@@ -54,6 +54,7 @@ wmDict = {
 	'awesome': 'Awesome',
 	'beryl': 'Beryl',
 	'blackbox': 'Blackbox',
+	'cinnamon': 'Cinnamon',
 	'compiz': 'Compiz',
 	'dwm': 'DWM',
 	'enlightenment': 'Enlightenment',
@@ -99,7 +100,7 @@ logosDict = {'Arch Linux': """
 	{color[0]} #'                         `#  {results[17]}\x1b[0m
 	"""}
 
-processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers')), encoding='utf8').rstrip('\n').split('\n')
+processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
 
 
 # -------------- Classes -------------- #
