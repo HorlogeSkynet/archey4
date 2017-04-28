@@ -72,6 +72,7 @@ wmDict = {
 	'pekwm': 'PekWM',
 	'ratpoison': 'ratpoison',
 	'scrotwm': 'ScrotWM',
+	'stumpwm': 'StumpWM',
 	'subtle': 'Subtle',
 	'wmaker': 'Window Maker',
 	'wmfs': 'Wmfs',
