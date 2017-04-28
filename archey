@@ -166,7 +166,10 @@ class Kernel:
 
 class Uptime:
 	def __init__(self):
-		fuptime = int(open('/proc/uptime').read().split('.')[0])
+		with open('/proc/uptime', 'r') as file:
+			fuptime = int(file.read().split('.')[0])
+			file.close()
+
 		day = int(fuptime / 86400)
 		fuptime = fuptime % 86400
 		hour = int(fuptime / 3600)
@@ -233,8 +236,10 @@ class Packages:
 
 class CPU:
 	def __init__(self):
-		file = open('/proc/cpuinfo').readlines()
-		cpuinfo = re.sub('  +', ' ', file[4].replace('model name\t: ', '').rstrip('\n'))
+		with open('/proc/cpuinfo', 'r') as file:
+			cpuinfo = re.sub('  +', ' ', file.readlines()[4].replace('model name\t: ', '').rstrip('\n'))
+			file.close()
+
 		self.key = 'CPU'
 		self.value = cpuinfo
 
