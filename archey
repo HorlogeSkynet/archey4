@@ -19,6 +19,7 @@ import re
 import os
 import sys
 
+from math import floor
 from getpass import getuser
 from subprocess import Popen, PIPE, check_output
 
@@ -123,7 +124,14 @@ class Output:
 		self.results.append('%s%s: %s%s' % (colorDict[self.distro][1], display.key, colorDict['Clear'][0], display.value))
 
 	def output(self):
-		print(logosDict[self.distro].format(color=colorDict[self.distro], results=self.results))
+		results = []
+		results.extend([''] * floor((18 - len(self.results)) / 2))
+		results.extend(self.results[:])
+
+		if len(results) < 18:
+			results.extend([''] * (18 - len(results)))
+
+		print(logosDict[self.distro].format(color=colorDict[self.distro], results=results))
 
 
 class User:
@@ -254,6 +262,7 @@ class Disk:
 			disk = '%s%s %s/ %s' % (colorDict['Sensors'][2], used, colorDict['Clear'][0], size)
 		if usedpercent >= 67:
 			disk = '%s%s %s/ %s' % (colorDict['Sensors'][0], used, colorDict['Clear'][0], size)
+
 		self.key = 'Disk'
 		self.value = disk
 
@@ -281,5 +290,8 @@ if __name__ == '__main__':
 
 	out = Output()
 	for x in output:
-		out.append(classes[x]())
+		result = classes[x]()
+		if result.value and result.value != '':
+			out.append(result)
+
 	out.output()
