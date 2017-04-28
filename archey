@@ -55,6 +55,7 @@ wmDict = {
 	'awesome': 'Awesome',
 	'beryl': 'Beryl',
 	'blackbox': 'Blackbox',
+	'bspwm': 'bspwm',
 	'cinnamon': 'Cinnamon',
 	'compiz': 'Compiz',
 	'dwm': 'DWM',
