@@ -183,7 +183,7 @@ class Uptime:
 
 class WindowManager:
 	def __init__(self):
-		wm = ''
+		wm = 'None'
 		for key in wmDict.keys():
 			if key in processes:
 				wm = wmDict[key]
@@ -195,7 +195,7 @@ class WindowManager:
 
 class DesktopEnvironment:
 	def __init__(self):
-		de = ''
+		de = 'None'
 		for key in deDict.keys():
 			if key in processes:
 				de = deDict[key]
