@@ -240,16 +240,14 @@ class CPU:
 
 class RAM:
 	def __init__(self):
-		raminfo = Popen(['free', '-m'], stdout=PIPE).communicate()[0].decode('utf-8').split('\n')
-		ram = ''.join(filter(re.compile('M').search, raminfo)).split()
-		used = int(ram[2]) - int(ram[5]) - int(ram[6])
-		usedpercent = ((float(used) / float(ram[1])) * 100)
+		ram = ''.join(filter(re.compile('M').search, Popen(['free', '-mw'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode('utf-8').split('\n'))).split()
+		usedpercent = ((float(ram[2]) / float(ram[1])) * 100)
 		if usedpercent <= 33:
-			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][1], used, colorDict['Clear'][0], ram[1])
+			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][1], ram[2], colorDict['Clear'][0], ram[1])
 		if usedpercent > 33 and usedpercent < 67:
-			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][2], used, colorDict['Clear'][0], ram[1])
+			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][2], ram[2], colorDict['Clear'][0], ram[1])
 		if usedpercent >= 67:
-			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][0], used, colorDict['Clear'][0], ram[1])
+			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][0], ram[2], colorDict['Clear'][0], ram[1])
 		self.key = 'RAM'
 		self.value = ramdisplay
 
