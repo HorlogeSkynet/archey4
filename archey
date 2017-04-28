@@ -184,10 +184,15 @@ class Uptime:
 class WindowManager:
 	def __init__(self):
 		wm = 'None'
-		for key in wmDict.keys():
-			if key in processes:
-				wm = wmDict[key]
-				break
+
+		try:
+			wm = re.search('(?<=Name: ).*', Popen(['wmctrl', '-m'], stdout=PIPE).communicate()[0].decode('utf-8')).group(0)
+
+		except FileNotFoundError:
+			for key in wmDict.keys():
+				if key in processes:
+					wm = wmDict[key]
+					break
 
 		self.key = 'Window Manager'
 		self.value = wm
