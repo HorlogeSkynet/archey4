@@ -42,7 +42,7 @@ colorDict = {
 }
 
 deDict = {
-	'cinnamon-session': 'Cinnamon',
+	'cinnamon': 'Cinnamon',
 	'gnome-session': 'GNOME',
 	'mate-session': 'MATE',
 	'ksmserver': 'KDE',
