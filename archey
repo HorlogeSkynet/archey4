@@ -17,27 +17,26 @@
 
 import re
 import os
-import sys
 
 from math import floor
 from getpass import getuser
 from subprocess import Popen, PIPE, check_output
 
 
-# -------------- Output -------------- #
+# -------------- Outputs -------------- #
 
-output = ['User', 'Hostname', 'Distro', 'Kernel', 'Uptime', 'WindowManager', 'DesktopEnvironment', 'Shell', 'Terminal', 'Packages', 'CPU', 'RAM', 'Disk']
+outputs = ['User', 'Hostname', 'Distro', 'Kernel', 'Uptime', 'WindowManager', 'DesktopEnvironment', 'Shell', 'Terminal', 'Packages', 'CPU', 'RAM', 'Disk']
 
 
 # -------------- Dictionaries -------------- #
 
 colorDict = {
 	'Arch Linux': ['\x1b[0;34m', '\x1b[1;34m'],
-	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
-	'Debian': ['\x1b[0;31m', '\x1b[1;31m'],
-	'Mint': ['\x1b[0;32m', '\x1b[1;37m'],
 	'Crunchbang': ['\x1b[1;37m'],
+	'Debian': ['\x1b[0;31m', '\x1b[1;31m'],
 	'Fedora': ['\x1b[0;34m', '\x1b[1;37m'],
+	'Mint': ['\x1b[0;32m', '\x1b[1;37m'],
+	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
 	'Sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
 	'Clear': ['\x1b[0m']
 }
@@ -82,27 +81,48 @@ wmDict = {
 	'xmonad': 'xmonad'
 }
 
-logosDict = {'Arch Linux': """
-	{color[1]}
-	{color[1]}               +                {results[0]}
-	{color[1]}               #                {results[1]}
-	{color[1]}              ###               {results[2]}
-	{color[1]}             #####              {results[3]}
-	{color[1]}             ######             {results[4]}
-	{color[1]}            ; #####;            {results[5]}
-	{color[1]}           +##.#####            {results[6]}
-	{color[1]}          +##########           {results[7]}
-	{color[1]}         ######{color[0]}#####{color[1]}##;         {results[8]}
-	{color[1]}        ###{color[0]}############{color[1]}+        {results[9]}
-	{color[1]}       #{color[0]}######   #######        {results[10]}
-	{color[0]}     .######;     ;###;`\".      {results[11]}
-	{color[0]}    .#######;     ;#####.       {results[12]}
-	{color[0]}    #########.   .########`     {results[13]}
-	{color[0]}   ######'           '######    {results[14]}
-	{color[0]}  ;####                 ####;   {results[15]}
-	{color[0]}  ##'                     '##   {results[16]}
-	{color[0]} #'                         `#  {results[17]}\x1b[0m
-	"""}
+logosDict = {
+	'Arch Linux': """
+		{color[1]}
+		{color[1]}               +                {results[0]}
+		{color[1]}               #                {results[1]}
+		{color[1]}              ###               {results[2]}
+		{color[1]}             #####              {results[3]}
+		{color[1]}             ######             {results[4]}
+		{color[1]}            ; #####;            {results[5]}
+		{color[1]}           +##.#####            {results[6]}
+		{color[1]}          +##########           {results[7]}
+		{color[1]}         ######{color[0]}#####{color[1]}##;         {results[8]}
+		{color[1]}        ###{color[0]}############{color[1]}+        {results[9]}
+		{color[1]}       #{color[0]}######   #######        {results[10]}
+		{color[0]}     .######;     ;###;`\".      {results[11]}
+		{color[0]}    .#######;     ;#####.       {results[12]}
+		{color[0]}    #########.   .########`     {results[13]}
+		{color[0]}   ######'           '######    {results[14]}
+		{color[0]}  ;####                 ####;   {results[15]}
+		{color[0]}  ##'                     '##   {results[16]}
+		{color[0]} #'                         `#  {results[17]}\x1b[0m""",
+	'Debian': """
+		{color[1]}                                  {results[0]}
+		{color[1]}          _sudZUZ#Z#XZo=_         {results[1]}
+		{color[1]}       _jmZZ2!!~---~!!X##wx       {results[2]}
+		{color[1]}    .<wdP~~            -!YZL,     {results[3]}
+		{color[1]}   .mX2'       _xaaa__     XZ[.   {results[4]}
+		{color[1]}   oZ[      _jdXY!~?S#wa   ]Xb;   {results[5]}
+		{color[1]}  _#e'     .]X2(     ~Xw|  )XXc   {results[6]}
+		{color[1]} .2Z`      ]X[.       xY|  ]oZ(   {results[7]}
+		{color[1]} .2#;      )3k;     _s!~   jXf`   {results[8]}
+		{color[0]}  1Z>      -]Xb/    ~    __#2(    {results[9]}
+		{color[0]}  -Zo;       +!4ZwerfgnZZXY'      {results[10]}
+		{color[0]}   *#[,        ~-?!!!!!!-~        {results[11]}
+		{color[0]}    XUb;.                         {results[12]}
+		{color[0]}     )YXL,,                       {results[13]}
+		{color[0]}       +3#bc,                     {results[14]}
+		{color[0]}         -)SSL,,                  {results[15]}
+		{color[0]}            ~~~~~                 {results[16]}
+		{color[0]}                                  {results[17]}
+		{color[0]}\x1b[0m"""
+}
 
 processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
 
@@ -111,19 +131,12 @@ processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers
 
 class Output:
 	results = []
-	results.extend([''] * (18 - len(output)))
 
 	def __init__(self):
-		self.distro = self.__detectDistro()
+		self.distro = Popen(['lsb_release', '-i'], stdout=PIPE).communicate()[0].decode('utf-8').split(':')[1].lstrip('\t').rstrip('\n')
 
-	def __detectDistro(self):
-		if os.path.exists('/etc/pacman.conf'):
-			return 'Arch Linux'
-		else:
-			sys.exit(1)
-
-	def append(self, display):
-		self.results.append('%s%s: %s%s' % (colorDict[self.distro][1], display.key, colorDict['Clear'][0], display.value))
+	def append(self, key, value):
+		self.results.append('%s%s: %s%s' % (colorDict[self.distro][1], key, colorDict['Clear'][0], value))
 
 	def output(self):
 		results = []
@@ -138,29 +151,24 @@ class Output:
 
 class User:
 	def __init__(self):
-		self.key = 'User'
 		self.value = os.getenv('USER')
 
 
 class Hostname:
 	def __init__(self):
 		hostname = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
-		self.key = 'Hostname'
 		self.value = hostname
 
 
 class Distro:
 	def __init__(self):
-		if os.path.exists('/etc/pacman.conf'):
-			distro = 'Arch Linux'
-		self.key = 'Distro'
+		distro = Popen(['lsb_release', '-i'], stdout=PIPE).communicate()[0].decode('utf-8').split(':')[1].lstrip('\t').rstrip('\n')
 		self.value = distro
 
 
 class Kernel:
 	def __init__(self):
 		kernel = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
-		self.key = 'Kernel'
 		self.value = kernel
 
 
@@ -181,7 +189,6 @@ class Uptime:
 		if day > 1:
 			uptime += '%d days, ' % day
 		uptime += '%d:%02d' % (hour, minute)
-		self.key = 'Uptime'
 		self.value = uptime
 
 
@@ -198,7 +205,6 @@ class WindowManager:
 					wm = wmDict[key]
 					break
 
-		self.key = 'Window Manager'
 		self.value = wm
 
 
@@ -210,28 +216,31 @@ class DesktopEnvironment:
 				de = deDict[key]
 				break
 
-		self.key = 'Desktop Environment'
 		self.value = de
 
 
 class Shell:
 	def __init__(self):
-		self.key = 'Shell'
 		self.value = os.getenv('SHELL')
 
 
 class Terminal:
 	def __init__(self):
-		self.key = 'Terminal'
 		self.value = os.getenv('TERM')
 
 
 class Packages:
 	def __init__(self):
-		p1 = Popen(['pacman', '-Q'], stdout=PIPE).communicate()[0].decode('utf-8')
-		packages = len(p1.rstrip('\n').split('\n'))
-		self.key = 'Packages'
-		self.value = packages
+		packagesTools = [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--list'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world']]
+		for packagesTool in packagesTools:
+			try:
+				p1 = Popen(packagesTool, stdout=PIPE).communicate()[0].decode('utf-8')
+				break
+
+			except:
+				pass
+
+		self.value = len(p1.rstrip('\n').split('\n'))
 
 
 class CPU:
@@ -240,7 +249,6 @@ class CPU:
 			cpuinfo = re.sub('  +', ' ', file.readlines()[4].replace('model name\t: ', '').rstrip('\n'))
 			file.close()
 
-		self.key = 'CPU'
 		self.value = cpuinfo
 
 
@@ -254,7 +262,7 @@ class RAM:
 			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][2], ram[2], colorDict['Clear'][0], ram[1])
 		if usedpercent >= 67:
 			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][0], ram[2], colorDict['Clear'][0], ram[1])
-		self.key = 'RAM'
+
 		self.value = ramdisplay
 
 
@@ -273,7 +281,6 @@ class Disk:
 		if usedpercent >= 67:
 			disk = '%s%s %s/ %s' % (colorDict['Sensors'][0], used, colorDict['Clear'][0], size)
 
-		self.key = 'Disk'
 		self.value = disk
 
 
@@ -299,9 +306,9 @@ classes = {
 if __name__ == '__main__':
 
 	out = Output()
-	for x in output:
+	for x in outputs:
 		result = classes[x]()
 		if result.value and result.value != '':
-			out.append(result)
+			out.append(x, result.value)
 
 	out.output()
