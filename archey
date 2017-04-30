@@ -40,10 +40,13 @@ colorDict = {
 deDict = {
 	'cinnamon': 'Cinnamon',
 	'gnome-session': 'GNOME',
+	'gnome-shell': 'GNOME',
 	'mate-session': 'MATE',
 	'ksmserver': 'KDE',
 	'xfce4-session': 'Xfce',
-	'lxsession': 'LXDE'
+	'fur-box-session': 'Fur Box',
+	'lxsession': 'LXDE',
+	'lxqt-session': 'LXQt'
 }
 
 wmDict = {
@@ -66,10 +69,13 @@ wmDict = {
 	'nemo': 'Nemo',
 	'openbox': 'Openbox',
 	'pekwm': 'PekWM',
+	'qtile': 'QTile',
 	'ratpoison': 'ratpoison',
 	'scrotwm': 'ScrotWM',
 	'stumpwm': 'StumpWM',
 	'subtle': 'Subtle',
+	'monsterwm': 'MonsterWM',
+	'wingo': 'Wingo',
 	'wmaker': 'Window Maker',
 	'wmfs': 'Wmfs',
 	'wmii': 'wmii',
