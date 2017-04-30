@@ -79,24 +79,24 @@ wmDict = {
 
 logosDict = {
 	'Arch Linux': """
-		{color[1]}               +                {results[0]}
-		{color[1]}               #                {results[1]}
-		{color[1]}              ###               {results[2]}
-		{color[1]}             #####              {results[3]}
-		{color[1]}             ######             {results[4]}
-		{color[1]}            ; #####;            {results[5]}
-		{color[1]}           +##.#####            {results[6]}
-		{color[1]}          +##########           {results[7]}
-		{color[1]}         ######{color[0]}#####{color[1]}##;         {results[8]}
-		{color[1]}        ###{color[0]}############{color[1]}+        {results[9]}
-		{color[1]}       #{color[0]}######   #######        {results[10]}
-		{color[0]}     .######;     ;###;`\".      {results[11]}
-		{color[0]}    .#######;     ;#####.       {results[12]}
-		{color[0]}    #########.   .########`     {results[13]}
-		{color[0]}   ######'           '######    {results[14]}
-		{color[0]}  ;####                 ####;   {results[15]}
-		{color[0]}  ##'                     '##   {results[16]}
-		{color[0]} #'                         `#  {results[17]}
+		{color[1]}               +                 {results[0]}
+		{color[1]}               #                 {results[1]}
+		{color[1]}              ###                {results[2]}
+		{color[1]}             #####               {results[3]}
+		{color[1]}             ######              {results[4]}
+		{color[1]}            ; #####;             {results[5]}
+		{color[1]}           +##.#####             {results[6]}
+		{color[1]}          +##########            {results[7]}
+		{color[1]}         ######{color[0]}#####{color[1]}##;          {results[8]}
+		{color[1]}        ###{color[0]}############{color[1]}+         {results[9]}
+		{color[1]}       #{color[0]}######   #######         {results[10]}
+		{color[0]}     .######;     ;###;`\".       {results[11]}
+		{color[0]}    .#######;     ;#####.        {results[12]}
+		{color[0]}    #########.   .########`      {results[13]}
+		{color[0]}   ######'           '######     {results[14]}
+		{color[0]}  ;####                 ####;    {results[15]}
+		{color[0]}  ##'                     '##    {results[16]}
+		{color[0]} #'                         `#   {results[17]}
 		{color[0]}\x1b[0m""",
 	'Debian': """
 		{color[1]}                                  {results[0]}
@@ -117,7 +117,27 @@ logosDict = {
 		{color[0]}         -)SSL,,                  {results[15]}
 		{color[0]}            ~~~~~                 {results[16]}
 		{color[0]}                                  {results[17]}
-		{color[0]}\x1b[0m"""
+		{color[0]}\x1b[0m""",
+	'Ubuntu': """
+		{color[0]}                          .oyhhs:     {results[0]}
+		{color[1]}                 ..--.., {color[0]}shhhhhh-     {results[1]}
+		{color[1]}               -+++++++++`:{color[0]}yyhhyo`    {results[2]}
+		{color[2]}          .--  {color[1]}-++++++++/-.-{color[0]}::-`      {results[3]}
+		{color[2]}        .::::-   {color[1]}:-----:/+++/++/.     {results[4]}
+		{color[2]}       -:::::-.          {color[1]}.:++++++:    {results[5]}
+		{color[1]}  ,,, {color[2]}.:::::-`             {color[1]}.++++++-   {results[6]}
+		{color[1]}./+++/-{color[2]}`-::-                {color[1]}./////:   {results[7]}
+		{color[1]}+++++++ {color[2]}.::-                          {results[8]}
+		{color[1]}./+++/-`{color[2]}-::-                {color[0]}:yyyyyo   {results[9]}
+		{color[1]}  ``` `{color[2]}-::::-`             {color[0]}:yhhhhh:   {results[10]}
+		{color[2]}       -:::::-.         {color[0]}`-ohhhhhh+    {results[11]}
+		{color[2]}        .::::-` {color[0]}-o+///+oyhhyyyhy:     {results[12]}
+		{color[2]}         `.--  {color[0]}/yhhhhhhhy+{color[2]},....       {results[13]}
+		{color[0]}               /hhhhhhhhh{color[2]}-.-:::;      {results[14]}
+		{color[0]}               `.:://::- {color[2]}-:::::;      {results[15]}
+		{color[2]}                         `.-:-'       {results[16]}
+		{color[2]}                                      {results[17]}
+		{color[2]}\x1b[0m"""
 }
 
 processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
