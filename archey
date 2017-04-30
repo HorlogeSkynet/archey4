@@ -79,7 +79,6 @@ wmDict = {
 
 logosDict = {
 	'Arch Linux': """
-		{color[1]}
 		{color[1]}               +                {results[0]}
 		{color[1]}               #                {results[1]}
 		{color[1]}              ###               {results[2]}
@@ -97,7 +96,8 @@ logosDict = {
 		{color[0]}   ######'           '######    {results[14]}
 		{color[0]}  ;####                 ####;   {results[15]}
 		{color[0]}  ##'                     '##   {results[16]}
-		{color[0]} #'                         `#  {results[17]}\x1b[0m""",
+		{color[0]} #'                         `#  {results[17]}
+		{color[0]}\x1b[0m""",
 	'Debian': """
 		{color[1]}                                  {results[0]}
 		{color[1]}          _sudZUZ#Z#XZo=_         {results[1]}
