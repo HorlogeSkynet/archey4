@@ -20,12 +20,8 @@ import os
 
 from math import floor
 from getpass import getuser
+from collections import OrderedDict
 from subprocess import Popen, PIPE, check_output
-
-
-# -------------- Outputs -------------- #
-
-outputs = ['User', 'Hostname', 'Distro', 'Kernel', 'Uptime', 'WindowManager', 'DesktopEnvironment', 'Shell', 'Terminal', 'Packages', 'CPU', 'RAM', 'Disk']
 
 
 # -------------- Dictionaries -------------- #
@@ -130,13 +126,11 @@ processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers
 # -------------- Classes -------------- #
 
 class Output:
-	results = []
-
 	def __init__(self):
-		self.distro = Popen(['lsb_release', '-i'], stdout=PIPE).communicate()[0].decode('utf-8').split(':')[1].lstrip('\t').rstrip('\n')
+		self.results = []
 
 	def append(self, key, value):
-		self.results.append('%s%s: %s%s' % (colorDict[self.distro][1], key, colorDict['Clear'][0], value))
+		self.results.append('%s%s: %s%s' % (colorDict[distribution][1], key, colorDict['Clear'][0], value))
 
 	def output(self):
 		results = []
@@ -146,7 +140,7 @@ class Output:
 		if len(results) < 18:
 			results.extend([''] * (18 - len(results)))
 
-		print(logosDict[self.distro].format(color=colorDict[self.distro], results=results))
+		print(logosDict[distribution].format(color=colorDict[distribution], results=results))
 
 
 class User:
@@ -157,18 +151,19 @@ class User:
 class Hostname:
 	def __init__(self):
 		hostname = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+
 		self.value = hostname
 
 
 class Distro:
 	def __init__(self):
-		distro = Popen(['lsb_release', '-i'], stdout=PIPE).communicate()[0].decode('utf-8').split(':')[1].lstrip('\t').rstrip('\n')
-		self.value = distro
+		self.value = distribution
 
 
 class Kernel:
 	def __init__(self):
 		kernel = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+
 		self.value = kernel
 
 
@@ -189,6 +184,7 @@ class Uptime:
 		if day > 1:
 			uptime += '%d days, ' % day
 		uptime += '%d:%02d' % (hour, minute)
+
 		self.value = uptime
 
 
@@ -284,31 +280,30 @@ class Disk:
 		self.value = disk
 
 
-classes = {
-	'User': User,
-	'Hostname': Hostname,
-	'Distro': Distro,
-	'Kernel': Kernel,
-	'Uptime': Uptime,
-	'WindowManager': WindowManager,
-	'DesktopEnvironment': DesktopEnvironment,
-	'Shell': Shell,
-	'Terminal': Terminal,
-	'Packages': Packages,
-	'CPU': CPU,
-	'RAM': RAM,
-	'Disk': Disk
-}
+classes = OrderedDict([
+	('User', User),
+	('Hostname', Hostname),
+	('Distro', Distro),
+	('Kernel', Kernel),
+	('Uptime', Uptime),
+	('WindowManager', WindowManager),
+	('DesktopEnvironment', DesktopEnvironment),
+	('Shell', Shell),
+	('Terminal', Terminal),
+	('Packages', Packages),
+	('CPU', CPU),
+	('RAM', RAM),
+	('Disk', Disk)
+])
 
 
 # -------------- Main -------------- #
 
 if __name__ == '__main__':
 
-	out = Output()
-	for x in outputs:
-		result = classes[x]()
-		if result.value and result.value != '':
-			out.append(x, result.value)
+	distribution = Popen(['lsb_release', '-i'], stdout=PIPE).communicate()[0].decode('utf-8').split(':')[1].lstrip('\t').rstrip('\n')
 
+	out = Output()
+	for key in classes.keys():
+		out.append(key, classes[key]().value)
 	out.output()
