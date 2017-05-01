@@ -16,10 +16,9 @@
 
 
 import re
-import os
 
 from math import floor
-from getpass import getuser
+from os import getenv, getuid
 from collections import OrderedDict
 from subprocess import Popen, PIPE, check_output
 
@@ -166,7 +165,7 @@ logosDict = {
 		{color[0]}\x1b[0m"""
 }
 
-processes = str(check_output(('ps', '-u', getuser(), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
+processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
 
 
 # -------------- Classes -------------- #
@@ -191,7 +190,7 @@ class Output:
 
 class User:
 	def __init__(self):
-		self.value = os.getenv('USER')
+		self.value = getenv('USER')
 
 
 class Hostname:
@@ -262,12 +261,12 @@ class DesktopEnvironment:
 
 class Shell:
 	def __init__(self):
-		self.value = os.getenv('SHELL')
+		self.value = getenv('SHELL')
 
 
 class Terminal:
 	def __init__(self):
-		self.value = os.getenv('TERM')
+		self.value = getenv('TERM')
 
 
 class Packages:
