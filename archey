@@ -224,12 +224,11 @@ class Uptime:
 		hour = int(fuptime / 3600)
 		fuptime = fuptime % 3600
 		minute = int(fuptime / 60)
+
 		uptime = ''
-		if day == 1:
-			uptime += '%d day, ' % day
-		elif day > 1:
-			uptime += '%d days, ' % day
-		uptime += '%d:%02d' % (hour, minute)
+		uptime += ((str(day) + ' day' + ('s' if day > 1 else '') + ('' if minute == 0 and hour == 0 else (' and ' if (minute != 0 and hour == 0) or (minute == 0 and hour != 0) else ', '))) if day >= 1 else '')
+		uptime += ((str(hour) + ' hour' + ('s' if hour > 1 else '') + (' and ' if minute != 0 else '')) if hour >= 1 else '')
+		uptime += ((str(minute) + ' minute' + ('s' if minute > 1 else '')) if minute >= 1 else ('< 1 minute' if day == 0 and hour == 0 else ''))
 
 		self.value = uptime
 
