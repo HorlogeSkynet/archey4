@@ -30,6 +30,7 @@ colorDict = {
 	'CrunchBang': ['\x1b[1;37m', '\x1b[1;37m'],
 	'Debian': ['\x1b[0;31m', '\x1b[1;31m'],
 	'Fedora': ['\x1b[1;37m', '\x1b[0;34m'],
+	'Manjaro': ['\x1b[0;32m', '\x1b[1;32m'],
 	'Mint': ['\x1b[0;32m', '\x1b[1;37m'],
 	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
 	'Sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
@@ -182,7 +183,27 @@ logosDict = {
 		{color[1]} :------{color[0]}:://:{color[1]}-----------://           {results[15]}
 		{color[1]} :--------------------://             {results[16]}
 		{color[1]}                                      {results[17]}
-		{color[1]}\x1b[0m"""
+		{color[1]}\x1b[0m""",
+	'Manjaro': """
+		{color[0]}   $$$$$$$$$$$$$$$$  $$$$$$$   {results[0]}
+		{color[0]}   M77777777777777M  M77777M   {results[1]}
+		{color[0]}   M77777777777777M  M77777M   {results[2]}
+		{color[0]}   M77777MMMMMMMMMM  M77777M   {results[3]}
+		{color[0]}   M77777M           M77777M   {results[4]}
+		{color[0]}   M77777M  $$$$$$$  M77777M   {results[5]}
+		{color[0]}   MMMMMMM  M77777M  M77777M   {results[6]}
+		{color[0]}            M77777M  M77777M   {results[7]}
+		{color[0]}   $$$$$$$  M77777M  M77777M   {results[8]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[9]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[10]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[11]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[12]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[13]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[14]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[15]}
+		{color[0]}   M77777M  M77777M  M77777M   {results[16]}
+		{color[0]}   MMMMMMM  MMMMMMM  MMMMMMM   {results[17]}
+		{color[0]}\x1b[0m"""
 }
 
 processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
