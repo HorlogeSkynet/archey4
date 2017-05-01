@@ -227,7 +227,7 @@ class Uptime:
 		uptime = ''
 		if day == 1:
 			uptime += '%d day, ' % day
-		if day > 1:
+		elif day > 1:
 			uptime += '%d days, ' % day
 		uptime += '%d:%02d' % (hour, minute)
 
@@ -297,12 +297,13 @@ class CPU:
 class RAM:
 	def __init__(self):
 		ram = ''.join(filter(re.compile('M').search, Popen(['free', '-mw'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode('utf-8').split('\n'))).split()
-		usedpercent = ((float(ram[2]) / float(ram[1])) * 100)
+		usedpercent = (float(ram[2]) / float(ram[1])) * 100
+
 		if usedpercent <= 33:
 			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][1], ram[2], colorDict['Clear'][0], ram[1])
-		if usedpercent > 33 and usedpercent < 67:
+		elif usedpercent > 33 and usedpercent < 67:
 			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][2], ram[2], colorDict['Clear'][0], ram[1])
-		if usedpercent >= 67:
+		else:
 			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][0], ram[2], colorDict['Clear'][0], ram[1])
 
 		self.value = ramdisplay
@@ -318,9 +319,9 @@ class Disk:
 
 		if usedpercent <= 33:
 			disk = '%s%s %s/ %s' % (colorDict['Sensors'][1], used, colorDict['Clear'][0], size)
-		if usedpercent > 33 and usedpercent < 67:
+		elif usedpercent > 33 and usedpercent < 67:
 			disk = '%s%s %s/ %s' % (colorDict['Sensors'][2], used, colorDict['Clear'][0], size)
-		if usedpercent >= 67:
+		else:
 			disk = '%s%s %s/ %s' % (colorDict['Sensors'][0], used, colorDict['Clear'][0], size)
 
 		self.value = disk
