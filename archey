@@ -29,7 +29,7 @@ colorDict = {
 	'Arch Linux': ['\x1b[0;34m', '\x1b[1;34m'],
 	'CrunchBang': ['\x1b[1;37m', '\x1b[1;37m'],
 	'Debian': ['\x1b[0;31m', '\x1b[1;31m'],
-	'Fedora': ['\x1b[0;34m', '\x1b[1;37m'],
+	'Fedora': ['\x1b[1;37m', '\x1b[0;34m'],
 	'Mint': ['\x1b[0;32m', '\x1b[1;37m'],
 	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
 	'Sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
@@ -162,7 +162,27 @@ logosDict = {
 		{color[0]}  /__/      /__/                   |_|   {results[15]}
 		{color[0]}                                         {results[16]}
 		{color[0]}                                         {results[17]}
-		{color[0]}\x1b[0m"""
+		{color[0]}\x1b[0m""",
+	'Fedora': """
+		{color[1]}           :/------------://          {results[0]}
+		{color[1]}        :------------------://        {results[1]}
+		{color[1]}      :-----------{color[0]}/shhdhyo/{color[1]}-://       {results[2]}
+		{color[1]}    /-----------{color[0]}omMMMNNNMMMd/{color[1]}-:/      {results[3]}
+		{color[1]}   :-----------{color[0]}sMMMdo:/{color[1]}       -:/     {results[4]}
+		{color[1]}  :-----------{color[0]}:MMMd{color[1]}-------    --:/    {results[5]}
+		{color[1]}  /-----------{color[0]}:MMMy{color[1]}-------    ---/    {results[6]}
+		{color[1]} :------    --{color[0]}/+MMMh/{color[1]}--        ---:   {results[7]}
+		{color[1]} :---     {color[0]}oNMMMMMMMMMNho{color[1]}     -----:   {results[8]}
+		{color[1]} :--      {color[0]}+shhhMMMmhhy++{color[1]}   ------:    {results[9]}
+		{color[1]} :-      -----{color[0]}:MMMy{color[1]}--------------/    {results[10]}
+		{color[1]} :-     ------{color[0]}/MMMy{color[1]}-------------:     {results[11]}
+		{color[1]} :-      ----{color[0]}/hMMM+{color[1]}------------:      {results[12]}
+		{color[1]} :--{color[0]}:dMMNdhhdNMMNo{color[1]}-----------:        {results[13]}
+		{color[1]} :---{color[0]}:sdNMMMMNds:{color[1]}----------:          {results[14]}
+		{color[1]} :------{color[0]}:://:{color[1]}-----------://           {results[15]}
+		{color[1]} :--------------------://             {results[16]}
+		{color[1]}                                      {results[17]}
+		{color[1]}\x1b[0m"""
 }
 
 processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
