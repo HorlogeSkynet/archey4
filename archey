@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Archey [version 0.3.0]
+# Archey4
 #
 # Archey is a simple system information tool written in Python.
 #
@@ -234,9 +234,10 @@ processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-hea
 class Output:
 	def __init__(self):
 		self.results = []
+		self.distribution = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
 
 	def append(self, key, value):
-		self.results.append('%s%s: %s%s' % (colorDict[distribution][1], key, colorDict['Clear'][0], value))
+		self.results.append('%s%s: %s%s' % (colorDict[self.distribution][1], key, colorDict['Clear'][0], value))
 
 	def output(self):
 		results = []
@@ -246,7 +247,7 @@ class Output:
 		if len(results) < 18:
 			results.extend([''] * (18 - len(results)))
 
-		print(logosDict[distribution].format(color=colorDict[distribution], results=results))
+		print(logosDict[self.distribution].format(color=colorDict[self.distribution], results=results))
 
 
 class User:
@@ -263,7 +264,9 @@ class Hostname:
 
 class Distro:
 	def __init__(self):
-		self.value = distribution
+		distro = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+
+		self.value = distro
 
 
 class Kernel:
@@ -406,8 +409,6 @@ classes = OrderedDict([
 # -------------- Main -------------- #
 
 if __name__ == '__main__':
-
-	distribution = Popen(['lsb_release', '-i'], stdout=PIPE).communicate()[0].decode('utf-8').split(':')[1].lstrip('\t').rstrip('\n')
 
 	out = Output()
 	for key in classes.keys():
