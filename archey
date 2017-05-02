@@ -262,9 +262,19 @@ class Hostname:
 		self.value = hostname
 
 
+class Model:
+	def __init__(self):
+		with open('/sys/devices/virtual/dmi/id/product_name', 'r') as file:
+			model = file.read().rstrip('\n')
+			file.close()
+
+		self.value = model
+
+
 class Distro:
 	def __init__(self):
 		distro = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+		distro += ' ' + Popen(['uname', '-m'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
 
 		self.value = distro
 
@@ -392,6 +402,7 @@ class Disk:
 classes = OrderedDict([
 	('User', User),
 	('Hostname', Hostname),
+	('Model', Model),
 	('Distro', Distro),
 	('Kernel', Kernel),
 	('Uptime', Uptime),
