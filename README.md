@@ -1,5 +1,7 @@
 # Archey4
 
+![Archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png)
+
 ### Why, again, a f*cking new Archey fork ?
 
 The answer is [here](https://horlogeskynet.github.io/blog/articles/the-archey-project-what-i-ve-decided-to-do).

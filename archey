@@ -2,7 +2,7 @@
 #
 # Archey4
 #
-# Archey is a simple system information tool written in Python.
+# -- Archey is a simple system information tool written in Python.
 #
 # Copyright 2010 Melik Manukyan <melik@archlinux.us>
 # Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>
@@ -10,6 +10,8 @@
 # ASCII art by Brett Bohnenkamper <kittykatt@silverirc.com>
 # Changes Jerome Launay <jerome@projet-libre.org>
 # Fedora support by YeOK <yeok@henpen.org>
+#
+# Currently maintained by Samuel FORESTIER <https://horlogeskynet.github.io/>
 #
 # Distributed under the terms of the GNU General Public License v3.
 # See http://www.gnu.org/licenses/gpl.txt for the full license text.
