@@ -4,7 +4,7 @@
 
 ### Why, again, a f*cking new Archey fork ?
 
-The answer is [here](https://horlogeskynet.github.io/blog/articles/the-archey-project-what-i-ve-decided-to-do).
+The answer is [here](https://horlogeskynet.github.io/archey4).
 
 ### What do I need to get and use this script ?
 
