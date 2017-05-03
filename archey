@@ -33,6 +33,7 @@ colorDict = {
 	'Debian': ['\x1b[0;31m', '\x1b[1;31m'],
 	'Fedora': ['\x1b[1;37m', '\x1b[0;34m'],
 	'ManjaroLinux': ['\x1b[0;32m', '\x1b[1;32m'],
+	'Linux': ['\x1b[1;33m', '\x1b[1;37m'],
 	'LinuxMint': ['\x1b[1;32m', '\x1b[1;37m'],
 	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
 	'Sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
@@ -207,25 +208,45 @@ logosDict = {
 		{color[0]}   MMMMMMM  MMMMMMM  MMMMMMM   {results[17]}
 		{color[0]}\x1b[0m""",
 	'LinuxMint': """
-	{color[1]}                                   {results[0]}
-	{color[1]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {results[1]}
-	{color[1]} MMm----::-://////////////oymNMd+`     {results[2]}
-	{color[1]} MMd      {color[0]}/++                {color[1]}-sNMd:    {results[3]}
-	{color[1]} MMNso/`  {color[0]}dMM    `.::-. .-::.` {color[1]}.hMN:   {results[4]}
-	{color[1]} ddddMMh  {color[0]}dMM   :hNMNMNhNMNMNh: `{color[1]}NMm   {results[5]}
-	{color[1]}     NMm  {color[0]}dMM  .NMN/-+MMM+-/NMN` {color[1]}dMM   {results[6]}
-	{color[1]}     NMm  {color[0]}dMM  -MMm  `MMM   dMM. {color[1]}dMM   {results[7]}
-	{color[1]}     NMm  {color[0]}dMM  -MMm  `MMM   dMM. {color[1]}dMM   {results[8]}
-	{color[1]}     NMm  {color[0]}dMM  .mmd  `mmm   yMM. {color[1]}dMM   {results[9]}
-	{color[1]}     NMm  {color[0]}dMM`  ..`   ...   ydm. {color[1]}dMM   {results[10]}
-	{color[1]}     hMM-  {color[0]}+MMd/-------...-:sdds {color[1]}MMM   {results[11]}
-	{color[1]}     -NMm-  {color[0]}:hNMNNNmdddddddddy/` {color[1]}dMM   {results[12]}
-	{color[1]}      -dMNs-``{color[0]}-::::-------.``    {color[1]}dMM   {results[13]}
-	{color[1]}       `/dMNmy+/:-------------:/yMMM   {results[14]}
-	{color[1]}          ./ydNMMMMMMMMMMMMMMMMMMMMM   {results[15]}
-	{color[1]}                                       {results[16]}
-	{color[1]}                                       {results[17]}
-	{color[1]}\x1b[0m"""
+		{color[1]}                                       {results[0]}
+		{color[1]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {results[1]}
+		{color[1]} MMm----::-://////////////oymNMd+`     {results[2]}
+		{color[1]} MMd      {color[0]}/++                {color[1]}-sNMd:    {results[3]}
+		{color[1]} MMNso/`  {color[0]}dMM    `.::-. .-::.` {color[1]}.hMN:   {results[4]}
+		{color[1]} ddddMMh  {color[0]}dMM   :hNMNMNhNMNMNh: `{color[1]}NMm   {results[5]}
+		{color[1]}     NMm  {color[0]}dMM  .NMN/-+MMM+-/NMN` {color[1]}dMM   {results[6]}
+		{color[1]}     NMm  {color[0]}dMM  -MMm  `MMM   dMM. {color[1]}dMM   {results[7]}
+		{color[1]}     NMm  {color[0]}dMM  -MMm  `MMM   dMM. {color[1]}dMM   {results[8]}
+		{color[1]}     NMm  {color[0]}dMM  .mmd  `mmm   yMM. {color[1]}dMM   {results[9]}
+		{color[1]}     NMm  {color[0]}dMM`  ..`   ...   ydm. {color[1]}dMM   {results[10]}
+		{color[1]}     hMM-  {color[0]}+MMd/-------...-:sdds {color[1]}MMM   {results[11]}
+		{color[1]}     -NMm-  {color[0]}:hNMNNNmdddddddddy/` {color[1]}dMM   {results[12]}
+		{color[1]}      -dMNs-``{color[0]}-::::-------.``    {color[1]}dMM   {results[13]}
+		{color[1]}       `/dMNmy+/:-------------:/yMMM   {results[14]}
+		{color[1]}          ./ydNMMMMMMMMMMMMMMMMMMMMM   {results[15]}
+		{color[1]}                                       {results[16]}
+		{color[1]}                                       {results[17]}
+		{color[1]}\x1b[0m""",
+	'Linux': """
+		{color[1]}                           {results[0]}
+		{color[1]}          a8888b.          {results[1]}
+		{color[1]}         d888888b.         {results[2]}
+		{color[1]}         8P"YP"Y88         {results[3]}
+		{color[1]}         8|o||o|88         {results[4]}
+		{color[1]}         8{color[0]}\\vvvv/{color[1]}88         {results[5]}
+		{color[1]}         8{color[0]} \\vv/ {color[1]}Y8.        {results[6]}
+		{color[1]}        d/  {color[0]}`'{color[1]}  \8b.       {results[7]}
+		{color[1]}      .dP   .     Y8b.     {results[8]}
+		{color[1]}     d8:'   "   `::88b.    {results[9]}
+		{color[1]}    d8"           `Y88b    {results[10]}
+		{color[1]}   :8P     '       :888    {results[11]}
+		{color[1]}    8a.    :      _a88P    {results[12]}
+		{color[1]}  {color[0]}._/"{color[1]}Yaa_ :    .{color[0]}| {color[1]}88P{color[0]}|{color[1]}    {results[13]}
+		{color[1]} {color[0]}\++++{color[1]}YP"      `{color[0]}| {color[1]}8P{color[0]}++\.{color[1]}   {results[14]}
+		{color[1]} {color[0]}/+++++\.{color[1]}_____.d{color[0]}|+++++/{color[1]}    {results[15]}
+		{color[1]}  {color[0]}\++++++){color[1]}888888P{color[0]}\+++/{color[1]}     {results[16]}
+		{color[1]}                           {results[17]}
+		{color[1]}\x1b[0m"""
 }
 
 processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
@@ -237,6 +258,9 @@ class Output:
 	def __init__(self):
 		self.results = []
 		self.distribution = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+
+		if self.distribution not in logosDict.keys():
+			self.distribution = 'Linux'
 
 	def append(self, key, value):
 		self.results.append('%s%s: %s%s' % (colorDict[self.distribution][1], key, colorDict['Clear'][0], value))
@@ -259,9 +283,7 @@ class User:
 
 class Hostname:
 	def __init__(self):
-		hostname = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
-
-		self.value = hostname
+		self.value = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
 
 
 class Model:
@@ -275,17 +297,12 @@ class Model:
 
 class Distro:
 	def __init__(self):
-		distro = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
-		distro += ' ' + Popen(['uname', '-m'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
-
-		self.value = distro
+		self.value = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n') + ' ' + Popen(['uname', '-m'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
 
 
 class Kernel:
 	def __init__(self):
-		kernel = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
-
-		self.value = kernel
+		self.value = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
 
 
 class Uptime:
