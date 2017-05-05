@@ -472,6 +472,13 @@ class CPU:
 		self.value = cpuinfo
 
 
+class GPU:
+	def __init__(self):
+		gpuinfo = Popen(['grep', '-E', 'VGA|3D'], stdout=PIPE, stdin=Popen(['lspci'], stdout=PIPE).stdout).communicate()[0].decode('utf-8').split(': ')[1].rstrip('\n')
+
+		self.value = (re.findall('.{1,37}(?:\W|$)', gpuinfo)[0] + '[...]' if len(gpuinfo) > 40 else gpuinfo)
+
+
 class RAM:
 	def __init__(self):
 		ram = ''.join(filter(re.compile('M').search, Popen(['free', '-mw'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode('utf-8').split('\n'))).split()
@@ -517,6 +524,7 @@ classes = OrderedDict([
 	('Terminal', Terminal),
 	('Packages', Packages),
 	('CPU', CPU),
+	('GPU', GPU),
 	('RAM', RAM),
 	('Disk', Disk)
 ])
