@@ -107,7 +107,7 @@ logosDict = {
 		{color[0]}  ;####                 ####;    {results[15]}
 		{color[0]}  ##'                     '##    {results[16]}
 		{color[0]} #'                         `#   {results[17]}
-		{color[0]}\x1b[0m""",
+	""",
 	'Debian': """
 		{color[1]}                                  {results[0]}
 		{color[1]}          _sudZUZ#Z#XZo=_         {results[1]}
@@ -127,7 +127,7 @@ logosDict = {
 		{color[0]}         -)SSL,,                  {results[15]}
 		{color[0]}            ~~~~~                 {results[16]}
 		{color[0]}                                  {results[17]}
-		{color[0]}\x1b[0m""",
+	""",
 	'Ubuntu': """
 		{color[0]}                           .oyhhs:     {results[0]}
 		{color[1]}                  ..--.., {color[0]}shhhhhh-     {results[1]}
@@ -147,7 +147,7 @@ logosDict = {
 		{color[0]}                `.:://::- {color[2]}-:::::;      {results[15]}
 		{color[2]}                          `.-:-'       {results[16]}
 		{color[2]}                                       {results[17]}
-		{color[2]}\x1b[0m""",
+	""",
 	'CrunchBang': """
 		{color[0]}                 ___       ___      _    {results[0]}
 		{color[0]}                /  /      /  /     | |   {results[1]}
@@ -167,7 +167,7 @@ logosDict = {
 		{color[0]}  /__/      /__/                   |_|   {results[15]}
 		{color[0]}                                         {results[16]}
 		{color[0]}                                         {results[17]}
-		{color[0]}\x1b[0m""",
+	""",
 	'Fedora': """
 		{color[1]}           :/------------://          {results[0]}
 		{color[1]}        :------------------://        {results[1]}
@@ -187,7 +187,7 @@ logosDict = {
 		{color[1]} :------{color[0]}:://:{color[1]}-----------://           {results[15]}
 		{color[1]} :--------------------://             {results[16]}
 		{color[1]}                                      {results[17]}
-		{color[1]}\x1b[0m""",
+	""",
 	'Manjaro': """
 		{color[0]}   $$$$$$$$$$$$$$$$  $$$$$$$   {results[0]}
 		{color[0]}   M77777777777777M  M77777M   {results[1]}
@@ -207,7 +207,7 @@ logosDict = {
 		{color[0]}   M77777M  M77777M  M77777M   {results[15]}
 		{color[0]}   M77777M  M77777M  M77777M   {results[16]}
 		{color[0]}   MMMMMMM  MMMMMMM  MMMMMMM   {results[17]}
-		{color[0]}\x1b[0m""",
+	""",
 	'LinuxMint': """
 		{color[1]}                                       {results[0]}
 		{color[1]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {results[1]}
@@ -227,7 +227,7 @@ logosDict = {
 		{color[1]}          ./ydNMMMMMMMMMMMMMMMMMMMMM   {results[15]}
 		{color[1]}                                       {results[16]}
 		{color[1]}                                       {results[17]}
-		{color[1]}\x1b[0m""",
+	""",
 	'Red Hat': """
 		{color[2]}                                             {results[0]}
 		{color[2]}              \`.-..........\`               {results[1]}
@@ -247,7 +247,7 @@ logosDict = {
 		{color[0]}   MMMMMMMMMMMMMMMMyoNNNMMM+.   MMMMMMMM     {results[15]}
 		{color[0]}    MMNMMMNNMMMMMNM+ mhsMNyyyyMNMMMMsMM      {results[16]}
 		{color[0]}                                             {results[17]}
-		{color[0]}\x1b[0m""",
+	""",
 	'Linux': """
 		{color[1]}                           {results[0]}
 		{color[1]}          a8888b.          {results[1]}
@@ -267,7 +267,7 @@ logosDict = {
 		{color[1]} {color[0]}/+++++\.{color[1]}_____.d{color[0]}|+++++/{color[1]}    {results[15]}
 		{color[1]}  {color[0]}\++++++){color[1]}888888P{color[0]}\+++/{color[1]}     {results[16]}
 		{color[1]}                           {results[17]}
-		{color[1]}\x1b[0m"""
+	"""
 }
 
 processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
@@ -284,7 +284,7 @@ class Output:
 			self.distribution = 'Linux'
 
 	def append(self, key, value):
-		self.results.append('%s%s: %s%s' % (colorDict[self.distribution][1], key, colorDict['Clear'][0], value))
+		self.results.append('{0}{1}:{2} {3}'.format(colorDict[self.distribution][1], key, colorDict['Clear'][0], value))
 
 	def output(self):
 		results = []
@@ -412,11 +412,11 @@ class RAM:
 		usedpercent = (float(ram[2]) / float(ram[1])) * 100
 
 		if usedpercent <= 33:
-			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][1], ram[2], colorDict['Clear'][0], ram[1])
+			ramdisplay = '{0}{1} MB{2} / {3} MB'.format(colorDict['Sensors'][1], ram[2], colorDict['Clear'][0], ram[1])
 		elif usedpercent > 33 and usedpercent < 67:
-			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][2], ram[2], colorDict['Clear'][0], ram[1])
+			ramdisplay = '{0}{1} MB{2} / {3} MB'.format(colorDict['Sensors'][2], ram[2], colorDict['Clear'][0], ram[1])
 		else:
-			ramdisplay = '%s%s MB %s/ %s MB' % (colorDict['Sensors'][0], ram[2], colorDict['Clear'][0], ram[1])
+			ramdisplay = '{0}{1} MB{2} / {3} MB'.format(colorDict['Sensors'][0], ram[2], colorDict['Clear'][0], ram[1])
 
 		self.value = ramdisplay
 
@@ -428,11 +428,11 @@ class Disk:
 		usedpercent = float(total[5][:-1])
 
 		if usedpercent <= 33:
-			disk = '%s%s %s/ %s' % (colorDict['Sensors'][1], total[3], colorDict['Clear'][0], total[2])
+			disk = '{0}{1}{2} / {3}'.format(colorDict['Sensors'][1], total[3], colorDict['Clear'][0], total[2])
 		elif usedpercent > 33 and usedpercent < 67:
-			disk = '%s%s %s/ %s' % (colorDict['Sensors'][2], total[3], colorDict['Clear'][0], total[2])
+			disk = '{0}{1}{2} / {3}'.format(colorDict['Sensors'][2], total[3], colorDict['Clear'][0], total[2])
 		else:
-			disk = '%s%s %s/ %s' % (colorDict['Sensors'][0], total[3], colorDict['Clear'][0], total[2])
+			disk = '{0}{1}{2} / {3}'.format(colorDict['Sensors'][0], total[3], colorDict['Clear'][0], total[2])
 
 		self.value = disk
 
