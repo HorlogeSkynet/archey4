@@ -35,8 +35,9 @@ colorDict = {
 	'ManjaroLinux': ['\x1b[0;32m', '\x1b[1;32m'],
 	'Linux': ['\x1b[1;33m', '\x1b[1;37m'],
 	'LinuxMint': ['\x1b[1;32m', '\x1b[1;37m'],
-	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
+	'openSUSE': ['\x1b[1;37m', '\x1b[1;32m'],
 	'Red Hat': ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
+	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
 	'Sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
 	'Clear': ['\x1b[0m']
 }
@@ -207,6 +208,26 @@ logosDict = {
 		{color[0]}   M77777M  M77777M  M77777M   {results[15]}
 		{color[0]}   M77777M  M77777M  M77777M   {results[16]}
 		{color[0]}   MMMMMMM  MMMMMMM  MMMMMMM   {results[17]}
+	""",
+	'openSUSE': """
+		{color[0]}             .;ldkO0000Okdl;.              {results[0]}
+		{color[0]}         .;d00xl:^''''''^:ok00d;.          {results[1]}
+		{color[0]}       .d00l'                'o00d.        {results[2]}
+		{color[0]}     .d0Kd'  {color[1]}Okxol:;,.{color[0]}          :O0d.      {results[3]}
+		{color[0]}    .OK{color[1]}KKK0kOKKKKKKKKKKOxo:,{color[0]}      lKO.     {results[4]}
+		{color[0]}   ,0K{color[1]}KKKKKKKKKKKKKKK0P^{color[0]},,,{color[1]}^dx:{color[0]}    ;00,    {results[5]}
+		{color[0]}  .OK{color[1]}KKKKKKKKKKKKKKKk'{color[0]}.oOPPb.{color[1]}'0k.{color[0]}   cKO.   {results[6]}
+		{color[0]}  :KK{color[1]}KKKKKKKKKKKKKKK: {color[0]}kKx..dd{color[1]} lKd{color[0]}   'OK:   {results[7]}
+		{color[0]}  dKK{color[1]}KKKKKKKKKOx0KKKd {color[0]}^0KKKO'{color[1]} kKKc{color[0]}   dKd   {results[8]}
+		{color[0]}  dKK{color[1]}KKKKKKKKKK;.;oOKx,..{color[0]}^{color[1]}..;kKKK0.{color[0]}  dKd   {results[9]}
+		{color[0]}  :KK{color[1]}KKKKKKKKKK0o;...^cdxxOK0O/^^'{color[0]}  .0K:   {results[10]}
+		{color[0]}   kKK{color[1]}KKKKKKKKKKKKK0x;,,......,;od{color[0]}  lKk    {results[11]}
+		{color[0]}   '0K{color[1]}KKKKKKKKKKKKKKKKKKKK00KKOo^{color[0]}  c00'    {results[12]}
+		{color[0]}    'kK{color[1]}KKOxddxkOO00000Okxoc;''{color[0]}   .dKk'     {results[13]}
+		{color[0]}      l0Ko.                    .c00l'      {results[14]}
+		{color[0]}       'l0Kk:.              .;xK0l'        {results[15]}
+		{color[0]}          'lkK0xl:;,,,,;:ldO0kl'           {results[16]}
+		{color[0]}              '^:ldxkkkkxdl:^'             {results[17]}
 	""",
 	'LinuxMint': """
 		{color[1]}                                       {results[0]}
