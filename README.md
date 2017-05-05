@@ -20,7 +20,7 @@ Optional packages:
 ### Installation procedure
 
 ```
-$  git clone git@github.com:HorlogeSkynet/archey4.git
+$  git clone https://github.com/HorlogeSkynet/archey4.git
 $  cd archey4/
 $  chmod +x archey
 #  cp archey /usr/bin/archey
