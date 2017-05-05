@@ -32,6 +32,7 @@ colorDict = {
 	'CrunchBang': ['\x1b[1;37m', '\x1b[1;37m'],
 	'Debian': ['\x1b[0;31m', '\x1b[1;31m'],
 	'Fedora': ['\x1b[1;37m', '\x1b[0;34m'],
+	'Gentoo': ['\x1b[1;37m', '\x1b[1;35m'],
 	'ManjaroLinux': ['\x1b[0;32m', '\x1b[1;32m'],
 	'Linux': ['\x1b[1;33m', '\x1b[1;37m'],
 	'LinuxMint': ['\x1b[1;32m', '\x1b[1;37m'],
@@ -188,6 +189,26 @@ logosDict = {
 		{color[1]} :------{color[0]}:://:{color[1]}-----------://           {results[15]}
 		{color[1]} :--------------------://             {results[16]}
 		{color[1]}                                      {results[17]}
+	""",
+	'Gentoo': """
+		{color[1]}          -/oyddmdhs+:.                {results[0]}
+		{color[1]}      -o{color[0]}dNMMMMMMMMNNmhy+{color[1]}-`             {results[1]}
+		{color[1]}    -y{color[0]}NMMMMMMMMMMMNNNmmdhy{color[1]}+-           {results[2]}
+		{color[1]}  `o{color[0]}mMMMMMMMMMMMMNmdmmmmddhhy{color[1]}/`        {results[3]}
+		{color[1]}  om{color[0]}MMMMMMMMMMMN{color[1]}hhyyyo{color[0]}hmdddhhhd{color[1]}o`      {results[4]}
+		{color[1]} .y{color[0]}dMMMMMMMMMMd{color[1]}hs++so/s{color[0]}mdddhhhhdm{color[1]}+`    {results[5]}
+		{color[1]}  oy{color[0]}hdmNMMMMMMMN{color[1]}dyooy{color[0]}dmddddhhhhyhN{color[1]}d.   {results[6]}
+		{color[1]}   :o{color[0]}yhhdNNMMMMMMMNNNmmdddhhhhhyym{color[1]}Mh   {results[7]}
+		{color[1]}     .:{color[0]}+sydNMMMMMNNNmmmdddhhhhhhmM{color[1]}my   {results[8]}
+		{color[1]}        /m{color[0]}MMMMMMNNNmmmdddhhhhhmMNh{color[1]}s:   {results[9]}
+		{color[1]}     `o{color[0]}NMMMMMMMNNNmmmddddhhdmMNhs{color[1]}+`    {results[10]}
+		{color[1]}   `s{color[0]}NMMMMMMMMNNNmmmdddddmNMmhs{color[1]}/.      {results[11]}
+		{color[1]}  /N{color[0]}MMMMMMMMNNNNmmmdddmNMNdso{color[1]}:`        {results[12]}
+		{color[1]} +M{color[0]}MMMMMMNNNNNmmmmdmNMNdso{color[1]}/-           {results[13]}
+		{color[1]} yM{color[0]}MNNNNNNNmmmmmNNMmhs+/{color[1]}-`             {results[14]}
+		{color[1]} /h{color[0]}MMNNNNNNNNMNdhs++/{color[1]}-`                {results[15]}
+		{color[1]} `/{color[0]}ohdmmddhys+++/:{color[1]}.`                   {results[16]}
+		{color[1]} `-//////:--.                          {results[17]}
 	""",
 	'Manjaro': """
 		{color[0]}   $$$$$$$$$$$$$$$$  $$$$$$$   {results[0]}
