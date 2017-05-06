@@ -259,7 +259,7 @@ logosDict = {
 		{color[0]}                                             .'     {results[17]}
 		{color[0]}                                              .     \0
 	""",
-	'Manjaro': """
+	'ManjaroLinux': """
 		{color[0]} $$$$$$$$$$$$$$$$  $$$$$$$   {results[0]}
 		{color[0]} M77777777777777M  M77777M   {results[1]}
 		{color[0]} M77777777777777M  M77777M   {results[2]}
