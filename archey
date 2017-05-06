@@ -476,7 +476,7 @@ class Terminal:
 
 class Packages:
 	def __init__(self):
-		packagesTools = [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--list'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world']]
+		packagesTools = [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--list'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]
 		for packagesTool in packagesTools:
 			try:
 				p1 = Popen(packagesTool, stdout=PIPE).communicate()[0].decode('utf-8')
