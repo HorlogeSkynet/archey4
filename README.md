@@ -4,13 +4,13 @@
 
 ### Why, again, a f*cking new Archey fork ?
 
-The answer is [here](https://horlogeskynet.github.io/archey4).
+The answer is [here](https://horlogeskynet.github.io/Archey4).
 
 ### What do I need to get and use this script ?
 
 Required packages:
 
-* Python3
+* python3
 * lsb-release
 
 Optional packages:
@@ -20,8 +20,8 @@ Optional packages:
 ### Installation procedure
 
 ```
-$  git clone https://github.com/HorlogeSkynet/archey4.git
-$  cd archey4/
+$  git clone https://github.com/HorlogeSkynet/Archey4.git
+$  cd Archey4/
 $  chmod +x archey
 #  cp archey /usr/bin/archey
 ```

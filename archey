@@ -499,7 +499,7 @@ class CPU:
 
 class GPU:
 	def __init__(self):
-		gpuinfo = Popen(['grep', '-E', 'VGA|3D'], stdout=PIPE, stdin=Popen(['lspci'], stdout=PIPE).stdout).communicate()[0].decode('utf-8').split(': ')[1].rstrip('\n')
+		gpuinfo = Popen(['grep', '-E', '3D|VGA|Display'], stdout=PIPE, stdin=Popen(['lspci'], stdout=PIPE).stdout).communicate()[0].decode('utf-8').split(': ')[1].rstrip('\n')
 
 		self.value = (re.findall('.{1,37}(?:\W|$)', gpuinfo)[0] + '[...]' if len(gpuinfo) > 40 else gpuinfo)
 
