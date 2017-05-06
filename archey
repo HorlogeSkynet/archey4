@@ -122,15 +122,15 @@ logosDict = {
 		{color[1]}  _#e'     .]X2(     ~Xw|  )XXc   {results[6]}
 		{color[1]} .2Z`      ]X[.       xY|  ]oZ(   {results[7]}
 		{color[1]} .2#;      )3k;     _s!~   jXf`   {results[8]}
-		{color[0]}  1Z>      -]Xb/    ~    __#2(    {results[9]}
-		{color[0]}  -Zo;       +!4ZwerfgnZZXY'      {results[10]}
-		{color[0]}   *#[,        ~-?!!!!!!-~        {results[11]}
-		{color[0]}    XUb;.                         {results[12]}
-		{color[0]}     )YXL,,                       {results[13]}
-		{color[0]}       +3#bc,                     {results[14]}
-		{color[0]}         -)SSL,,                  {results[15]}
-		{color[0]}            ~~~~~                 {results[16]}
-		{color[0]}                                  {results[17]}
+		{color[1]}  {color[0]}1Z>{color[1]}      {color[0]}-]Xb/{color[1]}    {color[0]}~{color[1]}    {color[0]}__#2({color[1]}    {results[9]}
+		{color[1]}  {color[0]}-Zo;{color[1]}       {color[0]}+!4ZwerfgnZZXY'{color[1]}      {results[10]}
+		{color[1]}   {color[0]}*#[,{color[1]}        {color[0]}~-?!!!!!!-~{color[1]}        {results[11]}
+		{color[1]}    {color[0]}XUb;.{color[1]}                         {results[12]}
+		{color[1]}     {color[0]})YXL,,{color[1]}                       {results[13]}
+		{color[1]}       {color[0]}+3#bc,{color[1]}                     {results[14]}
+		{color[1]}         {color[0]}-)SSL,,{color[1]}                  {results[15]}
+		{color[1]}            {color[0]}~~~~~{color[1]}                 {results[16]}
+		{color[1]}                                  {results[17]}
 	""",
 	'Ubuntu': """
 		{color[0]}                           .oyhhs:     {results[0]}
