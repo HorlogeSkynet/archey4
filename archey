@@ -439,7 +439,7 @@ class Uptime:
 
 class WindowManager:
 	def __init__(self):
-		wm = 'None'
+		wm = '∅'
 
 		try:
 			wm = re.search('(?<=Name: ).*', Popen(['wmctrl', '-m'], stdout=PIPE).communicate()[0].decode('utf-8')).group(0)
@@ -455,7 +455,7 @@ class WindowManager:
 
 class DesktopEnvironment:
 	def __init__(self):
-		de = 'None'
+		de = '∅'
 		for key in deDict.keys():
 			if key in processes:
 				de = deDict[key]
@@ -476,16 +476,21 @@ class Terminal:
 
 class Packages:
 	def __init__(self):
-		packagesTools = [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--list'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]
+		packagesTools = [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--get-selections'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]
 		for packagesTool in packagesTools:
 			try:
-				p1 = Popen(packagesTool, stdout=PIPE).communicate()[0].decode('utf-8')
+				results = Popen(packagesTool, stdout=PIPE).communicate()[0].decode('utf-8')
+				packages = len(results.rstrip('\n').split('\n'))
+
+				if 'dpkg' in packagesTool:
+					packages -= results.count('deinstall')
+
 				break
 
 			except:
-				pass
+				packages = '∅'
 
-		self.value = len(p1.rstrip('\n').split('\n'))
+		self.value = packages
 
 
 class CPU:
@@ -525,8 +530,8 @@ class RAM:
 
 class Disk:
 	def __init__(self):
-		p1 = Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs'], stdout=PIPE).communicate()[0].decode('utf-8')
-		total = re.sub(',', '.', p1.splitlines()[-1]).split()
+		results = Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs'], stdout=PIPE).communicate()[0].decode('utf-8')
+		total = re.sub(',', '.', results.splitlines()[-1]).split()
 		usedpercent = float(total[5][:-1])
 
 		self.value = '{0}{1}{2} / {3}'.format(colorDict['Sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['Clear'][0], re.sub('GB', ' GB', total[2]))
