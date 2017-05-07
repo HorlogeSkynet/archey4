@@ -21,8 +21,8 @@ import re
 
 from math import floor
 from os import getenv, getuid
+from subprocess import Popen, PIPE
 from collections import OrderedDict
-from subprocess import Popen, PIPE, check_output
 
 
 # -------------- Dictionaries -------------- #
@@ -361,7 +361,7 @@ logosDict = {
 	"""
 }
 
-processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-headers')), encoding='utf-8').rstrip('\n').split('\n')
+processes = Popen(['ps', '-u', str(getuid()), '-o', 'comm', '--no-headers'], stdout=PIPE).communicate()[0].decode().rstrip('\n').split('\n')
 
 
 # -------------- Classes -------------- #
@@ -369,7 +369,7 @@ processes = str(check_output(('ps', '-u', str(getuid()), '-o', 'comm', '--no-hea
 class Output:
 	def __init__(self):
 		self.results = []
-		self.distribution = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+		self.distribution = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
 
 		if self.distribution not in logosDict.keys():
 			self.distribution = 'Linux'
@@ -395,7 +395,7 @@ class User:
 
 class Hostname:
 	def __init__(self):
-		self.value = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+		self.value = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
 
 
 class Model:
@@ -409,12 +409,12 @@ class Model:
 
 class Distro:
 	def __init__(self):
-		self.value = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n') + ' ' + Popen(['uname', '-m'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+		self.value = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode().rstrip('\n') + ' ' + Popen(['uname', '-m'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
 
 
 class Kernel:
 	def __init__(self):
-		self.value = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode('utf-8').rstrip('\n')
+		self.value = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
 
 
 class Uptime:
@@ -442,7 +442,7 @@ class WindowManager:
 		wm = '∅'
 
 		try:
-			wm = re.search('(?<=Name: ).*', Popen(['wmctrl', '-m'], stdout=PIPE).communicate()[0].decode('utf-8')).group(0)
+			wm = re.search('(?<=Name: ).*', Popen(['wmctrl', '-m'], stdout=PIPE).communicate()[0].decode()).group(0)
 
 		except FileNotFoundError:
 			for key in wmDict.keys():
@@ -479,7 +479,7 @@ class Packages:
 		packagesTools = [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--get-selections'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]
 		for packagesTool in packagesTools:
 			try:
-				results = Popen(packagesTool, stdout=PIPE).communicate()[0].decode('utf-8')
+				results = Popen(packagesTool, stdout=PIPE).communicate()[0].decode()
 				packages = len(results.rstrip('\n').split('\n'))
 
 				if 'dpkg' in packagesTool:
@@ -504,7 +504,7 @@ class CPU:
 
 class GPU:
 	def __init__(self):
-		gpuinfo = Popen(['grep', '-E', '3D|VGA|Display'], stdout=PIPE, stdin=Popen(['lspci'], stdout=PIPE).stdout).communicate()[0].decode('utf-8').split(': ')[1].rstrip('\n')
+		gpuinfo = Popen(['grep', '-E', '3D|VGA|Display'], stdout=PIPE, stdin=Popen(['lspci'], stdout=PIPE).stdout).communicate()[0].decode().split(': ')[1].rstrip('\n')
 
 		self.value = (re.findall('.{1,37}(?:\W|$)', gpuinfo)[0] + '[...]' if len(gpuinfo) > 40 else gpuinfo)
 
@@ -512,7 +512,7 @@ class GPU:
 class RAM:
 	def __init__(self):
 		try:
-			ram = ''.join(filter(re.compile('M').search, Popen(['free', '-mw'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode('utf-8').split('\n'))).split()
+			ram = ''.join(filter(re.compile('M').search, Popen(['free', '-mw'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode().split('\n'))).split()
 			used = ram[2]
 			total = ram[1]
 			usedpercent = (float(used) / float(total)) * 100
@@ -530,8 +530,7 @@ class RAM:
 
 class Disk:
 	def __init__(self):
-		results = Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs'], stdout=PIPE).communicate()[0].decode('utf-8')
-		total = re.sub(',', '.', results.splitlines()[-1]).split()
+		total = re.sub(',', '.', Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs'], stdout=PIPE).communicate()[0].decode().splitlines()[-1]).split()
 		usedpercent = float(total[5][:-1])
 
 		self.value = '{0}{1}{2} / {3}'.format(colorDict['Sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['Clear'][0], re.sub('GB', ' GB', total[2]))
