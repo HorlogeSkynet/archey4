@@ -402,7 +402,6 @@ class Model:
 	def __init__(self):
 		with open('/sys/devices/virtual/dmi/id/product_name') as file:
 			model = file.read().rstrip('\n')
-			file.close()
 
 		self.value = model
 
@@ -421,7 +420,6 @@ class Uptime:
 	def __init__(self):
 		with open('/proc/uptime') as file:
 			fuptime = int(file.read().split('.')[0])
-			file.close()
 
 		day = int(fuptime / 86400)
 		fuptime = fuptime % 86400
@@ -497,7 +495,6 @@ class CPU:
 	def __init__(self):
 		with open('/proc/cpuinfo') as file:
 			cpuinfo = re.sub('  +', ' ', file.readlines()[4].replace('model name\t: ', '').rstrip('\n'))
-			file.close()
 
 		self.value = cpuinfo
 
@@ -520,10 +517,10 @@ class RAM:
 		except IndexError:
 			with open('/proc/meminfo') as file:
 				ram = file.read().split('\n')
-				file.close()
-				total = float(ram[0].split(':')[1].strip(' ').rstrip(' kB')) / 1024
-				used = total - ((float(ram[1].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[3].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[4].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[22].split(':')[1].strip(' ').rstrip(' kB'))) / 1024)
-				usedpercent = (float(used) / float(total)) * 100
+
+			total = float(ram[0].split(':')[1].strip(' ').rstrip(' kB')) / 1024
+			used = total - ((float(ram[1].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[3].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[4].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[22].split(':')[1].strip(' ').rstrip(' kB'))) / 1024)
+			usedpercent = (float(used) / float(total)) * 100
 
 		self.value = '{0}{1} MB{2} / {3} MB'.format(colorDict['Sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], int(used), colorDict['Clear'][0], int(total))
 
