@@ -31,3 +31,9 @@ $  chmod +x archey
 ```
 $  archey
 ```
+
+### Notes
+
+* If you run `archey` as root, the script will list the processes running by other users of your system in order to display correctly Window Manager & Desktop Environment outputs.
+
+* During the procedure I advise you to copy this binary into the `/usr/bin/` folder, you may want to check what it does thus.

@@ -363,7 +363,7 @@ logosDict = {
 	"""
 }
 
-processes = Popen(['ps', '-u', str(getuid()), '-o', 'comm', '--no-headers'], stdout=PIPE).communicate()[0].decode().rstrip('\n').split('\n')
+processes = Popen(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers'], stdout=PIPE).communicate()[0].decode().rstrip('\n').split('\n')
 
 
 # -------------- Classes -------------- #
