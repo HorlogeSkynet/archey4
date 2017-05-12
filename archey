@@ -511,7 +511,7 @@ class GPU:
 class RAM:
 	def __init__(self):
 		try:
-			ram = ''.join(filter(re.compile('M').search, Popen(['free', '-mw'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode().split('\n'))).split()
+			ram = ''.join(filter(re.compile('M').search, Popen(['free', '-m'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode().split('\n'))).split()
 			used = ram[2]
 			total = ram[1]
 			usedpercent = (float(used) / float(total)) * 100
