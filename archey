@@ -448,7 +448,7 @@ class DesktopEnvironment:
 				de = deDict[key]
 				break
 
-		self.value = de
+		self.value = (de if de != '∅' else getenv('XDG_CURRENT_DESKTOP'))
 
 
 class Shell:
