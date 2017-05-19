@@ -43,7 +43,7 @@ colorDict = {
 	'openSUSE': ['\x1b[1;37m', '\x1b[1;32m'],
 	'Red Hat': ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
 	'Ubuntu': ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
-	'Sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
+	'sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
 	'clear': '\x1b[0m'
 }
 
@@ -510,7 +510,7 @@ class RAM:
 			used = total - ((float(ram[1].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[3].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[4].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[22].split(':')[1].strip(' ').rstrip(' kB'))) / 1024)
 			usedpercent = (float(used) / float(total)) * 100
 
-		self.value = '{0}{1} MB{2} / {3} MB'.format(colorDict['Sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], int(used), colorDict['clear'], int(total))
+		self.value = '{0}{1} MB{2} / {3} MB'.format(colorDict['sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], int(used), colorDict['clear'], int(total))
 
 
 class Disk:
@@ -518,7 +518,7 @@ class Disk:
 		total = re.sub(',', '.', Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs'], stdout=PIPE).communicate()[0].decode().splitlines()[-1]).split()
 		usedpercent = float(total[5][:-1])
 
-		self.value = '{0}{1}{2} / {3}'.format(colorDict['Sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['clear'], re.sub('GB', ' GB', total[2]))
+		self.value = '{0}{1}{2} / {3}'.format(colorDict['sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['clear'], re.sub('GB', ' GB', total[2]))
 
 
 classes = OrderedDict([
