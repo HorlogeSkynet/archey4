@@ -17,13 +17,14 @@ Recommended packages:
 
 * wmctrl
 
-### Installation procedure
+### Setup procedure
 
 ```
 $  git clone https://github.com/HorlogeSkynet/Archey4.git
 $  cd Archey4/
 $  chmod +x archey
 #  cp archey /usr/bin/archey
+$  cd .. && rm -rf Archey4/
 ```
 
 ### Usage
@@ -36,7 +37,7 @@ $  archey
 
 * If you run `archey` as root, the script will list the processes running by other users on your system in order to display correctly Window Manager & Desktop Environment outputs.
 
-* During the procedure I advised you to copy this script into the `/usr/bin/` folder, you may want to check what it does beforehand.
+* During the setup procedure, I advised you to copy this script into the `/usr/bin/` folder, you may want to check what it does beforehand.
 
 * If you experience any trouble during installation or usage, please do **open an _issue_**.
 
