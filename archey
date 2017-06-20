@@ -31,7 +31,7 @@ from collections import OrderedDict
 # -------------- Enumerations -------------- #
 
 class Distributions(Enum):
-	ARCH_LINUX = 'Arch Linux'
+	ARCH_LINUX = 'Arch.*'
 	BUNSENLABS = 'BunsenLabs'
 	CRUNCHBANG = 'CrunchBang'
 	DEBIAN = 'Debian'
@@ -49,19 +49,19 @@ class Distributions(Enum):
 # -------------- Dictionaries -------------- #
 
 colorDict = {
-	Distributions.ARCH_LINUX.value: ['\x1b[0;34m', '\x1b[1;34m'],
-	Distributions.BUNSENLABS.value: ['\x1b[1;37m', '\x1b[1;33m', '\x1b[0;33m'],
-	Distributions.CRUNCHBANG.value: ['\x1b[1;37m', '\x1b[1;37m'],
-	Distributions.DEBIAN.value: ['\x1b[0;31m', '\x1b[1;31m'],
-	Distributions.FEDORA.value: ['\x1b[1;37m', '\x1b[0;34m'],
-	Distributions.GENTOO.value: ['\x1b[1;37m', '\x1b[1;35m'],
-	Distributions.KALI_LINUX.value: ['\x1b[1;37m', '\x1b[1;34m'],
-	Distributions.MANJARO_LINUX.value: ['\x1b[0;32m', '\x1b[1;32m'],
-	Distributions.LINUX.value: ['\x1b[1;33m', '\x1b[1;37m'],
-	Distributions.LINUX_MINT.value: ['\x1b[1;37m', '\x1b[1;32m'],
-	Distributions.OPENSUSE.value: ['\x1b[1;37m', '\x1b[1;32m'],
-	Distributions.RED_HAT.value: ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
-	Distributions.UBUNTU.value: ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
+	Distributions.ARCH_LINUX: ['\x1b[0;34m', '\x1b[1;34m'],
+	Distributions.BUNSENLABS: ['\x1b[1;37m', '\x1b[1;33m', '\x1b[0;33m'],
+	Distributions.CRUNCHBANG: ['\x1b[1;37m', '\x1b[1;37m'],
+	Distributions.DEBIAN: ['\x1b[0;31m', '\x1b[1;31m'],
+	Distributions.FEDORA: ['\x1b[1;37m', '\x1b[0;34m'],
+	Distributions.GENTOO: ['\x1b[1;37m', '\x1b[1;35m'],
+	Distributions.KALI_LINUX: ['\x1b[1;37m', '\x1b[1;34m'],
+	Distributions.MANJARO_LINUX: ['\x1b[0;32m', '\x1b[1;32m'],
+	Distributions.LINUX: ['\x1b[1;33m', '\x1b[1;37m'],
+	Distributions.LINUX_MINT: ['\x1b[1;37m', '\x1b[1;32m'],
+	Distributions.OPENSUSE: ['\x1b[1;37m', '\x1b[1;32m'],
+	Distributions.RED_HAT: ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
+	Distributions.UBUNTU: ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
 	'sensors': ['\x1b[0;31m', '\x1b[0;32m', '\x1b[0;33m'],
 	'clear': '\x1b[0m'
 }
@@ -113,7 +113,7 @@ wmDict = {
 }
 
 logosDict = {
-	Distributions.ARCH_LINUX.value: """
+	Distributions.ARCH_LINUX: """
 {c[1]}               +                 {r[0]}
 {c[1]}               #                 {r[1]}
 {c[1]}              ###                {r[2]}
@@ -132,7 +132,7 @@ logosDict = {
 {c[0]}  ;####                 ####;    {r[15]}
 {c[0]}  ##'                     '##    {r[16]}
 {c[0]} #'                         `#   {r[17]}\n""",
-	Distributions.DEBIAN.value: """
+	Distributions.DEBIAN: """
 {c[1]}                                  {r[0]}
 {c[1]}          _sudZUZ#Z#XZo=_         {r[1]}
 {c[1]}       _jmZZ2!!~---~!!X##wx       {r[2]}
@@ -151,7 +151,7 @@ logosDict = {
 {c[1]}         {c[0]}-)SSL,,{c[1]}                  {r[15]}
 {c[1]}            {c[0]}~~~~~{c[1]}                 {r[16]}
 {c[1]}                                  {r[17]}\n""",
-	Distributions.UBUNTU.value: """
+	Distributions.UBUNTU: """
 {c[0]}                           .oyhhs:     {r[0]}
 {c[1]}                  ..--.., {c[0]}shhhhhh-     {r[1]}
 {c[1]}                -+++++++++`:{c[0]}yyhhyo`    {r[2]}
@@ -170,7 +170,7 @@ logosDict = {
 {c[0]}                `.:://::- {c[2]}-:::::;      {r[15]}
 {c[2]}                          `.-:-'       {r[16]}
 {c[2]}                                       {r[17]}\n""",
-	Distributions.CRUNCHBANG.value: """
+	Distributions.CRUNCHBANG: """
 {c[0]}                 ___       ___      _    {r[0]}
 {c[0]}                /  /      /  /     | |   {r[1]}
 {c[0]}               /  /      /  /      | |   {r[2]}
@@ -189,7 +189,7 @@ logosDict = {
 {c[0]}  /__/      /__/                   |_|   {r[15]}
 {c[0]}                                         {r[16]}
 {c[0]}                                         {r[17]}\n""",
-	Distributions.FEDORA.value: """
+	Distributions.FEDORA: """
 {c[1]}           :/------------://          {r[0]}
 {c[1]}        :------------------://        {r[1]}
 {c[1]}      :-----------{c[0]}/shhdhyo/{c[1]}-://       {r[2]}
@@ -208,7 +208,7 @@ logosDict = {
 {c[1]} :------{c[0]}:://:{c[1]}-----------://           {r[15]}
 {c[1]} :--------------------://             {r[16]}
 {c[1]}                                      {r[17]}\n""",
-	Distributions.GENTOO.value: """
+	Distributions.GENTOO: """
 {c[1]}          -/oyddmdhs+:.                {r[0]}
 {c[1]}      -o{c[0]}dNMMMMMMMMNNmhy+{c[1]}-`             {r[1]}
 {c[1]}    -y{c[0]}NMMMMMMMMMMMNNNmmdhy{c[1]}+-           {r[2]}
@@ -227,7 +227,7 @@ logosDict = {
 {c[1]} /h{c[0]}MMNNNNNNNNMNdhs++/{c[1]}-`                {r[15]}
 {c[1]} `/{c[0]}ohdmmddhys+++/:{c[1]}.`                   {r[16]}
 {c[1]} `-//////:--.                          {r[17]}\n""",
-	Distributions.BUNSENLABS.value: """
+	Distributions.BUNSENLABS: """
 {c[0]}           .{c[1]}..{c[0]}+hhy+-`         \0
 {c[0]}        `+hd{c[1]}-{c[0]}+dddd{c[2]}hyso{c[0]}+//:    \0
 {c[0]}      `+dddd{c[1]}:-{c[0]}sdh/.           {r[0]}
@@ -250,7 +250,7 @@ logosDict = {
 {c[0]}  `sddys`  :`                 {r[17]}
 {c[0]} -hdy+`y+yo./+/:-             \0
 {c[0]} ...  .o++oso+/               \n""",
-	Distributions.KALI_LINUX.value: """
+	Distributions.KALI_LINUX: """
 {c[0]}      ,.....                                        \0
 {c[0]}  ----`     `..,;:ccc,.                             \0
 {c[0]}           ......''';lxO.                           {r[0]}
@@ -272,7 +272,7 @@ logosDict = {
 {c[0]}                                             c      {r[16]}
 {c[0]}                                             .'     {r[17]}
 {c[0]}                                              .     \n""",
-	Distributions.MANJARO_LINUX.value: """
+	Distributions.MANJARO_LINUX: """
 {c[0]} $$$$$$$$$$$$$$$$  $$$$$$$   {r[0]}
 {c[0]} M77777777777777M  M77777M   {r[1]}
 {c[0]} M77777777777777M  M77777M   {r[2]}
@@ -291,7 +291,7 @@ logosDict = {
 {c[0]} M77777M  M77777M  M77777M   {r[15]}
 {c[0]} M77777M  M77777M  M77777M   {r[16]}
 {c[0]} MMMMMMM  MMMMMMM  MMMMMMM   {r[17]}\n""",
-	Distributions.OPENSUSE.value: """
+	Distributions.OPENSUSE: """
 {c[0]}            .;ldkO0000Okdl;.              {r[0]}
 {c[0]}        .;d00xl:^''''''^:ok00d;.          {r[1]}
 {c[0]}      .d00l'                'o00d.        {r[2]}
@@ -310,7 +310,7 @@ logosDict = {
 {c[0]}      'l0Kk:.              .;xK0l'        {r[15]}
 {c[0]}         'lkK0xl:;,,,,;:ldO0kl'           {r[16]}
 {c[0]}             '^:ldxkkkkxdl:^'             {r[17]}\n""",
-	Distributions.LINUX_MINT.value: """
+	Distributions.LINUX_MINT: """
 {c[1]}                                       {r[0]}
 {c[1]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {r[1]}
 {c[1]} MMm----::-://////////////oymNMd+`     {r[2]}
@@ -329,7 +329,7 @@ logosDict = {
 {c[1]}          ./ydNMMMMMMMMMMMMMMMMMMMMM   {r[15]}
 {c[1]}                                       {r[16]}
 {c[1]}                                       {r[17]}\n""",
-	Distributions.RED_HAT.value: """
+	Distributions.RED_HAT: """
 {c[2]}                                             {r[0]}
 {c[2]}              \`.-..........\`               {r[1]}
 {c[2]}             \`////////::.\`-/.              {r[2]}
@@ -348,7 +348,7 @@ logosDict = {
 {c[0]}   MMMMMMMMMMMMMMMMyoNNNMMM+.   MMMMMMMM     {r[15]}
 {c[0]}    MMNMMMNNMMMMMNM+ mhsMNyyyyMNMMMMsMM      {r[16]}
 {c[0]}                                             {r[17]}\n""",
-	Distributions.LINUX.value: """
+	Distributions.LINUX: """
 {c[1]}                           {r[0]}
 {c[1]}          a8888b.          {r[1]}
 {c[1]}         d888888b.         {r[2]}
@@ -377,10 +377,13 @@ processes = Popen(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o
 class Output:
 	def __init__(self):
 		self.results = []
-		self.distribution = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
+		lsbOutput = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
 
-		if self.distribution not in [x.value for x in Distributions]:
-			self.distribution = Distributions.LINUX.value
+		self.distribution = Distributions.LINUX
+		for distribution in Distributions:
+			if re.match(distribution.value, lsbOutput):
+				self.distribution = distribution
+				break
 
 	def append(self, key, value):
 		self.results.append('{0}{1}:{2} {3}'.format(colorDict[self.distribution][1], key, colorDict['clear'], value))
