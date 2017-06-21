@@ -39,8 +39,8 @@ class Distributions(Enum):
 	GENTOO = 'Gentoo'
 	KALI_LINUX = 'Kali'
 	MANJARO_LINUX = 'ManjaroLinux'
-	LINUX_MINT = 'LinuxMint'
 	LINUX = 'Linux'
+	LINUX_MINT = 'LinuxMint'
 	OPENSUSE = 'openSUSE'
 	RED_HAT = 'Red Hat'
 	UBUNTU = 'Ubuntu'
@@ -381,7 +381,7 @@ class Output:
 
 		self.distribution = Distributions.LINUX
 		for distribution in Distributions:
-			if re.match(distribution.value, lsbOutput):
+			if re.fullmatch(distribution.value, lsbOutput):
 				self.distribution = distribution
 				break
 
