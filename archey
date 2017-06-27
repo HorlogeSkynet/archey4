@@ -25,7 +25,6 @@ from enum import Enum
 from math import floor
 from os import getenv, getuid
 from subprocess import Popen, PIPE
-from collections import OrderedDict
 
 
 # -------------- Enumerations -------------- #
@@ -543,23 +542,24 @@ class Disk:
 		self.value = '{0}{1}{2} / {3}'.format(colorDict['sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['clear'], re.sub('GB', ' GB', total[2]))
 
 
-classes = OrderedDict([
-	('User', User),
-	('Hostname', Hostname),
-	('Model', Model),
-	('Distro', Distro),
-	('Kernel', Kernel),
-	('Uptime', Uptime),
-	('WindowManager', WindowManager),
-	('DesktopEnvironment', DesktopEnvironment),
-	('Shell', Shell),
-	('Terminal', Terminal),
-	('Packages', Packages),
-	('CPU', CPU),
-	('GPU', GPU),
-	('RAM', RAM),
-	('Disk', Disk)
-])
+# -------------- Classes' Enumeration -------------- #
+
+class Classes(Enum):
+	User = User
+	Hostname = Hostname
+	Model = Model
+	Distro = Distro
+	Kernel = Kernel
+	Uptime = Uptime
+	WindowManager = WindowManager
+	DesktopEnvironment = DesktopEnvironment
+	Shell = Shell
+	Terminal = Terminal
+	Packages = Packages
+	CPU = CPU
+	GPU = GPU
+	RAM = RAM
+	Disk = Disk
 
 
 # -------------- Main -------------- #
@@ -567,6 +567,6 @@ classes = OrderedDict([
 if __name__ == '__main__':
 
 	output = Output()
-	for key in classes.keys():
-		output.append(key, classes[key]().value)
+	for key in Classes:
+		output.append(key.name, key.value().value)
 	output.output()
