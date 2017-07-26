@@ -1,6 +1,6 @@
 # Archey4
 
-![Archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png)
+![Archey4](https://github.com/normcyr/Archey4/raw/ip-addresses/img/screenshot.png)
 
 ### Why, again, a f*cking new Archey fork ?
 
