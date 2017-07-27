@@ -12,6 +12,7 @@ Required packages:
 
 * python3
 * lsb-release
+* dnsutils
 
 Recommended packages:
 
