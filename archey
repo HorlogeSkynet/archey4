@@ -369,7 +369,7 @@ logosDict = {
 {c[1]}                                       {r[17]}\n"""
 }
 
-processes = Popen(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers'], stdout=PIPE).communicate()[0].decode().rstrip('\n').split('\n')
+processes = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip('\n').split('\n')
 
 
 # -------------- Classes -------------- #
@@ -377,7 +377,7 @@ processes = Popen(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o
 class Output:
 	def __init__(self):
 		self.results = []
-		lsbOutput = Popen(['lsb_release', '-i', '-s'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
+		lsbOutput = check_output(['lsb_release', '-i', '-s']).decode().rstrip('\n')
 
 		self.distribution = Distributions.LINUX
 		for distribution in Distributions:
@@ -406,7 +406,7 @@ class User:
 
 class Hostname:
 	def __init__(self):
-		self.value = Popen(['uname', '-n'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
+		self.value = check_output(['uname', '-n']).decode().rstrip('\n')
 
 
 class Model:
@@ -419,12 +419,12 @@ class Model:
 
 class Distro:
 	def __init__(self):
-		self.value = Popen(['lsb_release', '-d', '-s'], stdout=PIPE).communicate()[0].decode().rstrip('\n') + ' ' + Popen(['uname', '-m'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
+		self.value = check_output(['lsb_release', '-d', '-s']).decode().rstrip('\n') + ' ' + check_output(['uname', '-m']).decode().rstrip('\n')
 
 
 class Kernel:
 	def __init__(self):
-		self.value = Popen(['uname', '-r'], stdout=PIPE).communicate()[0].decode().rstrip('\n')
+		self.value = check_output(['uname', '-r']).decode().rstrip('\n')
 
 
 class Uptime:
@@ -451,7 +451,7 @@ class WindowManager:
 		wm = '∅'
 
 		try:
-			wm = re.search('(?<=Name: ).*', Popen(['wmctrl', '-m'], stdout=PIPE).communicate()[0].decode()).group(0)
+			wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m']).decode()).group(0)
 
 		except FileNotFoundError:
 			for key in wmDict.keys():
@@ -487,7 +487,7 @@ class Packages:
 	def __init__(self):
 		for packagesTool in [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--get-selections'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]:
 			try:
-				results = Popen(packagesTool, stdout=PIPE).communicate()[0].decode()
+				results = check_output(packagesTool).decode()
 				packages = len(results.rstrip('\n').split('\n'))
 
 				if 'dpkg' in packagesTool:
@@ -511,7 +511,7 @@ class CPU:
 
 class GPU:
 	def __init__(self):
-		gpuinfo = Popen(['grep', '-E', '3D|VGA|Display'], stdout=PIPE, stdin=Popen(['lspci'], stdout=PIPE).stdout).communicate()[0].decode().split(': ')[1].rstrip('\n')
+		gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'], stdin=Popen(['lspci'], stdout=PIPE).stdout).decode().split(': ')[1].rstrip('\n')
 
 		self.value = (re.findall('.{1,45}(?:\W|$)', gpuinfo)[0] + '[...]' if len(gpuinfo) > 48 else gpuinfo)
 
@@ -537,7 +537,7 @@ class RAM:
 
 class Disk:
 	def __init__(self):
-		total = re.sub(',', '.', Popen(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs'], stdout=PIPE).communicate()[0].decode().splitlines()[-1]).split()
+		total = re.sub(',', '.', check_output(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs']).decode().splitlines()[-1]).split()
 		usedpercent = float(total[5][:-1])
 
 		self.value = '{0}{1}{2} / {3}'.format(colorDict['sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['clear'], re.sub('GB', ' GB', total[2]))
@@ -545,14 +545,14 @@ class Disk:
 
 class LAN_IP:
 	def __init__(self):
-		self.value = ', '.join(check_output(['hostname', '-I']).decode().strip('\n').split()) or 'No Address'
+		self.value = ', '.join(check_output(['hostname', '-I']).decode().rstrip('\n').split()) or 'No Address'
 
 
 class WAN_IP:
 	def __init__(self):
 		try:
 			try:
-				self.value = check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'], timeout=1, stderr=DEVNULL).decode().strip()
+				self.value = check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'], timeout=1, stderr=DEVNULL).decode().rstrip('\n')
 
 			except FileNotFoundError:
 				self.value = check_output(['wget', '-qO-', 'https://ident.me/'], timeout=1).decode()
