@@ -547,7 +547,7 @@ class LANIP:
 
 class WANIP:
 	def __init__(self):
-		self.value = re.sub('[^\d\.]', '', str(check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'])))
+		self.value = re.sub('[^\d\.]', '', str(check_output(['wget', '-q', '-O-', 'icanhazip.com'])))
 
 
 # -------------- Classes' Enumeration -------------- #
