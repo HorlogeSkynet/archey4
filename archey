@@ -10,6 +10,7 @@
 # ASCII art by Brett Bohnenkamper <kittykatt@silverirc.com>
 # Changes Jerome Launay <jerome@projet-libre.org>
 # Fedora support by YeOK <yeok@henpen.org>
+# First IP handling by Normand Cyr <normand.cyr@gmail.com>
 #
 # Currently maintained by Samuel FORESTIER <https://horlogeskynet.github.io/>
 #
@@ -24,7 +25,7 @@ import re
 from enum import Enum
 from math import floor
 from os import getenv, getuid
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, DEVNULL, check_output, CalledProcessError, TimeoutExpired
 
 
 # -------------- Enumerations -------------- #
@@ -542,6 +543,24 @@ class Disk:
 		self.value = '{0}{1}{2} / {3}'.format(colorDict['sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], re.sub('GB', ' GB', total[3]), colorDict['clear'], re.sub('GB', ' GB', total[2]))
 
 
+class LAN_IP:
+	def __init__(self):
+		self.value = ', '.join(check_output(['hostname', '-I']).decode().strip('\n').split()) or 'No Address'
+
+
+class WAN_IP:
+	def __init__(self):
+		try:
+			try:
+				self.value = check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'], timeout=1, stderr=DEVNULL).decode().strip()
+
+			except FileNotFoundError:
+				self.value = check_output(['wget', '-qO-', 'https://ident.me/'], timeout=1).decode()
+
+		except (CalledProcessError, TimeoutExpired):
+			self.value = 'No Address'
+
+
 # -------------- Classes' Enumeration -------------- #
 
 class Classes(Enum):
@@ -560,6 +579,8 @@ class Classes(Enum):
 	GPU = GPU
 	RAM = RAM
 	Disk = Disk
+	LAN_IP = LAN_IP
+	WAN_IP = WAN_IP
 
 
 # -------------- Main -------------- #

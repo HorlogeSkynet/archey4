@@ -1,12 +1,12 @@
 # Archey4
 
-![Archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png)
+![Archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v410)
 
-### Why, again, a f*cking new Archey fork ?
+#### Why, again, a f*cking new Archey fork ?
 
 The answer is [here](https://horlogeskynet.github.io/Archey4).
 
-### What do I need to get and use this script ?
+#### What do I need to get and use this script ?
 
 Required packages:
 
@@ -16,26 +16,27 @@ Required packages:
 Recommended packages:
 
 * wmctrl
+* dnsutils
 
 ### Setup procedure
 
-```
+```bash
 $  git clone https://github.com/HorlogeSkynet/Archey4.git
 $  cd Archey4/
 $  chmod +x archey
-#  cp archey /usr/bin/archey
+$  sudo cp archey /usr/bin/archey
 $  cd .. && rm -rf Archey4/
 ```
 
 ### Usage
 
-```
+```bash
 $  archey
 ```
 
-### Notes
+#### Notes to users
 
-* If you run `archey` as root, the script will list the processes running by other users on your system in order to display correctly Window Manager & Desktop Environment outputs.
+* If you run `archey` as root, the script will list the processes running by other users on your system in order to display correctly _Window Manager_ & _Desktop Environment_ outputs.
 
 * During the setup procedure, I advised you to copy this script into the `/usr/bin/` folder, you may want to check what it does beforehand.
 
