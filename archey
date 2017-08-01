@@ -451,9 +451,9 @@ class WindowManager:
 		wm = '∅'
 
 		try:
-			wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m']).decode()).group(0)
+			wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m'], stderr=DEVNULL).decode()).group(0)
 
-		except FileNotFoundError:
+		except (FileNotFoundError, CalledProcessError):
 			for key in wmDict.keys():
 				if key in processes:
 					wm = wmDict[key]
