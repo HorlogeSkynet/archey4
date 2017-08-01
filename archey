@@ -95,7 +95,6 @@ wmDict = {
 	'kwin': 'KWin',
 	'metacity': 'Metacity',
 	'musca': 'Musca',
-	'nemo': 'Nemo',
 	'openbox': 'Openbox',
 	'pekwm': 'PekWM',
 	'qtile': 'QTile',
