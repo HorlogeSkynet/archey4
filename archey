@@ -549,7 +549,7 @@ class LAN_IP:
 
 		except CalledProcessError:
 			# Slow manual workaround for old `inetutils` versions, with `ip`
-			self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '2'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or 'No Address'
+			self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or 'No Address'
 
 class WAN_IP:
 	def __init__(self):
