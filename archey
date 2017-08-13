@@ -447,8 +447,6 @@ class Uptime:
 
 class WindowManager:
     def __init__(self):
-        wm = '∅'
-
         try:
             wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m'], stderr=DEVNULL).decode()).group(0)
 
@@ -458,7 +456,7 @@ class WindowManager:
                     wm = wmDict[key]
                     break
 
-        self.value = wm
+        self.value = wm or 'Not detected'
 
 
 class DesktopEnvironment:
@@ -469,7 +467,7 @@ class DesktopEnvironment:
                 de = deDict[key]
                 break
 
-        self.value = de
+        self.value = de or 'Not detected'
 
 
 class Shell:
@@ -495,7 +493,7 @@ class Packages:
                 break
 
             except:
-                packages = '∅'
+                packages = 'Not detected'
 
         self.value = packages
 
@@ -503,9 +501,7 @@ class Packages:
 class CPU:
     def __init__(self):
         with open('/proc/cpuinfo') as file:
-            cpuinfo = re.sub('  +', ' ', file.readlines()[4].replace('model name\t: ', '').rstrip('\n'))
-
-        self.value = cpuinfo
+            self.value = re.sub('  +', ' ', file.readlines()[4].replace('model name\t: ', '').rstrip('\n'))
 
 
 class GPU:
