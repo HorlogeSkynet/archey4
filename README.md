@@ -1,19 +1,19 @@
-# Archey4
+# archey4
 
-![Archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v410)
+![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v410)
 
 #### Why, again, a f*cking new Archey fork ?
 
-The answer is [here](https://horlogeskynet.github.io/Archey4).
+The answer is [here](https://horlogeskynet.github.io/archey4).
 
 #### What do I need to get and use this script ?
 
-Required packages:
+Required packages :
 
 * python3
 * lsb-release
 
-Recommended packages:
+Recommended packages :
 
 * wmctrl
 * dnsutils
@@ -21,17 +21,17 @@ Recommended packages:
 ### Setup procedure
 
 ```bash
-$  git clone https://github.com/HorlogeSkynet/Archey4.git
-$  cd Archey4/
-$  chmod +x archey
-$  sudo cp archey /usr/bin/archey
-$  cd .. && rm -rf Archey4/
+$ git clone https://github.com/HorlogeSkynet/archey4.git
+$ cd archey4/
+$ chmod +x archey
+$ sudo cp archey /usr/bin/archey
+$ cd .. && rm -rf archey4/
 ```
 
 ### Usage
 
 ```bash
-$  archey
+$ archey
 ```
 
 #### Notes to users
