@@ -470,9 +470,10 @@ class WindowManager:
             for key in wmDict.keys():
                 if key in processes:
                     wm = wmDict[key]
-                    break
+                else:
+                    wm = 'Not detected'
 
-        self.value = wm or 'Not detected'
+        self.value = wm
 
 
 class DesktopEnvironment:
