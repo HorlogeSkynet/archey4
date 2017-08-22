@@ -508,7 +508,7 @@ class Packages:
 
                 break
 
-            except:
+            except FileNotFoundError:
                 packages = 'Not detected'
 
         self.value = packages
