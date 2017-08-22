@@ -517,7 +517,7 @@ class Packages:
 class CPU:
     def __init__(self):
         with open('/proc/cpuinfo') as file:
-            self.value = re.sub('  +', ' ', file.readlines()[4].replace('model name\t: ', '').rstrip('\n'))
+            self.value = re.search('(?<=model name\t: ).*', file.read()).group(0)
 
 
 class GPU:
