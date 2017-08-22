@@ -410,8 +410,24 @@ class Hostname:
 
 class Model:
     def __init__(self):
-        with open('/sys/devices/virtual/dmi/id/product_name') as file:
-            model = file.read().rstrip('\n')
+        try:
+            with open('/sys/devices/virtual/dmi/id/product_name') as file:
+                model = file.read().rstrip('\n')
+
+        except FileNotFoundError:
+            # The file above does not exist, is this device a Raspberry Pi ?
+            # Let's retrieve the Hardware and Revision IDs with `/proc/cpuinfo`
+            with open('/proc/cpuinfo') as file:
+                output = file.read()
+                hardware = re.search('(?<=Hardware\t: ).*', output)
+                revision = re.search('(?<=Revision\t: ).*', output)
+                # If the output contains 'Hardware' and 'Revision'...
+                if hardware and revision:
+                        # ... let's set a pretty info string with these data
+                        model = 'Raspberry Pi ' + hardware.group(0) + ' (Rev. ' + revision.group(0) + ')'
+
+                else:
+                    model = 'Not detected'
 
         self.value = model
 
