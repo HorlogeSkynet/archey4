@@ -34,7 +34,7 @@ class Distributions(Enum):
     ARCH_LINUX = 'Arch.*'
     BUNSENLABS = 'BunsenLabs'
     CRUNCHBANG = 'CrunchBang'
-    DEBIAN = 'Debian'
+    DEBIAN = 'Debian|Raspbian'
     FEDORA = 'Fedora'
     GENTOO = 'Gentoo'
     KALI_LINUX = 'Kali'
