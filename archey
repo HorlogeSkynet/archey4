@@ -447,11 +447,11 @@ class Uptime:
         with open('/proc/uptime') as file:
             fuptime = int(file.read().split('.')[0])
 
-        day = int(fuptime / 86400)
+        day = fuptime // 86400
         fuptime = fuptime % 86400
-        hour = int(fuptime / 3600)
+        hour = fuptime // 3600
         fuptime = fuptime % 3600
-        minute = int(fuptime / 60)
+        minute = fuptime // 60
 
         uptime = ''
         uptime += ((str(day) + ' day' + ('s' if day > 1 else '') + ('' if minute == 0 and hour == 0 else (' and ' if (minute != 0 and hour == 0) or (minute == 0 and hour != 0) else ', '))) if day >= 1 else '')
