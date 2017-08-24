@@ -2,33 +2,46 @@
 
 ![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v410)
 
-#### Why, again, a f*cking new Archey fork ?
+#### Why (again) a f*cking new Archey fork ?
 
 The answer is [here](https://horlogeskynet.github.io/archey4).
 
-#### What do I need to get and use this script ?
+#### Which packages do I need to run this script ?
 
 Required packages :
 
 * python3
 * lsb-release
 
-Recommended packages :
+Highly recommended packages :
 
 * wmctrl
 * dnsutils
 
-### Setup procedure
+## Installation
+
+### Install latest stable release from source
+
+```bash
+$ wget -O archey4.tar.gz https://github.com/HorlogeSkynet/archey4/archive/master.tar.gz
+$ tar xvzf archey4.tar.gz
+$ cd archey4-master/
+$ chmod +x archey
+$ sudo cp archey /usr/local/bin/archey
+```
+
+### Install (or update) development version from source
 
 ```bash
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
 $ chmod +x archey
-$ sudo cp archey /usr/bin/archey
-$ cd .. && rm -rf archey4/
+# Fetch latest changes (update your local version)
+$ git pull
+$ sudo cp archey /usr/local/bin/archey
 ```
 
-### Usage
+## Usage
 
 ```bash
 $ archey
@@ -38,7 +51,7 @@ $ archey
 
 * If you run `archey` as root, the script will list the processes running by other users on your system in order to display correctly _Window Manager_ & _Desktop Environment_ outputs.
 
-* During the setup procedure, I advised you to copy this script into the `/usr/bin/` folder, you may want to check what it does beforehand.
+* During the setup procedure, I advised you to copy this script into the `/usr/local/bin/` folder, you may want to check what it does beforehand.
 
 * If you experience any trouble during installation or usage, please do **open an _issue_**.
 
