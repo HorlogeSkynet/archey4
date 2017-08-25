@@ -465,11 +465,11 @@ class WindowManager:
             wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m'], stderr=DEVNULL).decode()).group(0)
 
         except (FileNotFoundError, CalledProcessError):
+            wm = 'Not detected'
             for key in wmDict.keys():
                 if key in processes:
                     wm = wmDict[key]
-                else:
-                    wm = 'Not detected'
+                    break
 
         self.value = wm
 
