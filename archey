@@ -447,10 +447,8 @@ class Uptime:
         with open('/proc/uptime') as file:
             fuptime = int(file.read().split('.')[0])
 
-        day = fuptime // 86400
-        fuptime = fuptime % 86400
-        hour = fuptime // 3600
-        fuptime = fuptime % 3600
+        day, fuptime = divmod(fuptime, 86400)
+        hour, fuptime = divmod(fuptime, 3600)
         minute = fuptime // 60
 
         uptime = ''
