@@ -421,12 +421,32 @@ class Model:
                 output = file.read()
                 hardware = re.search('(?<=Hardware\t: ).*', output)
                 revision = re.search('(?<=Revision\t: ).*', output)
-                # If the output contains 'Hardware' and 'Revision'...
-                if hardware and revision:
-                        # ... let's set a pretty info string with these data
-                        model = 'Raspberry Pi ' + hardware.group(0) + ' (Rev. ' + revision.group(0) + ')'
 
-                else:
+            # If the output contains 'Hardware' and 'Revision'...
+            if hardware and revision:
+                # ... let's set a pretty info string with these data
+                model = 'Raspberry Pi ' + hardware.group(0) + ' (Rev. ' + revision.group(0) + ')'
+
+            else:
+                # A tricky way to retrieve some details about hypervisor (within virtualized contexts)
+                # `archey` needs to be run as root although...
+                try:
+                    virtWhat = ', '.join(check_output(['virt-what'], stderr=DEVNULL).decode().rstrip().split())
+
+                    if virtWhat:
+                        try:
+                            # Sometimes we may gather info added by hosting service provider this way
+                            model = check_output(['dmidecode', '-s', 'system-product-name'], stderr=DEVNULL).decode().rstrip()
+
+                        except (FileNotFoundError, CalledProcessError):
+                            model = 'Virtualized environment'
+
+                        model += ' (' + virtWhat + ')'
+
+                    else:
+                        model = 'Bare-metal environment'
+
+                except (FileNotFoundError, CalledProcessError):
                     model = 'Not detected'
 
         self.value = model
