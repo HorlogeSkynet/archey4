@@ -8,15 +8,18 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 
 #### Which packages do I need to run this script ?
 
-Required packages :
+##### Required packages
 
 * python3
 * lsb-release
 
-Highly recommended packages :
+##### Highly recommended packages
 
-* wmctrl
-* dnsutils
+| Environments |  Packages  |                Reasons                | Notes |
+| :----------- | :--------: | :-----------------------------------: | :---: |
+| All          | `dnsutils` | _WAN\_IP_ will be detected 5x faster  |   ∅   |
+| Graphical    |  `wmctrl`  | _WindowManager_ will be more accurate |   ∅   |
+| Virtual      | `virt-what`<br />`dmidecode` | _Model_ will contain details about the hypervisor | `archey` will need to be run as **root** |
 
 ## Installation
 
