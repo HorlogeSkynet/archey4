@@ -519,7 +519,7 @@ class Packages:
     def __init__(self):
         for packagesTool in [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--get-selections'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]:
             try:
-                results = check_output(packagesTool).decode()
+                results = check_output(packagesTool, stderr=DEVNULL).decode()
                 packages = len(results.rstrip('\n').split('\n'))
 
                 if 'dpkg' in packagesTool:
@@ -527,7 +527,7 @@ class Packages:
 
                 break
 
-            except FileNotFoundError:
+            except (FileNotFoundError, CalledProcessError):
                 packages = 'Not detected'
 
         self.value = packages
