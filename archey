@@ -368,7 +368,7 @@ logosDict = {
 {c[1]}                                       {r[17]}\n"""
 }
 
-processes = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip('\n').split('\n')
+processes = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip().split('\n')
 
 
 # -------------- Classes -------------- #
@@ -376,7 +376,7 @@ processes = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax
 class Output:
     def __init__(self):
         self.results = []
-        lsbOutput = check_output(['lsb_release', '-i', '-s']).decode().rstrip('\n')
+        lsbOutput = check_output(['lsb_release', '-i', '-s']).decode().rstrip()
 
         self.distribution = Distributions.LINUX
         for distribution in Distributions:
@@ -405,14 +405,14 @@ class User:
 
 class Hostname:
     def __init__(self):
-        self.value = check_output(['uname', '-n']).decode().rstrip('\n')
+        self.value = check_output(['uname', '-n']).decode().rstrip()
 
 
 class Model:
     def __init__(self):
         try:
             with open('/sys/devices/virtual/dmi/id/product_name') as file:
-                model = file.read().rstrip('\n')
+                model = file.read().rstrip()
 
         except FileNotFoundError:
             # The file above does not exist, is this device a Raspberry Pi ?
@@ -454,12 +454,12 @@ class Model:
 
 class Distro:
     def __init__(self):
-        self.value = check_output(['lsb_release', '-d', '-s']).decode().rstrip('\n') + ' ' + check_output(['uname', '-m']).decode().rstrip('\n')
+        self.value = check_output(['lsb_release', '-d', '-s']).decode().rstrip() + ' ' + check_output(['uname', '-m']).decode().rstrip()
 
 
 class Kernel:
     def __init__(self):
-        self.value = check_output(['uname', '-r']).decode().rstrip('\n')
+        self.value = check_output(['uname', '-r']).decode().rstrip()
 
 
 class Uptime:
@@ -520,7 +520,7 @@ class Packages:
         for packagesTool in [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--get-selections'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]:
             try:
                 results = check_output(packagesTool, stderr=DEVNULL).decode()
-                packages = len(results.rstrip('\n').split('\n'))
+                packages = len(results.rstrip().split('\n'))
 
                 if 'dpkg' in packagesTool:
                     packages -= results.count('deinstall')
@@ -542,7 +542,7 @@ class CPU:
 class GPU:
     def __init__(self):
         try:
-            gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'], stdin=Popen(['lspci'], stdout=PIPE, stderr=DEVNULL).stdout).decode().split(': ')[1].rstrip('\n')
+            gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'], stdin=Popen(['lspci'], stdout=PIPE, stderr=DEVNULL).stdout).decode().split(': ')[1].rstrip()
 
             if len(gpuinfo) > 48:
                 gpuinfo = re.findall('.{1,45}(?:\W|$)', gpuinfo)[0] + '[...]'
@@ -565,8 +565,8 @@ class RAM:
             with open('/proc/meminfo') as file:
                 ram = file.read().split('\n')
 
-            total = float(ram[0].split(':')[1].strip(' ').rstrip(' kB')) / 1024
-            used = total - ((float(ram[1].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[3].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[4].split(':')[1].strip(' ').rstrip(' kB')) + float(ram[22].split(':')[1].strip(' ').rstrip(' kB'))) / 1024)
+            total = float(ram[0].split(':')[1].strip().rstrip('kB')) / 1024
+            used = total - ((float(ram[1].split(':')[1].strip().rstrip('kB')) + float(ram[3].split(':')[1].rstrip('kB')) + float(ram[4].split(':')[1].strip().rstrip('kB')) + float(ram[22].split(':')[1].strip().rstrip('kB'))) / 1024)
             usedpercent = (float(used) / float(total)) * 100
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(colorDict['sensors'][1 if usedpercent <= 33 else (0 if usedpercent >= 67 else 2)], int(used), colorDict['clear'], int(total))
@@ -583,7 +583,7 @@ class Disk:
 class LAN_IP:
     def __init__(self):
         try:
-            self.value = ', '.join(check_output(['hostname', '-I'], stderr=DEVNULL).decode().rstrip('\n').split()) or 'No Address'
+            self.value = ', '.join(check_output(['hostname', '-I'], stderr=DEVNULL).decode().rstrip().split()) or 'No Address'
 
         except CalledProcessError:
             # Slow manual workaround for old `inetutils` versions, with `ip`
@@ -594,7 +594,7 @@ class WAN_IP:
     def __init__(self):
         try:
             try:
-                self.value = check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'], timeout=1, stderr=DEVNULL).decode().rstrip('\n')
+                self.value = check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'], timeout=1, stderr=DEVNULL).decode().rstrip()
 
             except FileNotFoundError:
                 self.value = check_output(['wget', '-qO-', 'https://ident.me/'], timeout=1).decode()
