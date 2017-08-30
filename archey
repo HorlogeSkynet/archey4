@@ -400,7 +400,7 @@ class Output:
 
 class User:
     def __init__(self):
-        self.value = getenv('USER')
+        self.value = getenv('USER') or 'Not detected'
 
 
 class Hostname:
@@ -496,23 +496,25 @@ class WindowManager:
 
 class DesktopEnvironment:
     def __init__(self):
-        de = getenv('XDG_CURRENT_DESKTOP')
+        de = getenv('XDG_CURRENT_DESKTOP') or 'Not detected'
+
+        # Maybe we can find something more accurate in our own list...
         for key in deDict.keys():
             if key in processes:
                 de = deDict[key]
                 break
 
-        self.value = de or 'Not detected'
+        self.value = de
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv('SHELL')
+        self.value = getenv('SHELL') or 'Not detected'
 
 
 class Terminal:
     def __init__(self):
-        self.value = getenv('TERM')
+        self.value = getenv('TERM') or 'Not detected'
 
 
 class Packages:
