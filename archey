@@ -378,11 +378,13 @@ class Output:
         self.results = []
         lsbOutput = check_output(['lsb_release', '-i', '-s']).decode().rstrip()
 
-        self.distribution = Distributions.LINUX
         for distribution in Distributions:
             if re.fullmatch(distribution.value, lsbOutput):
                 self.distribution = distribution
                 break
+
+        else:
+            self.distribution = Distributions.LINUX
 
     def append(self, key, value):
         self.results.append('{0}{1}:{2} {3}'.format(colorDict[self.distribution][1], key, colorDict['clear'], value))
@@ -485,11 +487,13 @@ class WindowManager:
             wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m'], stderr=DEVNULL).decode()).group(0)
 
         except (FileNotFoundError, CalledProcessError):
-            wm = 'Not detected'
             for key in wmDict.keys():
                 if key in processes:
                     wm = wmDict[key]
                     break
+
+            else:
+                wm = 'Not detected'
 
         self.value = wm
 
