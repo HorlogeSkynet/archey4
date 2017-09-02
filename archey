@@ -368,6 +368,8 @@ logosDict = {
 {c[1]}                                       {r[17]}\n"""
 }
 
+
+# We'll list the running processes only one time
 processes = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip().split('\n')
 
 
@@ -500,13 +502,14 @@ class WindowManager:
 
 class DesktopEnvironment:
     def __init__(self):
-        de = getenv('XDG_CURRENT_DESKTOP') or 'Not detected'
-
-        # Maybe we can find something more accurate in our own list...
         for key in deDict.keys():
             if key in processes:
                 de = deDict[key]
                 break
+
+        else:
+            # Let's rely on an environment var if the loop above didn't `break`
+            de = getenv('XDG_CURRENT_DESKTOP') or 'Not detected'
 
         self.value = de
 
@@ -550,6 +553,7 @@ class GPU:
         try:
             gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'], stdin=Popen(['lspci'], stdout=PIPE, stderr=DEVNULL).stdout).decode().split(': ')[1].rstrip()
 
+            # If the line got too long, let's truncate it and add some dots...
             if len(gpuinfo) > 48:
                 gpuinfo = re.findall('.{1,45}(?:\W|$)', gpuinfo)[0] + '[...]'
 
