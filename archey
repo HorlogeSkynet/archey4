@@ -555,7 +555,7 @@ class GPU:
 
             # If the line got too long, let's truncate it and add some dots...
             if len(gpuinfo) > 48:
-                gpuinfo = re.findall('.{1,45}(?:\W|$)', gpuinfo)[0] + '[...]'
+                gpuinfo = re.findall('.{1,45}(?:\W|$)', gpuinfo)[0].strip() + '...'
 
         except (FileNotFoundError, CalledProcessError):
             gpuinfo = 'Not detected'
