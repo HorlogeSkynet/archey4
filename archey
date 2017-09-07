@@ -369,8 +369,13 @@ logosDict = {
 }
 
 
+# ---------- Global variables --------- #
+
 # We'll list the running processes only one time
-processes = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip().split('\n')
+PROCESSES = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip().split('\n')
+
+# Default string for non-reachable info
+NOT_DETECTED = 'Not detected'
 
 
 # -------------- Classes -------------- #
@@ -404,7 +409,7 @@ class Output:
 
 class User:
     def __init__(self):
-        self.value = getenv('USER') or 'Not detected'
+        self.value = getenv('USER', NOT_DETECTED)
 
 
 class Hostname:
@@ -451,7 +456,7 @@ class Model:
                         model = 'Bare-metal environment'
 
                 except (FileNotFoundError, CalledProcessError):
-                    model = 'Not detected'
+                    model = NOT_DETECTED
 
         self.value = model
 
@@ -490,12 +495,12 @@ class WindowManager:
 
         except (FileNotFoundError, CalledProcessError):
             for key in wmDict.keys():
-                if key in processes:
+                if key in PROCESSES:
                     wm = wmDict[key]
                     break
 
             else:
-                wm = 'Not detected'
+                wm = NOT_DETECTED
 
         self.value = wm
 
@@ -503,25 +508,25 @@ class WindowManager:
 class DesktopEnvironment:
     def __init__(self):
         for key in deDict.keys():
-            if key in processes:
+            if key in PROCESSES:
                 de = deDict[key]
                 break
 
         else:
             # Let's rely on an environment var if the loop above didn't `break`
-            de = getenv('XDG_CURRENT_DESKTOP') or 'Not detected'
+            de = getenv('XDG_CURRENT_DESKTOP', NOT_DETECTED)
 
         self.value = de
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv('SHELL') or 'Not detected'
+        self.value = getenv('SHELL', NOT_DETECTED)
 
 
 class Terminal:
     def __init__(self):
-        self.value = getenv('TERM') or 'Not detected'
+        self.value = getenv('TERM', NOT_DETECTED)
 
 
 class Packages:
@@ -537,7 +542,7 @@ class Packages:
                 break
 
             except (FileNotFoundError, CalledProcessError):
-                packages = 'Not detected'
+                packages = NOT_DETECTED
 
         self.value = packages
 
@@ -558,7 +563,7 @@ class GPU:
                 gpuinfo = re.findall('.{1,45}(?:\W|$)', gpuinfo)[0].strip() + '...'
 
         except (FileNotFoundError, CalledProcessError):
-            gpuinfo = 'Not detected'
+            gpuinfo = NOT_DETECTED
 
         self.value = gpuinfo
 
