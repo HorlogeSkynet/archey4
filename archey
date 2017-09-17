@@ -14,10 +14,11 @@
 #
 # Currently maintained by Samuel FORESTIER <https://horlogeskynet.github.io/>
 #
-# This program IS A FORK of the original Archey project <https://github.com/djmelik/archey>
+# This program IS A FORK of
+# the original Archey project <https://github.com/djmelik/archey>
 #
 # Distributed under the terms of the GNU General Public License v3.
-# See http://www.gnu.org/licenses/gpl.txt for the full license text.
+# See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 
 
 import re
@@ -25,7 +26,8 @@ import re
 from enum import Enum
 from math import floor
 from os import getenv, getuid
-from subprocess import Popen, PIPE, DEVNULL, check_output, CalledProcessError, TimeoutExpired
+from subprocess import Popen, PIPE, DEVNULL, check_output, \
+                       CalledProcessError, TimeoutExpired
 
 
 # -------------- Enumerations -------------- #
@@ -372,7 +374,11 @@ logosDict = {
 # ---------- Global variables --------- #
 
 # We'll list the running processes only one time
-PROCESSES = check_output(['ps', ('-u' + str(getuid()) if getuid() != 0 else '-ax'), '-o', 'comm', '--no-headers']).decode().rstrip().split('\n')
+PROCESSES = check_output([
+                          'ps',
+                          '-u' + str(getuid()) if getuid() != 0 else '-ax',
+                          '-o', 'comm', '--no-headers'
+                        ]).decode().rstrip().split('\n')
 
 # Default string for non-reachable info
 NOT_DETECTED = 'Not detected'
@@ -394,7 +400,8 @@ class Output:
             self.distribution = Distributions.LINUX
 
     def append(self, key, value):
-        self.results.append('{0}{1}:{2} {3}'.format(colorDict[self.distribution][1], key, colorDict['clear'], value))
+        self.results.append('{0}{1}:{2} {3}'.format(
+            colorDict[self.distribution][1], key, colorDict['clear'], value))
 
     def output(self):
         results = []
@@ -404,7 +411,8 @@ class Output:
         if len(results) < 18:
             results.extend([''] * (18 - len(results)))
 
-        print(logosDict[self.distribution].format(c=colorDict[self.distribution], r=results) + colorDict['clear'])
+        print(logosDict[self.distribution].format(
+            c=colorDict[self.distribution], r=results) + colorDict['clear'])
 
 
 class User:
@@ -434,18 +442,30 @@ class Model:
             # If the output contains 'Hardware' and 'Revision'...
             if hardware and revision:
                 # ... let's set a pretty info string with these data
-                model = 'Raspberry Pi ' + hardware.group(0) + ' (Rev. ' + revision.group(0) + ')'
+                model = 'Raspberry Pi ' + hardware.group(0) + \
+                        ' (Rev. ' + revision.group(0) + ')'
 
             else:
-                # A tricky way to retrieve some details about hypervisor (within virtualized contexts)
-                # `archey` needs to be run as root although...
+                # A tricky way to retrieve some details about hypervisor...
+                # ... within virtualized contexts.
+                # `archey` needs to be run as root although.
                 try:
-                    virtWhat = ', '.join(check_output(['virt-what'], stderr=DEVNULL).decode().rstrip().split())
+                    virtWhat = ', '.join(check_output([
+                                                       'virt-what'
+                                                      ],
+                                                      stderr=DEVNULL)
+                                         .decode().rstrip().split())
 
                     if virtWhat:
                         try:
-                            # Sometimes we may gather info added by hosting service provider this way
-                            model = check_output(['dmidecode', '-s', 'system-product-name'], stderr=DEVNULL).decode().rstrip()
+                            # Sometimes we may gather info added by...
+                            # ... hosting service provider this way
+                            model = check_output([
+                                                  'dmidecode',
+                                                  '-s',
+                                                  'system-product-name'
+                                                 ], stderr=DEVNULL
+                                                 ).decode().rstrip()
 
                         except (FileNotFoundError, CalledProcessError):
                             model = 'Virtualized environment'
@@ -463,7 +483,9 @@ class Model:
 
 class Distro:
     def __init__(self):
-        self.value = check_output(['lsb_release', '-d', '-s']).decode().rstrip() + ' ' + check_output(['uname', '-m']).decode().rstrip()
+        self.value = check_output(['lsb_release', '-d', '-s']
+                                  ).decode().rstrip() + \
+                     ' ' + check_output(['uname', '-m']).decode().rstrip()
 
 
 class Kernel:
@@ -491,7 +513,9 @@ class Uptime:
 class WindowManager:
     def __init__(self):
         try:
-            wm = re.search('(?<=Name: ).*', check_output(['wmctrl', '-m'], stderr=DEVNULL).decode()).group(0)
+            wm = re.search('(?<=Name: ).*',
+                           check_output(['wmctrl', '-m'],
+                                        stderr=DEVNULL).decode()).group(0)
 
         except (FileNotFoundError, CalledProcessError):
             for key in wmDict.keys():
@@ -531,7 +555,14 @@ class Terminal:
 
 class Packages:
     def __init__(self):
-        for packagesTool in [['pacman', '-Q'], ['dnf', 'list', 'installed'], ['dpkg', '--get-selections'], ['zypper', 'search', '--installed-only'], ['emerge', '-ep', 'world'], ['rpm', '-qa']]:
+        for packagesTool in [
+                                ['pacman', '-Q'],
+                                ['dnf', 'list', 'installed'],
+                                ['dpkg', '--get-selections'],
+                                ['zypper', 'search', '--installed-only'],
+                                ['emerge', '-ep', 'world'],
+                                ['rpm', '-qa']
+                            ]:
             try:
                 results = check_output(packagesTool, stderr=DEVNULL).decode()
                 packages = len(results.rstrip().split('\n'))
@@ -550,17 +581,22 @@ class Packages:
 class CPU:
     def __init__(self):
         with open('/proc/cpuinfo') as file:
-            self.value = re.search('(?<=model name\t: ).*', file.read()).group(0)
+            self.value = re.search('(?<=model name\t: ).*',
+                                   file.read()).group(0)
 
 
 class GPU:
     def __init__(self):
         try:
-            gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'], stdin=Popen(['lspci'], stdout=PIPE, stderr=DEVNULL).stdout).decode().split(': ')[1].rstrip()
+            gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'],
+                                   stdin=Popen(['lspci'],
+                                   stdout=PIPE, stderr=DEVNULL).stdout
+                                   ).decode().split(': ')[1].rstrip()
 
             # If the line got too long, let's truncate it and add some dots...
             if len(gpuinfo) > 48:
-                gpuinfo = re.findall('.{1,45}(?:\W|$)', gpuinfo)[0].strip() + '...'
+                gpuinfo = re.findall('.{1,45}(?:\W|$)',
+                                     gpuinfo)[0].strip() + '...'
 
         except (FileNotFoundError, CalledProcessError):
             gpuinfo = NOT_DETECTED
@@ -571,7 +607,10 @@ class GPU:
 class RAM:
     def __init__(self):
         try:
-            ram = ''.join(filter(re.compile('M').search, Popen(['free', '-m'], stdout=PIPE, env={'LANG': 'C'}).communicate()[0].decode().split('\n'))).split()
+            ram = ''.join(filter(re.compile('M').search,
+                          Popen(['free', '-m'], stdout=PIPE, env={'LANG': 'C'}
+                                ).communicate()[0].decode().split('\n'))
+                          ).split()
             used = float(ram[2])
             total = float(ram[1])
 
@@ -584,22 +623,31 @@ class RAM:
                 return float(line.split(':')[1].strip(' kB'))
 
             total = convert(ram[0]) / 1024
-            used = total - ((convert(ram[1]) + convert(ram[3]) + convert(ram[4]) + convert(ram[22])) / 1024)
+            used = total - ((convert(ram[1]) + convert(ram[3]) +
+                             convert(ram[4]) + convert(ram[22])) / 1024)
 
-        self.value = '{0}{1} MB{2} / {3} MB'.format(colorDict['sensors'][int((used / total) * 100) // 33], int(used), colorDict['clear'], int(total))
+        self.value = '{0}{1} MB{2} / {3} MB'.format(
+                        colorDict['sensors'][int((used / total) * 100) // 33],
+                        int(used), colorDict['clear'], int(total))
 
 
 class Disk:
     def __init__(self):
         total = re.sub(',', '.', check_output(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs']).decode().splitlines()[-1]).split()
 
-        self.value = '{0}{1}{2} / {3}'.format(colorDict['sensors'][int(total[5][:-1]) // 33], re.sub('GB', ' GB', total[3]), colorDict['clear'], re.sub('GB', ' GB', total[2]))
+        self.value = '{0}{1}{2} / {3}'.format(
+                        colorDict['sensors'][int(total[5][:-1]) // 33],
+                        re.sub('GB', ' GB', total[3]), colorDict['clear'],
+                        re.sub('GB', ' GB', total[2]))
 
 
 class LAN_IP:
     def __init__(self):
         try:
-            self.value = ', '.join(check_output(['hostname', '-I'], stderr=DEVNULL).decode().rstrip().split()) or 'No Address'
+            self.value = ', '.join(check_output(['hostname', '-I'],
+                                                stderr=DEVNULL
+                                                ).decode().rstrip().split()
+                                   ) or 'No Address'
 
         except CalledProcessError:
             # Slow manual workaround for old `inetutils` versions, with `ip`
@@ -610,10 +658,16 @@ class WAN_IP:
     def __init__(self):
         try:
             try:
-                self.value = check_output(['dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'], timeout=1, stderr=DEVNULL).decode().rstrip()
+                self.value = check_output([
+                                           'dig', '+short', 'myip.opendns.com',
+                                           '@resolver1.opendns.com'
+                                          ], timeout=1, stderr=DEVNULL
+                                          ).decode().rstrip()
 
             except FileNotFoundError:
-                self.value = check_output(['wget', '-qO-', 'https://ident.me/'], timeout=1).decode()
+                self.value = check_output([
+                                           'wget', '-qO-', 'https://ident.me/'
+                                           ], timeout=1).decode()
 
         except (CalledProcessError, TimeoutExpired):
             self.value = 'No Address'
