@@ -380,7 +380,8 @@ PROCESSES = check_output([
                           '-o', 'comm', '--no-headers'
                         ]).decode().rstrip().split('\n')
 
-# Default string for non-reachable info
+# Default strings for non-reachable information
+NO_ADRESS = 'No Address '
 NOT_DETECTED = 'Not detected'
 
 
@@ -647,11 +648,11 @@ class LAN_IP:
             self.value = ', '.join(check_output(['hostname', '-I'],
                                                 stderr=DEVNULL
                                                 ).decode().rstrip().split()
-                                   ) or 'No Address'
+                                   ) or NO_ADRESS
 
         except CalledProcessError:
             # Slow manual workaround for old `inetutils` versions, with `ip`
-            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or 'No Address'
+            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or NO_ADRESS
 
 
 class WAN_IP:
@@ -670,7 +671,7 @@ class WAN_IP:
                                            ], timeout=1).decode()
 
         except (CalledProcessError, TimeoutExpired):
-            self.value = 'No Address'
+            self.value = NO_ADRESS
 
 
 # -------------- Classes' Enumeration -------------- #
