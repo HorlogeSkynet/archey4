@@ -25,7 +25,7 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 
 ### Install latest stable release from source
 
-```bash
+```shell
 $ wget -O archey4.tar.gz https://github.com/HorlogeSkynet/archey4/archive/master.tar.gz
 $ tar xvzf archey4.tar.gz
 $ cd archey4-master/
@@ -35,7 +35,7 @@ $ sudo cp archey /usr/local/bin/archey
 
 ### Install (or update) development version from source
 
-```bash
+```shell
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
 $ chmod +x archey
@@ -46,7 +46,7 @@ $ sudo cp archey /usr/local/bin/archey
 
 ## Usage
 
-```bash
+```shell
 $ archey
 ```
 
@@ -56,6 +56,6 @@ $ archey
 
 * During the setup procedure, I advised you to copy this script into the `/usr/local/bin/` folder, you may want to check what it does beforehand.
 
-* If you experience any trouble during installation or usage, please do **open an _issue_**.
+* If you experience any trouble during installation or usage, please do [**open an _issue_**](https://github.com/HorlogeSkynet/archey4/issues/new).
 
-* If you had to adapt the script to make it working with your system, please **open a _pull request_** so as to share your modifications with the rest of the world and participate to this project !
+* If you had to adapt the script to make it working with your system, please [**open a _pull request_**](https://github.com/HorlogeSkynet/archey4/pulls) so as to share your modifications with the rest of the world and participate to this project !
