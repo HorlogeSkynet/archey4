@@ -390,7 +390,14 @@ NOT_DETECTED = 'Not detected'
 class Output:
     def __init__(self):
         self.results = []
-        lsbOutput = check_output(['lsb_release', '-i', '-s']).decode().rstrip()
+        try:
+            lsbOutput = check_output([
+                                      'lsb_release', '-i', '-s'
+                                    ]).decode().rstrip()
+
+        except FileNotFoundError:
+            print('Please, install first `lsb-release` on your distribution.')
+            exit()
 
         for distribution in Distributions:
             if re.fullmatch(distribution.value, lsbOutput):
