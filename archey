@@ -381,7 +381,7 @@ PROCESSES = check_output([
                         ]).decode().rstrip().split('\n')
 
 # Default strings for non-reachable information
-NO_ADRESS = 'No Address '
+NO_ADRESS = 'No Address'
 NOT_DETECTED = 'Not detected'
 
 
