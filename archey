@@ -361,7 +361,7 @@ logosDict = {
 {c[1]} +++++++ {c[2]}.::-{c[1]}                          {r[8]}
 {c[1]} ./+++/-`{c[2]}-::-{c[1]}                {c[0]}:yyyyyo{c[1]}   {r[9]}
 {c[1]}   ``` `{c[2]}-::::-`{c[1]}             {c[0]}:yhhhhh:{c[1]}   {r[10]}
-{c[1]}       {c[2]}-:::::-.{c[1]}         {c[0]}`-ohhhhhh+{c[1]}    {r[11]}
+{c[1]}       {c[2]}-:::::-.{c[1]}          {c[0]}`-ohhhhhh+{c[1]}    {r[11]}
 {c[1]}         {c[2]}.::::-`{c[1]} {c[0]}-o+///+oyhhyyyhy:{c[1]}     {r[12]}
 {c[1]}          {c[2]}`.--{c[1]}  {c[0]}/yhhhhhhhy+{c[2]},....{c[1]}       {r[13]}
 {c[1]}                {c[0]}/hhhhhhhhh{c[2]}-.-:::;{c[1]}      {r[14]}
@@ -381,7 +381,7 @@ PROCESSES = check_output([
                         ]).decode().rstrip().split('\n')
 
 # Default strings for non-reachable information
-NO_ADRESS = 'No Address '
+NO_ADRESS = 'No Address'
 NOT_DETECTED = 'Not detected'
 
 
@@ -390,7 +390,14 @@ NOT_DETECTED = 'Not detected'
 class Output:
     def __init__(self):
         self.results = []
-        lsbOutput = check_output(['lsb_release', '-i', '-s']).decode().rstrip()
+        try:
+            lsbOutput = check_output([
+                                      'lsb_release', '-i', '-s'
+                                    ]).decode().rstrip()
+
+        except FileNotFoundError:
+            print('Please, install first `lsb-release` on your distribution.')
+            exit()
 
         for distribution in Distributions:
             if re.fullmatch(distribution.value, lsbOutput):

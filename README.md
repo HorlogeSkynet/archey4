@@ -6,6 +6,10 @@
 
 The answer is [here](https://horlogeskynet.github.io/archey4).
 
+> Note : Since the 21st September of 2017, you may notice that this repository no longer has the official status of _fork_.  
+> Actually, the maintainer decided to separate it from the original one's "network" with the help of the _GitHub_'s staff.  
+> Nevertheless, **this piece of software is still a _fork_ of the [djmelik's Archey project](https://github.com/djmelik/archey.git)**.
+
 #### Which packages do I need to run this script ?
 
 ##### Required packages
