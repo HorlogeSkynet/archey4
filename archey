@@ -12,7 +12,7 @@
 # Fedora support by YeOK <yeok@henpen.org>
 # First IP handling by Normand Cyr <normand.cyr@gmail.com>
 #
-# Currently maintained by Samuel FORESTIER <https://horlogeskynet.github.io/>
+# Currently maintained by Samuel FORESTIER <archey@samuel.domains>
 #
 # This program IS A FORK of
 # the original Archey project <https://github.com/djmelik/archey>
@@ -381,7 +381,7 @@ PROCESSES = check_output([
                         ]).decode().rstrip().split('\n')
 
 # Default strings for non-reachable information
-NO_ADRESS = 'No Address'
+NO_ADDRESS = 'No Address'
 NOT_DETECTED = 'Not detected'
 
 
@@ -655,11 +655,11 @@ class LAN_IP:
             self.value = ', '.join(check_output(['hostname', '-I'],
                                                 stderr=DEVNULL
                                                 ).decode().rstrip().split()
-                                   ) or NO_ADRESS
+                                   ) or NO_ADDRESS
 
         except CalledProcessError:
             # Slow manual workaround for old `inetutils` versions, with `ip`
-            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or NO_ADRESS
+            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or NO_ADDRESS
 
 
 class WAN_IP:
@@ -678,7 +678,7 @@ class WAN_IP:
                                            ], timeout=1).decode()
 
         except (CalledProcessError, TimeoutExpired):
-            self.value = NO_ADRESS
+            self.value = NO_ADDRESS
 
 
 # -------------- Classes' Enumeration -------------- #
