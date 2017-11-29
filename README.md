@@ -27,7 +27,32 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 
 ## Installation
 
-### Install latest stable release from source
+### Install from package
+
+First, grab a package for your distribution from the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest).  
+Now, it's time to use your favorite packages manager. Some examples :
+
+* Arch-based distributions ([source](https://aur.archlinux.org/packages/archey4/))
+
+	```shell
+	pacman -U ./archey4-v4.X.Z-R-any.pkg.tar.xz
+	```
+
+* Debian-based distributions ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
+
+	```shell
+	apt install ./archey4-4.Y.Z-R-all.deb
+	```
+
+* Red Hat, Fedora, OpenSuse, ... ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
+
+	```shell
+	dnf install ./archey4-4.Y.Z-R.noarch.rpm
+	```
+
+### Install from source
+
+#### Latest stable release
 
 ```shell
 $ wget -O archey4.tar.gz https://github.com/HorlogeSkynet/archey4/archive/master.tar.gz
@@ -37,7 +62,7 @@ $ chmod +x archey
 $ sudo cp archey /usr/local/bin/archey
 ```
 
-### Install (or update) development version from source
+#### Development version
 
 ```shell
 $ git clone https://github.com/HorlogeSkynet/archey4.git
