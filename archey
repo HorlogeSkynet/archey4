@@ -574,7 +574,7 @@ class Temperature:
                 check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'],
                              stderr=DEVNULL).decode())[0]
 
-            temp = '{0} {1}'.format(
+            self.value = '{0} {1}'.format(
                 str(convert(temp) if TEMP_FAHRENHEIT else temp),
                 'oF' if TEMP_FAHRENHEIT else 'oC')
 
@@ -583,18 +583,20 @@ class Temperature:
             for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
                 with open(thermalFile) as file:
                     temp = float(file.read().strip())
-                    if float(temp) != 0.0:
+                    if temp != 0.0:
                         temps.append(
                             convert(temp) if TEMP_FAHRENHEIT else temp
                         )
 
-                temp = '{0} o{2} (Max. {1} o{2})'.format(
+            if temps:
+                self.value = '{0} {2} (Max. {1} {2})'.format(
                     str(round((sum(temps) / len(temps) / 1000), 2)),
                     str(round(max(temps) / 1000, 2)),
                     'oF' if TEMP_FAHRENHEIT else 'oC'
                 )
 
-        self.value = temp or NOT_DETECTED
+            else:
+                self.value = NOT_DETECTED
 
 
 class Packages:
