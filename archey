@@ -25,6 +25,7 @@ import re
 
 from enum import Enum
 from math import floor
+from glob import glob
 from os import getenv, getuid
 from subprocess import Popen, PIPE, DEVNULL, check_output, \
                        CalledProcessError, TimeoutExpired
@@ -383,6 +384,7 @@ PROCESSES = check_output([
 # Default strings for non-reachable information
 NO_ADDRESS = 'No Address'
 NOT_DETECTED = 'Not detected'
+TEMP_FAHRENHEIT = False
 
 
 # -------------- Classes -------------- #
@@ -561,6 +563,40 @@ class Terminal:
         self.value = getenv('TERM', NOT_DETECTED)
 
 
+class Temperature:
+    def __init__(self):
+        def convert(temp):
+            return temp * (9 / 5) + 32
+
+        try:
+            temp = re.findall(
+                '\d+\.\d+',
+                check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'],
+                             stderr=DEVNULL).decode())[0]
+
+            temp = '{0} {1}'.format(
+                str(convert(temp) if TEMP_FAHRENHEIT else temp),
+                'oF' if TEMP_FAHRENHEIT else 'oC')
+
+        except (FileNotFoundError, CalledProcessError):
+            temps = []
+            for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
+                with open(thermalFile) as file:
+                    temp = float(file.read().strip())
+                    if float(temp) != 0.0:
+                        temps.append(
+                            convert(temp) if TEMP_FAHRENHEIT else temp
+                        )
+
+                temp = '{0} o{2} (Max. {1} o{2})'.format(
+                    str(round((sum(temps) / len(temps) / 1000), 2)),
+                    str(round(max(temps) / 1000, 2)),
+                    'oF' if TEMP_FAHRENHEIT else 'oC'
+                )
+
+        self.value = temp or NOT_DETECTED
+
+
 class Packages:
     def __init__(self):
         for packagesTool in [
@@ -695,6 +731,7 @@ class Classes(Enum):
     Shell = Shell
     Terminal = Terminal
     Packages = Packages
+    Temperature = Temperature
     CPU = CPU
     GPU = GPU
     RAM = RAM
