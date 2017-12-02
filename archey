@@ -576,7 +576,7 @@ class Temperature:
 
             self.value = '{0} {1}'.format(
                 str(convert(temp) if TEMP_FAHRENHEIT else temp),
-                'oF' if TEMP_FAHRENHEIT else 'oC')
+                '°F' if TEMP_FAHRENHEIT else '°C')
 
         except (FileNotFoundError, CalledProcessError):
             temps = []
@@ -592,7 +592,7 @@ class Temperature:
                 self.value = '{0} {2} (Max. {1} {2})'.format(
                     str(round((sum(temps) / len(temps) / 1000), 2)),
                     str(round(max(temps) / 1000, 2)),
-                    'oF' if TEMP_FAHRENHEIT else 'oC'
+                    '°F' if TEMP_FAHRENHEIT else '°C'
                 )
 
             else:
