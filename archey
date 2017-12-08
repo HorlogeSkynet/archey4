@@ -563,17 +563,16 @@ class Terminal:
 
 class Packages:
     def __init__(self):
-        for packagesTool in [
-                                ['pacman', '-Q'],
-                                ['dnf', 'list', 'installed'],
-                                ['dpkg', '--get-selections'],
-                                ['zypper', 'search', '--installed-only'],
-                                ['emerge', '-ep', 'world'],
-                                ['rpm', '-qa']
-                            ]:
+        packages = NOT_DETECTED
+        for packagesTool in [['pacman', '-Q'],
+                             ['dnf', 'list', 'installed'],
+                             ['dpkg', '--get-selections'],
+                             ['zypper', 'search', '--installed-only'],
+                             ['emerge', '-ep', 'world'],
+                             ['rpm', '-qa']]:
             try:
                 results = check_output(packagesTool, stderr=DEVNULL).decode()
-                packages = len(results.rstrip().split('\n'))
+                packages = results.count('\n')
 
                 if 'dpkg' in packagesTool:
                     packages -= results.count('deinstall')
@@ -581,7 +580,7 @@ class Packages:
                 break
 
             except (FileNotFoundError, CalledProcessError):
-                packages = NOT_DETECTED
+                pass
 
         self.value = packages
 
