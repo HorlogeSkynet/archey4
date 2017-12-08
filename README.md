@@ -16,13 +16,14 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 
 * python3
 * lsb-release
+* procps
 
 ### Highly recommended packages
 
 | Environments |  Packages  |                Reasons                | Notes |
 | :----------- | :--------: | :-----------------------------------: | :---: |
-| All          | `dnsutils` | **WAN_IP** would be detected 5x faster   |   ∅   |
-| Graphical    |  `wmctrl`  | **WindowManager** would be more accurate |   ∅   |
+| All          | `dnsutils`<br>`net-tools` | **WAN_IP** and **LAN_IP** would be detected faster | They will provide `dig` and `hostname` |
+| Graphical    |  `pciutils`<br>`wmctrl`  | **GPU** wouldn't be detected without it<br>**WindowManager** would be more accurate | `pciutils` will provide `lspci` |
 | Virtual      | `virt-what`<br>`dmidecode` | **Model** would contain details about the hypervisor | `archey` will need to be run as **root** |
 
 ## Installation
