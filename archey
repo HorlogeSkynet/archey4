@@ -563,7 +563,6 @@ class Terminal:
 
 class Packages:
     def __init__(self):
-        packages = NOT_DETECTED
         for packagesTool in [['pacman', '-Q'],
                              ['dnf', 'list', 'installed'],
                              ['dpkg', '--get-selections'],
@@ -581,6 +580,9 @@ class Packages:
 
             except (FileNotFoundError, CalledProcessError):
                 pass
+
+        else:
+            packages = NOT_DETECTED
 
         self.value = packages
 
