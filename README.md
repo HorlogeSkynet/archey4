@@ -1,6 +1,6 @@
 # Archey 4
 
-![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v410)
+![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.0)
 
 ## Why (again) a f*cking new Archey fork ?
 
@@ -79,6 +79,17 @@ $ sudo cp archey /usr/local/bin/archey
 ```shell
 $ archey
 ```
+
+## Configuration
+
+Since the version 1.4.0, Archey 4 may be "tweaked" a bit with external configuration.  
+You can place a [`config.json`](config.json) file in these locations :
+
+1. `./config.json` (beside the script itself)
+2. `~/.config/archey4/config.json` (in your home directory)
+3. `/etc/archey4/config.json`
+
+If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).
 
 ## Notes to users
 
