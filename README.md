@@ -36,7 +36,7 @@ Now, it's time to use your favorite packages manager. Some examples :
 * Arch-based distributions ([source](https://aur.archlinux.org/packages/archey4/))
 
 	```shell
-	pacman -U ./archey4-v4.X.Z-R-any.pkg.tar.xz
+	pacman -U ./archey4-v4.Y.Z-R-any.pkg.tar.xz
 	```
 
 * Debian-based distributions ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
@@ -55,10 +55,11 @@ Now, it's time to use your favorite packages manager. Some examples :
 
 #### Latest stable release
 
+First, grab the archive containing source code of the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest), and then :
+
 ```shell
-$ wget -O archey4.tar.gz https://github.com/HorlogeSkynet/archey4/archive/master.tar.gz
-$ tar xvzf archey4.tar.gz
-$ cd archey4-master/
+$ tar xvzf archey4-4.X.Y.tar.gz
+$ cd archey4-4.X.Y/
 $ chmod +x archey
 $ sudo cp archey /usr/local/bin/archey
 ```
