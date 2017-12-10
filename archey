@@ -589,7 +589,7 @@ class Temperature:
                         else temp)
 
         if temps:
-            self.value = '{0}{2} (Max. {1}{2})'.format(
+            self.value = '{0} {2} (Max. {1} {2})'.format(
                 str(round(sum(temps) / len(temps), 1)),
                 str(round(max(temps), 1)),
                 'F' if TEMP_FAHRENHEIT else 'C')
