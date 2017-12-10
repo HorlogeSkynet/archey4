@@ -80,9 +80,9 @@ $ sudo cp archey /usr/local/bin/archey
 $ archey
 ```
 
-## Configuration
+## Configuration (optional)
 
-Since the version 1.4.0, Archey 4 may be "tweaked" a bit with external configuration.  
+Since the version 1.4.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
 You can place a [`config.json`](config.json) file in these locations :
 
 1. `./config.json` (beside the script itself)
