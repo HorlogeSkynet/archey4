@@ -12,7 +12,7 @@
 # Fedora support by YeOK <yeok@henpen.org>
 # First IP handling by Normand Cyr <normand.cyr@gmail.com>
 #
-# Currently maintained by Samuel FORESTIER <https://horlogeskynet.github.io/>
+# Currently maintained by Samuel FORESTIER <archey@samuel.domains>
 #
 # This program IS A FORK of
 # the original Archey project <https://github.com/djmelik/archey>
@@ -21,10 +21,13 @@
 # See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 
 
+import json
+import os
 import re
 
 from enum import Enum
 from math import floor
+from glob import glob
 from os import getenv, getuid
 from subprocess import Popen, PIPE, DEVNULL, check_output, \
                        CalledProcessError, TimeoutExpired
@@ -370,6 +373,34 @@ logosDict = {
 {c[1]}                                       {r[17]}\n"""
 }
 
+# ----------- Configuration ----------- #
+config = {
+    'default_strings': {
+        'no_address': 'No Address',
+        'not_detected': 'Not detected'
+    },
+    'temperature': {
+        'use_fahrenheit': False
+    }
+}
+
+
+def loadConfiguration(path):
+    if not path.endswith('/'):
+        path += '/'
+
+    path += 'config.json'
+
+    try:
+        with open(path) as file:
+            config.update(json.load(file))
+
+    except FileNotFoundError:
+        pass
+
+    except json.JSONDecodeError as e:
+        print('Warning: {0} ({1})'.format(e, path))
+
 
 # ---------- Global variables --------- #
 
@@ -379,10 +410,6 @@ PROCESSES = check_output([
                           '-u' + str(getuid()) if getuid() != 0 else '-ax',
                           '-o', 'comm', '--no-headers'
                         ]).decode().rstrip().split('\n')
-
-# Default strings for non-reachable information
-NO_ADRESS = 'No Address'
-NOT_DETECTED = 'Not detected'
 
 
 # -------------- Classes -------------- #
@@ -425,7 +452,7 @@ class Output:
 
 class User:
     def __init__(self):
-        self.value = getenv('USER', NOT_DETECTED)
+        self.value = getenv('USER', config['default_strings']['not_detected'])
 
 
 class Hostname:
@@ -484,7 +511,7 @@ class Model:
                         model = 'Bare-metal environment'
 
                 except (FileNotFoundError, CalledProcessError):
-                    model = NOT_DETECTED
+                    model = config['default_strings']['not_detected']
 
         self.value = model
 
@@ -532,7 +559,7 @@ class WindowManager:
                     break
 
             else:
-                wm = NOT_DETECTED
+                wm = config['default_strings']['not_detected']
 
         self.value = wm
 
@@ -546,34 +573,75 @@ class DesktopEnvironment:
 
         else:
             # Let's rely on an environment var if the loop above didn't `break`
-            de = getenv('XDG_CURRENT_DESKTOP', NOT_DETECTED)
+            de = getenv('XDG_CURRENT_DESKTOP',
+                        config['default_strings']['not_detected'])
 
         self.value = de
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv('SHELL', NOT_DETECTED)
+        self.value = getenv('SHELL', config['default_strings']['not_detected'])
 
 
 class Terminal:
     def __init__(self):
-        self.value = getenv('TERM', NOT_DETECTED)
+        self.value = getenv('TERM', config['default_strings']['not_detected'])
+
+
+class Temperature:
+    def __init__(self):
+        temps = []
+
+        try:
+            # Let's try to retrieve a value from 'Broadcom' chip on Raspberry
+            temp = float(re.findall(
+                '\d+\.\d+',
+                check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'],
+                             stderr=DEVNULL).decode())[0])
+            temps.append(
+                self.convertToFahrenheit(temp)
+                if config['temperature']['use_fahrenheit'] else temp)
+
+        except (FileNotFoundError, CalledProcessError):
+            pass
+
+        # Now we just check for values within files present in the path below
+        for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
+            with open(thermalFile) as file:
+                temp = float(file.read().strip()) / 1000
+                if temp != 0.0:
+                    temps.append(
+                        self.convertToFahrenheit(temp)
+                        if config['temperature']['use_fahrenheit'] else temp)
+
+        if temps:
+            self.value = '{0} {2} (Max. {1} {2})'.format(
+                str(round(sum(temps) / len(temps), 1)),
+                str(round(max(temps), 1)),
+                'F' if config['temperature']['use_fahrenheit'] else 'C')
+
+        else:
+            self.value = config['default_strings']['not_detected']
+
+    """
+    Simple Celsius to Fahrenheit conversion method
+    """
+    def convertToFahrenheit(self, temp):
+        return temp * (9 / 5) + 32
 
 
 class Packages:
     def __init__(self):
-        for packagesTool in [
-                                ['pacman', '-Q'],
-                                ['dnf', 'list', 'installed'],
-                                ['dpkg', '--get-selections'],
-                                ['zypper', 'search', '--installed-only'],
-                                ['emerge', '-ep', 'world'],
-                                ['rpm', '-qa']
-                            ]:
+        for packagesTool in [['pacman', '-Q'],
+                             ['dnf', 'list', 'installed'],
+                             ['dpkg', '--get-selections'],
+                             ['zypper', 'search', '--installed-only'],
+                             ['emerge', '-ep', 'world'],
+                             ['rpm', '-qa']]:
             try:
                 results = check_output(packagesTool, stderr=DEVNULL).decode()
-                packages = len(results.rstrip().split('\n'))
+                packages = results.count('\n')
 
                 if 'dpkg' in packagesTool:
                     packages -= results.count('deinstall')
@@ -581,7 +649,10 @@ class Packages:
                 break
 
             except (FileNotFoundError, CalledProcessError):
-                packages = NOT_DETECTED
+                pass
+
+        else:
+            packages = config['default_strings']['not_detected']
 
         self.value = packages
 
@@ -607,7 +678,7 @@ class GPU:
                                      gpuinfo)[0].strip() + '...'
 
         except (FileNotFoundError, CalledProcessError):
-            gpuinfo = NOT_DETECTED
+            gpuinfo = config['default_strings']['not_detected']
 
         self.value = gpuinfo
 
@@ -622,29 +693,44 @@ class RAM:
             used = float(ram[2])
             total = float(ram[1])
 
-        except IndexError:
+        except (IndexError, FileNotFoundError):
+            # An in-digest one-liner to retrieve memory info into a dictionary
             with open('/proc/meminfo') as file:
-                ram = file.read().split('\n')
+                ram = {
+                    i.split(':')[0]: float(i.split(':')[1].strip(' kB')) / 1024
+                    for i in filter(None, file.read().split('\n'))
+                }
 
-            # A little closure to convert `/proc/meminfo` lines as `float`
-            def convert(line):
-                return float(line.split(':')[1].strip(' kB'))
-
-            total = convert(ram[0]) / 1024
-            used = total - ((convert(ram[1]) + convert(ram[3]) +
-                             convert(ram[4]) + convert(ram[22])) / 1024)
+            total = ram['MemTotal']
+            # Here, let's imitate the `free` command behavior
+            # (https://gitlab.com/procps-ng/procps/blob/master/proc/sysinfo.c#L787)
+            used = total - (ram['MemFree'] + ram['Cached'] + ram['Buffers'])
+            if used < 0:
+                used += ram['Cached'] + ram['Buffers']
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-                        colorDict['sensors'][int((used / total) * 100) // 33],
+                        colorDict['sensors'][
+                            int(((used / total) * 100) // 33.34)
+                        ],
                         int(used), colorDict['clear'], int(total))
 
 
 class Disk:
     def __init__(self):
-        total = re.sub(',', '.', check_output(['df', '-Tlh', '-B', 'GB', '--total', '-t', 'ext4', '-t', 'ext3', '-t', 'ext2', '-t', 'reiserfs', '-t', 'jfs', '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs', '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs', '-t', 'tmpfs', '-t', 'zfs']).decode().splitlines()[-1]).split()
+        total = re.sub(',', '.',
+                       check_output([
+                                    'df', '-Tlh', '-B', 'GB', '--total',
+                                    '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
+                                    '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
+                                    '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
+                                    '-t', 'fuseblk', '-t', 'xfs',
+                                    '-t', 'simfs', '-t', 'tmpfs'
+                                    ]).decode().splitlines()[-1]).split()
 
         self.value = '{0}{1}{2} / {3}'.format(
-                        colorDict['sensors'][int(total[5][:-1]) // 33],
+                        colorDict['sensors'][
+                            int(float(total[5][:-1]) // 33.34)
+                        ],
                         re.sub('GB', ' GB', total[3]), colorDict['clear'],
                         re.sub('GB', ' GB', total[2]))
 
@@ -655,11 +741,11 @@ class LAN_IP:
             self.value = ', '.join(check_output(['hostname', '-I'],
                                                 stderr=DEVNULL
                                                 ).decode().rstrip().split()
-                                   ) or NO_ADRESS
+                                   ) or config['default_strings']['no_address']
 
         except CalledProcessError:
             # Slow manual workaround for old `inetutils` versions, with `ip`
-            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or NO_ADRESS
+            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or config['default_strings']['no_address']
 
 
 class WAN_IP:
@@ -678,7 +764,7 @@ class WAN_IP:
                                            ], timeout=1).decode()
 
         except (CalledProcessError, TimeoutExpired):
-            self.value = NO_ADRESS
+            self.value = config['default_strings']['no_address']
 
 
 # -------------- Classes' Enumeration -------------- #
@@ -695,6 +781,7 @@ class Classes(Enum):
     Shell = Shell
     Terminal = Terminal
     Packages = Packages
+    Temperature = Temperature
     CPU = CPU
     GPU = GPU
     RAM = RAM
@@ -706,6 +793,11 @@ class Classes(Enum):
 # -------------- Main -------------- #
 
 if __name__ == '__main__':
+
+    # Load global and local configurations in a "regular" order (all optional)
+    loadConfiguration('/etc/archey4/')
+    loadConfiguration(os.getcwd() + '/.config/archey4/')
+    loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
     output = Output()
     for key in Classes:
