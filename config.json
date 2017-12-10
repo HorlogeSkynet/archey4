@@ -1,0 +1,9 @@
+{
+	"default_strings": {
+		"no_address": "No Address",
+		"not_detected": "Not detected"
+	},
+	"temperature": {
+		"use_fahrenheit": false
+	}
+}
