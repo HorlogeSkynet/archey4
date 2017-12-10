@@ -25,6 +25,7 @@ import re
 
 from enum import Enum
 from math import floor
+from glob import glob
 from os import getenv, getuid
 from subprocess import Popen, PIPE, DEVNULL, check_output, \
                        CalledProcessError, TimeoutExpired
@@ -383,6 +384,7 @@ PROCESSES = check_output([
 # Default strings for non-reachable information
 NO_ADDRESS = 'No Address'
 NOT_DETECTED = 'Not detected'
+TEMP_FAHRENHEIT = False
 
 
 # -------------- Classes -------------- #
@@ -561,6 +563,47 @@ class Terminal:
         self.value = getenv('TERM', NOT_DETECTED)
 
 
+class Temperature:
+    def __init__(self):
+        temps = []
+
+        try:
+            # Let's try to retrieve a value from 'Broadcom' chip on Raspberry
+            temp = float(re.findall(
+                '\d+\.\d+',
+                check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'],
+                             stderr=DEVNULL).decode())[0])
+            temps.append(
+                self.convertToFahrenheit(temp) if TEMP_FAHRENHEIT else temp)
+
+        except (FileNotFoundError, CalledProcessError):
+            pass
+
+        # Now we just check for values within files present in the path below
+        for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
+            with open(thermalFile) as file:
+                temp = float(file.read().strip()) / 1000
+                if temp != 0.0:
+                    temps.append(
+                        self.convertToFahrenheit(temp) if TEMP_FAHRENHEIT
+                        else temp)
+
+        if temps:
+            self.value = '{0} {2} (Max. {1} {2})'.format(
+                str(round(sum(temps) / len(temps), 1)),
+                str(round(max(temps), 1)),
+                'F' if TEMP_FAHRENHEIT else 'C')
+
+        else:
+            self.value = NOT_DETECTED
+
+    """
+    Simple Celsius to Fahrenheit conversion method
+    """
+    def convertToFahrenheit(self, temp):
+        return temp * (9 / 5) + 32
+
+
 class Packages:
     def __init__(self):
         for packagesTool in [['pacman', '-Q'],
@@ -711,6 +754,7 @@ class Classes(Enum):
     Shell = Shell
     Terminal = Terminal
     Packages = Packages
+    Temperature = Temperature
     CPU = CPU
     GPU = GPU
     RAM = RAM
