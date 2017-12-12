@@ -471,8 +471,9 @@ class Model:
             # Let's retrieve the Hardware and Revision IDs with `/proc/cpuinfo`
             with open('/proc/cpuinfo') as file:
                 output = file.read()
-                hardware = re.search('(?<=Hardware\t: ).*', output)
-                revision = re.search('(?<=Revision\t: ).*', output)
+
+            hardware = re.search('(?<=Hardware\t: ).*', output)
+            revision = re.search('(?<=Revision\t: ).*', output)
 
             # If the output contains 'Hardware' and 'Revision'...
             if hardware and revision:
