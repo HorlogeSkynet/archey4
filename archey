@@ -801,5 +801,7 @@ if __name__ == '__main__':
 
     output = Output()
     for key in Classes:
-        output.append(key.name, key.value().value)
+        if config['entries'].get(key.name, True):
+            output.append(key.name, key.value().value)
+
     output.output()

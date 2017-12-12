@@ -1,4 +1,24 @@
 {
+	"entries": {
+		"User": true,
+		"Hostname": true,
+		"Model": true,
+		"Distro": true,
+		"Kernel": true,
+		"Uptime": true,
+		"WindowManager": true,
+		"DesktopEnvironment": true,
+		"Shell": true,
+		"Terminal": true,
+		"Packages": true,
+		"Temperature": true,
+		"CPU": true,
+		"GPU": true,
+		"RAM": true,
+		"Disk": true,
+		"LAN_IP": true,
+		"WAN_IP": true
+	},
 	"default_strings": {
 		"no_address": "No Address",
 		"not_detected": "Not detected"
