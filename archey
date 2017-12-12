@@ -24,13 +24,12 @@
 import json
 import os
 import re
-
 from enum import Enum
-from math import floor
 from glob import glob
+from math import floor
 from os import getenv, getuid
-from subprocess import Popen, PIPE, DEVNULL, check_output, \
-                       CalledProcessError, TimeoutExpired
+from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
+    TimeoutExpired, check_output
 
 
 # -------------- Enumerations -------------- #
@@ -373,7 +372,9 @@ logosDict = {
 {c[1]}                                       {r[17]}\n"""
 }
 
+
 # ----------- Configuration ----------- #
+
 config = {
     'default_strings': {
         'no_address': 'No Address',
@@ -670,7 +671,8 @@ class GPU:
         try:
             gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'],
                                    stdin=Popen(['lspci'],
-                                   stdout=PIPE, stderr=DEVNULL).stdout
+                                               stdout=PIPE,
+                                               stderr=DEVNULL).stdout
                                    ).decode().split(': ')[1].rstrip()
 
             # If the line got too long, let's truncate it and add some dots...
