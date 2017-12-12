@@ -741,14 +741,36 @@ class Disk:
 class LAN_IP:
     def __init__(self):
         try:
-            self.value = ', '.join(check_output(['hostname', '-I'],
-                                                stderr=DEVNULL
-                                                ).decode().rstrip().split()
-                                   ) or config['default_strings']['no_address']
+            addresses = ', '.join(check_output(['hostname', '-I'],
+                                               stderr=DEVNULL
+                                               ).decode().rstrip().split())
 
-        except CalledProcessError:
+        except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
-            self.value = ', '.join(check_output(['cut', '-d', ' ', '-f', '3'], stdin=Popen(['cut', '-d', '/', '-f', '1'], stdout=PIPE, stdin=Popen(['tr', '-s', ' '], stdout=PIPE, stdin=Popen(['grep', '-v', ' lo'], stdout=PIPE, stdin=Popen(['grep', 'inet '], stdout=PIPE, stdin=Popen(['ip', 'addr', 'show', 'up'], stdout=PIPE).stdout).stdout).stdout).stdout).stdout).decode().split()) or config['default_strings']['no_address']
+            addresses = ', '.join(
+                check_output(
+                    ['cut', '-d', ' ', '-f', '3'],
+                    stdin=Popen(['cut', '-d', '/', '-f', '1'],
+                                stdout=PIPE,
+                                stdin=Popen(['tr', '-s', ' '],
+                                            stdout=PIPE,
+                                            stdin=Popen(['grep', '-v', ' lo'],
+                                                        stdout=PIPE,
+                                                        stdin=Popen(
+                                                            ['grep', 'inet '],
+                                                            stdout=PIPE,
+                                                            stdin=Popen([
+                                                                'ip', 'addr',
+                                                                'show', 'up'],
+                                                                stdout=PIPE
+                                                                ).stdout
+                                                            ).stdout
+                                                        ).stdout
+                                            ).stdout
+                                ).stdout
+                    ).decode().split())
+
+        self.value = addresses or config['default_strings']['no_address']
 
 
 class WAN_IP:
