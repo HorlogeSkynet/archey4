@@ -375,32 +375,64 @@ logosDict = {
 
 # ----------- Configuration ----------- #
 
-config = {
-    'default_strings': {
-        'no_address': 'No Address',
-        'not_detected': 'Not detected'
-    },
-    'temperature': {
-        'use_fahrenheit': False
-    }
-}
+class Configuration():
+    def __init__(self):
+        """
+        Represents the default configuration which will be used by Archey.
+        Values present in the dictionary below are needed.
+        New optional values may be added with `updateRecursive()` method.
+        """
+        self.config = {
+            'default_strings': {
+                'no_address': 'No Address',
+                'not_detected': 'Not detected'
+            },
+            'temperature': {
+                'char_before_unit': ' ',
+                'use_fahrenheit': False
+            }
+        }
+
+    def get(self, key, default=None):
+        """
+        A binding method to imitate the `dict.get()` behavior.
+        """
+        return self.config.get(key, default)
+
+    def loadConfiguration(self, path):
+        if not path.endswith('/'):
+            path += '/'
+
+        path += 'config.json'
+
+        try:
+            with open(path) as file:
+                self.updateRecursive(self.config, json.load(file))
+
+        except FileNotFoundError:
+            pass
+
+        except json.JSONDecodeError as e:
+            print('Warning: {0} ({1})'.format(e, path))
+
+    def updateRecursive(self, oldDict, newDict):
+        """
+        A method for recursively merging dictionaries as...
+        ... `dict.update()` is not able to do this.
+        Original snippet taken from here :
+        https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
+        """
+        for key in newDict.keys():
+            if key in oldDict and isinstance(oldDict[key], dict) \
+                    and isinstance(newDict[key], dict):
+                self.updateRecursive(oldDict[key], newDict[key])
+
+            else:
+                oldDict[key] = newDict[key]
 
 
-def loadConfiguration(path):
-    if not path.endswith('/'):
-        path += '/'
-
-    path += 'config.json'
-
-    try:
-        with open(path) as file:
-            config.update(json.load(file))
-
-    except FileNotFoundError:
-        pass
-
-    except json.JSONDecodeError as e:
-        print('Warning: {0} ({1})'.format(e, path))
+# We create a global instance of our `Configuration` Class
+config = Configuration()
 
 
 # ---------- Global variables --------- #
@@ -453,7 +485,8 @@ class Output:
 
 class User:
     def __init__(self):
-        self.value = getenv('USER', config['default_strings']['not_detected'])
+        self.value = getenv('USER',
+                            config.get('default_strings')['not_detected'])
 
 
 class Hostname:
@@ -513,7 +546,7 @@ class Model:
                         model = 'Bare-metal environment'
 
                 except (FileNotFoundError, CalledProcessError):
-                    model = config['default_strings']['not_detected']
+                    model = config.get('default_strings')['not_detected']
 
         self.value = model
 
@@ -561,7 +594,7 @@ class WindowManager:
                     break
 
             else:
-                wm = config['default_strings']['not_detected']
+                wm = config.get('default_strings')['not_detected']
 
         self.value = wm
 
@@ -576,19 +609,21 @@ class DesktopEnvironment:
         else:
             # Let's rely on an environment var if the loop above didn't `break`
             de = getenv('XDG_CURRENT_DESKTOP',
-                        config['default_strings']['not_detected'])
+                        config.get('default_strings')['not_detected'])
 
         self.value = de
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv('SHELL', config['default_strings']['not_detected'])
+        self.value = getenv('SHELL',
+                            config.get('default_strings')['not_detected'])
 
 
 class Terminal:
     def __init__(self):
-        self.value = getenv('TERM', config['default_strings']['not_detected'])
+        self.value = getenv('TERM',
+                            config.get('default_strings')['not_detected'])
 
 
 class Temperature:
@@ -603,7 +638,7 @@ class Temperature:
                              stderr=DEVNULL).decode())[0])
             temps.append(
                 self.convertToFahrenheit(temp)
-                if config['temperature']['use_fahrenheit'] else temp)
+                if config.get('temperature')['use_fahrenheit'] else temp)
 
         except (FileNotFoundError, CalledProcessError):
             pass
@@ -615,16 +650,18 @@ class Temperature:
                 if temp != 0.0:
                     temps.append(
                         self.convertToFahrenheit(temp)
-                        if config['temperature']['use_fahrenheit'] else temp)
+                        if config.get('temperature')['use_fahrenheit']
+                        else temp)
 
         if temps:
-            self.value = '{0} {2} (Max. {1} {2})'.format(
+            self.value = '{0}{3}{2} (Max. {1}{3}{2})'.format(
                 str(round(sum(temps) / len(temps), 1)),
                 str(round(max(temps), 1)),
-                'F' if config['temperature']['use_fahrenheit'] else 'C')
+                'F' if config.get('temperature')['use_fahrenheit'] else 'C',
+                config.get('temperature')['char_before_unit'])
 
         else:
-            self.value = config['default_strings']['not_detected']
+            self.value = config.get('default_strings')['not_detected']
 
     """
     Simple Celsius to Fahrenheit conversion method
@@ -654,7 +691,7 @@ class Packages:
                 pass
 
         else:
-            packages = config['default_strings']['not_detected']
+            packages = config.get('default_strings')['not_detected']
 
         self.value = packages
 
@@ -681,7 +718,7 @@ class GPU:
                                      gpuinfo)[0].strip() + '...'
 
         except (FileNotFoundError, CalledProcessError):
-            gpuinfo = config['default_strings']['not_detected']
+            gpuinfo = config.get('default_strings')['not_detected']
 
         self.value = gpuinfo
 
@@ -770,7 +807,7 @@ class LAN_IP:
                                 ).stdout
                     ).decode().split())
 
-        self.value = addresses or config['default_strings']['no_address']
+        self.value = addresses or config.get('default_strings')['no_address']
 
 
 class WAN_IP:
@@ -789,7 +826,7 @@ class WAN_IP:
                                            ], timeout=1).decode()
 
         except (CalledProcessError, TimeoutExpired):
-            self.value = config['default_strings']['no_address']
+            self.value = config.get('default_strings')['no_address']
 
 
 # -------------- Classes' Enumeration -------------- #
@@ -820,9 +857,9 @@ class Classes(Enum):
 if __name__ == '__main__':
 
     # Load global and local configurations in a "regular" order (all optional)
-    loadConfiguration('/etc/archey4/')
-    loadConfiguration(os.getcwd() + '/.config/archey4/')
-    loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
+    config.loadConfiguration('/etc/archey4/')
+    config.loadConfiguration(os.getcwd() + '/.config/archey4/')
+    config.loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
     output = Output()
     for key in Classes:

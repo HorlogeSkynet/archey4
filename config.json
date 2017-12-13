@@ -24,6 +24,7 @@
 		"not_detected": "Not detected"
 	},
 	"temperature": {
+		"char_before_unit": " ",
 		"use_fahrenheit": false
 	}
 }
