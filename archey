@@ -422,13 +422,13 @@ class Configuration():
         Original snippet taken from here :
         https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
         """
-        for key in newDict.keys():
+        for key, value in newDict.items():
             if key in oldDict and isinstance(oldDict[key], dict) \
-                    and isinstance(newDict[key], dict):
-                self.updateRecursive(oldDict[key], newDict[key])
+                    and isinstance(value, dict):
+                self.updateRecursive(oldDict[key], value)
 
             else:
-                oldDict[key] = newDict[key]
+                oldDict[key] = value
 
 
 # We create a global instance of our `Configuration` Class
