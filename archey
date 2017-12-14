@@ -431,18 +431,22 @@ class Configuration():
                 oldDict[key] = value
 
 
+# ---------- Global variables --------- #
+
 # We create a global instance of our `Configuration` Class
 config = Configuration()
 
-
-# ---------- Global variables --------- #
-
 # We'll list the running processes only one time
-PROCESSES = check_output([
-                          'ps',
-                          '-u' + str(getuid()) if getuid() != 0 else '-ax',
-                          '-o', 'comm', '--no-headers'
-                        ]).decode().rstrip().split('\n')
+try:
+    PROCESSES = check_output([
+                              'ps',
+                              '-u' + str(getuid()) if getuid() != 0 else '-ax',
+                              '-o', 'comm', '--no-headers'
+                            ]).decode().split('\n')
+
+except FileNotFoundError:
+    print('Please, install first `procps` on your distribution.')
+    exit()
 
 
 # -------------- Classes -------------- #
@@ -524,7 +528,7 @@ class Model:
                                                        'virt-what'
                                                       ],
                                                       stderr=DEVNULL)
-                                         .decode().rstrip().split())
+                                         .decode().split())
 
                     if virtWhat:
                         try:
@@ -780,7 +784,7 @@ class LAN_IP:
         try:
             addresses = ', '.join(check_output(['hostname', '-I'],
                                                stderr=DEVNULL
-                                               ).decode().rstrip().split())
+                                               ).decode().split())
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
