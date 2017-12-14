@@ -1,4 +1,5 @@
 {
+	"allow_overriding": true,
 	"entries": {
 		"User": true,
 		"Hostname": true,

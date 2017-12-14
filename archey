@@ -400,6 +400,11 @@ class Configuration():
         return self.config.get(key, default)
 
     def loadConfiguration(self, path):
+        # If a previous configuration file has denied overriding...
+        if not self.config.get('allow_overriding', True):
+            #  ... don't load this one.
+            return
+
         if not path.endswith('/'):
             path += '/'
 

@@ -86,11 +86,35 @@ $ archey
 Since the version 1.4.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
 You can place a [`config.json`](config.json) file in these locations :
 
-1. `./config.json` (beside the script itself)
-2. `~/.config/archey4/config.json` (in your home directory)
-3. `/etc/archey4/config.json`
+1. `/etc/archey4/config.json` (system preferences)
+2. `~/.config/archey4/config.json` (user preferences)
+3. `./config.json` (local preferences)
 
-If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).
+**If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).**
+
+The [example file](config.json) provided in this repository lists exhaustively the parameters you can set.  
+Below, some further explanations of each option available :
+
+```cpp
+{
+	// If set to `false`, configurations defined afterwards won't be loaded.
+	// Developers running Archey from the original project may keep in there the original `config.json` while having their own external configuration set elsewhere.
+	"allow_overriding": true,
+	"entries": {
+		// Set to `false` each entry you want to mask.
+	},
+	"default_strings": {
+		// Use this section to override default strings.
+	},
+	"temperature": {
+		// The character to display between the temperature value and the unit (as '°' in 53.2°C).
+		// Set to ' ' (space) by default for backward compatibility with non-Unicode locales.
+		"char_before_unit": " ",
+		// Display temperature values in Fahrenheit instead of Celsius.
+		"use_fahrenheit": false
+	}
+}
+```
 
 ## Notes to users
 
