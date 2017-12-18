@@ -20,6 +20,9 @@
 		"LAN_IP": true,
 		"WAN_IP": true
 	},
+	"colors_palette": {
+		"use_unicode": false
+	},
 	"default_strings": {
 		"no_address": "No Address",
 		"not_detected": "Not detected"

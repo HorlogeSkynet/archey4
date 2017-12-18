@@ -103,6 +103,11 @@ Below, some further explanations of each option available :
 	"entries": {
 		// Set to `false` each entry you want to mask.
 	},
+	"colors_palette": {
+		// Set this option to `true` to display a beautiful colors palette.
+		// `false` by default for backward compatibility with non-Unicode locales.
+		"use_unicode": false
+	},
 	"default_strings": {
 		// Use this section to override default strings.
 	},

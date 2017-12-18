@@ -383,6 +383,9 @@ class Configuration():
         New optional values may be added with `updateRecursive()` method.
         """
         self.config = {
+            'colors_palette': {
+                'use_unicode': False
+            },
             'default_strings': {
                 'no_address': 'No Address',
                 'not_detected': 'Not detected'
@@ -631,8 +634,21 @@ class Shell:
 
 class Terminal:
     def __init__(self):
-        self.value = getenv('TERM',
-                            config.get('default_strings')['not_detected'])
+        terminal = getenv('TERM',
+                          config.get('default_strings')['not_detected'])
+
+        # On systems with non-Unicode locales, we imitate '\u2588' character
+        # ... with '#' to display the terminal colors palette.
+        # This is the default option for backward compatibility.
+        colors = ' '.join([
+            '\033[00;3{0}m{1}\033[01;3{0}m{1}{2}'.format(
+                i,
+                '\u2588' if config.get('colors_palette')['use_unicode']
+                else '#',
+                colorDict['clear']
+            ) for i in range(7, 0, -1)])
+
+        self.value = terminal + ' ' + colors
 
 
 class Temperature:
