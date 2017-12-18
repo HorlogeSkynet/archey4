@@ -96,7 +96,7 @@ wmDict = {
     'fvwm': 'FVWM',
     'i3': 'i3',
     'icewm': 'IceWM',
-    'kwin': 'KWin',
+    'kwin_x11': 'KWin',
     'metacity': 'Metacity',
     'musca': 'Musca',
     'openbox': 'Openbox',
