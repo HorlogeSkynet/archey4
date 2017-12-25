@@ -884,7 +884,7 @@ if __name__ == '__main__':
 
     # Load global and local configurations in a "regular" order (all optional)
     config.loadConfiguration('/etc/archey4/')
-    config.loadConfiguration(os.getcwd() + '/.config/archey4/')
+    config.loadConfiguration(os.path.expanduser('~') + '/.config/archey4/')
     config.loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
     output = Output()
