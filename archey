@@ -803,10 +803,11 @@ class Disk:
 
 class LAN_IP:
     def __init__(self):
+        max_count = int(config.get('ip_settings')['lan_ip_max_count'])
         try:
             addresses = ', '.join(check_output(['hostname', '-I'],
                                                stderr=DEVNULL
-                                               ).decode().split())
+                                               ).decode().split()[:max_count])
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
@@ -831,7 +832,7 @@ class LAN_IP:
                                                         ).stdout
                                             ).stdout
                                 ).stdout
-                    ).decode().split())
+                    ).decode().split()[:max_count])
 
         self.value = addresses or config.get('default_strings')['no_address']
 

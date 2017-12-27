@@ -28,6 +28,7 @@
 		"not_detected": "Not detected"
 	},
 	"ip_settings": {
+		"lan_ip_max_count": 2,
 		"wan_ip_v6_support": true
 	},
 	"temperature": {
