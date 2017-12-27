@@ -839,17 +839,30 @@ class LAN_IP:
 class WAN_IP:
     def __init__(self):
         try:
+            ipv4_value = ""
             try:
-                self.value = check_output([
+                ipv4_value = check_output([
                                            'dig', '+short', 'myip.opendns.com',
                                            '@resolver1.opendns.com'
                                           ], timeout=1, stderr=DEVNULL
                                           ).decode().rstrip()
 
             except FileNotFoundError:
-                self.value = check_output([
+                ipv4_value = check_output([
                                            'wget', '-qO-', 'https://ident.me/'
                                            ], timeout=1).decode()
+
+            if config.get('ip_settings')['wan_ip_v6_support']:
+                try:
+                        ipv6_value = check_output([
+                                                   'dig', '+short', '-6', 'myip.opendns.com',
+                                                   'aaaa', '@resolver1.ipv6-sandbox.opendns.com'
+                                                  ], timeout=1, stderr=DEVNULL
+                                                  ).decode().rstrip()
+                        self.value = ', '.join((ipv4_value + '\n' + ipv6_value).split())
+
+                except (FileNotFoundError, TimeoutExpired):
+                        self.value = ipv4_value
 
         except (CalledProcessError, TimeoutExpired):
             self.value = config.get('default_strings')['no_address']
