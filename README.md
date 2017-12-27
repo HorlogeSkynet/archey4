@@ -1,6 +1,6 @@
 # Archey 4
 
-![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.0)
+![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.1)
 
 ## Why (again) a f*cking new Archey fork ?
 
@@ -83,7 +83,7 @@ $ archey
 
 ## Configuration (optional)
 
-Since the version 1.4.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
+Since the version 4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
 You can place a [`config.json`](config.json) file in these locations :
 
 1. `/etc/archey4/config.json` (system preferences)
