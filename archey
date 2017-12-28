@@ -390,6 +390,10 @@ class Configuration():
                 'no_address': 'No Address',
                 'not_detected': 'Not detected'
             },
+	    'ip_settings': {
+                'lan_ip_max_count': 2,
+                'wan_ip_v6_support': True
+            },
             'temperature': {
                 'char_before_unit': ' ',
                 'use_fahrenheit': False
@@ -840,20 +844,20 @@ class LAN_IP:
 class WAN_IP:
     def __init__(self):
         try:
-            ipv4_value = ""
             try:
-                ipv4_value = check_output([
+                self.value = check_output([
                                            'dig', '+short', 'myip.opendns.com',
                                            '@resolver1.opendns.com'
                                           ], timeout=1, stderr=DEVNULL
                                           ).decode().rstrip()
 
             except FileNotFoundError:
-                ipv4_value = check_output([
+                self.value = check_output([
                                            'wget', '-qO-', 'https://ident.me/'
                                            ], timeout=1).decode()
 
             if config.get('ip_settings')['wan_ip_v6_support']:
+                ipv4_value = self.value
                 try:
                         ipv6_value = check_output([
                                                    'dig', '+short', '-6', 'myip.opendns.com',
