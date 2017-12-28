@@ -886,7 +886,7 @@ class WAN_IP:
                 ipv4_value = None
 
         self.value = ', '.join(
-            '{0}\n{1}'.format(ipv6_value or '', ipv4_value or '').split()
+            '{0}\n{1}'.format(ipv4_value or '', ipv6_value or '').split()
         ) or config.get('default_strings')['no_address']
 
 
