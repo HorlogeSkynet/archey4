@@ -390,7 +390,7 @@ class Configuration():
                 'no_address': 'No Address',
                 'not_detected': 'Not detected'
             },
-	    'ip_settings': {
+            'ip_settings': {
                 'lan_ip_max_count': 2,
                 'wan_ip_v6_support': True
             },
@@ -807,16 +807,13 @@ class Disk:
 
 class LAN_IP:
     def __init__(self):
-        max_count = int(config.get('ip_settings')['lan_ip_max_count'])
         try:
-            addresses = ', '.join(check_output(['hostname', '-I'],
-                                               stderr=DEVNULL
-                                               ).decode().split()[:max_count])
+            addresses = check_output(['hostname', '-I'], stderr=DEVNULL
+                                     ).decode().split()
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
-            addresses = ', '.join(
-                check_output(
+            addresses = check_output(
                     ['cut', '-d', ' ', '-f', '3'],
                     stdin=Popen(['cut', '-d', '/', '-f', '1'],
                                 stdout=PIPE,
@@ -836,9 +833,16 @@ class LAN_IP:
                                                         ).stdout
                                             ).stdout
                                 ).stdout
-                    ).decode().split()[:max_count])
+                    ).decode().split()
 
-        self.value = addresses or config.get('default_strings')['no_address']
+        # Use list slice to save only `lan_ip_max_count` addresses.
+        # If set to `False`, don't modify the list.
+        # This option is still optional.
+        self.value = ', '.join(addresses[:(
+            config.get('ip_settings')['lan_ip_max_count']
+            if config.get('ip_settings')['lan_ip_max_count'] is not False
+            else len(addresses)
+            )]) or config.get('default_strings')['no_address']
 
 
 class WAN_IP:
