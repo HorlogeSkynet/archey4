@@ -11,6 +11,7 @@
 # Changes Jerome Launay <jerome@projet-libre.org>
 # Fedora support by YeOK <yeok@henpen.org>
 # First IP handling by Normand Cyr <normand.cyr@gmail.com>
+# First IPv6 support by Si13n7 <admin@si13n7.com>
 #
 # Currently maintained by Samuel FORESTIER <archey@samuel.domains>
 #
@@ -820,20 +821,15 @@ class LAN_IP:
                                 stdin=Popen(['tr', '-s', ' '],
                                             stdout=PIPE,
                                             stdin=Popen(['grep', '-E',
-                                                        'inet6? '],
-                                                        stdout=PIPE,
-                                                        stdin=Popen(
-                                                            ['grep', '-E',
-                                                             'scope '
-                                                             '(global|site)'],
-                                                            stdout=PIPE,
-                                                            stdin=Popen([
-                                                                'ip', '-o',
-                                                                'addr',
-                                                                'show', 'up'],
-                                                                stdout=PIPE
-                                                                ).stdout
-                                                            ).stdout
+                                                         'scope (global|site)'
+                                                         ], stdout=PIPE,
+                                                        stdin=Popen(['ip',
+                                                                     '-o',
+                                                                     'addr',
+                                                                     'show',
+                                                                     'up'],
+                                                                    stdout=PIPE
+                                                                    ).stdout
                                                         ).stdout
                                             ).stdout
                                 ).stdout
