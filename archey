@@ -814,18 +814,22 @@ class LAN_IP:
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
             addresses = check_output(
-                    ['cut', '-d', ' ', '-f', '3'],
+                    ['cut', '-d', ' ', '-f', '4'],
                     stdin=Popen(['cut', '-d', '/', '-f', '1'],
                                 stdout=PIPE,
                                 stdin=Popen(['tr', '-s', ' '],
                                             stdout=PIPE,
-                                            stdin=Popen(['grep', '-v', ' lo'],
+                                            stdin=Popen(['grep', '-E',
+                                                        'inet6? '],
                                                         stdout=PIPE,
                                                         stdin=Popen(
-                                                            ['grep', 'inet '],
+                                                            ['grep', '-E',
+                                                             'scope '
+                                                             '(global|site)'],
                                                             stdout=PIPE,
                                                             stdin=Popen([
-                                                                'ip', 'addr',
+                                                                'ip', '-o',
+                                                                'addr',
                                                                 'show', 'up'],
                                                                 stdout=PIPE
                                                                 ).stdout
