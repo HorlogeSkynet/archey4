@@ -111,6 +111,13 @@ Below, some further explanations of each option available :
 	"default_strings": {
 		// Use this section to override default strings.
 	},
+	"ip_settings": {
+		// The maximum number of local addresses you want to display.
+		// `false` --> Unlimited.
+		"lan_ip_max_count": 2,
+		// `false` would make Archey displays only IPv4 WAN addresses.
+		"wan_ip_v6_support": true
+	},
 	"temperature": {
 		// The character to display between the temperature value and the unit (as '°' in 53.2°C).
 		// Set to ' ' (space) by default for backward compatibility with non-Unicode locales.
