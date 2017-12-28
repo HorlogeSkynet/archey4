@@ -843,34 +843,47 @@ class LAN_IP:
 
 class WAN_IP:
     def __init__(self):
-        try:
+        # IPv6 address retrieval (unless the user doesn't want it).
+        if config.get('ip_settings')['wan_ip_v6_support']:
             try:
-                self.value = check_output([
-                                           'dig', '+short', 'myip.opendns.com',
-                                           '@resolver1.opendns.com'
-                                          ], timeout=1, stderr=DEVNULL
-                                          ).decode().rstrip()
+                ipv6_value = check_output([
+                    'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
+                    '@resolver1.ipv6-sandbox.opendns.com'
+                    ], timeout=0.5, stderr=DEVNULL).decode().rstrip()
 
-            except FileNotFoundError:
-                self.value = check_output([
-                                           'wget', '-qO-', 'https://ident.me/'
-                                           ], timeout=1).decode()
-
-            if config.get('ip_settings')['wan_ip_v6_support']:
-                ipv4_value = self.value
+            except (FileNotFoundError, TimeoutExpired):
                 try:
-                        ipv6_value = check_output([
-                                                   'dig', '+short', '-6', 'myip.opendns.com',
-                                                   'aaaa', '@resolver1.ipv6-sandbox.opendns.com'
-                                                  ], timeout=1, stderr=DEVNULL
-                                                  ).decode().rstrip()
-                        self.value = ', '.join((ipv4_value + '\n' + ipv6_value).split())
+                    ipv6_value = check_output([
+                        'wget', '-qO-', 'https://v6.ident.me/'
+                        ], timeout=1).decode()
 
-                except (FileNotFoundError, TimeoutExpired):
-                        self.value = ipv4_value
+                except (CalledProcessError, TimeoutExpired):
+                    # It looks like this user doesn't have any IPv6 address...
+                    # ... or is not connected to Internet.
+                    ipv6_value = None
 
-        except (CalledProcessError, TimeoutExpired):
-            self.value = config.get('default_strings')['no_address']
+        else:
+            ipv6_value = None
+
+        # IPv4 addresses retrieval (anyway).
+        try:
+            ipv4_value = check_output([
+                'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
+                ], timeout=0.5, stderr=DEVNULL).decode().rstrip()
+
+        except (FileNotFoundError, TimeoutExpired):
+            try:
+                ipv4_value = check_output([
+                    'wget', '-qO-', 'https://v4.ident.me/'
+                    ], timeout=1).decode()
+
+            except (CalledProcessError, TimeoutExpired):
+                # This user looks not connected to Internet...
+                ipv4_value = None
+
+        self.value = ', '.join(
+            '{0}\n{1}'.format(ipv6_value or '', ipv4_value or '').split()
+        ) or config.get('default_strings')['no_address']
 
 
 # -------------- Classes' Enumeration -------------- #
