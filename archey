@@ -425,7 +425,9 @@ class Configuration():
         except FileNotFoundError:
             pass
 
-        except json.JSONDecodeError as e:
+        # For backward compatibility with Python versions prior to 3.5.0
+        #   we use `ValueError` instead of `json.JSONDecodeError`.
+        except ValueError as e:
             print('Warning: {0} ({1})'.format(e, path))
 
     def updateRecursive(self, oldDict, newDict):
