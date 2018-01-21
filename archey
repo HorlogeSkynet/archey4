@@ -49,6 +49,7 @@ class Distributions(Enum):
     OPENSUSE = 'openSUSE'
     RED_HAT = 'Red Hat'
     UBUNTU = 'Ubuntu'
+    WINDOWS = 'Windows'
 
 
 # -------------- Dictionaries -------------- #
@@ -67,6 +68,7 @@ colorDict = {
     Distributions.OPENSUSE: ['\x1b[1;37m', '\x1b[1;32m'],
     Distributions.RED_HAT: ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
     Distributions.UBUNTU: ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
+    Distributions.WINDOWS: ['\x1b[1;31m', '\x1b[1;34m', '\x1b[1;32m', '\x1b[0;33m'],
     'sensors': ['\x1b[0;32m', '\x1b[0;33m', '\x1b[0;31m'],
     'clear': '\x1b[0m'
 }
@@ -370,7 +372,26 @@ logosDict = {
 {c[1]}                {c[0]}/hhhhhhhhh{c[2]}-.-:::;{c[1]}      {r[14]}
 {c[1]}                {c[0]}`.:://::- {c[2]}-:::::;{c[1]}      {r[15]}
 {c[1]}                          {c[2]}`.-:-'{c[1]}       {r[16]}
-{c[1]}                                       {r[17]}\n"""
+{c[1]}                                       {r[17]}\n""",
+    Distributions.WINDOWS: """
+                                        {r[0]}
+{c[0]}         ,.=:^!^!t3Z3z.,                {r[1]}
+{c[0]}        :tt:::tt333EE3                  {r[2]}
+{c[0]}        Et:::ztt33EEE  {c[2]}@Ee.,      ..,   {r[3]}
+{c[0]}       ;tt:::tt333EE7 {c[2]};EEEEEEttttt33#   {r[4]}
+{c[0]}      :Et:::zt333EEQ. {c[2]}SEEEEEttttt33QL   {r[5]}
+{c[0]}      it::::tt333EEF {c[2]}@EEEEEEttttt33F    {r[6]}
+{c[0]}     ;3=*^```'*4EEV {c[2]}:EEEEEEttttt33@.    {r[7]}
+{c[1]}     ,.=::::it=., {c[0]}` {c[2]}@EEEEEEtttz33QF     {r[8]}
+{c[1]}    ;::::::::zt33)   {c[2]}'4EEEtttji3P*      {r[9]}
+{c[1]}   :t::::::::tt33.{c[3]}:Z3z..  {c[2]}`` {c[3]},..g.      {r[10]}
+{c[1]}   i::::::::zt33F {c[3]}AEEEtttt::::ztF       {r[11]}
+{c[1]}  ;:::::::::t33V {c[3]};EEEttttt::::t3        {r[12]}
+{c[1]}  E::::::::zt33L {c[3]}@EEEtttt::::z3F        {r[13]}
+{c[1]} {{3=*^```'*4E3) {c[3]};EEEtttt:::::tZ`        {r[14]}
+{c[1]}             ` {c[3]}:EEEEtttt::::z7          {r[15]}
+{c[3]}                 'VEzjt:;;z>*`          {r[16]}
+                                        {r[17]}\n"""
 }
 
 
@@ -479,6 +500,11 @@ class Output:
             exit()
 
         for distribution in Distributions:
+            if re.fullmatch(lsbOutput, "openSUSE") or re.fullmatch(lsbOutput, "Ubuntu"):
+                unameOutput = check_output(['uname', '-r']).decode().rstrip()
+                if re.search("Microsoft", unameOutput):
+                    self.distribution = Distributions.WINDOWS
+                    break
             if re.fullmatch(distribution.value, lsbOutput):
                 self.distribution = distribution
                 break
