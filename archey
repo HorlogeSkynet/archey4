@@ -1,25 +1,4 @@
 #!/usr/bin/env python3
-#
-# archey4
-#
-# -- Archey is a simple system information tool written in Python.
-#
-# Copyright 2010 Melik Manukyan <melik@archlinux.us>
-# Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>
-#
-# ASCII art by Brett Bohnenkamper <kittykatt@silverirc.com>
-# Changes Jerome Launay <jerome@projet-libre.org>
-# Fedora support by YeOK <yeok@henpen.org>
-# First IP handling by Normand Cyr <normand.cyr@gmail.com>
-# First IPv6 support by Si13n7 <admin@si13n7.com>
-#
-# Currently maintained by Samuel FORESTIER <archey@samuel.domains>
-#
-# This program IS A FORK of
-# the original Archey project <https://github.com/djmelik/archey>
-#
-# Distributed under the terms of the GNU General Public License v3.
-# See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 
 
 import json
@@ -68,7 +47,8 @@ colorDict = {
     Distributions.OPENSUSE: ['\x1b[1;37m', '\x1b[1;32m'],
     Distributions.RED_HAT: ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
     Distributions.UBUNTU: ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
-    Distributions.WINDOWS: ['\x1b[1;31m', '\x1b[1;34m', '\x1b[1;32m', '\x1b[0;33m'],
+    Distributions.WINDOWS: ['\x1b[1;31m', '\x1b[1;34m',
+                            '\x1b[1;32m', '\x1b[0;33m'],
     'sensors': ['\x1b[0;32m', '\x1b[0;33m', '\x1b[0;31m'],
     'clear': '\x1b[0m'
 }

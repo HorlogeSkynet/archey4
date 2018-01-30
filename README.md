@@ -1,5 +1,7 @@
 # Archey 4
 
+> Archey is a simple system information tool written in Python
+
 ![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.1)
 
 ## Why (again) a f*cking new Archey fork ?
