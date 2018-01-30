@@ -499,18 +499,18 @@ class Output:
             print('Please, install first `lsb-release` on your distribution.')
             exit()
 
-        for distribution in Distributions:
-            if re.fullmatch(lsbOutput, "openSUSE") or re.fullmatch(lsbOutput, "Ubuntu"):
-                unameOutput = check_output(['uname', '-r']).decode().rstrip()
-                if re.search("Microsoft", unameOutput):
-                    self.distribution = Distributions.WINDOWS
-                    break
-            if re.fullmatch(distribution.value, lsbOutput):
-                self.distribution = distribution
-                break
+        if re.search('Microsoft',
+                     check_output(['uname', '-r']).decode().rstrip()):
+            self.distribution = Distributions.WINDOWS
 
         else:
-            self.distribution = Distributions.LINUX
+            for distribution in Distributions:
+                if re.fullmatch(distribution.value, lsbOutput):
+                    self.distribution = distribution
+                    break
+
+            else:
+                self.distribution = Distributions.LINUX
 
     def append(self, key, value):
         self.results.append('{0}{1}:{2} {3}'.format(
