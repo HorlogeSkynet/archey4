@@ -9,8 +9,8 @@
 The answer is [here](https://horlogeskynet.github.io/archey4).
 
 > Note : Since the 21st September of 2017, you may notice that this repository no longer has the official status of fork.  
-> Actually, the maintainer decided to separate it from the original one's "network" with the help of the _GitHub_'s staff.  
-> Nevertheless, **this piece of software is still a fork of the [djmelik's Archey project](https://github.com/djmelik/archey.git)**.
+> Actually, the maintainer decided to separate it from the original one's "network" with the help of _GitHub_'s staff.  
+> Nevertheless, **this piece of software is still a fork of [djmelik's Archey project](https://github.com/djmelik/archey.git)**.
 
 ## Which packages do I need to run this script ?
 
@@ -33,7 +33,7 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 ### Install from package
 
 First, grab a package for your distribution from the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest).  
-Now, it's time to use your favorite packages manager. Some examples :
+Now, it's time to use your favorite package manager. Some examples :
 
 * Arch-based distributions ([source](https://aur.archlinux.org/packages/archey4/))
 
@@ -57,7 +57,7 @@ Now, it's time to use your favorite packages manager. Some examples :
 
 #### Latest stable release
 
-First, grab the archive containing source code of the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest), and then :
+First, grab the archive containing the source code for the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest), and then :
 
 ```shell
 $ tar xvzf archey4-4.X.Y.tar.gz
@@ -132,10 +132,10 @@ Below, some further explanations of each option available :
 
 ## Notes to users
 
-* If you run `archey` as root, the script will list the processes running by other users on your system in order to display correctly **Window Manager** & **Desktop Environment** outputs.
+* If you run `archey` as root, the script will list the processes running by other users on your system in order to display the **Window Manager** & **Desktop Environment** outputs correctly.
 
 * During the setup procedure, I advised you to copy this script into the `/usr/local/bin/` folder, you may want to check what it does beforehand.
 
-* If you experience any trouble during installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
+* If you experience any trouble during the installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
 
 * If you had to adapt the script to make it working with your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
