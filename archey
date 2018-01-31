@@ -825,7 +825,7 @@ class LAN_IP:
                 # Rather slow manual workaround for old `inetutils` versions, with `ip`
                 addresses = [check_output(
                         ['ip', 'route', 'get', '1.1.1.1'], stderr=DEVNULL
-                        ).decode().split()][6]
+                        ).decode().split()[6]]
             except:
                 addresses = []
         # Use list slice to save only `lan_ip_max_count` addresses.
