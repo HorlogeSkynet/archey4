@@ -821,11 +821,14 @@ class LAN_IP:
                                      ).decode().split()
 
         except (CalledProcessError, FileNotFoundError):
-            # Slow manual workaround for old `inetutils` versions, with `ip`
-            addresses = check_output(
-                    ['ip', 'route', 'get', '1.1.1.1']
-                    ).decode().split()
-            addresses = [addresses[6]]
+            try:
+                # Rather slow manual workaround for old `inetutils` versions, with `ip`
+                addresses = check_output(
+                        ['ip', 'route', 'get', '1.1.1.1'], stderr=DEVNULL
+                        ).decode().split()
+                addresses = [addresses[6]]
+            except:
+                addresses = []
         # Use list slice to save only `lan_ip_max_count` addresses.
         # If set to `False`, don't modify the list.
         # This option is still optional.
@@ -848,6 +851,28 @@ class WAN_IP:
 
             except (FileNotFoundError, TimeoutExpired):
                 try:
+                # Workaround with ip to get the IPv6 address, faster than the
+                # original workaround
+                #ipv6_value = check_output(
+                #    ['tr', '-d', '" "'],
+                #    stdin=Popen(['xargs'],
+                #                stdout=PIPE,
+                #                stdin=Popen(['grep', '-oh', '"\w*:\w*"'],
+                #                            stdout=PIPE,
+                #                            stdin=Popen(['grep', '-E',
+                #                                         'scope (global|site)'
+                #                                         ], stdout=PIPE,
+                #                                        stdin=Popen(['ip',
+                #                                                     '-6',
+                #                                                     'addr',
+                #                                                     'show',
+                #                                                     'up'],
+                #                                                    stdout=PIPE
+                #                                                    ).stdout
+                #                                        ).stdout
+                #                            ).stdout
+                #                ).stdout
+                #    ).decode().split()
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
                         ], timeout=1).decode()
