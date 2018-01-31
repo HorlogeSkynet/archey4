@@ -850,28 +850,6 @@ class WAN_IP:
 
             except (FileNotFoundError, TimeoutExpired):
                 try:
-                # Workaround with ip to get the IPv6 address, faster than the
-                # original workaround
-                #ipv6_value = check_output(
-                #    ['tr', '-d', '" "'],
-                #    stdin=Popen(['xargs'],
-                #                stdout=PIPE,
-                #                stdin=Popen(['grep', '-oh', '"\w*:\w*"'],
-                #                            stdout=PIPE,
-                #                            stdin=Popen(['grep', '-E',
-                #                                         'scope (global|site)'
-                #                                         ], stdout=PIPE,
-                #                                        stdin=Popen(['ip',
-                #                                                     '-6',
-                #                                                     'addr',
-                #                                                     'show',
-                #                                                     'up'],
-                #                                                    stdout=PIPE
-                #                                                    ).stdout
-                #                                        ).stdout
-                #                            ).stdout
-                #                ).stdout
-                #    ).decode().split()
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
                         ], timeout=1).decode()
