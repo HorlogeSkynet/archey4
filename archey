@@ -823,26 +823,9 @@ class LAN_IP:
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
             addresses = check_output(
-                    ['cut', '-d', ' ', '-f', '4'],
-                    stdin=Popen(['cut', '-d', '/', '-f', '1'],
-                                stdout=PIPE,
-                                stdin=Popen(['tr', '-s', ' '],
-                                            stdout=PIPE,
-                                            stdin=Popen(['grep', '-E',
-                                                         'scope (global|site)'
-                                                         ], stdout=PIPE,
-                                                        stdin=Popen(['ip',
-                                                                     '-o',
-                                                                     'addr',
-                                                                     'show',
-                                                                     'up'],
-                                                                    stdout=PIPE
-                                                                    ).stdout
-                                                        ).stdout
-                                            ).stdout
-                                ).stdout
+                    ['ip', 'route', 'get', '1.1.1.1']
                     ).decode().split()
-
+            addresses = [addresses[6]]
         # Use list slice to save only `lan_ip_max_count` addresses.
         # If set to `False`, don't modify the list.
         # This option is still optional.
