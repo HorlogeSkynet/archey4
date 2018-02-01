@@ -34,5 +34,9 @@
 	"temperature": {
 		"char_before_unit": " ",
 		"use_fahrenheit": false
+	},
+	"timeout": {
+		"ipv4_detection": 1,
+		"ipv6_detection": 1
 	}
 }

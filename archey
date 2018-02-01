@@ -399,6 +399,10 @@ class Configuration():
             'temperature': {
                 'char_before_unit': ' ',
                 'use_fahrenheit': False
+            },
+            'timeout': {
+                'ipv4_detection': 1,
+                'ipv6_detection': 1
             }
         }
 
@@ -861,13 +865,15 @@ class WAN_IP:
                 ipv6_value = check_output([
                     'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
                     '@resolver1.ipv6-sandbox.opendns.com'
-                    ], timeout=0.5, stderr=DEVNULL).decode().rstrip()
+                    ], timeout=config.get('timeout')['ipv6_detection'],
+                    stderr=DEVNULL).decode().rstrip()
 
             except (FileNotFoundError, TimeoutExpired):
                 try:
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
-                        ], timeout=1).decode()
+                        ], timeout=config.get('timeout')['ipv6_detection']
+                        ).decode()
 
                 except (CalledProcessError, TimeoutExpired):
                     # It looks like this user doesn't have any IPv6 address...
@@ -881,13 +887,15 @@ class WAN_IP:
         try:
             ipv4_value = check_output([
                 'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
-                ], timeout=0.5, stderr=DEVNULL).decode().rstrip()
+                ], timeout=config.get('timeout')['ipv4_detection'],
+                stderr=DEVNULL).decode().rstrip()
 
         except (FileNotFoundError, TimeoutExpired):
             try:
                 ipv4_value = check_output([
                     'wget', '-qO-', 'https://v4.ident.me/'
-                    ], timeout=1).decode()
+                    ], timeout=config.get('timeout')['ipv4_detection']
+                    ).decode()
 
             except (CalledProcessError, TimeoutExpired):
                 # This user looks not connected to Internet...
