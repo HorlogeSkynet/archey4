@@ -126,6 +126,9 @@ Below, some further explanations of each option available :
 		"char_before_unit": " ",
 		// Display temperature values in Fahrenheit instead of Celsius.
 		"use_fahrenheit": false
+	},
+	"timeout": {
+		// Some values you can adjust if the default ones look undersized for your system (seconds)
 	}
 }
 ```
