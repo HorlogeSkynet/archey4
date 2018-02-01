@@ -399,6 +399,10 @@ class Configuration():
             'temperature': {
                 'char_before_unit': ' ',
                 'use_fahrenheit': False
+            },
+            'timeout': {
+                'ipv6_detection': 0.5,
+                'ipv4_detection': 0.5
             }
         }
 
