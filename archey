@@ -401,8 +401,8 @@ class Configuration():
                 'use_fahrenheit': False
             },
             'timeout': {
-                'ipv6_detection': 0.5,
-                'ipv4_detection': 0.5
+                'ipv4_detection': 1,
+                'ipv6_detection': 1
             }
         }
 
