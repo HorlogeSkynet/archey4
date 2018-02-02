@@ -880,6 +880,10 @@ class WAN_IP:
                     # ... or is not connected to Internet.
                     ipv6_value = None
 
+                except FileNotFoundError:
+                    ipv6_value = None
+                    print('Warning: `wget` has not been found on your system.')
+
         else:
             ipv6_value = None
 
@@ -900,6 +904,12 @@ class WAN_IP:
             except (CalledProcessError, TimeoutExpired):
                 # This user looks not connected to Internet...
                 ipv4_value = None
+
+            except FileNotFoundError:
+                ipv4_value = None
+                # If statement so as to not print the same message twice.
+                if not config.get('ip_settings')['wan_ip_v6_support']:
+                    print('Warning: `wget` has not been found on your system.')
 
         self.value = ', '.join(
             '{0}\n{1}'.format(ipv4_value or '', ipv6_value or '').split()
