@@ -4,6 +4,7 @@
 import json
 import os
 import re
+import sys
 from enum import Enum
 from glob import glob
 from math import floor
@@ -433,7 +434,7 @@ class Configuration():
         # For backward compatibility with Python versions prior to 3.5.0
         #   we use `ValueError` instead of `json.JSONDecodeError`.
         except ValueError as e:
-            print('Warning: {0} ({1})'.format(e, path))
+            print('Warning: {0} ({1})'.format(e, path), file=sys.stderr)
 
     def updateRecursive(self, oldDict, newDict):
         """
@@ -465,7 +466,8 @@ try:
                             ]).decode().split('\n')
 
 except FileNotFoundError:
-    print('Please, install first `procps` on your distribution.')
+    print('Please, install first `procps` on your distribution.',
+          file=sys.stderr)
     exit()
 
 
@@ -480,7 +482,8 @@ class Output:
                                     ]).decode().rstrip()
 
         except FileNotFoundError:
-            print('Please, install first `lsb-release` on your distribution.')
+            print('Please, install first `lsb-release` on your distribution.',
+                  file=sys.stderr)
             exit()
 
         if re.search('Microsoft',
@@ -882,7 +885,8 @@ class WAN_IP:
 
                 except FileNotFoundError:
                     ipv6_value = None
-                    print('Warning: `wget` has not been found on your system.')
+                    print('Warning: `wget` has not been found on your system.',
+                          file=sys.stderr)
 
         else:
             ipv6_value = None
@@ -909,7 +913,8 @@ class WAN_IP:
                 ipv4_value = None
                 # If statement so as to not print the same message twice.
                 if not config.get('ip_settings')['wan_ip_v6_support']:
-                    print('Warning: `wget` has not been found on your system.')
+                    print('Warning: `wget` has not been found on your system.',
+                          file=sys.stderr)
 
         self.value = ', '.join(
             '{0}\n{1}'.format(ipv4_value or '', ipv6_value or '').split()
