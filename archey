@@ -868,7 +868,7 @@ class WAN_IP:
                     ], timeout=config.get('timeout')['ipv6_detection'],
                     stderr=DEVNULL).decode().rstrip()
 
-            except (FileNotFoundError, TimeoutExpired):
+            except (FileNotFoundError, TimeoutExpired, CalledProcessError):
                 try:
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
@@ -890,7 +890,7 @@ class WAN_IP:
                 ], timeout=config.get('timeout')['ipv4_detection'],
                 stderr=DEVNULL).decode().rstrip()
 
-        except (FileNotFoundError, TimeoutExpired):
+        except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
                 ipv4_value = check_output([
                     'wget', '-qO-', 'https://v4.ident.me/'
