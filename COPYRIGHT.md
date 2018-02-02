@@ -17,5 +17,6 @@ See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 * Fedora support by YeOK <yeok@henpen.org>
 * First IP handling by Normand Cyr <normand.cyr@gmail.com>
 * First IPv6 support and Windows subsystems handling by Si13n7 <admin@si13n7.com>
+* Timeout improvements and `hostname` investigations by @AdJaGu <AdJaGu@users.noreply.github.com>
 
 Currently maintained by Samuel FORESTIER <contact@samuel.domains>
