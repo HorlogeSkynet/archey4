@@ -407,6 +407,9 @@ class Configuration():
             }
         }
 
+        # Let's "save" `STDERR` file descriptor for `suppress_warnings` option
+        self._stderr = sys.stderr
+
     def get(self, key, default=None):
         """
         A binding method to imitate the `dict.get()` behavior.
@@ -427,6 +430,13 @@ class Configuration():
         try:
             with open(path) as file:
                 self.updateRecursive(self.config, json.load(file))
+
+            # If the user does not want any warning to appear : 2> /dev/null
+            if config.get('suppress_warnings', False):
+                sys.stderr = open(os.devnull, 'w')
+
+            else:
+                sys.stderr = self._stderr
 
         except FileNotFoundError:
             pass
