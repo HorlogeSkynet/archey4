@@ -433,10 +433,16 @@ class Configuration():
 
             # If the user does not want any warning to appear : 2> /dev/null
             if config.get('suppress_warnings', False):
-                sys.stderr = open(os.devnull, 'w')
+                # One more if statement to avoid multiple `open` calls.
+                if sys.stderr == self._stderr:
+                    sys.stderr = open(os.devnull, 'w')
 
             else:
-                sys.stderr = self._stderr
+                # One more if statement to avoid useless assignments and...
+                # ... for closing previously opened new file descriptor.
+                if sys.stderr != self._stderr:
+                    sys.stderr.close()
+                    sys.stderr = self._stderr
 
         except FileNotFoundError:
             pass
