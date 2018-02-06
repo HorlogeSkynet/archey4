@@ -104,6 +104,9 @@ Below, some further explanations of each option available :
 	// If set to `false`, configurations defined afterwards won't be loaded.
 	// Developers running Archey from the original project may keep in there the original `config.json` while having their own external configuration set elsewhere.
 	"allow_overriding": true,
+	// If set to `true`, any execution warning or error would be hidden.
+	// It may not apply to configuration parsing warnings.
+	"suppress_warnings": false,
 	"entries": {
 		// Set to `false` each entry you want to mask.
 	},

@@ -407,6 +407,14 @@ class Configuration():
             }
         }
 
+        # Let's "save" `STDERR` file descriptor for `suppress_warnings` option
+        self._stderr = sys.stderr
+
+        # Now, let's load each optional configuration file in a "regular" order
+        self.loadConfiguration('/etc/archey4/')
+        self.loadConfiguration(os.path.expanduser('~') + '/.config/archey4/')
+        self.loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
+
     def get(self, key, default=None):
         """
         A binding method to imitate the `dict.get()` behavior.
@@ -427,6 +435,19 @@ class Configuration():
         try:
             with open(path) as file:
                 self.updateRecursive(self.config, json.load(file))
+
+            # If the user does not want any warning to appear : 2> /dev/null
+            if self.config.get('suppress_warnings', False):
+                # One more if statement to avoid multiple `open` calls.
+                if sys.stderr == self._stderr:
+                    sys.stderr = open(os.devnull, 'w')
+
+            else:
+                # One more if statement to avoid useless assignments and...
+                # ... for closing previously opened new file descriptor.
+                if sys.stderr != self._stderr:
+                    sys.stderr.close()
+                    sys.stderr = self._stderr
 
         except FileNotFoundError:
             pass
@@ -946,16 +967,14 @@ class Classes(Enum):
 
 # -------------- Main -------------- #
 
-if __name__ == '__main__':
-
-    # Load global and local configurations in a "regular" order (all optional)
-    config.loadConfiguration('/etc/archey4/')
-    config.loadConfiguration(os.path.expanduser('~') + '/.config/archey4/')
-    config.loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
-
+def main():
     output = Output()
     for key in Classes:
         if config.get('entries', {}).get(key.name, True):
             output.append(key.name, key.value().value)
 
     output.output()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,5 +1,6 @@
 {
 	"allow_overriding": true,
+	"suppress_warnings": false,
 	"entries": {
 		"User": true,
 		"Hostname": true,
