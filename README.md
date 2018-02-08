@@ -147,6 +147,18 @@ Below, some further explanations of each option available :
 }
 ```
 
+## Test cases
+
+Tests are now available. Here is a short procedure to run them (you'll only need `python3`) :
+
+```shell
+$ git clone https://github.com/HorlogeSkynet/archey4.git
+$ cd archey4/
+$ python3 -m unittest
+```
+
+Any improvement would be appreciated.
+
 ## Notes to users
 
 * If you run `archey` as root, the script will list the processes running by other users on your system in order to display the **Window Manager** & **Desktop Environment** outputs correctly.
