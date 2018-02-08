@@ -6,6 +6,10 @@ from archey.archey import Hostname
 
 
 class TestHostnameEntry(unittest.TestCase):
+    """
+    Here, we mock the `check_output` call and check afterwards
+      that the output is correct.
+    """
     @patch(
         'archey.archey.check_output',
         return_value=b'MY-COOL-LAPTOP\n'
