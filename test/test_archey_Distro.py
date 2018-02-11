@@ -14,7 +14,7 @@ class TestDistroEntry(unittest.TestCase):
         'archey.archey.check_output',
         side_effect=[
             b'Distro OS X.Y (name)\n',  # `lsb_release` output
-            b'ARCH\n'                  # `uname` output
+            b'ARCH\n'                   # `uname` output
         ]
     )
     def test(self, check_output_mock):
