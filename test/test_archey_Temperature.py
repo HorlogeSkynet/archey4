@@ -55,7 +55,7 @@ class TestUserEntry(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        side_effect=FileNotFoundError()
+        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
     )
     @patch('archey.archey.glob')
     @patch('archey.archey.config.config', {
@@ -71,6 +71,23 @@ class TestUserEntry(unittest.TestCase):
             Temperature().value,
             '116\.0.?.? \(Max\. 122\.0.?.?\)'  # 46.6 converted into Fahrenheit
         )
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
+    )
+    @patch(
+        'archey.archey.glob',
+        return_value=[]  # No temperature from file will be retrieved
+    )
+    @patch('archey.archey.config.config', {
+            'default_strings': {
+                'not_detected': 'Not detected'
+            }
+        }
+    )
+    def test_no_output(self, glob_mock, check_output_mock):
+        self.assertEqual(Temperature().value, 'Not detected')
 
 
 if __name__ == '__main__':

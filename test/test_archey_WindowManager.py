@@ -43,6 +43,12 @@ class TestHostnameEntry(unittest.TestCase):
         'running',
         'here'
     ])
+    @patch('archey.archey.config.config', {
+            'default_strings': {
+                'not_detected': 'Not detected'
+            }
+        }
+    )
     def test_no_wmctrl_mismatch(self, check_output_mock):
         self.assertEqual(WindowManager().value, 'Not detected')
 
