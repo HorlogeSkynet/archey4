@@ -7,7 +7,8 @@ from archey.archey import Terminal
 
 class TestUserEntry(unittest.TestCase):
     """
-    For this entry, we'll just verify that the output is non-null.
+    For this entry, we'll verify that the output contains what the environment
+      is supposed to give, plus the right number of "colorized" characters.
     """
     @patch(
         'archey.archey.getenv',

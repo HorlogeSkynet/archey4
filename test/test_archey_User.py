@@ -7,7 +7,7 @@ from archey.archey import User
 
 class TestUserEntry(unittest.TestCase):
     """
-    For this entry, we'll just verify that the output is non-null.
+    For this entry, we'll check the output by mocking the `getenv` call.
     """
     @patch(
         'archey.archey.getenv',
