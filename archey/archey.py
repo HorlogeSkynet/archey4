@@ -738,18 +738,28 @@ class Temperature:
 
 class Packages:
     def __init__(self):
-        for packagesTool in [['pacman', '-Q'],
-                             ['dnf', 'list', 'installed'],
-                             ['dpkg', '--get-selections'],
-                             ['zypper', 'search', '--installed-only'],
-                             ['emerge', '-ep', 'world'],
-                             ['rpm', '-qa']]:
+        for packagesTool in [['dnf',    'list',   'installed'],
+                             ['dpkg',   '--get-selections'],
+                             ['emerge', '-ep',    'world'],
+                             ['pacman', '-Q'],
+                             ['rpm',    '-qa'],
+                             ['yum',    'list',   'installed'],
+                             ['zypper', 'search', '-i']]:
             try:
                 results = check_output(packagesTool, stderr=DEVNULL).decode()
                 packages = results.count('\n')
 
-                if 'dpkg' in packagesTool:
+                if 'dnf' in packagesTool:  # Deduct extra heading line
+                    packages -= 1
+
+                elif 'dpkg' in packagesTool:  # Packages removed but not purged
                     packages -= results.count('deinstall')
+
+                elif 'yum' in packagesTool:  # Deduct extra heading lines
+                    packages -= 2
+
+                elif 'zypper' in packagesTool:  # Deduct extra heading lines
+                    packages -= 5
 
                 break
 
