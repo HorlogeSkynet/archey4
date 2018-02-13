@@ -1,0 +1,135 @@
+
+import unittest
+from unittest.mock import patch
+
+from archey.archey import Packages
+
+
+class TestPackagesEntry(unittest.TestCase):
+    """
+    Here, we mock the `check_output` calls and check afterwards
+      that the outputs are correct.
+    Sorry for the code style, mocking this class is pretty boring.
+    """
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            b"""Installed Packages
+GConf2.x86_64                  3.2.6-17.fc26           @@commandline
+GeoIP.x86_64                   1.6.11-1.fc26           @@commandline
+GeoIP-GeoLite-data.noarch      2017.07-1.fc26          @@commandline
+GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
+"""])
+    def test_match_with_dnf(self, check_output_mock):
+        self.assertEqual(Packages().value, 4)
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            b"""accountsservice         install
+acl                     install
+adb                     install
+adduser                 install
+adwaita-icon-theme      install
+albatross-gtk-theme     deinstall
+alien                   install
+"""])
+    def test_match_with_dpkg(self, check_output_mock):
+        self.assertEqual(Packages().value, 6)
+
+    def test_match_with_emerge(self):
+        raise unittest.SkipTest('TO DO')
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            b"""acl 2.2.52-4
+archey4 v4.3.3-1
+archlinux-keyring 20180108-1
+argon2 20171227-3
+"""])
+    def test_match_with_pacman(self, check_output_mock):
+        self.assertEqual(Packages().value, 4)
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            b"""cdrecord-2.01-10.7.el5
+bluez-libs-3.7-1.1
+setarch-2.0-1.1
+MySQL-client-3.23.57-1
+"""])
+    def test_match_with_rpm(self, check_output_mock):
+        self.assertEqual(Packages().value, 4)
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            b"""Loaded plugins: fastestmirror, langpacks
+Installed Packages
+GConf2.x86_64                   3.2.6-8.el7         @base/$releasever
+GeoIP.x86_64                    1.5.0-11.el7        @base            \n\
+ModemManager.x86_64             1.6.0-2.el7         @base            \n\
+ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
+"""])
+    def test_match_with_yum(self, check_output_mock):
+        self.assertEqual(Packages().value, 4)
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            b"""Loading repository data...
+Reading installed packages...
+
+S  | Name          | Summary                             | Type       \n\
+---+---------------+-------------------------------------+------------
+i+ | 5201          | Recommended update for xdg-utils    | patch      \n\
+i  | GeoIP-data    | Free GeoLite country-data for GeoIP | package    \n\
+i  | make          | GNU make                            | package    \n\
+i  | GNOME Nibbles | Guide a worm around a maze          | application
+i  | at            | A Job Manager                       | package    \n\
+"""])
+    def test_match_with_zypper(self, check_output_mock):
+        self.assertEqual(Packages().value, 5)
+
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[  # No packages manager will be found
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError(),
+            FileNotFoundError()
+        ]
+    )
+    @patch(
+        'archey.archey.config',
+        {'default_strings': {'not_detected': 'Not detected'}}
+    )
+    def test_no_packages_manager(self, check_output_mock):
+        self.assertEqual(Packages().value, 'Not detected')
+
+
+if __name__ == '__main__':
+    unittest.main()
