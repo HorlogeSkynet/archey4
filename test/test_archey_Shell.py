@@ -5,7 +5,7 @@ from unittest.mock import patch
 from archey.archey import Shell
 
 
-class TestUserEntry(unittest.TestCase):
+class TestShellEntry(unittest.TestCase):
     """
     For this entry, we'll just verify that the output is non-null.
     """

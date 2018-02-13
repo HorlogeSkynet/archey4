@@ -5,7 +5,7 @@ from unittest.mock import patch
 from archey.archey import WindowManager
 
 
-class TestHostnameEntry(unittest.TestCase):
+class TestWindowManagerEntry(unittest.TestCase):
     """
     Here, we mock the `check_output` call and check afterwards
       that the output is correct.

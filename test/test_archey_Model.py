@@ -5,7 +5,7 @@ from unittest.mock import mock_open, patch
 from archey.archey import Model
 
 
-class TestHostnameEntry(unittest.TestCase):
+class TestModelEntry(unittest.TestCase):
     """
     For this test we have to go through the three possibilities :
     * Laptop / Desktop "regular" environments

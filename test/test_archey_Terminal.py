@@ -5,7 +5,7 @@ from unittest.mock import patch
 from archey.archey import Terminal
 
 
-class TestUserEntry(unittest.TestCase):
+class TestTerminalEntry(unittest.TestCase):
     """
     For this entry, we'll verify that the output contains what the environment
       is supposed to give, plus the right number of "colorized" characters.

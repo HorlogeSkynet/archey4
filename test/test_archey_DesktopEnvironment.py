@@ -5,7 +5,7 @@ from unittest.mock import patch
 from archey.archey import DesktopEnvironment
 
 
-class TestHostnameEntry(unittest.TestCase):
+class TestDesktopEnvironmentEntry(unittest.TestCase):
     """
     With the help of a fake running processes list, we test the DE matching.
     """

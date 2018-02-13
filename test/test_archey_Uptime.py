@@ -5,7 +5,7 @@ from unittest.mock import mock_open, patch
 from archey.archey import Uptime
 
 
-class TestDistroEntry(unittest.TestCase):
+class TestUptimeEntry(unittest.TestCase):
     """
     Here, we mock the `open` call and imitate `/proc/uptime` content.
     """
