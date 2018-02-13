@@ -43,7 +43,7 @@ class TestWindowManagerEntry(unittest.TestCase):
         'running',
         'here'
     ])
-    @patch('archey.archey.config.config', {
+    @patch.dict('archey.archey.config.config', {
             'default_strings': {
                 'not_detected': 'Not detected'
             }

@@ -123,8 +123,8 @@ i  | at            | A Job Manager                       | package    \n\
             FileNotFoundError()
         ]
     )
-    @patch(
-        'archey.archey.config',
+    @patch.dict(
+        'archey.archey.config.config',
         {'default_strings': {'not_detected': 'Not detected'}}
     )
     def test_no_packages_manager(self, check_output_mock):

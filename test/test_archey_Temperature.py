@@ -12,12 +12,9 @@ class TestTemperatureEntry(unittest.TestCase):
     For this entry, we'll just verify that the output is non-null.
     """
 
-    # def __init__(self):
-    #     # We'll store there filenames of some temp files mocking those under
-    #     #  `/sys/class/thermal/thermal_zone*/temp`
-    #     self.tempfiles = None
-
     def setUp(self):
+        # We'll store there filenames of some temp files mocking those under
+        #  `/sys/class/thermal/thermal_zone*/temp`
         self.tempfiles = []
         for temperature in [  # Fake temperatures
                     b'50000',
@@ -58,7 +55,7 @@ class TestTemperatureEntry(unittest.TestCase):
         side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
     )
     @patch('archey.archey.glob')
-    @patch('archey.archey.config.config', {
+    @patch.dict('archey.archey.config.config', {
             'temperature': {
                 'char_before_unit': ' ',
                 'use_fahrenheit': True
@@ -80,7 +77,7 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.archey.glob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    @patch('archey.archey.config.config', {
+    @patch.dict('archey.archey.config.config', {
             'default_strings': {
                 'not_detected': 'Not detected'
             }

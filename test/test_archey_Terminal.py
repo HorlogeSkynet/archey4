@@ -14,7 +14,7 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.archey.getenv',
         return_value='TERMINAL'
     )
-    @patch('archey.archey.config.config', {
+    @patch.dict('archey.archey.config.config', {
             'colors_palette': {'use_unicode': False},
             'default_strings': {'not_detected': 'Not detected'}
         }
@@ -28,7 +28,7 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.archey.getenv',
         return_value='TERMINAL'
     )
-    @patch('archey.archey.config.config', {
+    @patch.dict('archey.archey.config.config', {
             'colors_palette': {'use_unicode': True},
             'default_strings': {'not_detected': 'Not detected'}
         }
