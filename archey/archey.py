@@ -783,16 +783,19 @@ class CPU:
 class GPU:
     def __init__(self):
         try:
-            gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'],
-                                   stdin=Popen(['lspci'],
-                                               stdout=PIPE,
-                                               stderr=DEVNULL).stdout
-                                   ).decode().split(': ')[1].rstrip()
+            gpuinfo = check_output(
+                ['grep', '-E', '3D|VGA|Display'],
+                stdin=Popen(['lspci'],
+                            stdout=PIPE,
+                            stderr=DEVNULL).stdout
+            ).decode().split('\n')[0].split(': ')[1].rstrip()
 
             # If the line got too long, let's truncate it and add some dots...
             if len(gpuinfo) > 48:
-                gpuinfo = re.findall('.{1,45}(?:\W|$)',
-                                     gpuinfo)[0].strip() + '...'
+                # This call truncates `gpuinfo` with words preservation
+                gpuinfo = re.findall(
+                    '.{1,45}(?:\W|$)', gpuinfo
+                )[0].strip() + '...'
 
         except (FileNotFoundError, CalledProcessError):
             gpuinfo = config.get('default_strings')['not_detected']
