@@ -806,10 +806,14 @@ class GPU:
 class RAM:
     def __init__(self):
         try:
-            ram = ''.join(filter(re.compile('M').search,
-                          Popen(['free', '-m'], stdout=PIPE, env={'LANG': 'C'}
-                                ).communicate()[0].decode().split('\n'))
-                          ).split()
+            ram = ''.join(
+                filter(
+                    re.compile('Mem').search,
+                    Popen(['free', '-m'],  # We use `Popen` to specify `env`
+                          stdout=PIPE, env={'LANG': 'C'}
+                          ).stdout.read().decode().split('\n')
+                )
+            ).split()
             used = float(ram[2])
             total = float(ram[1])
 
