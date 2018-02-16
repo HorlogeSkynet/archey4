@@ -862,8 +862,10 @@ class Disk:
 class LAN_IP:
     def __init__(self):
         try:
-            addresses = check_output(['hostname', '-I'], stderr=DEVNULL
-                                     ).decode().split()
+            addresses = check_output(
+                ['hostname', '-I'],
+                stderr=DEVNULL
+            ).decode().split()
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
@@ -886,16 +888,18 @@ class LAN_IP:
                                                         ).stdout
                                             ).stdout
                                 ).stdout
-                    ).decode().split()
+            ).decode().split()
 
-        # Use list slice to save only `lan_ip_max_count` addresses.
+        # Use list slice to save only `lan_ip_max_count` from `addresses`.
         # If set to `False`, don't modify the list.
         # This option is still optional.
-        self.value = ', '.join(addresses[:(
-            config.get('ip_settings')['lan_ip_max_count']
-            if config.get('ip_settings')['lan_ip_max_count'] is not False
-            else len(addresses)
-            )]) or config.get('default_strings')['no_address']
+        self.value = ', '.join(
+            addresses[:(
+                config.get('ip_settings')['lan_ip_max_count']
+                if config.get('ip_settings')['lan_ip_max_count'] is not False
+                else len(addresses)
+            )]
+        ) or config.get('default_strings')['no_address']
 
 
 class WAN_IP:
@@ -907,14 +911,15 @@ class WAN_IP:
                     'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
                     '@resolver1.ipv6-sandbox.opendns.com'
                     ], timeout=config.get('timeout')['ipv6_detection'],
-                    stderr=DEVNULL).decode().rstrip()
+                    stderr=DEVNULL
+                ).decode().rstrip()
 
             except (FileNotFoundError, TimeoutExpired, CalledProcessError):
                 try:
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
                         ], timeout=config.get('timeout')['ipv6_detection']
-                        ).decode()
+                    ).decode()
 
                 except (CalledProcessError, TimeoutExpired):
                     # It looks like this user doesn't have any IPv6 address...
@@ -934,14 +939,15 @@ class WAN_IP:
             ipv4_value = check_output([
                 'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
                 ], timeout=config.get('timeout')['ipv4_detection'],
-                stderr=DEVNULL).decode().rstrip()
+                stderr=DEVNULL
+            ).decode().rstrip()
 
         except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
                 ipv4_value = check_output([
                     'wget', '-qO-', 'https://v4.ident.me/'
                     ], timeout=config.get('timeout')['ipv4_detection']
-                    ).decode()
+                ).decode()
 
             except (CalledProcessError, TimeoutExpired):
                 # This user looks not connected to Internet...
@@ -955,7 +961,7 @@ class WAN_IP:
                           file=sys.stderr)
 
         self.value = ', '.join(
-            '{0}\n{1}'.format(ipv4_value or '', ipv6_value or '').split()
+            filter(None, (ipv4_value, ipv6_value))
         ) or config.get('default_strings')['no_address']
 
 
