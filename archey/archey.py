@@ -849,30 +849,33 @@ class RAM:
                 used += ram['Cached'] + ram['Buffers']
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-                        colorDict['sensors'][
-                            int(((used / total) * 100) // 33.34)
-                        ],
-                        int(used), colorDict['clear'], int(total))
+            colorDict['sensors'][int(((used / total) * 100) // 33.34)],
+            int(used),
+            colorDict['clear'],
+            int(total)
+        )
 
 
 class Disk:
     def __init__(self):
-        total = re.sub(',', '.',
-                       check_output([
-                                    'df', '-Tlh', '-B', 'GB', '--total',
-                                    '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
-                                    '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
-                                    '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
-                                    '-t', 'fuseblk', '-t', 'xfs',
-                                    '-t', 'simfs', '-t', 'tmpfs'
-                                    ]).decode().splitlines()[-1]).split()
+        total = re.sub(
+            ',', '.',
+            check_output([
+                'df', '-Tlh', '-B', 'GB', '--total',
+                '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
+                '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
+                '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
+                '-t', 'fuseblk', '-t', 'xfs',
+                '-t', 'simfs', '-t', 'tmpfs'
+                ], universal_newlines=True
+            ).splitlines()[-1]
+        ).split()
 
         self.value = '{0}{1}{2} / {3}'.format(
-                        colorDict['sensors'][
-                            int(float(total[5][:-1]) // 33.34)
-                        ],
-                        re.sub('GB', ' GB', total[3]), colorDict['clear'],
-                        re.sub('GB', ' GB', total[2]))
+            colorDict['sensors'][int(float(total[5][:-1]) // 33.34)],
+            re.sub('GB', ' GB', total[3]), colorDict['clear'],
+            re.sub('GB', ' GB', total[2])
+        )
 
 
 class LAN_IP:

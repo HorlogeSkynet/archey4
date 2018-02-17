@@ -29,7 +29,8 @@ Swap:      7607        5    7602
     @patch(
         'archey.archey.open',
         mock_open(
-            read_data="""MemTotal:        7590580 kB
+            read_data="""\
+MemTotal:        7590580 kB
 MemFree:         1502940 kB
 MemAvailable:    3173804 kB
 Buffers:          156976 kB
