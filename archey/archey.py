@@ -824,9 +824,10 @@ class RAM:
             ram = ''.join(
                 filter(
                     re.compile('Mem').search,
-                    Popen(['free', '-m'],  # We use `Popen` to specify `env`
-                          stdout=PIPE, env={'LANG': 'C'}
-                          ).stdout.read().decode().split('\n')
+                    check_output(
+                        ['free', '-m'],
+                        env={'LANG': 'C'}, universal_newlines=True
+                    ).splitlines()
                 )
             ).split()
             used = float(ram[2])

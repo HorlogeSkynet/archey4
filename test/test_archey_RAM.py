@@ -1,6 +1,4 @@
 
-import os
-import tempfile
 import unittest
 from unittest.mock import mock_open, patch
 
@@ -9,34 +7,23 @@ from archey.archey import RAM
 
 class TestRAMEntry(unittest.TestCase):
     """
-    Here, we mock the `Popen` call to `free`.
-    More information about the method here :
-    <https://horlogeskynet.github.io/blog/programming/how-to-mock-stdout-runtime-attribute-of-subprocess-popen-in-python-3>
-    We have to check the behavior when Archey deals with old version of `free`.
+    Here, we mock the `check_output` call to `free`.
+    Same thing with `/proc/meminfo` file opening during the manual way.
     """
 
-    def setUp(self):
-        self.stdout_mock = tempfile.NamedTemporaryFile(delete=False)
-
-    def tearDown(self):
-        self.stdout_mock.close()
-        os.remove(self.stdout_mock.name)
-
-    @patch('archey.archey.Popen')
-    def test_free_dash_m(self, popen_mock):
-        self.stdout_mock.write(b"""\
+    @patch(
+        'archey.archey.check_output',
+        return_value="""\
           total     used    free    shared  buff/cache   available
 Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
-        self.stdout_mock.seek(0)
-        popen_mock.return_value.stdout = self.stdout_mock
-
+    def test_free_dash_m(self, check_output_mock):
         self.assertIn('3341', RAM().value)
         self.assertIn('7412', RAM().value)
 
     @patch(
-        'archey.archey.Popen',
+        'archey.archey.check_output',
         side_effect=IndexError()  # `free` call will fail
     )
     @patch(
@@ -61,7 +48,7 @@ SwapFree:        7785396 kB
 Dirty:               200 kB
 """)  # Some content have been truncated (because the following is useless)
     )
-    def test_proc_meminfo(self, popen_mock):
+    def test_proc_meminfo(self, check_output_mock):
         self.assertIn('3556', RAM().value)
         self.assertIn('7412', RAM().value)
 
