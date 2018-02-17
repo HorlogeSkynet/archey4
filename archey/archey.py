@@ -383,7 +383,7 @@ class Configuration():
         """
         Represents the default configuration which will be used by Archey.
         Values present in the dictionary below are needed.
-        New optional values may be added with `updateRecursive()` method.
+        New optional values may be added with `_updateRecursive()` method.
         """
         self.config = {
             'colors_palette': {
@@ -436,7 +436,7 @@ class Configuration():
 
         try:
             with open(path) as file:
-                self.updateRecursive(self.config, json.load(file))
+                self._updateRecursive(self.config, json.load(file))
 
             # If the user does not want any warning to appear : 2> /dev/null
             if self.config.get('suppress_warnings', False):
@@ -459,7 +459,7 @@ class Configuration():
         except ValueError as e:
             print('Warning: {0} ({1})'.format(e, path), file=sys.stderr)
 
-    def updateRecursive(self, oldDict, newDict):
+    def _updateRecursive(self, oldDict, newDict):
         """
         A method for recursively merging dictionaries as...
         ... `dict.update()` is not able to do this.
@@ -469,7 +469,7 @@ class Configuration():
         for key, value in newDict.items():
             if key in oldDict and isinstance(oldDict[key], dict) \
                     and isinstance(value, dict):
-                self.updateRecursive(oldDict[key], value)
+                self._updateRecursive(oldDict[key], value)
 
             else:
                 oldDict[key] = value
