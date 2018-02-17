@@ -17,6 +17,7 @@ class TestWindowManagerEntry(unittest.TestCase):
 Name: WINDOW MANAGER
 Class: N/A
 PID: N/A
+Window manager's "showing the desktop" mode: OFF
 """)
     def test_wmctrl(self, check_output_mock):
         self.assertEqual(WindowManager().value, 'WINDOW MANAGER')
