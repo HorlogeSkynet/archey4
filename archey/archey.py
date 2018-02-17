@@ -775,27 +775,42 @@ class Packages:
 class CPU:
     def __init__(self):
         with open('/proc/cpuinfo') as file:
-            self.value = re.sub('\s+', ' ',
-                                re.search('(?<=model name\t: ).*',
-                                          file.read()).group(0))
+            self.value = re.sub(
+                '\s+', ' ',
+                re.search('(?<=model name\t: ).*', file.read()).group(0)
+            )
 
 
 class GPU:
     def __init__(self):
+        """
+        Some explanations are needed here :
+        * We call `lspci` program to retrieve hardware devices
+        * We keep only the entries with "3D", "VGA" or "Display"
+        * We sort them in the same order as above (for relevancy)
+        """
         try:
-            gpuinfo = check_output(
-                ['grep', '-E', '3D|VGA|Display'],
-                stdin=Popen(['lspci'],
-                            stdout=PIPE,
-                            stderr=DEVNULL).stdout
-            ).decode().split('\n')[0].split(': ')[1].rstrip()
+            lspci_output = sorted([
+                (i.split(': ')[0].split(' ')[1], i.split(': ')[1])
+                for i in check_output(
+                    ['lspci'], universal_newlines=True
+                ).splitlines()
+                if '3D' in i or 'VGA' in i or 'Display' in i
+                ], key=lambda x: len(x[1])
+            )
 
-            # If the line got too long, let's truncate it and add some dots...
-            if len(gpuinfo) > 48:
-                # This call truncates `gpuinfo` with words preservation
-                gpuinfo = re.findall(
-                    '.{1,45}(?:\W|$)', gpuinfo
-                )[0].strip() + '...'
+            if lspci_output:
+                gpuinfo = lspci_output[0][1]
+
+                # If the line got too long, let's truncate it and add some dots
+                if len(gpuinfo) > 48:
+                    # This call truncates `gpuinfo` with words preservation
+                    gpuinfo = re.findall(
+                        '.{1,45}(?:\W|$)', gpuinfo
+                    )[0].strip() + '...'
+
+            else:
+                gpuinfo = config.get('default_strings')['not_detected']
 
         except (FileNotFoundError, CalledProcessError):
             gpuinfo = config.get('default_strings')['not_detected']
