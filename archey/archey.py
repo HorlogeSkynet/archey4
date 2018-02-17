@@ -391,7 +391,9 @@ class Configuration():
             },
             'default_strings': {
                 'no_address': 'No Address',
-                'not_detected': 'Not detected'
+                'not_detected': 'Not detected',
+                'virtual_environment': 'Virtual Environment',
+                'bare_metal_environment': 'Bare-metal Environment'
             },
             'ip_settings': {
                 'lan_ip_max_count': 2,
@@ -570,38 +572,43 @@ class Model:
             # If the output contains 'Hardware' and 'Revision'...
             if hardware and revision:
                 # ... let's set a pretty info string with these data
-                model = 'Raspberry Pi ' + hardware.group(0) + \
-                        ' (Rev. ' + revision.group(0) + ')'
+                model = 'Raspberry Pi {0} (Rev. {1})'.format(
+                    hardware.group(0),
+                    revision.group(0)
+                )
 
             else:
                 # A tricky way to retrieve some details about hypervisor...
-                # ... within virtualized contexts.
+                # ... within virtual contexts.
                 # `archey` needs to be run as root although.
                 try:
-                    virtWhat = ', '.join(check_output([
-                                                       'virt-what'
-                                                      ],
-                                                      stderr=DEVNULL)
-                                         .decode().split())
+                    virtWhat = ', '.join(
+                        check_output(
+                            ['virt-what'],
+                            stderr=DEVNULL, universal_newlines=True
+                        ).splitlines()
+                    )
 
                     if virtWhat:
                         try:
                             # Sometimes we may gather info added by...
                             # ... hosting service provider this way
-                            model = check_output([
-                                                  'dmidecode',
-                                                  '-s',
-                                                  'system-product-name'
-                                                 ], stderr=DEVNULL
-                                                 ).decode().rstrip()
+                            model = check_output(
+                                ['dmidecode', '-s', 'system-product-name'],
+                                stderr=DEVNULL, universal_newlines=True
+                            ).rstrip()
 
                         except (FileNotFoundError, CalledProcessError):
-                            model = 'Virtualized environment'
+                            model = config.get(
+                                'default_strings'
+                            )['virtual_environment']
 
-                        model += ' (' + virtWhat + ')'
+                        model += ' ({0})'.format(virtWhat)
 
                     else:
-                        model = 'Bare-metal environment'
+                        model = config.get(
+                            'default_strings'
+                        )['bare_metal_environment']
 
                 except (FileNotFoundError, CalledProcessError):
                     model = config.get('default_strings')['not_detected']
