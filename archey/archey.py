@@ -482,11 +482,10 @@ config = Configuration()
 
 # We'll list the running processes only one time
 try:
-    PROCESSES = check_output([
-                              'ps',
-                              '-u' + str(getuid()) if getuid() != 0 else '-ax',
-                              '-o', 'comm', '--no-headers'
-                            ]).decode().split('\n')
+    PROCESSES = check_output(
+        ['ps', '-u' + str(getuid()) if getuid() != 0 else '-ax',
+         '-o', 'comm', '--no-headers'], universal_newlines=True
+    ).splitlines()
 
 except FileNotFoundError:
     print('Please, install first `procps` on your distribution.',
@@ -500,17 +499,20 @@ class Output:
     def __init__(self):
         self.results = []
         try:
-            lsbOutput = check_output([
-                                      'lsb_release', '-i', '-s'
-                                    ]).decode().rstrip()
+            lsbOutput = check_output(
+                ['lsb_release', '-i', '-s'],
+                universal_newlines=True
+            ).rstrip()
 
         except FileNotFoundError:
             print('Please, install first `lsb-release` on your distribution.',
                   file=sys.stderr)
             exit()
 
-        if re.search('Microsoft',
-                     check_output(['uname', '-r']).decode().rstrip()):
+        if re.search(
+               'Microsoft',
+               check_output(['uname', '-r'], universal_newlines=True).rstrip()
+           ):
             self.distribution = Distributions.WINDOWS
 
         else:
@@ -883,7 +885,7 @@ class RAM:
             with open('/proc/meminfo') as file:
                 ram = {
                     i.split(':')[0]: float(i.split(':')[1].strip(' kB')) / 1024
-                    for i in filter(None, file.read().split('\n'))
+                    for i in filter(None, file.read().splitlines())
                 }
 
             total = ram['MemTotal']
