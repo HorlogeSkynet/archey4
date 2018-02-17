@@ -883,13 +883,14 @@ class LAN_IP:
         try:
             addresses = check_output(
                 ['hostname', '-I'],
-                stderr=DEVNULL
-            ).decode().split()
+                stderr=DEVNULL, universal_newlines=True
+            ).splitlines()
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
             addresses = check_output(
                     ['cut', '-d', ' ', '-f', '4'],
+                    universal_newlines=True,
                     stdin=Popen(['cut', '-d', '/', '-f', '1'],
                                 stdout=PIPE,
                                 stdin=Popen(['tr', '-s', ' '],
@@ -907,7 +908,7 @@ class LAN_IP:
                                                         ).stdout
                                             ).stdout
                                 ).stdout
-            ).decode().split()
+            ).splitlines()
 
         # Use list slice to save only `lan_ip_max_count` from `addresses`.
         # If set to `False`, don't modify the list.
@@ -930,15 +931,16 @@ class WAN_IP:
                     'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
                     '@resolver1.ipv6-sandbox.opendns.com'
                     ], timeout=config.get('timeout')['ipv6_detection'],
-                    stderr=DEVNULL
-                ).decode().rstrip()
+                    stderr=DEVNULL, universal_newlines=True
+                ).rstrip()
 
             except (FileNotFoundError, TimeoutExpired, CalledProcessError):
                 try:
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
-                        ], timeout=config.get('timeout')['ipv6_detection']
-                    ).decode()
+                        ], timeout=config.get('timeout')['ipv6_detection'],
+                        universal_newlines=True
+                    )
 
                 except (CalledProcessError, TimeoutExpired):
                     # It looks like this user doesn't have any IPv6 address...
@@ -958,15 +960,16 @@ class WAN_IP:
             ipv4_value = check_output([
                 'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
                 ], timeout=config.get('timeout')['ipv4_detection'],
-                stderr=DEVNULL
-            ).decode().rstrip()
+                stderr=DEVNULL, universal_newlines=True
+            ).rstrip()
 
         except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
                 ipv4_value = check_output([
                     'wget', '-qO-', 'https://v4.ident.me/'
-                    ], timeout=config.get('timeout')['ipv4_detection']
-                ).decode()
+                    ], timeout=config.get('timeout')['ipv4_detection'],
+                    universal_newlines=True
+                )
 
             except (CalledProcessError, TimeoutExpired):
                 # This user looks not connected to Internet...

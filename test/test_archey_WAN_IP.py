@@ -13,8 +13,8 @@ class TestWAN_IPEntry(unittest.TestCase):
     @patch(
         'archey.archey.check_output',
         side_effect=[
-            b'0123::4567:89a:dead:beef\n',
-            b'XXX.YY.ZZ.TTT\n'
+            '0123::4567:89a:dead:beef\n',
+            'XXX.YY.ZZ.TTT\n'
         ]
     )
     @patch.dict(
@@ -29,7 +29,7 @@ class TestWAN_IPEntry(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        return_value=b'XXX.YY.ZZ.TTT'
+        return_value='XXX.YY.ZZ.TTT'
     )
     @patch.dict(
         'archey.archey.config.config',
@@ -45,8 +45,8 @@ class TestWAN_IPEntry(unittest.TestCase):
         'archey.archey.check_output',
         side_effect=[
             TimeoutExpired('dig', 1),     # First `check_output` call will fail
-            b'0123::4567:89a:dead:beef',  # `wget` will "work"
-            b'XXX.YY.ZZ.TTT'              # The IPv4 address is detected
+            '0123::4567:89a:dead:beef',  # `wget` will "work"
+            'XXX.YY.ZZ.TTT'              # The IPv4 address is detected
         ]
     )
     @patch.dict(
@@ -79,8 +79,8 @@ class TestWAN_IPEntry(unittest.TestCase):
     @patch(
         'archey.archey.check_output',
         side_effect=[
-            b'',  # No address will be returned
-            b''
+            '',  # No address will be returned
+            ''
         ]
     )
     @patch.dict(

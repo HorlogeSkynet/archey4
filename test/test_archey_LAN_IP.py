@@ -12,7 +12,8 @@ class TestLAN_IPEntry(unittest.TestCase):
     """
     @patch(
         'archey.archey.check_output',
-        return_value=b"""192.168.0.1
+        return_value="""\
+192.168.0.1
 192.168.0.11
 172.34.56.78
 """)
@@ -31,7 +32,7 @@ class TestLAN_IPEntry(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        return_value=b''
+        return_value=''
     )
     @patch.dict(
         'archey.archey.config.config',
