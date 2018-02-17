@@ -13,8 +13,11 @@ class TestWindowManagerEntry(unittest.TestCase):
     """
     @patch(
         'archey.archey.check_output',
-        return_value=b'Name: WINDOW MANAGER\nClass: N/A\nPID: N/A\n'
-    )
+        return_value="""\
+Name: WINDOW MANAGER
+Class: N/A
+PID: N/A
+""")
     def test_wmctrl(self, check_output_mock):
         self.assertEqual(WindowManager().value, 'WINDOW MANAGER')
 

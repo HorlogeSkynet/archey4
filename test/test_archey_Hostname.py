@@ -12,7 +12,7 @@ class TestHostnameEntry(unittest.TestCase):
     """
     @patch(
         'archey.archey.check_output',
-        return_value=b'MY-COOL-LAPTOP\n'
+        return_value='MY-COOL-LAPTOP\n'
     )
     def test(self, check_output_mock):
         self.assertEqual(Hostname().value, 'MY-COOL-LAPTOP')

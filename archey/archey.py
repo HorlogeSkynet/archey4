@@ -538,13 +538,18 @@ class Output:
 
 class User:
     def __init__(self):
-        self.value = getenv('USER',
-                            config.get('default_strings')['not_detected'])
+        self.value = getenv(
+            'USER',
+            config.get('default_strings')['not_detected']
+        )
 
 
 class Hostname:
     def __init__(self):
-        self.value = check_output(['uname', '-n']).decode().rstrip()
+        self.value = check_output(
+            ['uname', '-n'],
+            universal_newlines=True
+        ).rstrip()
 
 
 class Model:
@@ -606,14 +611,24 @@ class Model:
 
 class Distro:
     def __init__(self):
-        self.value = check_output(['lsb_release', '-d', '-s']
-                                  ).decode().rstrip() + \
-                     ' ' + check_output(['uname', '-m']).decode().rstrip()
+        self.value = '{0} {1}'.format(
+            check_output(
+                ['lsb_release', '-d', '-s'],
+                universal_newlines=True
+            ).rstrip(),
+            check_output(
+                ['uname', '-m'],
+                universal_newlines=True
+            ).rstrip()
+        )
 
 
 class Kernel:
     def __init__(self):
-        self.value = check_output(['uname', '-r']).decode().rstrip()
+        self.value = check_output(
+            ['uname', '-r'],
+            universal_newlines=True
+        ).rstrip()
 
 
 class Uptime:
@@ -636,9 +651,13 @@ class Uptime:
 class WindowManager:
     def __init__(self):
         try:
-            wm = re.search('(?<=Name: ).*',
-                           check_output(['wmctrl', '-m'],
-                                        stderr=DEVNULL).decode()).group(0)
+            wm = re.search(
+                '(?<=Name: ).*',
+                check_output(
+                    ['wmctrl', '-m'],
+                    stderr=DEVNULL, universal_newlines=True
+                )
+            ).group(0)
 
         except (FileNotFoundError, CalledProcessError):
             for key in wmDict.keys():
@@ -661,22 +680,28 @@ class DesktopEnvironment:
 
         else:
             # Let's rely on an environment var if the loop above didn't `break`
-            de = getenv('XDG_CURRENT_DESKTOP',
-                        config.get('default_strings')['not_detected'])
+            de = getenv(
+                'XDG_CURRENT_DESKTOP',
+                config.get('default_strings')['not_detected']
+            )
 
         self.value = de
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv('SHELL',
-                            config.get('default_strings')['not_detected'])
+        self.value = getenv(
+            'SHELL',
+            config.get('default_strings')['not_detected']
+        )
 
 
 class Terminal:
     def __init__(self):
-        terminal = getenv('TERM',
-                          config.get('default_strings')['not_detected'])
+        terminal = getenv(
+            'TERM',
+            config.get('default_strings')['not_detected']
+        )
 
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
@@ -687,9 +712,10 @@ class Terminal:
                 '\u2588' if config.get('colors_palette')['use_unicode']
                 else '#',
                 colorDict['clear']
-            ) for i in range(7, 0, -1)])
+            ) for i in range(7, 0, -1)
+        ])
 
-        self.value = terminal + ' ' + colors
+        self.value = '{0} {1}'.format(terminal, colors)
 
 
 class Temperature:
@@ -697,14 +723,21 @@ class Temperature:
         temps = []
 
         try:
-            # Let's try to retrieve a value from 'Broadcom' chip on Raspberry
-            temp = float(re.findall(
-                '\d+\.\d+',
-                check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'],
-                             stderr=DEVNULL).decode())[0])
+            # Let's try to retrieve a value from the Broadcom chip on Raspberry
+            temp = float(
+                re.findall(
+                    '\d+\.\d+',
+                    check_output(
+                        ['/opt/vc/bin/vcgencmd', 'measure_temp'],
+                        stderr=DEVNULL, universal_newlines=True
+                    )
+                )[0]
+            )
+
             temps.append(
-                self.convertToFahrenheit(temp)
-                if config.get('temperature')['use_fahrenheit'] else temp)
+                self._convertToFahrenheit(temp)
+                if config.get('temperature')['use_fahrenheit'] else temp
+            )
 
         except (FileNotFoundError, CalledProcessError):
             pass
@@ -715,16 +748,18 @@ class Temperature:
                 temp = float(file.read().strip()) / 1000
                 if temp != 0.0:
                     temps.append(
-                        self.convertToFahrenheit(temp)
+                        self._convertToFahrenheit(temp)
                         if config.get('temperature')['use_fahrenheit']
-                        else temp)
+                        else temp
+                    )
 
         if temps:
-            self.value = '{0}{3}{2} (Max. {1}{3}{2})'.format(
+            self.value = '{0}{2}{3} (Max. {1}{2}{3})'.format(
                 str(round(sum(temps) / len(temps), 1)),
                 str(round(max(temps), 1)),
-                'F' if config.get('temperature')['use_fahrenheit'] else 'C',
-                config.get('temperature')['char_before_unit'])
+                config.get('temperature')['char_before_unit'],
+                'F' if config.get('temperature')['use_fahrenheit'] else 'C'
+            )
 
         else:
             self.value = config.get('default_strings')['not_detected']
@@ -732,7 +767,7 @@ class Temperature:
     """
     Simple Celsius to Fahrenheit conversion method
     """
-    def convertToFahrenheit(self, temp):
+    def _convertToFahrenheit(self, temp):
         return temp * (9 / 5) + 32
 
 
@@ -746,7 +781,10 @@ class Packages:
                              ['yum',    'list',   'installed'],
                              ['zypper', 'search', '-i']]:
             try:
-                results = check_output(packagesTool, stderr=DEVNULL).decode()
+                results = check_output(
+                    packagesTool,
+                    stderr=DEVNULL, env={'LANG': 'C'}, universal_newlines=True
+                )
                 packages = results.count('\n')
 
                 if 'dnf' in packagesTool:  # Deduct extra heading line

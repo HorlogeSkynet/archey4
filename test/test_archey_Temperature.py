@@ -32,7 +32,7 @@ class TestTemperatureEntry(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        return_value=b'temp=42.8\'C\n'
+        return_value='temp=42.8\'C\n'
     )
     @patch(
         'archey.archey.glob',
@@ -43,7 +43,7 @@ class TestTemperatureEntry(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        return_value=b'temp=40.0\'C\n'
+        return_value='temp=40.0\'C\n'
     )
     @patch('archey.archey.glob')
     def test_vcgencmd_and_files(self, glob_mock, check_output_mock):
