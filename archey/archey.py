@@ -7,7 +7,6 @@ import re
 import sys
 from enum import Enum
 from glob import glob
-from math import floor
 from os import getenv, getuid
 from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
     TimeoutExpired, check_output
@@ -497,7 +496,6 @@ except FileNotFoundError:
 
 class Output:
     def __init__(self):
-        self.results = []
         try:
             lsbOutput = check_output(
                 ['lsb_release', '-i', '-s'],
@@ -511,8 +509,7 @@ class Output:
 
         if re.search(
                'Microsoft',
-               check_output(['uname', '-r'], universal_newlines=True).rstrip()
-           ):
+               check_output(['uname', '-r'], universal_newlines=True)):
             self.distribution = Distributions.WINDOWS
 
         else:
@@ -524,20 +521,27 @@ class Output:
             else:
                 self.distribution = Distributions.LINUX
 
+        # Each class output will be added in the list below afterwards
+        self.results = []
+
     def append(self, key, value):
-        self.results.append('{0}{1}:{2} {3}'.format(
-            colorDict[self.distribution][1], key, colorDict['clear'], value))
+        self.results.append(
+            '{0}{1}:{2} {3}'.format(
+                colorDict[self.distribution][1], key, colorDict['clear'], value
+            )
+        )
 
     def output(self):
-        results = []
-        results.extend([''] * floor((18 - len(self.results)) / 2))
-        results.extend(self.results[:])
+        # Let's center the entries according to the logo (handles odd numbers)
+        self.results[0:0] = [''] * ((18 - len(self.results)) // 2)
+        self.results.extend([''] * (18 - len(self.results)))
 
-        if len(results) < 18:
-            results.extend([''] * (18 - len(results)))
-
-        print(logosDict[self.distribution].format(
-            c=colorDict[self.distribution], r=results) + colorDict['clear'])
+        print(
+            logosDict[self.distribution].format(
+                c=colorDict[self.distribution],
+                r=self.results
+            ) + colorDict['clear']
+        )
 
 
 class User:
@@ -734,13 +738,13 @@ class Temperature:
         try:
             # Let's try to retrieve a value from the Broadcom chip on Raspberry
             temp = float(
-                re.findall(
+                re.search(
                     '\d+\.\d+',
                     check_output(
                         ['/opt/vc/bin/vcgencmd', 'measure_temp'],
                         stderr=DEVNULL, universal_newlines=True
                     )
-                )[0]
+                ).group(0)
             )
 
             temps.append(
@@ -852,9 +856,9 @@ class GPU:
                 # If the line got too long, let's truncate it and add some dots
                 if len(gpuinfo) > 48:
                     # This call truncates `gpuinfo` with words preservation
-                    gpuinfo = re.findall(
+                    gpuinfo = re.search(
                         '.{1,45}(?:\W|$)', gpuinfo
-                    )[0].strip() + '...'
+                    ).group(0).strip() + '...'
 
             else:
                 gpuinfo = config.get('default_strings')['not_detected']

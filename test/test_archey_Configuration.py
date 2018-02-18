@@ -10,7 +10,7 @@ from archey.archey import Configuration
 
 class TestConfigurationUtil(unittest.TestCase):
     """
-    Simple test class to check the behavior of `Configuration` tools.
+    Simple test cases to check the behavior of `Configuration` tools.
     """
     @patch.dict(
         'archey.archey.config.config',
@@ -76,7 +76,7 @@ class TestConfigurationUtil(unittest.TestCase):
             configuration.loadConfiguration(tempDir)
 
             # Let's check the result :S
-            self.assertEqual(
+            self.assertDictEqual(
                 configuration.config,
                 {
                     'allow_overriding': False,
@@ -101,7 +101,7 @@ class TestConfigurationUtil(unittest.TestCase):
 
             # It should not happen as `allow_overriding` has been set to false.
             # Thus, the configuration is supposed to be the same as before.
-            self.assertEqual(
+            self.assertDictEqual(
                 configuration.config,
                 {
                     'allow_overriding': False,
@@ -164,7 +164,7 @@ class TestConfigurationUtil(unittest.TestCase):
             }
         )
 
-        self.assertEqual(
+        self.assertDictEqual(
             configuration.config,
             {
                 'allow_overriding': True,
