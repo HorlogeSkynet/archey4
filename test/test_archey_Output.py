@@ -58,7 +58,12 @@ class TestOutputUtil(unittest.TestCase):
         'archey.archey.check_output',
         side_effect=FileNotFoundError()
     )
-    def test_init_without_lsb_release(self, check_output_mock):
+    @patch(
+        'archey.archey.print',
+        return_value=None,  # Let's badly mute the class outputs
+        create=True
+    )
+    def test_init_without_lsb_release(self, print_mock, check_output_mock):
         with self.assertRaises(SystemExit):
             Output()
 
@@ -113,7 +118,8 @@ class TestOutputUtil(unittest.TestCase):
     )
     @patch(
         'archey.archey.print',
-        return_value=None  # Let's badly mute the class outputs
+        return_value=None,  # Let's badly mute the class outputs
+        create=True
     )
     def test_centered_output_even_and_odd_numbers(self, print_mock):
         output = Output()
