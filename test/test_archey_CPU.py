@@ -18,7 +18,9 @@ vendor_id\t: CPU-VENDOR-NAME
 cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
-"""))
+"""),
+        create=True
+    )
     def test_model_name_match(self):
         self.assertEqual(CPU().value, 'CPU-MODEL-NAME')
 
@@ -31,7 +33,9 @@ vendor_id\t: CPU-VENDOR-NAME
 cpu family\t: X
 model\t\t: YY
 model name\t: CPU  MODEL\t  NAME
-"""))
+"""),
+        create=True
+    )
     def test_spaces_squeezing(self):
         self.assertEqual(CPU().value, 'CPU MODEL NAME')
 

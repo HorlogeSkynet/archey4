@@ -16,7 +16,8 @@ class TestModelEntry(unittest.TestCase):
         'archey.archey.open',
         mock_open(
             read_data='MY-LAPTOP-MODEL\n'
-        )
+        ),
+        create=True
     )
     def test_regular(self):
         self.assertEqual(Model().value, 'MY-LAPTOP-MODEL')
@@ -27,7 +28,7 @@ class TestModelEntry(unittest.TestCase):
             'Hardware\t: HARDWARE\nRevision\t: REVISION\n'
         ]
 
-        with patch('archey.archey.open', mock_open()) as mock:
+        with patch('archey.archey.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = \
                 self._special_func_for_mock_open
             self.assertEqual(
@@ -48,7 +49,7 @@ class TestModelEntry(unittest.TestCase):
             'Hardware\t: HARDWARE\n'  # `Revision` entry is not present
         ]
 
-        with patch('archey.archey.open', mock_open()) as mock:
+        with patch('archey.archey.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = \
                 self._special_func_for_mock_open
             self.assertEqual(
@@ -74,7 +75,7 @@ class TestModelEntry(unittest.TestCase):
             'Hardware\t: HARDWARE\n'  # `Revision` entry is not present
         ]
 
-        with patch('archey.archey.open', mock_open()) as mock:
+        with patch('archey.archey.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = \
                 self._special_func_for_mock_open
             self.assertEqual(Model().value, 'Bare-metal Environment')
@@ -93,7 +94,7 @@ class TestModelEntry(unittest.TestCase):
             'Hardware\t: HARDWARE\n'  # `Revision` entry is not present
         ]
 
-        with patch('archey.archey.open', mock_open()) as mock:
+        with patch('archey.archey.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = \
                 self._special_func_for_mock_open
             self.assertEqual(Model().value, 'Not detected')

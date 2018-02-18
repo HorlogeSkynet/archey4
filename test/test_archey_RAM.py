@@ -19,8 +19,8 @@ Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
     def test_free_dash_m(self, check_output_mock):
-        self.assertIn('3341', RAM().value)
-        self.assertIn('7412', RAM().value)
+        ram = RAM().value
+        self.assertTrue(all(i in ram for i in ['3341', '7412']))
 
     @patch(
         'archey.archey.check_output',
@@ -47,11 +47,12 @@ Mlocked:              32 kB
 SwapTotal:       7790588 kB
 SwapFree:        7785396 kB
 Dirty:               200 kB
-""")  # Some content have been truncated (because the following is useless)
+"""),  # Some content have been truncated (because the following is useless)
+        create=True
     )
     def test_proc_meminfo(self, check_output_mock):
-        self.assertIn('3556', RAM().value)
-        self.assertIn('7412', RAM().value)
+        ram = RAM().value
+        self.assertTrue(all(i in ram for i in ['3556', '7412']))
 
 
 if __name__ == '__main__':
