@@ -12,7 +12,7 @@ from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
     TimeoutExpired, check_output
 
 
-# -------------- Enumerations -------------- #
+# ----- Distributions fingerprints ---- #
 
 class Distributions(Enum):
     ARCH_LINUX = 'Arch.*'
@@ -31,7 +31,7 @@ class Distributions(Enum):
     WINDOWS = 'Windows'
 
 
-# -------------- Dictionaries -------------- #
+# ------------ Dictionaries ----------- #
 
 colorDict = {
     Distributions.ARCH_LINUX: ['\x1b[0;34m', '\x1b[1;34m'],
@@ -377,7 +377,7 @@ logosDict = {
 
 # ----------- Configuration ----------- #
 
-class Configuration():
+class Configuration(object):
     def __init__(self):
         """
         Represents the default configuration which will be used by Archey.
@@ -492,9 +492,9 @@ except FileNotFoundError:
     exit()
 
 
-# -------------- Classes -------------- #
+# ----------- Output handler ---------- #
 
-class Output:
+class Output(object):
     def __init__(self):
         try:
             lsbOutput = check_output(
@@ -543,6 +543,8 @@ class Output:
             ) + colorDict['clear']
         )
 
+
+# -------------- Entries -------------- #
 
 class User:
     def __init__(self):
@@ -1038,7 +1040,7 @@ class WAN_IP:
         ) or config.get('default_strings')['no_address']
 
 
-# -------------- Classes' Enumeration -------------- #
+# ----------- Classes Index ----------- #
 
 class Classes(Enum):
     User = User
@@ -1061,7 +1063,7 @@ class Classes(Enum):
     WAN_IP = WAN_IP
 
 
-# -------------- Main -------------- #
+# ---------------- Main --------------- #
 
 def main():
     output = Output()
