@@ -49,11 +49,9 @@ Now, it's time to use your favorite package manager. Some examples :
 	apt install ./archey4-4.Y.Z-R-all.deb
 	```
 
-* Red Hat, Fedora, OpenSuse, ... ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
+* RPM-based distributions, and others...
 
-	```shell
-	dnf install ./archey4-4.Y.Z-R.noarch.rpm
-	```
+	**Packagers are welcome !**
 
 ### Install from source
 
@@ -82,9 +80,13 @@ $ sudo cp archey/archey.py /usr/local/bin/archey
 $ chmod +x /usr/local/bin/archey
 # _____________________________________
 
-### Step 3 (Optional) : Configuration file
+### Step 3 (Optional) : Configuration files
+# System-wide configuration
 $ sudo mkdir /etc/archey4
 $ sudo cp archey/config.json /etc/archey4/config.json
+# User-specific configuration
+$ mkdir ~/.config/archey4
+$ cp archey/config.json ~/.config/archey4/config.json
 # ________________________________________
 ```
 
