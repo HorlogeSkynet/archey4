@@ -937,7 +937,7 @@ class LAN_IP:
             addresses = check_output(
                 ['hostname', '-I'],
                 stderr=DEVNULL, universal_newlines=True
-            ).splitlines()
+            ).split()
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
