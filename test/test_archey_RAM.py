@@ -47,7 +47,8 @@ Mlocked:              32 kB
 SwapTotal:       7790588 kB
 SwapFree:        7785396 kB
 Dirty:               200 kB
-""")  # Some content have been truncated (because the following is useless)
+"""),  # Some content have been truncated (because the following is useless)
+        create=True
     )
     def test_proc_meminfo(self, check_output_mock):
         self.assertIn('3556', RAM().value)
