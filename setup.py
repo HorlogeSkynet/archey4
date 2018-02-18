@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='archey4',
-    version='4.3.3',
+    version='4.4.0',
     description='Archey is a simple system information tool written in Python',
     keywords='archey python3 linux system-information monitoring',
     url='http://git.io/archey4',
@@ -12,6 +12,7 @@ setup(
     author_email='dev@samuel.domains',
     license='GPLv3',
     packages=['archey'],
+    test_suite='test',
     entry_points={
         'console_scripts': [
             'archey = archey.archey:main'

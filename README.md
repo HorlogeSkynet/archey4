@@ -96,6 +96,12 @@ $ cp archey/config.json ~/.config/archey4/config.json
 $ archey
 ```
 
+or if you only want to try this out :
+
+```shell
+$ python3 archey/archey.py
+```
+
 ## Configuration (optional)
 
 Since the version 4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
@@ -156,7 +162,7 @@ Tests are now available. Here is a short procedure to run them (you'll only need
 ```shell
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
-$ python3 -m unittest
+$ python3 setup.py test
 ```
 
 Any improvement would be appreciated.
