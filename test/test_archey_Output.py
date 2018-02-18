@@ -76,6 +76,10 @@ class TestOutputUtil(unittest.TestCase):
     )
     def test_append(self):
         output = Output()
+
+        # Let's manually set the distribution for the test case...
+        output.distribution = Distributions.DEBIAN
+
         output.append('KEY', 'VALUE')
 
         self.assertEqual(
