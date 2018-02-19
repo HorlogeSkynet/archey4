@@ -7,13 +7,12 @@ import re
 import sys
 from enum import Enum
 from glob import glob
-from math import floor
 from os import getenv, getuid
 from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
     TimeoutExpired, check_output
 
 
-# -------------- Enumerations -------------- #
+# ----- Distributions fingerprints ---- #
 
 class Distributions(Enum):
     ARCH_LINUX = 'Arch.*'
@@ -32,7 +31,7 @@ class Distributions(Enum):
     WINDOWS = 'Windows'
 
 
-# -------------- Dictionaries -------------- #
+# ------------ Dictionaries ----------- #
 
 colorDict = {
     Distributions.ARCH_LINUX: ['\x1b[0;34m', '\x1b[1;34m'],
@@ -378,12 +377,12 @@ logosDict = {
 
 # ----------- Configuration ----------- #
 
-class Configuration():
+class Configuration(object):
     def __init__(self):
         """
         Represents the default configuration which will be used by Archey.
         Values present in the dictionary below are needed.
-        New optional values may be added with `updateRecursive()` method.
+        New optional values may be added with `_updateRecursive()` method.
         """
         self.config = {
             'colors_palette': {
@@ -391,7 +390,9 @@ class Configuration():
             },
             'default_strings': {
                 'no_address': 'No Address',
-                'not_detected': 'Not detected'
+                'not_detected': 'Not detected',
+                'virtual_environment': 'Virtual Environment',
+                'bare_metal_environment': 'Bare-metal Environment'
             },
             'ip_settings': {
                 'lan_ip_max_count': 2,
@@ -434,7 +435,7 @@ class Configuration():
 
         try:
             with open(path) as file:
-                self.updateRecursive(self.config, json.load(file))
+                self._updateRecursive(self.config, json.load(file))
 
             # If the user does not want any warning to appear : 2> /dev/null
             if self.config.get('suppress_warnings', False):
@@ -457,7 +458,7 @@ class Configuration():
         except ValueError as e:
             print('Warning: {0} ({1})'.format(e, path), file=sys.stderr)
 
-    def updateRecursive(self, oldDict, newDict):
+    def _updateRecursive(self, oldDict, newDict):
         """
         A method for recursively merging dictionaries as...
         ... `dict.update()` is not able to do this.
@@ -467,7 +468,7 @@ class Configuration():
         for key, value in newDict.items():
             if key in oldDict and isinstance(oldDict[key], dict) \
                     and isinstance(value, dict):
-                self.updateRecursive(oldDict[key], value)
+                self._updateRecursive(oldDict[key], value)
 
             else:
                 oldDict[key] = value
@@ -480,11 +481,10 @@ config = Configuration()
 
 # We'll list the running processes only one time
 try:
-    PROCESSES = check_output([
-                              'ps',
-                              '-u' + str(getuid()) if getuid() != 0 else '-ax',
-                              '-o', 'comm', '--no-headers'
-                            ]).decode().split('\n')
+    PROCESSES = check_output(
+        ['ps', '-u' + str(getuid()) if getuid() != 0 else '-ax',
+         '-o', 'comm', '--no-headers'], universal_newlines=True
+    ).splitlines()
 
 except FileNotFoundError:
     print('Please, install first `procps` on your distribution.',
@@ -492,23 +492,24 @@ except FileNotFoundError:
     exit()
 
 
-# -------------- Classes -------------- #
+# ----------- Output handler ---------- #
 
-class Output:
+class Output(object):
     def __init__(self):
-        self.results = []
         try:
-            lsbOutput = check_output([
-                                      'lsb_release', '-i', '-s'
-                                    ]).decode().rstrip()
+            lsbOutput = check_output(
+                ['lsb_release', '-i', '-s'],
+                universal_newlines=True
+            ).rstrip()
 
         except FileNotFoundError:
             print('Please, install first `lsb-release` on your distribution.',
                   file=sys.stderr)
             exit()
 
-        if re.search('Microsoft',
-                     check_output(['uname', '-r']).decode().rstrip()):
+        if re.search(
+               'Microsoft',
+               check_output(['uname', '-r'], universal_newlines=True)):
             self.distribution = Distributions.WINDOWS
 
         else:
@@ -520,31 +521,45 @@ class Output:
             else:
                 self.distribution = Distributions.LINUX
 
+        # Each class output will be added in the list below afterwards
+        self.results = []
+
     def append(self, key, value):
-        self.results.append('{0}{1}:{2} {3}'.format(
-            colorDict[self.distribution][1], key, colorDict['clear'], value))
+        self.results.append(
+            '{0}{1}:{2} {3}'.format(
+                colorDict[self.distribution][1], key, colorDict['clear'], value
+            )
+        )
 
     def output(self):
-        results = []
-        results.extend([''] * floor((18 - len(self.results)) / 2))
-        results.extend(self.results[:])
+        # Let's center the entries according to the logo (handles odd numbers)
+        self.results[0:0] = [''] * ((18 - len(self.results)) // 2)
+        self.results.extend([''] * (18 - len(self.results)))
 
-        if len(results) < 18:
-            results.extend([''] * (18 - len(results)))
+        print(
+            logosDict[self.distribution].format(
+                c=colorDict[self.distribution],
+                r=self.results
+            ) + colorDict['clear']
+        )
 
-        print(logosDict[self.distribution].format(
-            c=colorDict[self.distribution], r=results) + colorDict['clear'])
 
+# -------------- Entries -------------- #
 
 class User:
     def __init__(self):
-        self.value = getenv('USER',
-                            config.get('default_strings')['not_detected'])
+        self.value = getenv(
+            'USER',
+            config.get('default_strings')['not_detected']
+        )
 
 
 class Hostname:
     def __init__(self):
-        self.value = check_output(['uname', '-n']).decode().rstrip()
+        self.value = check_output(
+            ['uname', '-n'],
+            universal_newlines=True
+        ).rstrip()
 
 
 class Model:
@@ -565,38 +580,43 @@ class Model:
             # If the output contains 'Hardware' and 'Revision'...
             if hardware and revision:
                 # ... let's set a pretty info string with these data
-                model = 'Raspberry Pi ' + hardware.group(0) + \
-                        ' (Rev. ' + revision.group(0) + ')'
+                model = 'Raspberry Pi {0} (Rev. {1})'.format(
+                    hardware.group(0),
+                    revision.group(0)
+                )
 
             else:
                 # A tricky way to retrieve some details about hypervisor...
-                # ... within virtualized contexts.
+                # ... within virtual contexts.
                 # `archey` needs to be run as root although.
                 try:
-                    virtWhat = ', '.join(check_output([
-                                                       'virt-what'
-                                                      ],
-                                                      stderr=DEVNULL)
-                                         .decode().split())
+                    virtWhat = ', '.join(
+                        check_output(
+                            ['virt-what'],
+                            stderr=DEVNULL, universal_newlines=True
+                        ).splitlines()
+                    )
 
                     if virtWhat:
                         try:
                             # Sometimes we may gather info added by...
                             # ... hosting service provider this way
-                            model = check_output([
-                                                  'dmidecode',
-                                                  '-s',
-                                                  'system-product-name'
-                                                 ], stderr=DEVNULL
-                                                 ).decode().rstrip()
+                            model = check_output(
+                                ['dmidecode', '-s', 'system-product-name'],
+                                stderr=DEVNULL, universal_newlines=True
+                            ).rstrip()
 
                         except (FileNotFoundError, CalledProcessError):
-                            model = 'Virtualized environment'
+                            model = config.get(
+                                'default_strings'
+                            )['virtual_environment']
 
-                        model += ' (' + virtWhat + ')'
+                        model += ' ({0})'.format(virtWhat)
 
                     else:
-                        model = 'Bare-metal environment'
+                        model = config.get(
+                            'default_strings'
+                        )['bare_metal_environment']
 
                 except (FileNotFoundError, CalledProcessError):
                     model = config.get('default_strings')['not_detected']
@@ -606,14 +626,24 @@ class Model:
 
 class Distro:
     def __init__(self):
-        self.value = check_output(['lsb_release', '-d', '-s']
-                                  ).decode().rstrip() + \
-                     ' ' + check_output(['uname', '-m']).decode().rstrip()
+        self.value = '{0} {1}'.format(
+            check_output(
+                ['lsb_release', '-d', '-s'],
+                universal_newlines=True
+            ).rstrip(),
+            check_output(
+                ['uname', '-m'],
+                universal_newlines=True
+            ).rstrip()
+        )
 
 
 class Kernel:
     def __init__(self):
-        self.value = check_output(['uname', '-r']).decode().rstrip()
+        self.value = check_output(
+            ['uname', '-r'],
+            universal_newlines=True
+        ).rstrip()
 
 
 class Uptime:
@@ -636,9 +666,13 @@ class Uptime:
 class WindowManager:
     def __init__(self):
         try:
-            wm = re.search('(?<=Name: ).*',
-                           check_output(['wmctrl', '-m'],
-                                        stderr=DEVNULL).decode()).group(0)
+            wm = re.search(
+                '(?<=Name: ).*',
+                check_output(
+                    ['wmctrl', '-m'],
+                    stderr=DEVNULL, universal_newlines=True
+                )
+            ).group(0)
 
         except (FileNotFoundError, CalledProcessError):
             for key in wmDict.keys():
@@ -661,22 +695,28 @@ class DesktopEnvironment:
 
         else:
             # Let's rely on an environment var if the loop above didn't `break`
-            de = getenv('XDG_CURRENT_DESKTOP',
-                        config.get('default_strings')['not_detected'])
+            de = getenv(
+                'XDG_CURRENT_DESKTOP',
+                config.get('default_strings')['not_detected']
+            )
 
         self.value = de
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv('SHELL',
-                            config.get('default_strings')['not_detected'])
+        self.value = getenv(
+            'SHELL',
+            config.get('default_strings')['not_detected']
+        )
 
 
 class Terminal:
     def __init__(self):
-        terminal = getenv('TERM',
-                          config.get('default_strings')['not_detected'])
+        terminal = getenv(
+            'TERM',
+            config.get('default_strings')['not_detected']
+        )
 
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
@@ -687,9 +727,10 @@ class Terminal:
                 '\u2588' if config.get('colors_palette')['use_unicode']
                 else '#',
                 colorDict['clear']
-            ) for i in range(7, 0, -1)])
+            ) for i in range(7, 0, -1)
+        ])
 
-        self.value = terminal + ' ' + colors
+        self.value = '{0} {1}'.format(terminal, colors)
 
 
 class Temperature:
@@ -697,14 +738,21 @@ class Temperature:
         temps = []
 
         try:
-            # Let's try to retrieve a value from 'Broadcom' chip on Raspberry
-            temp = float(re.findall(
-                '\d+\.\d+',
-                check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'],
-                             stderr=DEVNULL).decode())[0])
+            # Let's try to retrieve a value from the Broadcom chip on Raspberry
+            temp = float(
+                re.search(
+                    '\d+\.\d+',
+                    check_output(
+                        ['/opt/vc/bin/vcgencmd', 'measure_temp'],
+                        stderr=DEVNULL, universal_newlines=True
+                    )
+                ).group(0)
+            )
+
             temps.append(
-                self.convertToFahrenheit(temp)
-                if config.get('temperature')['use_fahrenheit'] else temp)
+                self._convertToFahrenheit(temp)
+                if config.get('temperature')['use_fahrenheit'] else temp
+            )
 
         except (FileNotFoundError, CalledProcessError):
             pass
@@ -715,16 +763,18 @@ class Temperature:
                 temp = float(file.read().strip()) / 1000
                 if temp != 0.0:
                     temps.append(
-                        self.convertToFahrenheit(temp)
+                        self._convertToFahrenheit(temp)
                         if config.get('temperature')['use_fahrenheit']
-                        else temp)
+                        else temp
+                    )
 
         if temps:
-            self.value = '{0}{3}{2} (Max. {1}{3}{2})'.format(
+            self.value = '{0}{2}{3} (Max. {1}{2}{3})'.format(
                 str(round(sum(temps) / len(temps), 1)),
                 str(round(max(temps), 1)),
-                'F' if config.get('temperature')['use_fahrenheit'] else 'C',
-                config.get('temperature')['char_before_unit'])
+                config.get('temperature')['char_before_unit'],
+                'F' if config.get('temperature')['use_fahrenheit'] else 'C'
+            )
 
         else:
             self.value = config.get('default_strings')['not_detected']
@@ -732,24 +782,37 @@ class Temperature:
     """
     Simple Celsius to Fahrenheit conversion method
     """
-    def convertToFahrenheit(self, temp):
+    def _convertToFahrenheit(self, temp):
         return temp * (9 / 5) + 32
 
 
 class Packages:
     def __init__(self):
-        for packagesTool in [['pacman', '-Q'],
-                             ['dnf', 'list', 'installed'],
-                             ['dpkg', '--get-selections'],
-                             ['zypper', 'search', '--installed-only'],
-                             ['emerge', '-ep', 'world'],
-                             ['rpm', '-qa']]:
+        for packagesTool in [['dnf',    'list',   'installed'],
+                             ['dpkg',   '--get-selections'],
+                             ['emerge', '-ep',    'world'],
+                             ['pacman', '-Q'],
+                             ['rpm',    '-qa'],
+                             ['yum',    'list',   'installed'],
+                             ['zypper', 'search', '-i']]:
             try:
-                results = check_output(packagesTool, stderr=DEVNULL).decode()
+                results = check_output(
+                    packagesTool,
+                    stderr=DEVNULL, env={'LANG': 'C'}, universal_newlines=True
+                )
                 packages = results.count('\n')
 
-                if 'dpkg' in packagesTool:
+                if 'dnf' in packagesTool:  # Deduct extra heading line
+                    packages -= 1
+
+                elif 'dpkg' in packagesTool:  # Packages removed but not purged
                     packages -= results.count('deinstall')
+
+                elif 'yum' in packagesTool:  # Deduct extra heading lines
+                    packages -= 2
+
+                elif 'zypper' in packagesTool:  # Deduct extra heading lines
+                    packages -= 5
 
                 break
 
@@ -765,24 +828,42 @@ class Packages:
 class CPU:
     def __init__(self):
         with open('/proc/cpuinfo') as file:
-            self.value = re.sub('\s+', ' ',
-                                re.search('(?<=model name\t: ).*',
-                                          file.read()).group(0))
+            self.value = re.sub(
+                '\s+', ' ',
+                re.search('(?<=model name\t: ).*', file.read()).group(0)
+            )
 
 
 class GPU:
     def __init__(self):
+        """
+        Some explanations are needed here :
+        * We call `lspci` program to retrieve hardware devices
+        * We keep only the entries with "3D", "VGA" or "Display"
+        * We sort them in the same order as above (for relevancy)
+        """
         try:
-            gpuinfo = check_output(['grep', '-E', '3D|VGA|Display'],
-                                   stdin=Popen(['lspci'],
-                                               stdout=PIPE,
-                                               stderr=DEVNULL).stdout
-                                   ).decode().split(': ')[1].rstrip()
+            lspci_output = sorted([
+                (i.split(': ')[0].split(' ')[1], i.split(': ')[1])
+                for i in check_output(
+                    ['lspci'], universal_newlines=True
+                ).splitlines()
+                if '3D' in i or 'VGA' in i or 'Display' in i
+                ], key=lambda x: len(x[1])
+            )
 
-            # If the line got too long, let's truncate it and add some dots...
-            if len(gpuinfo) > 48:
-                gpuinfo = re.findall('.{1,45}(?:\W|$)',
-                                     gpuinfo)[0].strip() + '...'
+            if lspci_output:
+                gpuinfo = lspci_output[0][1]
+
+                # If the line got too long, let's truncate it and add some dots
+                if len(gpuinfo) > 48:
+                    # This call truncates `gpuinfo` with words preservation
+                    gpuinfo = re.search(
+                        '.{1,45}(?:\W|$)', gpuinfo
+                    ).group(0).strip() + '...'
+
+            else:
+                gpuinfo = config.get('default_strings')['not_detected']
 
         except (FileNotFoundError, CalledProcessError):
             gpuinfo = config.get('default_strings')['not_detected']
@@ -793,10 +874,15 @@ class GPU:
 class RAM:
     def __init__(self):
         try:
-            ram = ''.join(filter(re.compile('M').search,
-                          Popen(['free', '-m'], stdout=PIPE, env={'LANG': 'C'}
-                                ).communicate()[0].decode().split('\n'))
-                          ).split()
+            ram = ''.join(
+                filter(
+                    re.compile('Mem').search,
+                    check_output(
+                        ['free', '-m'],
+                        env={'LANG': 'C'}, universal_newlines=True
+                    ).splitlines()
+                )
+            ).split()
             used = float(ram[2])
             total = float(ram[1])
 
@@ -805,7 +891,7 @@ class RAM:
             with open('/proc/meminfo') as file:
                 ram = {
                     i.split(':')[0]: float(i.split(':')[1].strip(' kB')) / 1024
-                    for i in filter(None, file.read().split('\n'))
+                    for i in filter(None, file.read().splitlines())
                 }
 
             total = ram['MemTotal']
@@ -816,42 +902,48 @@ class RAM:
                 used += ram['Cached'] + ram['Buffers']
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-                        colorDict['sensors'][
-                            int(((used / total) * 100) // 33.34)
-                        ],
-                        int(used), colorDict['clear'], int(total))
+            colorDict['sensors'][int(((used / total) * 100) // 33.34)],
+            int(used),
+            colorDict['clear'],
+            int(total)
+        )
 
 
 class Disk:
     def __init__(self):
-        total = re.sub(',', '.',
-                       check_output([
-                                    'df', '-Tlh', '-B', 'GB', '--total',
-                                    '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
-                                    '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
-                                    '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
-                                    '-t', 'fuseblk', '-t', 'xfs',
-                                    '-t', 'simfs', '-t', 'tmpfs'
-                                    ]).decode().splitlines()[-1]).split()
+        total = re.sub(
+            ',', '.',
+            check_output([
+                'df', '-Tlh', '-B', 'GB', '--total',
+                '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
+                '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
+                '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
+                '-t', 'fuseblk', '-t', 'xfs',
+                '-t', 'simfs', '-t', 'tmpfs'
+                ], universal_newlines=True
+            ).splitlines()[-1]
+        ).split()
 
         self.value = '{0}{1}{2} / {3}'.format(
-                        colorDict['sensors'][
-                            int(float(total[5][:-1]) // 33.34)
-                        ],
-                        re.sub('GB', ' GB', total[3]), colorDict['clear'],
-                        re.sub('GB', ' GB', total[2]))
+            colorDict['sensors'][int(float(total[5][:-1]) // 33.34)],
+            re.sub('GB', ' GB', total[3]), colorDict['clear'],
+            re.sub('GB', ' GB', total[2])
+        )
 
 
 class LAN_IP:
     def __init__(self):
         try:
-            addresses = check_output(['hostname', '-I'], stderr=DEVNULL
-                                     ).decode().split()
+            addresses = check_output(
+                ['hostname', '-I'],
+                stderr=DEVNULL, universal_newlines=True
+            ).split()
 
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
             addresses = check_output(
                     ['cut', '-d', ' ', '-f', '4'],
+                    universal_newlines=True,
                     stdin=Popen(['cut', '-d', '/', '-f', '1'],
                                 stdout=PIPE,
                                 stdin=Popen(['tr', '-s', ' '],
@@ -869,16 +961,18 @@ class LAN_IP:
                                                         ).stdout
                                             ).stdout
                                 ).stdout
-                    ).decode().split()
+            ).splitlines()
 
-        # Use list slice to save only `lan_ip_max_count` addresses.
+        # Use list slice to save only `lan_ip_max_count` from `addresses`.
         # If set to `False`, don't modify the list.
         # This option is still optional.
-        self.value = ', '.join(addresses[:(
-            config.get('ip_settings')['lan_ip_max_count']
-            if config.get('ip_settings')['lan_ip_max_count'] is not False
-            else len(addresses)
-            )]) or config.get('default_strings')['no_address']
+        self.value = ', '.join(
+            addresses[:(
+                config.get('ip_settings')['lan_ip_max_count']
+                if config.get('ip_settings')['lan_ip_max_count'] is not False
+                else len(addresses)
+            )]
+        ) or config.get('default_strings')['no_address']
 
 
 class WAN_IP:
@@ -890,14 +984,16 @@ class WAN_IP:
                     'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
                     '@resolver1.ipv6-sandbox.opendns.com'
                     ], timeout=config.get('timeout')['ipv6_detection'],
-                    stderr=DEVNULL).decode().rstrip()
+                    stderr=DEVNULL, universal_newlines=True
+                ).rstrip()
 
             except (FileNotFoundError, TimeoutExpired, CalledProcessError):
                 try:
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
-                        ], timeout=config.get('timeout')['ipv6_detection']
-                        ).decode()
+                        ], timeout=config.get('timeout')['ipv6_detection'],
+                        universal_newlines=True
+                    )
 
                 except (CalledProcessError, TimeoutExpired):
                     # It looks like this user doesn't have any IPv6 address...
@@ -917,14 +1013,16 @@ class WAN_IP:
             ipv4_value = check_output([
                 'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
                 ], timeout=config.get('timeout')['ipv4_detection'],
-                stderr=DEVNULL).decode().rstrip()
+                stderr=DEVNULL, universal_newlines=True
+            ).rstrip()
 
         except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
                 ipv4_value = check_output([
                     'wget', '-qO-', 'https://v4.ident.me/'
-                    ], timeout=config.get('timeout')['ipv4_detection']
-                    ).decode()
+                    ], timeout=config.get('timeout')['ipv4_detection'],
+                    universal_newlines=True
+                )
 
             except (CalledProcessError, TimeoutExpired):
                 # This user looks not connected to Internet...
@@ -938,11 +1036,11 @@ class WAN_IP:
                           file=sys.stderr)
 
         self.value = ', '.join(
-            '{0}\n{1}'.format(ipv4_value or '', ipv6_value or '').split()
+            filter(None, (ipv4_value, ipv6_value))
         ) or config.get('default_strings')['no_address']
 
 
-# -------------- Classes' Enumeration -------------- #
+# ----------- Classes Index ----------- #
 
 class Classes(Enum):
     User = User
@@ -965,7 +1063,7 @@ class Classes(Enum):
     WAN_IP = WAN_IP
 
 
-# -------------- Main -------------- #
+# ---------------- Main --------------- #
 
 def main():
     output = Output()

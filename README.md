@@ -49,40 +49,57 @@ Now, it's time to use your favorite package manager. Some examples :
 	apt install ./archey4-4.Y.Z-R-all.deb
 	```
 
-* Red Hat, Fedora, OpenSuse, ... ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
+* RPM-based distributions, and others...
 
-	```shell
-	dnf install ./archey4-4.Y.Z-R.noarch.rpm
-	```
+	**Packagers are welcome !**
 
 ### Install from source
 
-#### Latest stable release
-
-First, grab the archive containing the source code for the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest), and then :
-
 ```shell
+### Step 1 : Fetch the source ###
+# If you want the latest release
+$ wget https://github.com/HorlogeSkynet/archey4/releases/latest
 $ tar xvzf archey4-4.X.Y.tar.gz
 $ cd archey4-4.X.Y/
-$ chmod +x archey
-$ sudo cp archey /usr/local/bin/archey
-```
+# ______________________________
 
-#### Development version
-
-```shell
+# If you want the latest changes
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
-$ chmod +x archey
-# Fetch latest changes (update your local version)
-$ git pull
-$ sudo cp archey /usr/local/bin/archey
+# ______________________________
+
+### Step 2 : Installation ###
+# If you have PIP installed on your system
+$ sudo pip3 install .
+# So if one day you wanna uninstall Archey
+$ sudo pip3 uninstall archey4
+# ________________________________________
+
+# But if you don't have PIP, no worries
+$ sudo cp archey/archey.py /usr/local/bin/archey
+$ chmod +x /usr/local/bin/archey
+# _____________________________________
+
+### Step 3 (Optional) : Configuration files
+# System-wide configuration
+$ sudo mkdir /etc/archey4
+$ sudo cp archey/config.json /etc/archey4/config.json
+# User-specific configuration
+$ mkdir ~/.config/archey4
+$ cp archey/config.json ~/.config/archey4/config.json
+# ________________________________________
 ```
 
 ## Usage
 
 ```shell
 $ archey
+```
+
+or if you only want to try this out :
+
+```shell
+$ python3 archey/archey.py
 ```
 
 ## Configuration (optional)
@@ -137,6 +154,18 @@ Below, some further explanations of each option available :
 	}
 }
 ```
+
+## Test cases
+
+Tests are now available. Here is a short procedure to run them (you'll only need `python3`) :
+
+```shell
+$ git clone https://github.com/HorlogeSkynet/archey4.git
+$ cd archey4/
+$ python3 setup.py test
+```
+
+Any improvement would be appreciated.
 
 ## Notes to users
 
