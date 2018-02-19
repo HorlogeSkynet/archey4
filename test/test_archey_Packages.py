@@ -39,8 +39,26 @@ alien                   install
     def test_match_with_dpkg(self, check_output_mock):
         self.assertEqual(Packages().value, 6)
 
-    def test_match_with_emerge(self):
-        raise unittest.SkipTest('TO DO')
+    @patch(
+        'archey.archey.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            FileNotFoundError(),
+            """\
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies  ... done!
+[ebuild     U  ] sys-libs/glibc-2.25-r10 [2.25-r9]
+[ebuild   R    ] sys-apps/busybox-1.28.0 \n\
+[ebuild  N     ] sys-libs/libcap-2.24-r2  \
+USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
+[ebuild     U  ] app-misc/pax-utils-1.2.2-r2 [1.1.7]
+[ebuild   R    ] x11-misc/shared-mime-info-1.9 \n\
+
+"""])
+    def test_match_with_emerge(self, check_output_mock):
+        self.assertEqual(Packages().value, 5)
 
     @patch(
         'archey.archey.check_output',

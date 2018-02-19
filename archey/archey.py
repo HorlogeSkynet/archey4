@@ -808,6 +808,9 @@ class Packages:
                 elif 'dpkg' in packagesTool:  # Packages removed but not purged
                     packages -= results.count('deinstall')
 
+                elif 'emerge' in packagesTool:  # Deduct extra heading lines
+                    packages -= 5
+
                 elif 'yum' in packagesTool:  # Deduct extra heading lines
                     packages -= 2
 
