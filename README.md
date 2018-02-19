@@ -2,8 +2,11 @@
 
 [![Build Status](https://travis-ci.org/HorlogeSkynet/archey4.svg?branch=master)](https://travis-ci.org/HorlogeSkynet/archey4)
 [![GitHub release](https://img.shields.io/github/release/HorlogeSkynet/archey4.svg)](https://github.com/HorlogeSkynet/archey4/releases/latest)
+[![PyPI release](https://img.shields.io/pypi/v/archey4.svg)](https://pypi.org/project/archey4/)
+[![AUR release](https://img.shields.io/aur/version/archey4.svg)](https://aur.archlinux.org/packages/archey4/)
 [![GitHub issues](https://img.shields.io/github/issues/HorlogeSkynet/archey4.svg)](https://github.com/HorlogeSkynet/archey4/issues)
-[![AUR](https://img.shields.io/aur/votes/archey4.svg)](https://aur.archlinux.org/packages/archey4/) 	
+[![AUR votes](https://img.shields.io/aur/votes/archey4.svg)](https://aur.archlinux.org/packages/archey4/)
+[![License](https://img.shields.io/aur/license/archey4.svg)](https://aur.archlinux.org/packages/archey4/)
 
 > Archey is a simple system information tool written in Python
 
@@ -58,14 +61,20 @@ Now, it's time to use your favorite package manager. Some examples :
 
 	**Packagers are welcome !**
 
+### Install with PIP
+
+```shell
+$ sudo pip3 install archey4
+```
+
 ### Install from source
 
 ```shell
 ### Step 1 : Fetch the source ###
 # If you want the latest release
-$ wget https://github.com/HorlogeSkynet/archey4/releases/latest
-$ tar xvzf archey4-4.X.Y.tar.gz
-$ cd archey4-4.X.Y/
+$ wget https://github.com/HorlogeSkynet/archey4/archive/v4.4.0.tar.gz
+$ tar xvzf v4.4.0.tar.gz
+$ cd archey4-4.4.0/
 # ______________________________
 
 # If you want the latest changes
