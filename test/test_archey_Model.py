@@ -59,7 +59,7 @@ class TestModelEntry(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        return_value=''
+        return_value='\n'
     )
     @patch.dict(
         'archey.archey.config.config',
