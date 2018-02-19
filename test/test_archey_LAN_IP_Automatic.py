@@ -5,14 +5,14 @@ from unittest.mock import patch
 from archey.archey import LAN_IP
 
 
-class TestLAN_IPEntry(unittest.TestCase):
+class TestLAN_IPEntry_Automatic(unittest.TestCase):
     """
     Here, we mock the `check_output` call to `hostname`.
     Same thing with `ip` during the manual workaround.
     """
     @patch(
         'archey.archey.check_output',
-        return_value='192.168.0.1 192.168.0.11 172.34.56.78'
+        return_value='192.168.0.1 192.168.0.11 172.34.56.78\n'
     )
     @patch.dict(
         'archey.archey.config.config',
@@ -24,12 +24,9 @@ class TestLAN_IPEntry(unittest.TestCase):
             '192.168.0.1, 192.168.0.11, 172.34.56.78'
         )
 
-    def test_manual_workaround_with_limit(self):
-        raise unittest.SkipTest('TO DO')
-
     @patch(
         'archey.archey.check_output',
-        return_value=''
+        return_value='\n'
     )
     @patch.dict(
         'archey.archey.config.config',
