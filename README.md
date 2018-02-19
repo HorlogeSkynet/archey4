@@ -1,5 +1,10 @@
 # Archey 4
 
+[![Build Status](https://travis-ci.org/HorlogeSkynet/archey4.svg?branch=master)](https://travis-ci.org/HorlogeSkynet/archey4)
+[![GitHub release](https://img.shields.io/github/release/HorlogeSkynet/archey4.svg)](https://github.com/HorlogeSkynet/archey4/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/HorlogeSkynet/archey4.svg)](https://github.com/HorlogeSkynet/archey4/issues)
+[![AUR](https://img.shields.io/aur/votes/archey4.svg)](https://aur.archlinux.org/packages/archey4/) 	
+
 > Archey is a simple system information tool written in Python
 
 ![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.1)
