@@ -1,0 +1,10 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+install:
+  - pip3 install .
+script:
+  - python3 setup.py test
+  - python3 archey/archey.py
