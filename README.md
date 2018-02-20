@@ -91,7 +91,7 @@ $ sudo pip3 uninstall archey4
 
 # But if you don't have PIP, no worries
 $ sudo cp archey/archey.py /usr/local/bin/archey
-$ chmod +x /usr/local/bin/archey
+$ sudo chmod +x /usr/local/bin/archey
 # _____________________________________
 
 ### Step 3 (Optional) : Configuration files
