@@ -54,7 +54,7 @@ Now, it's time to use your favorite package manager. Some examples :
 * Debian-based distributions ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
 
 	```shell
-	apt install ./archey4-4.Y.Z-R-all.deb
+	apt install ./archey4-v4.Y.Z-R-all.deb
 	```
 
 * RPM-based distributions, and others...
@@ -176,7 +176,10 @@ Tests are now available. Here is a short procedure to run them (you'll only need
 ```shell
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
+# If you have `setuptools` installed
 $ python3 setup.py test
+# But if you still don't, no worries !
+$ python3 -m unittest
 ```
 
 Any improvement would be appreciated.
