@@ -544,14 +544,10 @@ class Output(object):
                 ) + colorDict['clear']
             )
 
-        except UnicodeError as e:
+        except UnicodeError:
             print(
-                format(
-                    'Your locale seems not supporting UTF8 encoding. '
-                    'Unfortunately \'{0}\' character has been found.\n'
-                    'Please disable Unicode within your configuration file.',
-                    e.object
-                ),
+                'Your locale or TTY seems not supporting UTF8 encoding.\n'
+                'Please disable Unicode within your configuration file.',
                 file=sys.stderr
             )
 
