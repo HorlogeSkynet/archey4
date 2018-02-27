@@ -536,12 +536,24 @@ class Output(object):
         self.results[0:0] = [''] * ((18 - len(self.results)) // 2)
         self.results.extend([''] * (18 - len(self.results)))
 
-        print(
-            logosDict[self.distribution].format(
-                c=colorDict[self.distribution],
-                r=self.results
-            ) + colorDict['clear']
-        )
+        try:
+            print(
+                logosDict[self.distribution].format(
+                    c=colorDict[self.distribution],
+                    r=self.results
+                ) + colorDict['clear']
+            )
+
+        except UnicodeError as e:
+            print(
+                format(
+                    'Your locale seems not supporting UTF8 encoding. '
+                    'Unfortunately \'{0}\' character has been found.\n'
+                    'Please disable Unicode within your configuration file.',
+                    e.object
+                ),
+                file=sys.stderr
+            )
 
 
 # -------------- Entries -------------- #
