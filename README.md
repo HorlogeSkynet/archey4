@@ -12,7 +12,7 @@
 
 ![archey4](https://horlogeskynet.github.io/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.1)
 
-## Why (again) a f*cking new Archey fork ?
+## Why (again) a f\*cking new Archey fork ?
 
 The answer is [here](https://horlogeskynet.github.io/archey4).
 
@@ -71,37 +71,42 @@ $ sudo pip3 install archey4
 
 ```shell
 ### Step 1 : Fetch the source ###
-# If you want the latest release
+
+# If you want the latest release :
 $ wget https://github.com/HorlogeSkynet/archey4/archive/v4.4.0.tar.gz
 $ tar xvzf v4.4.0.tar.gz
 $ cd archey4-4.4.0/
-# ______________________________
+# _______________________________
 
-# If you want the latest changes
+# If you want the latest changes :
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
-# ______________________________
+# _______________________________
+
 
 ### Step 2 : Installation ###
-# If you have PIP installed on your system
+
+# If you have PIP installed on your system :
 $ sudo pip3 install .
 # So if one day you wanna uninstall Archey
 $ sudo pip3 uninstall archey4
-# ________________________________________
+# _________________________________________
 
-# But if you don't have PIP, no worries
+# But if you don't have PIP, no worries :
 $ sudo cp archey/archey.py /usr/local/bin/archey
 $ sudo chmod +x /usr/local/bin/archey
-# _____________________________________
+# _______________________________________
 
 ### Step 3 (Optional) : Configuration files
-# System-wide configuration
+
+# System-wide configuration :
 $ sudo mkdir /etc/archey4
 $ sudo cp archey/config.json /etc/archey4/config.json
-# User-specific configuration
+# ___________________________
+# User-specific configuration :
 $ mkdir ~/.config/archey4
 $ cp archey/config.json ~/.config/archey4/config.json
-# ________________________________________
+# _____________________________
 ```
 
 ## Usage
@@ -130,6 +135,7 @@ You can place a [`config.json`](config.json) file in these locations :
 The [example file](config.json) provided in this repository lists exhaustively the parameters you can set.  
 Below, some further explanations of each option available :
 
+<!-- We use C++ syntax coloration below because JSON does not allow the usage of comments... -->
 ```cpp
 {
 	// If set to `false`, configurations defined afterwards won't be loaded.
