@@ -838,11 +838,25 @@ class Packages:
 
 class CPU:
     def __init__(self):
+        model_name_regex = re.compile(
+            '^model name\s*:\s*(.*)$',
+            flags=re.IGNORECASE | re.MULTILINE
+        )
+
         with open('/proc/cpuinfo') as file:
-            self.value = re.sub(
-                '\s+', ' ',
-                re.search('(?<=model name\t: ).*', file.read()).group(0)
+            cpuinfo = re.search(model_name_regex, file.read())
+
+        # This test case has been built for some ARM architectures (see #29).
+        # Sometimes, `model name` info is not present within `/proc/cpuinfo`.
+        # We use the output of `lscpu` program (util-linux-ng) to retrieve it.
+        if not cpuinfo:
+            cpuinfo = re.search(
+                model_name_regex,
+                check_output(['lscpu'], universal_newlines=True)
             )
+
+        # Sometimes CPU model name contains extra ugly white-spaces.
+        self.value = re.sub('\s+', ' ', cpuinfo.group(1))
 
 
 class GPU:
