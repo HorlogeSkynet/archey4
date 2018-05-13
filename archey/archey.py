@@ -852,7 +852,10 @@ class CPU:
         if not cpuinfo:
             cpuinfo = re.search(
                 model_name_regex,
-                check_output(['lscpu'], universal_newlines=True)
+                check_output(
+                    ['lscpu'],
+                    env={'LANG': 'C'}, universal_newlines=True
+                )
             )
 
         # Sometimes CPU model name contains extra ugly white-spaces.
