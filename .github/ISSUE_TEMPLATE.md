@@ -19,7 +19,7 @@
 ## Your environment
 <!--- Include as many relevant details about the environment you experienced the bug in -->
 * Version used (4.x.y) : 
-* Hardware type (Laptop, Server, Raspberry, ...) : 
-* Operating System and version : 
-* Environment name and version : 
+* Hardware type (Laptop, Server, Raspberry, Hyper-visor, ...) : 
+* Operating system and version : 
+* Graphical environment name and version : 
 * Connectivity (Off-line, LAN only, Internet access, ...) : 
