@@ -768,7 +768,10 @@ class Temperature:
         # Now we just check for values within files present in the path below
         for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
             with open(thermalFile) as file:
-                temp = float(file.read().strip()) / 1000
+                try:
+                    temp = float(file.read().strip()) / 1000
+                except OSError:
+                    continue
                 if temp != 0.0:
                     temps.append(
                         self._convertToFahrenheit(temp)
@@ -874,7 +877,7 @@ class GPU:
             lspci_output = sorted([
                 (i.split(': ')[0].split(' ')[1], i.split(': ')[1])
                 for i in check_output(
-                    ['lspci'], universal_newlines=True
+                    ['lspci'], stderr=PIPE, universal_newlines=True
                 ).splitlines()
                 if '3D' in i or 'VGA' in i or 'Display' in i
                 ], key=lambda x: len(x[1])
