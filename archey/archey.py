@@ -877,7 +877,7 @@ class GPU:
             lspci_output = sorted([
                 (i.split(': ')[0].split(' ')[1], i.split(': ')[1])
                 for i in check_output(
-                    ['lspci'], stderr=PIPE, universal_newlines=True
+                    ['lspci'], stderr=DEVNULL, universal_newlines=True
                 ).splitlines()
                 if '3D' in i or 'VGA' in i or 'Display' in i
                 ], key=lambda x: len(x[1])
