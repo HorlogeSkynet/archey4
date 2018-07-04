@@ -768,7 +768,12 @@ class Temperature:
         # Now we just check for values within files present in the path below
         for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
             with open(thermalFile) as file:
-                temp = float(file.read().strip()) / 1000
+                try:
+                    temp = float(file.read().strip()) / 1000
+
+                except OSError:
+                    continue
+
                 if temp != 0.0:
                     temps.append(
                         self._convertToFahrenheit(temp)
