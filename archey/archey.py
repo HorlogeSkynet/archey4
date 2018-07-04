@@ -773,6 +773,7 @@ class Temperature:
 
                 except OSError:
                     continue
+
                 if temp != 0.0:
                     temps.append(
                         self._convertToFahrenheit(temp)
