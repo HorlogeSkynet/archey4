@@ -770,6 +770,7 @@ class Temperature:
             with open(thermalFile) as file:
                 try:
                     temp = float(file.read().strip()) / 1000
+
                 except OSError:
                     continue
                 if temp != 0.0:
