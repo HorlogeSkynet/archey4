@@ -47,12 +47,11 @@ Window manager's "showing the desktop" mode: OFF
         'running',
         'here'
     ])
-    @patch.dict('archey.archey.config.config', {
-            'default_strings': {
-                'not_detected': 'Not detected'
-            }
+    @patch.dict('archey.archey.CONFIG.config', {
+        'default_strings': {
+            'not_detected': 'Not detected'
         }
-    )
+    })
     def test_no_wmctrl_mismatch(self, check_output_mock):
         self.assertEqual(WindowManager().value, 'Not detected')
 

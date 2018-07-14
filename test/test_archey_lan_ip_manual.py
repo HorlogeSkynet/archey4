@@ -3,9 +3,8 @@ import os
 import tempfile
 import unittest
 from subprocess import Popen, check_output
-from unittest.mock import patch
 
-from archey.archey import LAN_IP
+from archey.archey import LanIp
 
 
 # --------------------------------------------------------------------------------
@@ -19,12 +18,12 @@ class FakePopenMock(object):
         either receive our mocked mock, or an "original" `Popen` instance
         (called with the passed arguments to imitate the default behavior).
     """
-    @patch('subprocess.Popen')
+    @unittest.mock.patch('subprocess.Popen')
     def __init__(self, stdout_mock, popen_mock):
         self.stdout_mock = stdout_mock
 
         # A typical `ip -o addr show up` output
-        self.stdout_mock.write(b"""\
+        self.stdout_mock.write(rb"""\
 1: lo    inet 127.0.0.1/8 scope host lo\\       valid_lft forever \
 preferred_lft forever
 1: lo    inet6 ::1/128 scope host \\       valid_lft forever \
@@ -86,7 +85,7 @@ class FakeCheckOutputMock(object):
 # --------------------------------------------------------------------------------
 
 
-class TestLAN_IPEntry_Manual(unittest.TestCase):
+class TestLanIpEntryManual(unittest.TestCase):
     def setUp(self):
         # This temporary file will act as a standard stream pipe for `Popen`
         self.stdout_mock = tempfile.NamedTemporaryFile(delete=False)
@@ -96,33 +95,32 @@ class TestLAN_IPEntry_Manual(unittest.TestCase):
         self.stdout_mock.close()
         os.remove(self.stdout_mock.name)
 
-    @patch('archey.archey.Popen')
-    @patch('archey.archey.check_output')
-    @patch.dict(
-        'archey.archey.config.config',
+    @unittest.mock.patch('archey.archey.Popen')
+    @unittest.mock.patch('archey.archey.check_output')
+    @unittest.mock.patch.dict(
+        'archey.archey.CONFIG.config',
         {'ip_settings': {'lan_ip_max_count': False}}
     )
-    def test_manual_workaround_without_limit(self,
-                                             check_output_mock, popen_mock):
+    def test_manual_workaround(self, check_output_mock, popen_mock):
         # Our mocks will be "special", please refer to the class above.
         popen_mock.side_effect = FakePopenMock(self.stdout_mock).method
         check_output_mock.side_effect = FakeCheckOutputMock().method
         self.assertEqual(
-            LAN_IP().value,
+            LanIp().value,
             'XXX.YYY.ZZZ.9, 172.17.0.1, 0123::45:6789:abcd:6817'
         )
 
-    @patch('archey.archey.Popen')
-    @patch('archey.archey.check_output')
-    @patch.dict(
-        'archey.archey.config.config',
+    @unittest.mock.patch('archey.archey.Popen')
+    @unittest.mock.patch('archey.archey.check_output')
+    @unittest.mock.patch.dict(
+        'archey.archey.CONFIG.config',
         {'ip_settings': {'lan_ip_max_count': 2}}
     )
-    def test_manual_workaround_with_limit(self, check_output_mock, popen_mock):
+    def test_manual_workaround_limit(self, check_output_mock, popen_mock):
         popen_mock.side_effect = FakePopenMock(self.stdout_mock).method
         check_output_mock.side_effect = FakeCheckOutputMock().method
         self.assertEqual(
-            LAN_IP().value,
+            LanIp().value,
             'XXX.YYY.ZZZ.9, 172.17.0.1'
         )
 

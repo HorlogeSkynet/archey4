@@ -27,7 +27,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         'coffee'
     ])
     @patch(
-        'archey.archey.getenv',
+        'archey.archey.os.getenv',
         return_value='DESKTOP ENVIRONMENT'
     )
     def test_mismatch(self, getenv_mock):

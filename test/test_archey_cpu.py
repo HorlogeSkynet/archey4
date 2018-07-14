@@ -21,14 +21,9 @@ model name\t: CPU-MODEL-NAME
 """),
         create=True
     )
-    def test_model_name_match_proc_cpuinfo(self):
+    def test_model_name_match_cpuinfo(self):
         self.assertEqual(CPU().value, 'CPU-MODEL-NAME')
 
-    """
-    See issue #29 (ARM architectures).
-    `/proc/cpuinfo` will not contain `model name` info.
-    `lscpu` output will be used instead.
-    """
     @patch(
         'archey.archey.open',
         mock_open(
@@ -58,6 +53,11 @@ Model:               \xde\xad\xbe\xef
 Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
 """)
     def test_model_name_match_lscpu(self, check_output_mock):
+        """
+        See issue #29 (ARM architectures).
+        `/proc/cpuinfo` will not contain `model name` info.
+        `lscpu` output will be used instead.
+        """
         self.assertEqual(CPU().value, 'CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO')
 
     @patch(

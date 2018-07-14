@@ -68,7 +68,7 @@ class TestOutputUtil(unittest.TestCase):
             Output()
 
     @patch.dict(
-        'archey.archey.colorDict',
+        'archey.archey.COLOR_DICT',
         {
             Distributions.DEBIAN: ['COLOR_0', 'COLOR_1'],
             'clear': 'CLEAR'
@@ -88,14 +88,14 @@ class TestOutputUtil(unittest.TestCase):
         )
 
     @patch.dict(
-        'archey.archey.colorDict',
+        'archey.archey.COLOR_DICT',
         {
             Distributions.DEBIAN: ['COLOR_0', 'COLOR_1'],
             'clear': 'CLEAR'
         }
     )
     @patch.dict(
-        'archey.archey.logosDict',
+        'archey.archey.LOGOS_DICT',
         {
             Distributions.DEBIAN: """\
 {c[0]} {r[0]} {c[1]}
@@ -125,7 +125,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value=None,  # Let's badly mute the class outputs
         create=True
     )
-    def test_centered_output_even_and_odd_numbers(self, print_mock):
+    def test_centered_output(self, print_mock):
         output = Output()
 
         # Let's manually set the distribution for the test case...

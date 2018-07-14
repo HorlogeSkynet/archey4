@@ -7,7 +7,6 @@ import re
 import sys
 from enum import Enum
 from glob import glob
-from os import getenv, getuid
 from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
     TimeoutExpired, check_output
 
@@ -33,7 +32,7 @@ class Distributions(Enum):
 
 # ------------ Dictionaries ----------- #
 
-colorDict = {
+COLOR_DICT = {
     Distributions.ARCH_LINUX: ['\x1b[0;34m', '\x1b[1;34m'],
     Distributions.BUNSENLABS: ['\x1b[1;37m', '\x1b[1;33m', '\x1b[0;33m'],
     Distributions.CRUNCHBANG: ['\x1b[1;37m', '\x1b[1;37m'],
@@ -53,7 +52,7 @@ colorDict = {
     'clear': '\x1b[0m'
 }
 
-deDict = {
+DE_DICT = {
     'cinnamon': 'Cinnamon',
     'gnome-session': 'GNOME',
     'gnome-shell': 'GNOME',
@@ -65,7 +64,7 @@ deDict = {
     'lxqt-session': 'LXQt'
 }
 
-wmDict = {
+WM_DICT = {
     'awesome': 'Awesome',
     'beryl': 'Beryl',
     'blackbox': 'Blackbox',
@@ -98,7 +97,7 @@ wmDict = {
     'xmonad': 'xmonad'
 }
 
-logosDict = {
+LOGOS_DICT = {
     Distributions.ARCH_LINUX: """
 {c[1]}               +                 {r[0]}
 {c[1]}               #                 {r[1]}
@@ -266,16 +265,16 @@ logosDict = {
 {c[1]}         8|o||o|88         {r[4]}
 {c[1]}         8{c[0]}\\vvvv/{c[1]}88         {r[5]}
 {c[1]}         8{c[0]} \\vv/ {c[1]}Y8.        {r[6]}
-{c[1]}        d/  {c[0]}`'{c[1]}  \8b.       {r[7]}
+{c[1]}        d/  {c[0]}`'{c[1]}  \\8b.       {r[7]}
 {c[1]}      .dP   .     Y8b.     {r[8]}
 {c[1]}     d8:'   "   `::88b.    {r[9]}
 {c[1]}    d8"           `Y88b    {r[10]}
 {c[1]}   :8P     '       :888    {r[11]}
 {c[1]}    8a.    :      _a88P    {r[12]}
 {c[1]}  {c[0]}._/"{c[1]}Yaa_ :    .{c[0]}| {c[1]}88P{c[0]}|{c[1]}    {r[13]}
-{c[1]} {c[0]}\++++{c[1]}YP"      `{c[0]}| {c[1]}8P{c[0]}++\.{c[1]}   {r[14]}
-{c[1]} {c[0]}/+++++\.{c[1]}_____.d{c[0]}|+++++/{c[1]}    {r[15]}
-{c[1]}  {c[0]}\++++++){c[1]}888888P{c[0]}\+++/{c[1]}     {r[16]}
+{c[1]} {c[0]}\\++++{c[1]}YP"      `{c[0]}| {c[1]}8P{c[0]}++\\.{c[1]}   {r[14]}
+{c[1]} {c[0]}/+++++\\.{c[1]}_____.d{c[0]}|+++++/{c[1]}    {r[15]}
+{c[1]}  {c[0]}\\++++++){c[1]}888888P{c[0]}\\+++/{c[1]}     {r[16]}
 {c[1]}                           {r[17]}\n""",
     Distributions.LINUX_MINT: """
 {c[1]}                                       {r[0]}
@@ -317,20 +316,20 @@ logosDict = {
 {c[0]}             '^:ldxkkkkxdl:^'             {r[17]}\n""",
     Distributions.RED_HAT: """
 {c[1]}                                             {r[0]}
-{c[1]}              {c[2]}\`.-..........\`{c[1]}               {r[1]}
-{c[1]}             {c[2]}\`////////::.\`-/.{c[1]}              {r[2]}
+{c[1]}              {c[2]}\\`.-..........\\`{c[1]}               {r[1]}
+{c[1]}             {c[2]}\\`////////::.\\`-/.{c[1]}              {r[2]}
 {c[1]}             {c[2]}-: ....-////////.{c[1]}               {r[3]}
-{c[1]}             {c[2]}//:-::///////////\`{c[1]}             {r[4]}
-{c[1]}      {c[2]}\`--::: \`-://////////////:{c[1]}            {r[5]}
-{c[1]}      {c[2]}//////-    \`\`.-://///////{c[1]} .\`        {r[6]}
-{c[1]}      {c[2]}\`://////:-.\`    :///////::///:\`{c[1]}     {r[7]}
+{c[1]}             {c[2]}//:-::///////////\\`{c[1]}             {r[4]}
+{c[1]}      {c[2]}\\`--::: \\`-://////////////:{c[1]}            {r[5]}
+{c[1]}      {c[2]}//////-    \\`\\`.-://///////{c[1]} .\\`        {r[6]}
+{c[1]}      {c[2]}\\`://////:-.\\`    :///////::///:\\`{c[1]}     {r[7]}
 {c[1]}        {c[2]}.-/////////:---/////////////:{c[1]}        {r[8]}
 {c[1]}           {c[2]}.-://////////////////////.{c[1]}        {r[9]}
-{c[1]}          {c[0]}yMN+\`.-${c[2]}::///////////////-\`{c[1]}      {r[10]}
-{c[1]}       {c[0]}.-\`:NMMNMs\`  \`..-------..\`{c[1]}        {r[11]}
+{c[1]}          {c[0]}yMN+\\`.-${c[2]}::///////////////-\\`{c[1]}      {r[10]}
+{c[1]}       {c[0]}.-\\`:NMMNMs\\`  \\`..-------..\\`{c[1]}        {r[11]}
 {c[1]}        {c[0]}MN+/mMMMMMhoooyysshsss{c[1]}               {r[12]}
 {c[1]} {c[0]}MMM    MMMMMMMMMMMMMMyyddMMM+{c[1]}               {r[13]}
-{c[1]}  {c[0]}MMMM   MMMMMMMMMMMMMNdyNMMh\`     hyhMMM{c[1]}   {r[14]}
+{c[1]}  {c[0]}MMMM   MMMMMMMMMMMMMNdyNMMh\\`     hyhMMM{c[1]}   {r[14]}
 {c[1]}   {c[0]}MMMMMMMMMMMMMMMMyoNNNMMM+.   MMMMMMMM{c[1]}     {r[15]}
 {c[1]}    {c[0]}MMNMMMNNMMMMMNM+ mhsMNyyyyMNMMMMsMM{c[1]}      {r[16]}
 {c[1]}                                             {r[17]}\n""",
@@ -382,7 +381,7 @@ class Configuration(object):
         """
         Represents the default configuration which will be used by Archey.
         Values present in the dictionary below are needed.
-        New optional values may be added with `_updateRecursive()` method.
+        New optional values may be added with `_update_recursive()` method.
         """
         self.config = {
             'colors_palette': {
@@ -412,9 +411,9 @@ class Configuration(object):
         self._stderr = sys.stderr
 
         # Now, let's load each optional configuration file in a "regular" order
-        self.loadConfiguration('/etc/archey4/')
-        self.loadConfiguration(os.path.expanduser('~') + '/.config/archey4/')
-        self.loadConfiguration(os.path.dirname(os.path.realpath(__file__)))
+        self.load_configuration('/etc/archey4/')
+        self.load_configuration(os.path.expanduser('~') + '/.config/archey4/')
+        self.load_configuration(os.path.dirname(os.path.realpath(__file__)))
 
     def get(self, key, default=None):
         """
@@ -422,7 +421,7 @@ class Configuration(object):
         """
         return self.config.get(key, default)
 
-    def loadConfiguration(self, path):
+    def load_configuration(self, path):
         # If a previous configuration file has denied overriding...
         if not self.config.get('allow_overriding', True):
             #  ... don't load this one.
@@ -435,7 +434,7 @@ class Configuration(object):
 
         try:
             with open(path) as file:
-                self._updateRecursive(self.config, json.load(file))
+                self._update_recursive(self.config, json.load(file))
 
             # If the user does not want any warning to appear : 2> /dev/null
             if self.config.get('suppress_warnings', False):
@@ -455,34 +454,34 @@ class Configuration(object):
 
         # For backward compatibility with Python versions prior to 3.5.0
         #   we use `ValueError` instead of `json.JSONDecodeError`.
-        except ValueError as e:
-            print('Warning: {0} ({1})'.format(e, path), file=sys.stderr)
+        except ValueError as error:
+            print('Warning: {0} ({1})'.format(error, path), file=sys.stderr)
 
-    def _updateRecursive(self, oldDict, newDict):
+    def _update_recursive(self, old_dict, new_dict):
         """
         A method for recursively merging dictionaries as...
         ... `dict.update()` is not able to do this.
         Original snippet taken from here :
         https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
         """
-        for key, value in newDict.items():
-            if key in oldDict and isinstance(oldDict[key], dict) \
+        for key, value in new_dict.items():
+            if key in old_dict and isinstance(old_dict[key], dict) \
                     and isinstance(value, dict):
-                self._updateRecursive(oldDict[key], value)
+                self._update_recursive(old_dict[key], value)
 
             else:
-                oldDict[key] = value
+                old_dict[key] = value
 
 
 # ---------- Global variables --------- #
 
 # We create a global instance of our `Configuration` Class
-config = Configuration()
+CONFIG = Configuration()
 
 # We'll list the running processes only one time
 try:
     PROCESSES = check_output(
-        ['ps', '-u' + str(getuid()) if getuid() != 0 else '-ax',
+        ['ps', '-u' + str(os.getuid()) if os.getuid() != 0 else '-ax',
          '-o', 'comm', '--no-headers'], universal_newlines=True
     ).splitlines()
 
@@ -497,7 +496,7 @@ except FileNotFoundError:
 class Output(object):
     def __init__(self):
         try:
-            lsbOutput = check_output(
+            lsb_output = check_output(
                 ['lsb_release', '-i', '-s'],
                 universal_newlines=True
             ).rstrip()
@@ -508,13 +507,13 @@ class Output(object):
             exit()
 
         if re.search(
-               'Microsoft',
-               check_output(['uname', '-r'], universal_newlines=True)):
+                'Microsoft',
+                check_output(['uname', '-r'], universal_newlines=True)):
             self.distribution = Distributions.WINDOWS
 
         else:
             for distribution in Distributions:
-                if re.fullmatch(distribution.value, lsbOutput):
+                if re.fullmatch(distribution.value, lsb_output):
                     self.distribution = distribution
                     break
 
@@ -527,7 +526,7 @@ class Output(object):
     def append(self, key, value):
         self.results.append(
             '{0}{1}:{2} {3}'.format(
-                colorDict[self.distribution][1], key, colorDict['clear'], value
+                COLOR_DICT[self.distribution][1], key, COLOR_DICT['clear'], value
             )
         )
 
@@ -538,10 +537,10 @@ class Output(object):
 
         try:
             print(
-                logosDict[self.distribution].format(
-                    c=colorDict[self.distribution],
+                LOGOS_DICT[self.distribution].format(
+                    c=COLOR_DICT[self.distribution],
                     r=self.results
-                ) + colorDict['clear']
+                ) + COLOR_DICT['clear']
             )
 
         except UnicodeError:
@@ -556,9 +555,9 @@ class Output(object):
 
 class User:
     def __init__(self):
-        self.value = getenv(
+        self.value = os.getenv(
             'USER',
-            config.get('default_strings')['not_detected']
+            CONFIG.get('default_strings')['not_detected']
         )
 
 
@@ -598,14 +597,14 @@ class Model:
                 # ... within virtual contexts.
                 # `archey` needs to be run as root although.
                 try:
-                    virtWhat = ', '.join(
+                    virt_what = ', '.join(
                         check_output(
                             ['virt-what'],
                             stderr=DEVNULL, universal_newlines=True
                         ).splitlines()
                     )
 
-                    if virtWhat:
+                    if virt_what:
                         try:
                             # Sometimes we may gather info added by...
                             # ... hosting service provider this way
@@ -615,19 +614,19 @@ class Model:
                             ).rstrip()
 
                         except (FileNotFoundError, CalledProcessError):
-                            model = config.get(
+                            model = CONFIG.get(
                                 'default_strings'
                             )['virtual_environment']
 
-                        model += ' ({0})'.format(virtWhat)
+                        model += ' ({0})'.format(virt_what)
 
                     else:
-                        model = config.get(
+                        model = CONFIG.get(
                             'default_strings'
                         )['bare_metal_environment']
 
                 except (FileNotFoundError, CalledProcessError):
-                    model = config.get('default_strings')['not_detected']
+                    model = CONFIG.get('default_strings')['not_detected']
 
         self.value = model
 
@@ -664,9 +663,34 @@ class Uptime:
         minute = fuptime // 60
 
         uptime = ''
-        uptime += ((str(day) + ' day' + ('s' if day > 1 else '') + ('' if minute == 0 and hour == 0 else (' and ' if (minute != 0 and hour == 0) or (minute == 0 and hour != 0) else ', '))) if day >= 1 else '')
-        uptime += ((str(hour) + ' hour' + ('s' if hour > 1 else '') + (' and ' if minute != 0 else '')) if hour >= 1 else '')
-        uptime += ((str(minute) + ' minute' + ('s' if minute > 1 else '')) if minute >= 1 else ('< 1 minute' if day == 0 and hour == 0 else ''))
+        if day:
+            uptime += str(day) + ' day'
+            if day > 1:
+                uptime += 's'
+
+            if hour or minute:
+                if bool(hour) != bool(minute):
+                    uptime += ' and '
+
+                else:
+                    uptime += ', '
+
+        if hour:
+            uptime += str(hour) + ' hour'
+            if hour > 1:
+                uptime += 's'
+
+            if minute:
+                uptime += ' and '
+
+        if minute:
+            uptime += str(minute) + ' minute'
+            if minute > 1:
+                uptime += 's'
+
+        else:
+            if not day and not hour:
+                uptime = '< 1 minute'
 
         self.value = uptime
 
@@ -674,7 +698,7 @@ class Uptime:
 class WindowManager:
     def __init__(self):
         try:
-            wm = re.search(
+            window_manager = re.search(
                 '(?<=Name: ).*',
                 check_output(
                     ['wmctrl', '-m'],
@@ -683,47 +707,47 @@ class WindowManager:
             ).group(0)
 
         except (FileNotFoundError, CalledProcessError):
-            for key in wmDict.keys():
+            for key, value in WM_DICT.items():
                 if key in PROCESSES:
-                    wm = wmDict[key]
+                    window_manager = value
                     break
 
             else:
-                wm = config.get('default_strings')['not_detected']
+                window_manager = CONFIG.get('default_strings')['not_detected']
 
-        self.value = wm
+        self.value = window_manager
 
 
 class DesktopEnvironment:
     def __init__(self):
-        for key in deDict.keys():
+        for key, value in DE_DICT.items():
             if key in PROCESSES:
-                de = deDict[key]
+                desktop_environment = value
                 break
 
         else:
             # Let's rely on an environment var if the loop above didn't `break`
-            de = getenv(
+            desktop_environment = os.getenv(
                 'XDG_CURRENT_DESKTOP',
-                config.get('default_strings')['not_detected']
+                CONFIG.get('default_strings')['not_detected']
             )
 
-        self.value = de
+        self.value = desktop_environment
 
 
 class Shell:
     def __init__(self):
-        self.value = getenv(
+        self.value = os.getenv(
             'SHELL',
-            config.get('default_strings')['not_detected']
+            CONFIG.get('default_strings')['not_detected']
         )
 
 
 class Terminal:
     def __init__(self):
-        terminal = getenv(
+        terminal = os.getenv(
             'TERM',
-            config.get('default_strings')['not_detected']
+            CONFIG.get('default_strings')['not_detected']
         )
 
         # On systems with non-Unicode locales, we imitate '\u2588' character
@@ -732,9 +756,9 @@ class Terminal:
         colors = ' '.join([
             '\x1b[0;3{0}m{1}\x1b[1;3{0}m{1}{2}'.format(
                 i,
-                '\u2588' if config.get('colors_palette')['use_unicode']
+                '\u2588' if CONFIG.get('colors_palette')['use_unicode']
                 else '#',
-                colorDict['clear']
+                COLOR_DICT['clear']
             ) for i in range(7, 0, -1)
         ])
 
@@ -749,7 +773,7 @@ class Temperature:
             # Let's try to retrieve a value from the Broadcom chip on Raspberry
             temp = float(
                 re.search(
-                    '\d+\.\d+',
+                    r'\d+\.\d+',
                     check_output(
                         ['/opt/vc/bin/vcgencmd', 'measure_temp'],
                         stderr=DEVNULL, universal_newlines=True
@@ -758,21 +782,21 @@ class Temperature:
             )
 
             temps.append(
-                self._convertToFahrenheit(temp)
-                if config.get('temperature')['use_fahrenheit'] else temp
+                self._convert_to_fahrenheit(temp)
+                if CONFIG.get('temperature')['use_fahrenheit'] else temp
             )
 
         except (FileNotFoundError, CalledProcessError):
             pass
 
         # Now we just check for values within files present in the path below
-        for thermalFile in glob('/sys/class/thermal/thermal_zone*/temp'):
-            with open(thermalFile) as file:
+        for thermal_file in glob('/sys/class/thermal/thermal_zone*/temp'):
+            with open(thermal_file) as file:
                 temp = float(file.read().strip()) / 1000
                 if temp != 0.0:
                     temps.append(
-                        self._convertToFahrenheit(temp)
-                        if config.get('temperature')['use_fahrenheit']
+                        self._convert_to_fahrenheit(temp)
+                        if CONFIG.get('temperature')['use_fahrenheit']
                         else temp
                     )
 
@@ -780,49 +804,50 @@ class Temperature:
             self.value = '{0}{2}{3} (Max. {1}{2}{3})'.format(
                 str(round(sum(temps) / len(temps), 1)),
                 str(round(max(temps), 1)),
-                config.get('temperature')['char_before_unit'],
-                'F' if config.get('temperature')['use_fahrenheit'] else 'C'
+                CONFIG.get('temperature')['char_before_unit'],
+                'F' if CONFIG.get('temperature')['use_fahrenheit'] else 'C'
             )
 
         else:
-            self.value = config.get('default_strings')['not_detected']
+            self.value = CONFIG.get('default_strings')['not_detected']
 
-    """
-    Simple Celsius to Fahrenheit conversion method
-    """
-    def _convertToFahrenheit(self, temp):
+    @staticmethod
+    def _convert_to_fahrenheit(temp):
+        """
+        Simple Celsius to Fahrenheit conversion method
+        """
         return temp * (9 / 5) + 32
 
 
 class Packages:
     def __init__(self):
-        for packagesTool in [['dnf',    'list',   'installed'],
-                             ['dpkg',   '--get-selections'],
-                             ['emerge', '-ep',    'world'],
-                             ['pacman', '-Q'],
-                             ['rpm',    '-qa'],
-                             ['yum',    'list',   'installed'],
-                             ['zypper', 'search', '-i']]:
+        for packages_tool in [['dnf', 'list', 'installed'],
+                              ['dpkg', '--get-selections'],
+                              ['emerge', '-ep', 'world'],
+                              ['pacman', '-Q'],
+                              ['rpm', '-qa'],
+                              ['yum', 'list', 'installed'],
+                              ['zypper', 'search', '-i']]:
             try:
                 results = check_output(
-                    packagesTool,
+                    packages_tool,
                     stderr=DEVNULL, env={'LANG': 'C'}, universal_newlines=True
                 )
                 packages = results.count('\n')
 
-                if 'dnf' in packagesTool:  # Deduct extra heading line
+                if 'dnf' in packages_tool:  # Deduct extra heading line
                     packages -= 1
 
-                elif 'dpkg' in packagesTool:  # Packages removed but not purged
+                elif 'dpkg' in packages_tool:  # Packages removed but not purged
                     packages -= results.count('deinstall')
 
-                elif 'emerge' in packagesTool:  # Deduct extra heading lines
+                elif 'emerge' in packages_tool:  # Deduct extra heading lines
                     packages -= 5
 
-                elif 'yum' in packagesTool:  # Deduct extra heading lines
+                elif 'yum' in packages_tool:  # Deduct extra heading lines
                     packages -= 2
 
-                elif 'zypper' in packagesTool:  # Deduct extra heading lines
+                elif 'zypper' in packages_tool:  # Deduct extra heading lines
                     packages -= 5
 
                 break
@@ -831,7 +856,7 @@ class Packages:
                 pass
 
         else:
-            packages = config.get('default_strings')['not_detected']
+            packages = CONFIG.get('default_strings')['not_detected']
 
         self.value = packages
 
@@ -839,7 +864,7 @@ class Packages:
 class CPU:
     def __init__(self):
         model_name_regex = re.compile(
-            '^model name\s*:\s*(.*)$',
+            r'^model name\s*:\s*(.*)$',
             flags=re.IGNORECASE | re.MULTILINE
         )
 
@@ -859,7 +884,7 @@ class CPU:
             )
 
         # Sometimes CPU model name contains extra ugly white-spaces.
-        self.value = re.sub('\s+', ' ', cpuinfo.group(1))
+        self.value = re.sub(r'\s+', ' ', cpuinfo.group(1))
 
 
 class GPU:
@@ -887,14 +912,14 @@ class GPU:
                 if len(gpuinfo) > 48:
                     # This call truncates `gpuinfo` with words preservation
                     gpuinfo = re.search(
-                        '.{1,45}(?:\W|$)', gpuinfo
+                        r'.{1,45}(?:\W|$)', gpuinfo
                     ).group(0).strip() + '...'
 
             else:
-                gpuinfo = config.get('default_strings')['not_detected']
+                gpuinfo = CONFIG.get('default_strings')['not_detected']
 
         except (FileNotFoundError, CalledProcessError):
-            gpuinfo = config.get('default_strings')['not_detected']
+            gpuinfo = CONFIG.get('default_strings')['not_detected']
 
         self.value = gpuinfo
 
@@ -930,9 +955,9 @@ class RAM:
                 used += ram['Cached'] + ram['Buffers']
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-            colorDict['sensors'][int(((used / total) * 100) // 33.34)],
+            COLOR_DICT['sensors'][int(((used / total) * 100) // 33.34)],
             int(used),
-            colorDict['clear'],
+            COLOR_DICT['clear'],
             int(total)
         )
 
@@ -953,13 +978,14 @@ class Disk:
         ).split()
 
         self.value = '{0}{1}{2} / {3}'.format(
-            colorDict['sensors'][int(float(total[5][:-1]) // 33.34)],
-            re.sub('GB', ' GB', total[3]), colorDict['clear'],
+            COLOR_DICT['sensors'][int(float(total[5][:-1]) // 33.34)],
+            re.sub('GB', ' GB', total[3]),
+            COLOR_DICT['clear'],
             re.sub('GB', ' GB', total[2])
         )
 
 
-class LAN_IP:
+class LanIp:
     def __init__(self):
         try:
             addresses = check_output(
@@ -996,22 +1022,22 @@ class LAN_IP:
         # This option is still optional.
         self.value = ', '.join(
             addresses[:(
-                config.get('ip_settings')['lan_ip_max_count']
-                if config.get('ip_settings')['lan_ip_max_count'] is not False
+                CONFIG.get('ip_settings')['lan_ip_max_count']
+                if CONFIG.get('ip_settings')['lan_ip_max_count'] is not False
                 else len(addresses)
             )]
-        ) or config.get('default_strings')['no_address']
+        ) or CONFIG.get('default_strings')['no_address']
 
 
-class WAN_IP:
+class WanIp:
     def __init__(self):
         # IPv6 address retrieval (unless the user doesn't want it).
-        if config.get('ip_settings')['wan_ip_v6_support']:
+        if CONFIG.get('ip_settings')['wan_ip_v6_support']:
             try:
                 ipv6_value = check_output([
                     'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
                     '@resolver1.ipv6-sandbox.opendns.com'
-                    ], timeout=config.get('timeout')['ipv6_detection'],
+                    ], timeout=CONFIG.get('timeout')['ipv6_detection'],
                     stderr=DEVNULL, universal_newlines=True
                 ).rstrip()
 
@@ -1019,7 +1045,7 @@ class WAN_IP:
                 try:
                     ipv6_value = check_output([
                         'wget', '-qO-', 'https://v6.ident.me/'
-                        ], timeout=config.get('timeout')['ipv6_detection'],
+                        ], timeout=CONFIG.get('timeout')['ipv6_detection'],
                         universal_newlines=True
                     )
 
@@ -1040,7 +1066,7 @@ class WAN_IP:
         try:
             ipv4_value = check_output([
                 'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
-                ], timeout=config.get('timeout')['ipv4_detection'],
+                ], timeout=CONFIG.get('timeout')['ipv4_detection'],
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
 
@@ -1048,7 +1074,7 @@ class WAN_IP:
             try:
                 ipv4_value = check_output([
                     'wget', '-qO-', 'https://v4.ident.me/'
-                    ], timeout=config.get('timeout')['ipv4_detection'],
+                    ], timeout=CONFIG.get('timeout')['ipv4_detection'],
                     universal_newlines=True
                 )
 
@@ -1059,13 +1085,13 @@ class WAN_IP:
             except FileNotFoundError:
                 ipv4_value = None
                 # If statement so as to not print the same message twice.
-                if not config.get('ip_settings')['wan_ip_v6_support']:
+                if not CONFIG.get('ip_settings')['wan_ip_v6_support']:
                     print('Warning: `wget` has not been found on your system.',
                           file=sys.stderr)
 
         self.value = ', '.join(
             filter(None, (ipv4_value, ipv6_value))
-        ) or config.get('default_strings')['no_address']
+        ) or CONFIG.get('default_strings')['no_address']
 
 
 # ----------- Classes Index ----------- #
@@ -1087,8 +1113,8 @@ class Classes(Enum):
     GPU = GPU
     RAM = RAM
     Disk = Disk
-    LAN_IP = LAN_IP
-    WAN_IP = WAN_IP
+    LAN_IP = LanIp
+    WAN_IP = WanIp
 
 
 # ---------------- Main --------------- #
@@ -1096,7 +1122,7 @@ class Classes(Enum):
 def main():
     output = Output()
     for key in Classes:
-        if config.get('entries', {}).get(key.name, True):
+        if CONFIG.get('entries', {}).get(key.name, True):
             output.append(key.name, key.value().value)
 
     output.output()
