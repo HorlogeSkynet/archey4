@@ -792,7 +792,12 @@ class Temperature:
         # Now we just check for values within files present in the path below
         for thermal_file in glob('/sys/class/thermal/thermal_zone*/temp'):
             with open(thermal_file) as file:
-                temp = float(file.read().strip()) / 1000
+                try:
+                    temp = float(file.read().strip()) / 1000
+
+                except OSError:
+                    continue
+
                 if temp != 0.0:
                     temps.append(
                         self._convert_to_fahrenheit(temp)
@@ -971,8 +976,8 @@ class Disk:
                 '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
                 '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
                 '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
-                '-t', 'fuseblk', '-t', 'xfs',
-                '-t', 'simfs', '-t', 'tmpfs'
+                '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs',
+                '-t', 'tmpfs', '-t', 'lxfs'
                 ], universal_newlines=True
             ).splitlines()[-1]
         ).split()
