@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-
-# pylint: disable=C0111, W0613
-
 
 import unittest
 from unittest.mock import patch

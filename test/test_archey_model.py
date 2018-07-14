@@ -14,7 +14,7 @@ class TestModelEntry(unittest.TestCase):
     """
 
     def setUp(self):
-        self.return_values = []
+        self.return_values = None
 
     @patch(
         'archey.archey.open',

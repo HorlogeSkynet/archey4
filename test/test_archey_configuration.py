@@ -17,7 +17,6 @@ class TestConfigurationUtil(unittest.TestCase):
     def test_get(self):
         configuration = Configuration()
         configuration.config = {
-            'allow_overriding': 2,
             'ip_settings': {
                 'lan_ip_max_count': 2,
             },
