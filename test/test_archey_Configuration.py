@@ -3,7 +3,6 @@ import os
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
 
 from archey.archey import Configuration
 
@@ -11,10 +10,14 @@ from archey.archey import Configuration
 class TestConfigurationUtil(unittest.TestCase):
     """
     Simple test cases to check the behavior of `Configuration` tools.
+    We can't use the `patch` method as the dictionary state after
+      the initializations is unknown due to user's configuration files.
+    Values will be manually set in the tests below.
     """
-    @patch.dict(
-        'archey.archey.config.config',
-        {
+    def test_get(self):
+        configuration = Configuration()
+        configuration.config = {
+            'allow_overriding': 2,
             'ip_settings': {
                 'lan_ip_max_count': 2,
             },
@@ -22,9 +25,7 @@ class TestConfigurationUtil(unittest.TestCase):
                 'use_fahrenheit': False
             }
         }
-    )
-    def test_get(self):
-        configuration = Configuration()
+
         self.assertEqual(
             configuration.config.get('ip_settings')['lan_ip_max_count'],
             2
@@ -37,7 +38,6 @@ class TestConfigurationUtil(unittest.TestCase):
 
     def test_loadConfiguration(self):
         configuration = Configuration()
-        # We set a default configuration here
         configuration.config = {
             'allow_overriding': True,
             'suppress_warnings': False,
@@ -120,7 +120,6 @@ class TestConfigurationUtil(unittest.TestCase):
 
     def test_updateRecursive(self):
         configuration = Configuration()
-        # We set a default configuration here
         configuration.config = {
             'allow_overriding': True,
             'suppress_warnings': False,
