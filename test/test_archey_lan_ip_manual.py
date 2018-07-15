@@ -9,7 +9,7 @@ from archey.archey import LanIp
 
 # --------------------------------------------------------------------------------
 
-class FakePopenMock(object):
+class FakePopenMock:
     """
     This is the trick :
     * We mock the `Popen` object of this very module.
@@ -54,7 +54,7 @@ valid_lft forever preferred_lft forever
         return self.answers.pop(0)(*args, **kwargs)
 
 
-class FakeCheckOutputMock(object):
+class FakeCheckOutputMock:
     """
     Same stuff over here, the first `check_output` call will fail,
       and the second one will take back its default behavior.
