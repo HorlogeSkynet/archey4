@@ -17,7 +17,7 @@ Filesystem       Type 1GB-blocks  Used Available Use% Mounted on
 /dev/mapper/home ext3      512GB  47GB     465GB   9% /home
 total            -        1024GB  61GB     963GB  11% -
 """)
-    def test(self, popen_mock):
+    def test(self, check_output_mock):
         self.assertIn('61', Disk().value)
         self.assertIn('1024', Disk().value)
 

@@ -18,7 +18,7 @@ XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H VGA compatible controller: GPU-MODEL-NAME
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 """)
-    def test_match_VGA(self, check_output_mock):
+    def test_match_vga(self, check_output_mock):
         self.assertEqual(GPU().value, 'GPU-MODEL-NAME')
 
     @patch(
@@ -29,7 +29,7 @@ XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 XX:YY.H Display controller: GPU-MODEL-NAME VERY LONG WITH SPACES TO BE CUT OFF
 """)
-    def test_match_Display_longer_than_48_characters(self, check_output_mock):
+    def test_match_display_too_long(self, check_output_mock):
         self.assertEqual(
             GPU().value,
             'GPU-MODEL-NAME VERY LONG WITH SPACES TO BE...'
@@ -44,7 +44,7 @@ XX:YY.H Display controller: ANOTHER MATCHING VIDEO CONTROLLER IGNORED
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
 """)
-    def test_multimatches_3D_and_Display(self, check_output_mock):
+    def test_multi_matches(self, check_output_mock):
         self.assertEqual(
             GPU().value,
             '3D GPU-MODEL-NAME TAKES ADVANTAGE'
@@ -58,7 +58,7 @@ XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 """)
     @patch.dict(
-        'archey.archey.config.config',
+        'archey.archey.CONFIG.config',
         {'default_strings': {'not_detected': 'Not detected'}}
     )
     def test_no_match(self, check_output_mock):

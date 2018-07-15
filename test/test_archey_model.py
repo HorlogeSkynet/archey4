@@ -12,6 +12,10 @@ class TestModelEntry(unittest.TestCase):
     * Raspberry Pi
     * Virtual environment (as a VPS or a VM)
     """
+
+    def setUp(self):
+        self.return_values = None
+
     @patch(
         'archey.archey.open',
         mock_open(
@@ -62,7 +66,7 @@ class TestModelEntry(unittest.TestCase):
         return_value='\n'
     )
     @patch.dict(
-        'archey.archey.config.config',
+        'archey.archey.CONFIG.config',
         {
             'default_strings': {
                 'bare_metal_environment': 'Bare-metal Environment'
@@ -85,7 +89,7 @@ class TestModelEntry(unittest.TestCase):
         side_effect=FileNotFoundError()
     )
     @patch.dict(
-        'archey.archey.config.config',
+        'archey.archey.CONFIG.config',
         {'default_strings': {'not_detected': 'Not detected'}}
     )
     def test_no_match(self, check_output_mock):

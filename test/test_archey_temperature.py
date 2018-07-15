@@ -17,11 +17,11 @@ class TestTemperatureEntry(unittest.TestCase):
         #  `/sys/class/thermal/thermal_zone*/temp`
         self.tempfiles = []
         for temperature in [  # Fake temperatures
-                    b'50000',
-                    b'0',
-                    b'40000',
-                    b'50000'
-                ]:
+                b'50000',
+                b'0',
+                b'40000',
+                b'50000'
+            ]:
             file = tempfile.NamedTemporaryFile(delete=False)
             file.write(temperature)
             self.tempfiles.append(file.name)
@@ -39,7 +39,7 @@ class TestTemperatureEntry(unittest.TestCase):
         return_value=[]  # No temperature from file will be retrieved
     )
     def test_vcgencmd_only(self, glob_mock, check_output_mock):
-        self.assertRegex(Temperature().value, '42\.8.?.? \(Max\. 42\.8.?.?\)')
+        self.assertRegex(Temperature().value, r'42\.8.?.? \(Max\. 42\.8.?.?\)')
 
     @patch(
         'archey.archey.check_output',
@@ -48,25 +48,24 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch('archey.archey.glob')
     def test_vcgencmd_and_files(self, glob_mock, check_output_mock):
         glob_mock.return_value = self.tempfiles
-        self.assertRegex(Temperature().value, '45\.0.?.? \(Max\. 50\.0.?.?\)')
+        self.assertRegex(Temperature().value, r'45\.0.?.? \(Max\. 50\.0.?.?\)')
 
     @patch(
         'archey.archey.check_output',
         side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
     )
     @patch('archey.archey.glob')
-    @patch.dict('archey.archey.config.config', {
-            'temperature': {
-                'char_before_unit': ' ',
-                'use_fahrenheit': True
-            }
+    @patch.dict('archey.archey.CONFIG.config', {
+        'temperature': {
+            'char_before_unit': ' ',
+            'use_fahrenheit': True
         }
-    )
+    })
     def test_files_only_plus_fahrenheit(self, glob_mock, check_output_mock):
         glob_mock.return_value = self.tempfiles
         self.assertRegex(
             Temperature().value,
-            '116\.0.?.? \(Max\. 122\.0.?.?\)'  # 46.6 converted into Fahrenheit
+            r'116\.0.?.? \(Max\. 122\.0.?.?\)'  # 46.6 converted into Fahrenheit
         )
 
     @patch(
@@ -77,12 +76,11 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.archey.glob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    @patch.dict('archey.archey.config.config', {
-            'default_strings': {
-                'not_detected': 'Not detected'
-            }
+    @patch.dict('archey.archey.CONFIG.config', {
+        'default_strings': {
+            'not_detected': 'Not detected'
         }
-    )
+    })
     def test_no_output(self, glob_mock, check_output_mock):
         self.assertEqual(Temperature().value, 'Not detected')
 

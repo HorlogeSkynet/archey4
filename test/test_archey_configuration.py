@@ -3,7 +3,6 @@ import os
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
 
 from archey.archey import Configuration
 
@@ -11,10 +10,13 @@ from archey.archey import Configuration
 class TestConfigurationUtil(unittest.TestCase):
     """
     Simple test cases to check the behavior of `Configuration` tools.
+    We can't use the `patch` method as the dictionary state after
+      the initializations is unknown due to user's configuration files.
+    Values will be manually set in the tests below.
     """
-    @patch.dict(
-        'archey.archey.config.config',
-        {
+    def test_get(self):
+        configuration = Configuration()
+        configuration.config = {
             'ip_settings': {
                 'lan_ip_max_count': 2,
             },
@@ -22,9 +24,7 @@ class TestConfigurationUtil(unittest.TestCase):
                 'use_fahrenheit': False
             }
         }
-    )
-    def test_get(self):
-        configuration = Configuration()
+
         self.assertEqual(
             configuration.config.get('ip_settings')['lan_ip_max_count'],
             2
@@ -35,9 +35,8 @@ class TestConfigurationUtil(unittest.TestCase):
         self.assertTrue(configuration.config.get('does_not_exist', True))
         self.assertIsNone(configuration.config.get('does_not_exist_either'))
 
-    def test_loadConfiguration(self):
+    def test_load_configuration(self):
         configuration = Configuration()
-        # We set a default configuration here
         configuration.config = {
             'allow_overriding': True,
             'suppress_warnings': False,
@@ -52,9 +51,9 @@ class TestConfigurationUtil(unittest.TestCase):
             }
         }
 
-        with tempfile.TemporaryDirectory(suffix='/') as tempDir:
+        with tempfile.TemporaryDirectory(suffix='/') as temp_dir:
             # We create a fake temporary configuration file
-            file = open(tempDir + 'config.json', 'w')
+            file = open(temp_dir + 'config.json', 'w')
             file.write("""\
 {
     "allow_overriding": false,
@@ -73,7 +72,7 @@ class TestConfigurationUtil(unittest.TestCase):
             file.close()
 
             # Let's load it into our `Configuration` instance
-            configuration.loadConfiguration(tempDir)
+            configuration.load_configuration(temp_dir)
 
             # Let's check the result :S
             self.assertDictEqual(
@@ -97,7 +96,7 @@ class TestConfigurationUtil(unittest.TestCase):
             self.assertNotEqual(configuration._stderr, sys.stderr)
 
             # Let's try to load the `config.json` file present in this project.
-            configuration.loadConfiguration(os.getcwd() + '/archey/')
+            configuration.load_configuration(os.getcwd() + '/archey/')
 
             # It should not happen as `allow_overriding` has been set to false.
             # Thus, the configuration is supposed to be the same as before.
@@ -118,9 +117,8 @@ class TestConfigurationUtil(unittest.TestCase):
                 }
             )
 
-    def test_updateRecursive(self):
+    def test_update_recursive(self):
         configuration = Configuration()
-        # We set a default configuration here
         configuration.config = {
             'allow_overriding': True,
             'suppress_warnings': False,
@@ -140,7 +138,7 @@ class TestConfigurationUtil(unittest.TestCase):
         }
 
         # We change existing values, add new ones, and omit some others.
-        configuration._updateRecursive(
+        configuration._update_recursive(
             configuration.config,
             {
                 'suppress_warnings': True,

@@ -10,7 +10,7 @@ class TestShellEntry(unittest.TestCase):
     For this entry, we'll just verify that the output is non-null.
     """
     @patch(
-        'archey.archey.getenv',
+        'archey.archey.os.getenv',
         return_value='SHELL'
     )
     def test(self, getenv_mock):

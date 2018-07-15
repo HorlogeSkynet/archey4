@@ -3,8 +3,12 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7-dev"
 install:
   - pip3 install .
+  - pip3 install pylint
 script:
   - python3 setup.py test
   - python3 archey/archey.py
+  - pylint archey/ --jobs=2 --disable=missing-docstring,too-few-public-methods,too-many-lines,bad-continuation
+  - pylint test/   --jobs=2 --disable=missing-docstring,too-few-public-methods,unused-argument,protected-access,no-value-for-parameter
