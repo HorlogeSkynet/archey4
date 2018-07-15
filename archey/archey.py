@@ -376,7 +376,7 @@ LOGOS_DICT = {
 
 # ----------- Configuration ----------- #
 
-class Configuration(object):
+class Configuration:
     def __init__(self):
         """
         Represents the default configuration which will be used by Archey.
@@ -493,7 +493,7 @@ except FileNotFoundError:
 
 # ----------- Output handler ---------- #
 
-class Output(object):
+class Output:
     def __init__(self):
         try:
             lsb_output = check_output(
