@@ -472,6 +472,11 @@ class Configuration:
             else:
                 old_dict[key] = value
 
+    def __del__(self):
+        if sys.stderr != self._stderr:
+            sys.stderr.close()
+            sys.stderr = self._stderr
+
 
 # ---------- Global variables --------- #
 
