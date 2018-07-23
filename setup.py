@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='archey4',
-    version='4.4.1',
+    version='4.5.0',
     description='Archey is a simple system information tool written in Python',
     keywords='archey python3 linux system-information monitoring',
     url='http://git.io/archey4',
