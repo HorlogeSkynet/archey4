@@ -922,7 +922,7 @@ class GPU:
                 if len(gpuinfo) > 48:
                     # This call truncates `gpuinfo` with words preservation
                     gpuinfo = re.search(
-                        r'.{1,45}(?:\W|$)', gpuinfo
+                        r'.{1,45}(?:\s|$)', gpuinfo
                     ).group(0).strip() + '...'
 
             else:
