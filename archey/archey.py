@@ -907,16 +907,15 @@ class GPU:
         """
         try:
             lspci_output = sorted([
-                (i.split(': ')[0].split(' ')[1], i.split(': ')[1])
-                for i in check_output(
+                i.split(': ')[1] for i in check_output(
                     ['lspci'], universal_newlines=True
                 ).splitlines()
                 if '3D' in i or 'VGA' in i or 'Display' in i
-                ], key=lambda x: len(x[1])
+                ], key=len
             )
 
             if lspci_output:
-                gpuinfo = lspci_output[0][1]
+                gpuinfo = lspci_output[0]
 
                 # If the line got too long, let's truncate it and add some dots
                 if len(gpuinfo) > 48:
