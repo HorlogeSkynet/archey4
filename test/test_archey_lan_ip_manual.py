@@ -50,8 +50,24 @@ valid_lft forever preferred_lft forever
             Popen
         ]
 
+        # `RessourceWarning` workaround.
+        # We'll save STDOUT file descriptors here.
+        self.stdout_fds = []
+
     def method(self, *args, **kwargs):
-        return self.answers.pop(0)(*args, **kwargs)
+        answer = self.answers.pop(0)(*args, **kwargs)
+
+        # `RessourceWarning` workaround.
+        # We save the STDOUT file descriptor before returning our mock.
+        self.stdout_fds.append(answer.stdout)
+
+        return answer
+
+    def __del__(self):
+        # `RessourceWarning` workaround.
+        # Before deleting the mock, we close the open STDOUT file descriptors.
+        for stdout_fd in self.stdout_fds:
+            stdout_fd.close()
 
 
 class FakeCheckOutputMock:
