@@ -24,11 +24,13 @@ class TestTemperatureEntry(unittest.TestCase):
             ]:
             file = tempfile.NamedTemporaryFile(delete=False)
             file.write(temperature)
-            self.tempfiles.append(file.name)
+            file.seek(0)
+            self.tempfiles.append(file)
 
     def tearDown(self):
         for file in self.tempfiles:
-            os.remove(file)
+            file.close()
+            os.remove(file.name)
 
     @patch(
         'archey.archey.check_output',
@@ -47,7 +49,7 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     @patch('archey.archey.glob')
     def test_vcgencmd_and_files(self, glob_mock, check_output_mock):
-        glob_mock.return_value = self.tempfiles
+        glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertRegex(Temperature().value, r'45\.0.?.? \(Max\. 50\.0.?.?\)')
 
     @patch(
@@ -62,7 +64,7 @@ class TestTemperatureEntry(unittest.TestCase):
         }
     })
     def test_files_only_plus_fahrenheit(self, glob_mock, check_output_mock):
-        glob_mock.return_value = self.tempfiles
+        glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertRegex(
             Temperature().value,
             r'116\.0.?.? \(Max\. 122\.0.?.?\)'  # 46.6 converted into Fahrenheit
