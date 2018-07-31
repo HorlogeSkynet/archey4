@@ -132,7 +132,7 @@ $ python3 archey/archey.py
 ## Configuration (optional)
 
 Since the version 4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
-You can place a [`config.json`](config.json) file in these locations :
+You can place a [`config.json`](archey/config.json) file in these locations :
 
 1. `/etc/archey4/config.json` (system preferences)
 2. `~/.config/archey4/config.json` (user preferences)
@@ -140,7 +140,7 @@ You can place a [`config.json`](config.json) file in these locations :
 
 **If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).**
 
-The [example file](config.json) provided in this repository lists exhaustively the parameters you can set.  
+The [example file](archey/config.json) provided in this repository lists exhaustively the parameters you can set.  
 Below, some further explanations of each option available :
 
 <!-- We use C++ syntax coloration below because JSON does not allow the usage of comments... -->
