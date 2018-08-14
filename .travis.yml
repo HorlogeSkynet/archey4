@@ -10,5 +10,5 @@ install:
 script:
   - python3 setup.py test
   - python3 archey/archey.py
-  - pylint archey/ --jobs=2 --disable=missing-docstring,too-few-public-methods,too-many-lines,bad-continuation
+  - pylint archey/ --jobs=2 --disable=missing-docstring,too-few-public-methods,too-many-lines
   - pylint test/   --jobs=2 --disable=missing-docstring,too-few-public-methods,unused-argument,protected-access,no-value-for-parameter

@@ -906,11 +906,12 @@ class GPU:
         * We sort them in the same order as above (for relevancy)
         """
         try:
-            lspci_output = sorted([
-                i.split(': ')[1] for i in check_output(
-                    ['lspci'], universal_newlines=True
-                ).splitlines()
-                if '3D' in i or 'VGA' in i or 'Display' in i
+            lspci_output = sorted(
+                [
+                    i.split(': ')[1] for i in check_output(
+                        ['lspci'], universal_newlines=True
+                    ).splitlines()
+                    if '3D' in i or 'VGA' in i or 'Display' in i
                 ], key=len
             )
 
@@ -975,13 +976,14 @@ class Disk:
     def __init__(self):
         total = re.sub(
             ',', '.',
-            check_output([
-                'df', '-Tlh', '-B', 'GB', '--total',
-                '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
-                '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
-                '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
-                '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs',
-                '-t', 'tmpfs', '-t', 'lxfs'
+            check_output(
+                [
+                    'df', '-Tlh', '-B', 'GB', '--total',
+                    '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
+                    '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
+                    '-t', 'ntfs', '-t', 'fat32', '-t', 'btrfs',
+                    '-t', 'fuseblk', '-t', 'xfs', '-t', 'simfs',
+                    '-t', 'tmpfs', '-t', 'lxfs'
                 ], universal_newlines=True
             ).splitlines()[-1]
         ).split()
@@ -1005,25 +1007,24 @@ class LanIp:
         except (CalledProcessError, FileNotFoundError):
             # Slow manual workaround for old `inetutils` versions, with `ip`
             addresses = check_output(
-                    ['cut', '-d', ' ', '-f', '4'],
-                    universal_newlines=True,
-                    stdin=Popen(['cut', '-d', '/', '-f', '1'],
-                                stdout=PIPE,
-                                stdin=Popen(['tr', '-s', ' '],
-                                            stdout=PIPE,
-                                            stdin=Popen(['grep', '-E',
-                                                         'scope (global|site)'
-                                                         ], stdout=PIPE,
-                                                        stdin=Popen(['ip',
-                                                                     '-o',
-                                                                     'addr',
-                                                                     'show',
-                                                                     'up'],
-                                                                    stdout=PIPE
-                                                                    ).stdout
-                                                        ).stdout
-                                            ).stdout
-                                ).stdout
+                ['cut', '-d', ' ', '-f', '4'],
+                universal_newlines=True,
+                stdin=Popen(
+                    ['cut', '-d', '/', '-f', '1'],
+                    stdout=PIPE,
+                    stdin=Popen(
+                        ['tr', '-s', ' '],
+                        stdout=PIPE,
+                        stdin=Popen(
+                            ['grep', '-E', 'scope (global|site)'],
+                            stdout=PIPE,
+                            stdin=Popen(
+                                ['ip', '-o', 'addr', 'show', 'up'],
+                                stdout=PIPE
+                            ).stdout
+                        ).stdout
+                    ).stdout
+                ).stdout
             ).splitlines()
 
         # Use list slice to save only `lan_ip_max_count` from `addresses`.
@@ -1043,18 +1044,22 @@ class WanIp:
         # IPv6 address retrieval (unless the user doesn't want it).
         if CONFIG.get('ip_settings')['wan_ip_v6_support']:
             try:
-                ipv6_value = check_output([
-                    'dig', '+short', '-6', 'aaaa', 'myip.opendns.com',
-                    '@resolver1.ipv6-sandbox.opendns.com'
-                    ], timeout=CONFIG.get('timeout')['ipv6_detection'],
+                ipv6_value = check_output(
+                    [
+                        'dig', '+short', '-6', 'AAAA', 'myip.opendns.com',
+                        '@resolver1.ipv6-sandbox.opendns.com'
+                    ],
+                    timeout=CONFIG.get('timeout')['ipv6_detection'],
                     stderr=DEVNULL, universal_newlines=True
                 ).rstrip()
 
             except (FileNotFoundError, TimeoutExpired, CalledProcessError):
                 try:
-                    ipv6_value = check_output([
-                        'wget', '-qO-', 'https://v6.ident.me/'
-                        ], timeout=CONFIG.get('timeout')['ipv6_detection'],
+                    ipv6_value = check_output(
+                        [
+                            'wget', '-q6O-', 'https://v6.ident.me/'
+                        ],
+                        timeout=CONFIG.get('timeout')['ipv6_detection'],
                         universal_newlines=True
                     )
 
@@ -1073,17 +1078,22 @@ class WanIp:
 
         # IPv4 addresses retrieval (anyway).
         try:
-            ipv4_value = check_output([
-                'dig', '+short', 'myip.opendns.com', '@resolver1.opendns.com'
-                ], timeout=CONFIG.get('timeout')['ipv4_detection'],
+            ipv4_value = check_output(
+                [
+                    'dig', '+short', '-4', 'A', 'myip.opendns.com',
+                    '@resolver1.opendns.com'
+                ],
+                timeout=CONFIG.get('timeout')['ipv4_detection'],
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
 
         except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
-                ipv4_value = check_output([
-                    'wget', '-qO-', 'https://v4.ident.me/'
-                    ], timeout=CONFIG.get('timeout')['ipv4_detection'],
+                ipv4_value = check_output(
+                    [
+                        'wget', '-q4O-', 'https://v4.ident.me/'
+                    ],
+                    timeout=CONFIG.get('timeout')['ipv4_detection'],
                     universal_newlines=True
                 )
 
