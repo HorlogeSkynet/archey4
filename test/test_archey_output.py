@@ -11,12 +11,15 @@ class TestOutputUtil(unittest.TestCase):
     """
     @patch(
         'archey.archey.check_output',
-        side_effect=[
-            'Debian\n',
-            'X.Y.Z-R-ARCH\n'
-        ]
-    )
-    def test_init_known_distro(self, check_output_mock):
+        return_value="""\
+'X.Y.Z-R-ARCH'
+""")
+    @patch(
+        'archey.archey.distro.id',
+        return_value="""\
+debian\
+""")
+    def test_init_known_distro(self, distro_id_mock, check_output_mock):
         output = Output()
 
         self.assertEqual(
@@ -26,12 +29,15 @@ class TestOutputUtil(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        side_effect=[
-            'An unknown distro\n',
-            'X.Y.Z-R-ARCH\n'
-        ]
-    )
-    def test_init_unknown_distro(self, check_output_mock):
+        return_value="""\
+X.Y.Z-R-ARCH
+""")
+    @patch(
+        'archey.archey.distro.id',
+        return_value="""\
+an-unknown-distro-id\
+""")
+    def test_init_unknown_distro(self, distro_id_mock, check_output_mock):
         output = Output()
 
         self.assertEqual(
@@ -41,31 +47,21 @@ class TestOutputUtil(unittest.TestCase):
 
     @patch(
         'archey.archey.check_output',
-        side_effect=[
-            'openSUSE\n',
-            'X.Y.Z-R-Microsoft\n'
-        ]
-    )
-    def test_init_windows_subsystem(self, check_output_mock):
+        return_value="""\
+X.Y.Z-R-Microsoft
+""")
+    @patch(
+        'archey.archey.distro.id',
+        return_value="""\
+opensuse\
+""")
+    def test_init_windows_subsystem(self, distro_id_mock, check_output_mock):
         output = Output()
 
         self.assertEqual(
             output.distribution,
             Distributions.WINDOWS
         )
-
-    @patch(
-        'archey.archey.check_output',
-        side_effect=FileNotFoundError()
-    )
-    @patch(
-        'archey.archey.print',
-        return_value=None,  # Let's badly mute the class outputs
-        create=True
-    )
-    def test_init_without_lsb_release(self, print_mock, check_output_mock):
-        with self.assertRaises(SystemExit):
-            Output()
 
     @patch.dict(
         'archey.archey.COLOR_DICT',
