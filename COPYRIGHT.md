@@ -16,7 +16,10 @@ See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 * Changes Jerome Launay <jerome@projet-libre.org>
 * Fedora support by YeOK <yeok@henpen.org>
 * First IP handling by Normand Cyr <normand.cyr@gmail.com>
-* First IPv6 support and Windows subsystems handling by @Si13n7 <admin@si13n7.com>
+* First IPv6 support and Windows Subsystems handling by @Si13n7 <admin@si13n7.com>
 * Timeout improvements and `hostname` investigations by @AdJaGu <AdJaGu@users.noreply.github.com>
+* Workaround for Tinkerboard Linux builds by @thisforeda <thisforeda@live.cn>
+* Windows Subsystem Linux file-systems support by @Naragato <development@simonbalarabe.com>
+* `lsb-release` dropping support guidance by Eli Schwartz <eschwartz93@gmail.com>
 
 Currently maintained by Samuel FORESTIER <dev@samuel.domains>
