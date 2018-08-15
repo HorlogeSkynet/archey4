@@ -27,6 +27,7 @@ class Distributions(Enum):
     LINUX_MINT = 'Linux ?Mint'
     OPENSUSE = 'openSUSE'
     RED_HAT = '(Red ?Hat|RHEL)'
+    SLACKWARE = 'Slackware'
     UBUNTU = 'Ubuntu'
     WINDOWS = 'Windows'
 
@@ -46,6 +47,7 @@ COLOR_DICT = {
     Distributions.LINUX_MINT: ['\x1b[1;37m', '\x1b[1;32m'],
     Distributions.OPENSUSE: ['\x1b[1;37m', '\x1b[1;32m'],
     Distributions.RED_HAT: ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
+    Distributions.SLACKWARE: ['\x1b[0;34m', '\x1b[1;34m', '\x1b[1;0m'],
     Distributions.UBUNTU: ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
     Distributions.WINDOWS: ['\x1b[1;31m', '\x1b[1;34m',
                             '\x1b[1;32m', '\x1b[0;33m'],
@@ -334,6 +336,28 @@ LOGOS_DICT = {
 {c[1]}   {c[0]}MMMMMMMMMMMMMMMMyoNNNMMM+.   MMMMMMMM{c[1]}     {r[15]}
 {c[1]}    {c[0]}MMNMMMNNMMMMMNM+ mhsMNyyyyMNMMMMsMM{c[1]}      {r[16]}
 {c[1]}                                             {r[17]}\n""",
+    Distributions.SLACKWARE: """
+{c[0]}                  {c[1]}:::::::{c[0]}                       \0
+{c[0]}             {c[1]}:::::::::::::::::::{c[0]}                \0
+{c[0]}          {c[1]}:::::::::::::::::::::::::{c[0]}             {r[0]}
+{c[0]}        {c[1]}::::::::{c[2]}cllcccccllllllll{c[1]}::::::{c[0]}          {r[1]}
+{c[0]}     {c[1]}:::::::::{c[2]}lc{c[0]}               {c[2]}dc{c[1]}:::::::{c[0]}        {r[2]}
+{c[0]}    {c[1]}::::::::{c[2]}cl{c[0]}   {c[2]}clllccllll{c[0]}    {c[2]}oc{c[1]}:::::::::{c[0]}      {r[3]}
+{c[0]}   {c[1]}:::::::::{c[2]}o{c[0]}   {c[2]}lc{c[1]}::::::::{c[2]}co{c[0]}   {c[2]}oc{c[1]}::::::::::{c[0]}     {r[4]}
+{c[0]}  {c[1]}::::::::::{c[2]}o{c[0]}    {c[2]}cccclc{c[1]}:::::{c[2]}clcc{c[1]}::::::::::::{c[0]}    {r[5]}
+{c[0]}  {c[1]}:::::::::::{c[2]}lc{c[0]}        {c[2]}cclccclc{c[1]}:::::::::::::{c[0]}    {r[6]}
+{c[0]} {c[1]}::::::::::::::{c[2]}lcclcc{c[0]}          {c[2]}lc{c[1]}::::::::::::{c[0]}   {r[7]}
+{c[0]} {c[1]}::::::::::{c[2]}cclcc{c[1]}:::::{c[2]}lccclc{c[0]}     {c[2]}oc{c[1]}:::::::::::{c[0]}   {r[8]}
+{c[0]} {c[1]}::::::::::{c[2]}o{c[0]}    {c[2]}l{c[1]}::::::::::{c[2]}l{c[0]}    {c[2]}lc{c[1]}:::::::::::{c[0]}   {r[9]}
+{c[0]}  {c[1]}:::::{c[2]}c{c[0]} {c[0]}{c[1]}::{c[2]}o{c[0]}     {c[2]}clcllcccll{c[0]}     {c[2]}o{c[1]}:::::::::::{c[0]}    {r[10]}
+{c[0]}  {c[1]}:::::{c[2]}o{c[0]} {c[0]}{c[1]}:{c[2]}o{c[0]}                  {c[2]}clc{c[1]}:::::::::::{c[0]}     {r[11]}
+{c[0]}   {c[1]}::::{c[2]}o{c[0]} {c[0]}{c[1]}:{c[2]}ccslclccclclccclclc{c[1]}:::::::::::::{c[0]}      {r[12]}
+{c[0]}    {c[1]}:::{c[2]}o{c[0]}                             {c[1]}:::::{c[0]}      {r[13]}
+{c[0]}     {c[1]}::{c[2]}lcccccccccccccccccccccccccccco{c[1]}::::{c[0]}       {r[14]}
+{c[0]}       {c[1]}::::::::::::::::::::::::::::::::{c[0]}         {r[15]}
+{c[0]}         {c[1]}::::::::::::::::::::::::::::{c[0]}           {r[16]}
+{c[0]}            {c[1]}::::::::::::::::::::::{c[0]}              {r[17]}
+{c[0]}                 {c[1]}::::::::::::{c[0]}                   \n""",
     Distributions.UBUNTU: """
 {c[1]}                           {c[0]}.oyhhs:{c[1]}     {r[0]}
 {c[1]}                  ..--.., {c[0]}shhhhhh-{c[1]}     {r[1]}
