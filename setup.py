@@ -13,6 +13,9 @@ setup(
     license='GPLv3',
     packages=['archey'],
     test_suite='test',
+    install_requires=[
+        'distro'
+    ],
     entry_points={
         'console_scripts': [
             'archey = archey.archey:main'
