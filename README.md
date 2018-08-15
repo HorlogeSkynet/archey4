@@ -33,7 +33,7 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 ### Required packages
 
 * python3
-* lsb-release
+* python3-distro
 * procps
 
 ### Highly recommended packages
@@ -44,7 +44,11 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 | Graphical    |  `pciutils`<br>`wmctrl`  | **GPU** wouldn't be detected without it<br>**WindowManager** would be more accurate | `pciutils` will provide `lspci` |
 | Virtual      | `virt-what`<br>`dmidecode` | **Model** would contain details about the hypervisor | `archey` will need to be run as **root** |
 
+### :warning: Various notes to read before going down :warning:
+
 **Without `dnsutils` (or `bind-tools` on Arch Linux), you'll need `wget` in order to retrieve your public IP address.**
+
+**Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from `pip`](#install-with-pip).**
 
 ## Installation
 
@@ -81,9 +85,9 @@ $ sudo pip3 install archey4
 ### Step 1 : Fetch the source ###
 
 # If you want the latest release :
-$ wget https://github.com/HorlogeSkynet/archey4/archive/v4.5.0.tar.gz
-$ tar xvzf v4.5.0.tar.gz
-$ cd archey4-4.5.0/
+$ wget https://github.com/HorlogeSkynet/archey4/archive/v4.6.0.tar.gz
+$ tar xvzf v4.6.0.tar.gz
+$ cd archey4-4.6.0/
 # _______________________________
 
 # If you want the latest changes :
