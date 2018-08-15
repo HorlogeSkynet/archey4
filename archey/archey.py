@@ -10,6 +10,7 @@ from glob import glob
 from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
     TimeoutExpired, check_output
 
+import distro
 
 # ----- Distributions fingerprints ---- #
 
@@ -500,25 +501,17 @@ except FileNotFoundError:
 
 class Output:
     def __init__(self):
-        try:
-            lsb_output = check_output(
-                ['lsb_release', '-i', '-s'],
-                universal_newlines=True
-            ).rstrip()
-
-        except FileNotFoundError:
-            print('Please, install first `lsb-release` on your distribution.',
-                  file=sys.stderr)
-            exit()
-
+        # First we check whether the Kernel has been compiled as a WSL.
         if re.search(
                 'Microsoft',
                 check_output(['uname', '-r'], universal_newlines=True)):
             self.distribution = Distributions.WINDOWS
 
         else:
+            distribution_id = distro.id()
+
             for distribution in Distributions:
-                if re.fullmatch(distribution.value, lsb_output):
+                if re.fullmatch(distribution.value, distribution_id, re.IGNORECASE):
                     self.distribution = distribution
                     break
 
@@ -638,11 +631,8 @@ class Model:
 
 class Distro:
     def __init__(self):
-        self.value = '{0} {1}'.format(
-            check_output(
-                ['lsb_release', '-d', '-s'],
-                universal_newlines=True
-            ).rstrip(),
+        self.value = '{0} [{1}]'.format(
+            distro.name(pretty=True),
             check_output(
                 ['uname', '-m'],
                 universal_newlines=True
