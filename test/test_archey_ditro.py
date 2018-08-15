@@ -11,16 +11,19 @@ class TestDistroEntry(unittest.TestCase):
       that the outputs are correct.
     """
     @patch(
-        'archey.archey.check_output',
-        side_effect=[
-            'Distro OS X.Y (name)\n',  # `lsb_release` output
-            'ARCH\n'                   # `uname` output
-        ]
-    )
-    def test(self, check_output_mock):
+        'archey.archey.distro.name',  # `distro.name` output
+        return_value="""\
+NAME VERSION (CODENAME)\
+""")
+    @patch(
+        'archey.archey.check_output',  # `uname` output
+        return_value="""\
+ARCHITECTURE
+""")
+    def test(self, check_output_mock, distro_name_mock):
         self.assertEqual(
             Distro().value,
-            'Distro OS X.Y (name) ARCH'
+            'NAME VERSION (CODENAME) [ARCHITECTURE]'
         )
 
 
