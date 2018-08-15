@@ -423,6 +423,10 @@ class Configuration:
         return self.config.get(key, default)
 
     def load_configuration(self, path):
+        """
+        A method handling configuration loading from a JSON file.
+        It will try to load any `config.json` present under `path`.
+        """
         # If a previous configuration file has denied overriding...
         if not self.config.get('allow_overriding', True):
             #  ... don't load this one.
