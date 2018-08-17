@@ -32,23 +32,25 @@ The answer is [here](https://horlogeskynet.github.io/archey4).
 
 ### Required packages
 
-* python3
-* python3-distro
-* procps
+* `python3`
+* `python3-distro` (`python-distro` on Arch Linux)
+* `procps` (potentially `procps-ng`)
 
 ### Highly recommended packages
 
 | Environments |  Packages  |                Reasons                | Notes |
 | :----------- | :--------: | :-----------------------------------: | :---: |
-| All          | `dnsutils`<br>`net-tools` | **WAN_IP** and **LAN_IP** would be detected faster | They will provide `dig` and `hostname` |
-| Graphical    |  `pciutils`<br>`wmctrl`  | **GPU** wouldn't be detected without it<br>**WindowManager** would be more accurate | `pciutils` will provide `lspci` |
-| Virtual      | `virt-what`<br>`dmidecode` | **Model** would contain details about the hypervisor | `archey` will need to be run as **root** |
+| All          | `dnsutils` or `bind-tools` | **WAN_IP** would be detected faster | Would provide `dig` |
+| All          | `net-tools` | **LAN_IP** would be detected faster | Would provide `hostname` |
+| Graphical    |  `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
+| Graphical    |  `wmctrl` | **WindowManager** would be more accurate | φ |
+| Virtual      | `virt-what` and `dmidecode` | **Model** would contain details about the hypervisor | `archey` would have to be run as **root** |
 
 ### :warning: Various notes to read before going down :warning:
 
-**Without `dnsutils` (or `bind-tools` on Arch Linux), you'll need `wget` in order to retrieve your public IP address.**
+**Without `dnsutils` or `bind-tools` installed, you'll need `wget` in order to retrieve your public IP address.**
 
-**Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from `pip`](#install-with-pip).**
+**Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from PIP](#install-with-pip).**
 
 ## Installation
 
@@ -69,9 +71,11 @@ Now, it's time to use your favorite package manager. Some examples :
 	$ sudo apt install ./archey4-v4.Y.Z-R-all.deb
 	```
 
-* RPM-based distributions, and others...
+* RPM-based distributions (source will be available soon !)
 
-	**Packagers are welcome !**
+	```shell
+	$ sudo dnf install ./archey4-v4.Y.Z-R-all.rpm
+	```
 
 ### Install with PIP
 
@@ -210,4 +214,4 @@ Any improvement would be appreciated.
 
 * If you experience any trouble during the installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
 
-* If you had to adapt the script to make it working with your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
+* If you had to adapt the script to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
