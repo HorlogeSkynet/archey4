@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 
 from setuptools import setup
 
@@ -22,7 +24,7 @@ setup(
         ]
     },
     long_description='Maintained fork of the original Archey Linux system tool'
-                     ' written by Melik Manukyan.',
+                     ' originally written by Melik Manukyan.',
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
