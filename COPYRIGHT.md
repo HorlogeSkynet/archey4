@@ -22,4 +22,11 @@ See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 * Windows Subsystem Linux file-systems support by @Naragato <development@simonbalarabe.com>
 * `lsb-release` dropping support guidance by Eli Schwartz <eschwartz93@gmail.com>
 
-Currently maintained by Samuel FORESTIER <dev@samuel.domains>
+Currently maintained by Samuel Forestier <dev@samuel.domains>
+
+## Packagers
+
+* Arch-based package : Samuel Forestier <dev@samuel.domains>
+* Debian-based package : Samuel Forestier <dev@samuel.domains>
+* PyPI wheel : Samuel Forestier <dev@samuel.domains>
+* RPM-based package : Gaëtan Menat <gaetan.menat@gmail.com>
