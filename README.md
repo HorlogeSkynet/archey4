@@ -74,7 +74,7 @@ Now, it's time to use your favorite package manager. Some examples :
 * RPM-based distributions (source will be available soon !)
 
 	```shell
-	$ sudo dnf install ./archey4-v4.Y.Z-R-all.rpm
+	$ sudo dnf install ./archey4-4.Y.Z-R.fc28.noarch.rpm
 	```
 
 ### Install with PIP
@@ -186,7 +186,7 @@ Below, some further explanations of each option available :
 		"use_fahrenheit": false
 	},
 	"timeout": {
-		// Some values you can adjust if the default ones look undersized for your system (seconds)
+		// Some values you can adjust if the default ones look undersized for your system (seconds).
 	}
 }
 ```
