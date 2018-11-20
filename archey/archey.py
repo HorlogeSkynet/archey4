@@ -824,17 +824,22 @@ class Temperature:
                 if temp != 0.0:
                     temps.append(
                         self._convert_to_fahrenheit(temp)
-                        if CONFIG.get('temperature')['use_fahrenheit']
-                        else temp
+                        if CONFIG.get('temperature')['use_fahrenheit'] else temp
                     )
 
         if temps:
-            self.value = '{0}{2}{3} (Max. {1}{2}{3})'.format(
+            self.value = '{0}{1}{2}'.format(
                 str(round(sum(temps) / len(temps), 1)),
-                str(round(max(temps), 1)),
                 CONFIG.get('temperature')['char_before_unit'],
                 'F' if CONFIG.get('temperature')['use_fahrenheit'] else 'C'
             )
+
+            if len(temps) > 1:
+                self.value += ' (Max. {0}{1}{2})'.format(
+                    str(round(max(temps), 1)),
+                    CONFIG.get('temperature')['char_before_unit'],
+                    'F' if CONFIG.get('temperature')['use_fahrenheit'] else 'C'
+                )
 
         else:
             self.value = CONFIG.get('default_strings')['not_detected']

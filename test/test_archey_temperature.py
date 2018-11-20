@@ -40,8 +40,8 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.archey.glob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    def test_vcgencmd_only(self, glob_mock, check_output_mock):
-        self.assertRegex(Temperature().value, r'42\.8.?.? \(Max\. 42\.8.?.?\)')
+    def test_vcgencmd_only_no_max(self, glob_mock, check_output_mock):
+        self.assertRegex(Temperature().value, r'42\.8.?.?')
 
     @patch(
         'archey.archey.check_output',
