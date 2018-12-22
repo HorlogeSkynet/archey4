@@ -65,7 +65,7 @@ Now, it's time to use your favorite package manager. Some examples :
 	$ sudo pacman -U ./archey4-v4.Y.Z-R-any.pkg.tar.xz
 	```
 
-* Debian-based distributions ([source](https://labs.pixelswap.fr/HorlogeSkynet/archey4-packaging))
+* Debian-based distributions ([source](https://git.forestier.app/HorlogeSkynet/archey4-packaging))
 
 	```shell
 	$ sudo apt install ./archey4-v4.Y.Z-R-all.deb
