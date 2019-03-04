@@ -22,7 +22,7 @@
 
 ## Why (again) a f\*cking new Archey fork ?
 
-The answer is [here](https://horlogeskynet.github.io/archey4).
+The answer is [here](https://blog.samuel.domains/archey4).
 
 > Note : Since the 21st September of 2017, you may notice that this repository no longer has the official status of fork.  
 > Actually, the maintainer decided to separate it from the original one's "network" with the help of _GitHub_'s staff.  
