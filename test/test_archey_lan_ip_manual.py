@@ -90,13 +90,11 @@ class FakeCheckOutputMock:
             if issubclass(answer[1].__class__, OSError().__class__):
                 raise answer[1]
 
-            else:
-                # The branch is not used here, but maybe it'll help someone ;)
-                return answer[1]
+            # The branch is not used here, but maybe it'll help someone ;)
+            return answer[1]
 
-        else:
-            # Call the specified method with the arguments passed to the mock.
-            return answer[1](*args, **kwargs)
+        # Call the specified method with the arguments passed to the mock.
+        return answer[1](*args, **kwargs)
 
 # --------------------------------------------------------------------------------
 
