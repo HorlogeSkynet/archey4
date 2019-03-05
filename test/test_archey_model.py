@@ -116,8 +116,8 @@ class TestModelEntry(unittest.TestCase):
         # Either return value or raise any specified exception
         if issubclass(return_value.__class__, OSError().__class__):
             raise return_value
-        else:
-            return return_value
+
+        return return_value
 
 
 if __name__ == '__main__':
