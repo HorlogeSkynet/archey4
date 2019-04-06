@@ -23,6 +23,7 @@ from cpu import CPU
 from lan_ip import LanIp
 from wan_ip import WanIp
 from packages import Packages
+from user import User
 from constants import (
     COLOR_DICT,
     DE_DICT,
@@ -47,14 +48,6 @@ except FileNotFoundError:
     exit()
 
 # -------------- Entries -------------- #
-
-
-class User:
-    def __init__(self):
-        self.value = os.getenv(
-            'USER',
-            CONFIG.get('default_strings')['not_detected']
-        )
 
 
 class Distro:
@@ -243,7 +236,12 @@ class GPU:
 # ----------- Classes Index ----------- #
 
 class Classes(Enum):
-    User = {'class': User}
+    User = {
+        'class': User,
+        'kwargs': {
+            'not_detected': CONFIG.get('default_strings')['not_detected']
+        }
+    }
     Hostname = {'class': Hostname}
     Model = {'class': Model}
     Distro = {'class': Distro}
