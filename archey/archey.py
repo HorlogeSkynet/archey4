@@ -13,6 +13,7 @@ from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
 import distro
 
 from output import Output
+from hostname import Hostname
 from configuration import Configuration
 from constants import (
     COLOR_DICT,
@@ -47,12 +48,6 @@ class User:
         )
 
 
-class Hostname:
-    def __init__(self):
-        self.value = check_output(
-            ['uname', '-n'],
-            universal_newlines=True
-        ).rstrip()
 
 
 class Model:
