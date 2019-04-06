@@ -16,6 +16,7 @@ from model import Model
 from output import Output
 from hostname import Hostname
 from configuration import Configuration
+from kernel import Kernel
 from constants import (
     COLOR_DICT,
     DE_DICT,
@@ -58,14 +59,6 @@ class Distro:
                 universal_newlines=True
             ).rstrip()
         )
-
-
-class Kernel:
-    def __init__(self):
-        self.value = check_output(
-            ['uname', '-r'],
-            universal_newlines=True
-        ).rstrip()
 
 
 class Uptime:
