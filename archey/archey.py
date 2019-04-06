@@ -22,6 +22,7 @@ from ram import RAM
 from cpu import CPU
 from lan_ip import LanIp
 from wan_ip import WanIp
+from packages import Packages
 from constants import (
     COLOR_DICT,
     DE_DICT,
@@ -202,53 +203,6 @@ class Temperature:
         return temp * (9 / 5) + 32
 
 
-class Packages:
-    def __init__(self):
-        for packages_tool in [['dnf', 'list', 'installed'],
-                              ['dpkg', '--get-selections'],
-                              ['emerge', '-ep', 'world'],
-                              ['pacman', '-Q'],
-                              ['rpm', '-qa'],
-                              ['yum', 'list', 'installed'],
-                              ['zypper', 'search', '-i']]:
-            try:
-                results = check_output(
-                    packages_tool,
-                    stderr=DEVNULL, env={'LANG': 'C'}, universal_newlines=True
-                )
-                packages = results.count('\n')
-
-                # Deduct extra heading line
-                if 'dnf' in packages_tool:
-                    packages -= 1
-
-                # Packages removed but not purged
-                elif 'dpkg' in packages_tool:
-                    packages -= results.count('deinstall')
-
-                # Deduct extra heading lines
-                elif 'emerge' in packages_tool:
-                    packages -= 5
-
-                # Deduct extra heading lines
-                elif 'yum' in packages_tool:
-                    packages -= 2
-
-                # Deduct extra heading lines
-                elif 'zypper' in packages_tool:
-                    packages -= 5
-
-                break
-
-            except (FileNotFoundError, CalledProcessError):
-                pass
-
-        else:
-            packages = CONFIG.get('default_strings')['not_detected']
-
-        self.value = packages
-
-
 class GPU:
     def __init__(self):
         """
@@ -299,7 +253,12 @@ class Classes(Enum):
     DesktopEnvironment = {'class': DesktopEnvironment}
     Shell = {'class': Shell}
     Terminal = {'class': Terminal}
-    Packages = {'class': Packages}
+    Packages = {
+        'class': Packages,
+        'kwargs': {
+            'not_detected': CONFIG.get('default_strings')['not_detected']
+        }
+    }
     Temperature = {'class': Temperature}
     CPU = {'class': CPU}
     GPU = {'class': GPU}
