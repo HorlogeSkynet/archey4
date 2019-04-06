@@ -7,8 +7,8 @@ import sys
 
 from enum import Enum
 from glob import glob
-from subprocess import CalledProcessError, DEVNULL, PIPE, Popen, \
-    TimeoutExpired, check_output
+from subprocess import CalledProcessError, DEVNULL, \
+ TimeoutExpired, check_output
 
 import distro
 
@@ -21,6 +21,7 @@ from uptime import Uptime
 from disk import Disk
 from ram import RAM
 from cpu import CPU
+from lan_ip import LanIp
 from constants import (
     COLOR_DICT,
     DE_DICT,
@@ -45,6 +46,7 @@ except FileNotFoundError:
     exit()
 
 # -------------- Entries -------------- #
+
 
 class User:
     def __init__(self):
@@ -171,7 +173,8 @@ class Temperature:
                 if temp != 0.0:
                     temps.append(
                         self._convert_to_fahrenheit(temp)
-                        if CONFIG.get('temperature')['use_fahrenheit'] else temp
+                        if CONFIG.get('temperature')['use_fahrenheit']
+                        else temp
                     )
 
         if temps:
@@ -215,19 +218,24 @@ class Packages:
                 )
                 packages = results.count('\n')
 
-                if 'dnf' in packages_tool:  # Deduct extra heading line
+                # Deduct extra heading line
+                if 'dnf' in packages_tool:
                     packages -= 1
 
-                elif 'dpkg' in packages_tool:  # Packages removed but not purged
+                # Packages removed but not purged
+                elif 'dpkg' in packages_tool:
                     packages -= results.count('deinstall')
 
-                elif 'emerge' in packages_tool:  # Deduct extra heading lines
+                # Deduct extra heading lines
+                elif 'emerge' in packages_tool:
                     packages -= 5
 
-                elif 'yum' in packages_tool:  # Deduct extra heading lines
+                # Deduct extra heading lines
+                elif 'yum' in packages_tool:
                     packages -= 2
 
-                elif 'zypper' in packages_tool:  # Deduct extra heading lines
+                # Deduct extra heading lines
+                elif 'zypper' in packages_tool:
                     packages -= 5
 
                 break
@@ -276,49 +284,6 @@ class GPU:
             gpuinfo = CONFIG.get('default_strings')['not_detected']
 
         self.value = gpuinfo
-
-
-class LanIp:
-    def __init__(self):
-        try:
-            addresses = check_output(
-                ['hostname', '-I'],
-                stderr=DEVNULL, universal_newlines=True
-            ).split()
-
-        except (CalledProcessError, FileNotFoundError):
-            # Slow manual workaround for old `inetutils` versions, with `ip`
-            addresses = check_output(
-                ['cut', '-d', ' ', '-f', '4'],
-                universal_newlines=True,
-                stdin=Popen(
-                    ['cut', '-d', '/', '-f', '1'],
-                    stdout=PIPE,
-                    stdin=Popen(
-                        ['tr', '-s', ' '],
-                        stdout=PIPE,
-                        stdin=Popen(
-                            ['grep', '-E', 'scope (global|site)'],
-                            stdout=PIPE,
-                            stdin=Popen(
-                                ['ip', '-o', 'addr', 'show', 'up'],
-                                stdout=PIPE
-                            ).stdout
-                        ).stdout
-                    ).stdout
-                ).stdout
-            ).splitlines()
-
-        # Use list slice to save only `lan_ip_max_count` from `addresses`.
-        # If set to `False`, don't modify the list.
-        # This option is still optional.
-        self.value = ', '.join(
-            addresses[:(
-                CONFIG.get('ip_settings')['lan_ip_max_count']
-                if CONFIG.get('ip_settings')['lan_ip_max_count'] is not False
-                else len(addresses)
-            )]
-        ) or CONFIG.get('default_strings')['no_address']
 
 
 class WanIp:
@@ -398,24 +363,30 @@ class WanIp:
 # ----------- Classes Index ----------- #
 
 class Classes(Enum):
-    User = User
-    Hostname = Hostname
-    Model = Model
-    Distro = Distro
-    Kernel = Kernel
-    Uptime = Uptime
-    WindowManager = WindowManager
-    DesktopEnvironment = DesktopEnvironment
-    Shell = Shell
-    Terminal = Terminal
-    Packages = Packages
-    Temperature = Temperature
-    CPU = CPU
-    GPU = GPU
-    RAM = RAM
-    Disk = Disk
-    LAN_IP = LanIp
-    WAN_IP = WanIp
+    User = {'class': User}
+    Hostname = {'class': Hostname}
+    Model = {'class': Model}
+    Distro = {'class': Distro}
+    Kernel = {'class': Kernel}
+    Uptime = {'class': Uptime}
+    WindowManager = {'class': WindowManager}
+    DesktopEnvironment = {'class': DesktopEnvironment}
+    Shell = {'class': Shell}
+    Terminal = {'class': Terminal}
+    Packages = {'class': Packages}
+    Temperature = {'class': Temperature}
+    CPU = {'class': CPU}
+    GPU = {'class': GPU}
+    RAM = {'class': RAM}
+    Disk = {'class': Disk}
+    LAN_IP = {
+        'class': LanIp,
+        'kwargs': {
+            'ip_max_count': CONFIG.get('ip_settings')['lan_ip_max_count'],
+            'no_address': CONFIG.get('default_strings')['no_address']
+        }
+    }
+    WAN_IP = {'class': WanIp}
 
 
 # ---------------- Main --------------- #
@@ -424,7 +395,9 @@ def main():
     output = Output()
     for key in Classes:
         if CONFIG.get('entries', {}).get(key.name, True):
-            output.append(key.name, key.value().value)
+            kwargs = key.value.get('kwargs', {})
+            value = key.value['class'](**kwargs).value
+            output.append(key.name, value)
 
     output.output()
 

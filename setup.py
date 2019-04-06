@@ -16,7 +16,8 @@ setup(
     packages=['archey'],
     test_suite='test',
     install_requires=[
-        'distro'
+        'distro',
+        'netifaces'
     ],
     entry_points={
         'console_scripts': [
