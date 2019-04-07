@@ -15,6 +15,7 @@ from configuration import Configuration
 from entries.user import User
 from entries.hostname import Hostname
 from entries.model import Model
+from entries.distro import Distro
 from entries.kernel import Kernel
 from entries.uptime import Uptime
 from entries.window_manager import WindowManager
@@ -48,21 +49,8 @@ except FileNotFoundError:
           file=sys.stderr)
     exit()
 
-# -------------- Entries -------------- #
-
-
-class Distro:
-    def __init__(self):
-        self.value = '{0} [{1}]'.format(
-            distro.name(pretty=True),
-            check_output(
-                ['uname', '-m'],
-                universal_newlines=True
-            ).rstrip()
-        )
-
-
 # ----------- Classes Index ----------- #
+
 
 class Classes(Enum):
     User = {
