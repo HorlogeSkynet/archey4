@@ -98,28 +98,6 @@ class Shell:
         )
 
 
-class Terminal:
-    def __init__(self):
-        terminal = os.getenv(
-            'TERM',
-            CONFIG.get('default_strings')['not_detected']
-        )
-
-        # On systems with non-Unicode locales, we imitate '\u2588' character
-        # ... with '#' to display the terminal colors palette.
-        # This is the default option for backward compatibility.
-        colors = ' '.join([
-            '\x1b[0;3{0}m{1}\x1b[1;3{0}m{1}{2}'.format(
-                i,
-                '\u2588' if CONFIG.get('colors_palette')['use_unicode']
-                else '#',
-                COLOR_DICT['clear']
-            ) for i in range(7, 0, -1)
-        ])
-
-        self.value = '{0} {1}'.format(terminal, colors)
-
-
 # ----------- Classes Index ----------- #
 
 class Classes(Enum):
@@ -137,7 +115,12 @@ class Classes(Enum):
     WindowManager = {'class': WindowManager}
     DesktopEnvironment = {'class': DesktopEnvironment}
     Shell = {'class': Shell}
-    Terminal = {'class': Terminal}
+    Terminal = {
+        'class': entries.Terminal,
+        'not_detected': CONFIG.get('default_strings')['not_detected'],
+        'use_unicode': CONFIG.get('colors_palette')['use_unicode'],
+        'clear_color': COLOR_DICT['clear']
+    }
     Packages = {
         'class': entries.Packages,
         'kwargs': {
