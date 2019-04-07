@@ -11,19 +11,9 @@ from subprocess import CalledProcessError, DEVNULL, check_output
 
 import distro
 
-from model import Model
 from output import Output
-from hostname import Hostname
 from configuration import Configuration
-from kernel import Kernel
-from uptime import Uptime
-from disk import Disk
-from ram import RAM
-from cpu import CPU
-from lan_ip import LanIp
-from wan_ip import WanIp
-from packages import Packages
-from user import User
+import entries
 from constants import (
     COLOR_DICT,
     DE_DICT,
@@ -237,40 +227,40 @@ class GPU:
 
 class Classes(Enum):
     User = {
-        'class': User,
+        'class': entries.User,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
-    Hostname = {'class': Hostname}
-    Model = {'class': Model}
+    Hostname = {'class': entries.Hostname}
+    Model = {'class': entries.Model}
     Distro = {'class': Distro}
-    Kernel = {'class': Kernel}
-    Uptime = {'class': Uptime}
+    Kernel = {'class': entries.Kernel}
+    Uptime = {'class': entries.Uptime}
     WindowManager = {'class': WindowManager}
     DesktopEnvironment = {'class': DesktopEnvironment}
     Shell = {'class': Shell}
     Terminal = {'class': Terminal}
     Packages = {
-        'class': Packages,
+        'class': entries.Packages,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
     Temperature = {'class': Temperature}
-    CPU = {'class': CPU}
+    CPU = {'class': entries.CPU}
     GPU = {'class': GPU}
-    RAM = {'class': RAM}
-    Disk = {'class': Disk}
+    RAM = {'class': entries.RAM}
+    Disk = {'class': entries.Disk}
     LAN_IP = {
-        'class': LanIp,
+        'class': entries.LanIp,
         'kwargs': {
             'ip_max_count': CONFIG.get('ip_settings')['lan_ip_max_count'],
             'no_address': CONFIG.get('default_strings')['no_address']
         }
     }
     WAN_IP = {
-        'class': WanIp,
+        'class': entries.WanIp,
         'kwargs': {
             'ipv6_support': CONFIG.get('ip_settings')['wan_ip_v6_support'],
             'ipv6_timeout': CONFIG.get('timeout')['ipv6_detection'],
