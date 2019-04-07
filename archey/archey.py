@@ -186,43 +186,6 @@ class Temperature:
         return temp * (9 / 5) + 32
 
 
-class GPU:
-    def __init__(self):
-        """
-        Some explanations are needed here :
-        * We call `lspci` program to retrieve hardware devices
-        * We keep only the entries with "3D", "VGA" or "Display"
-        * We sort them in the same order as above (for relevancy)
-        """
-        try:
-            lspci_output = sorted(
-                [
-                    i.split(': ')[1] for i in check_output(
-                        ['lspci'], universal_newlines=True
-                    ).splitlines()
-                    if '3D' in i or 'VGA' in i or 'Display' in i
-                ], key=len
-            )
-
-            if lspci_output:
-                gpuinfo = lspci_output[0]
-
-                # If the line got too long, let's truncate it and add some dots
-                if len(gpuinfo) > 48:
-                    # This call truncates `gpuinfo` with words preservation
-                    gpuinfo = re.search(
-                        r'.{1,45}(?:\s|$)', gpuinfo
-                    ).group(0).strip() + '...'
-
-            else:
-                gpuinfo = CONFIG.get('default_strings')['not_detected']
-
-        except (FileNotFoundError, CalledProcessError):
-            gpuinfo = CONFIG.get('default_strings')['not_detected']
-
-        self.value = gpuinfo
-
-
 # ----------- Classes Index ----------- #
 
 class Classes(Enum):
@@ -249,7 +212,12 @@ class Classes(Enum):
     }
     Temperature = {'class': Temperature}
     CPU = {'class': entries.CPU}
-    GPU = {'class': GPU}
+    GPU = {
+         'class': entries.GPU,
+         'kwargs': {
+           'not_detected': CONFIG.get('default_strings')['not_detected']
+         }
+    }
     RAM = {'class': entries.RAM}
     Disk = {'class': entries.Disk}
     LAN_IP = {

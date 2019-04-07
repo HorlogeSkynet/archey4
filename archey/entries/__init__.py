@@ -5,6 +5,7 @@ from .kernel import Kernel
 from .uptime import Uptime
 from .packages import Packages
 from .cpu import CPU
+from .gpu import GPU
 from .ram import RAM
 from .disk import Disk
 from .lan_ip import LanIp
