@@ -34,6 +34,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 * `python3`
 * `python3-distro` (`python-distro` on Arch Linux)
+* `python3-netifaces` (`python-netifaces` on Arch Linux)
 * `procps` (potentially `procps-ng`)
 
 ### Highly recommended packages
