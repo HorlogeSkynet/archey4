@@ -12,12 +12,24 @@ import distro
 
 from output import Output
 from configuration import Configuration
-import entries
-from constants import (
-    COLOR_DICT,
-    DE_DICT,
-    WM_DICT,
-)
+from entries.user import User
+from entries.hostname import Hostname
+from entries.model import Model
+from entries.kernel import Kernel
+from entries.uptime import Uptime
+from entries.window_manager import WindowManager
+from entries.desktop_environment import DesktopEnvironment
+from entries.shell import Shell
+from entries.terminal import Terminal
+from entries.packages import Packages
+from entries.temperature import Temperature
+from entries.cpu import CPU
+from entries.gpu import GPU
+from entries.ram import RAM
+from entries.disk import Disk
+from entries.lan_ip import LanIp
+from entries.wan_ip import WanIp
+from constants import COLOR_DICT
 
 # ---------- Global variables --------- #
 
@@ -50,106 +62,78 @@ class Distro:
         )
 
 
-class WindowManager:
-    def __init__(self):
-        try:
-            window_manager = re.search(
-                '(?<=Name: ).*',
-                check_output(
-                    ['wmctrl', '-m'],
-                    stderr=DEVNULL, universal_newlines=True
-                )
-            ).group(0)
-
-        except (FileNotFoundError, CalledProcessError):
-            for key, value in WM_DICT.items():
-                if key in PROCESSES:
-                    window_manager = value
-                    break
-
-            else:
-                window_manager = CONFIG.get('default_strings')['not_detected']
-
-        self.value = window_manager
-
-
-class DesktopEnvironment:
-    def __init__(self):
-        for key, value in DE_DICT.items():
-            if key in PROCESSES:
-                desktop_environment = value
-                break
-
-        else:
-            # Let's rely on an environment var if the loop above didn't `break`
-            desktop_environment = os.getenv(
-                'XDG_CURRENT_DESKTOP',
-                CONFIG.get('default_strings')['not_detected']
-            )
-
-        self.value = desktop_environment
-
-
 # ----------- Classes Index ----------- #
 
 class Classes(Enum):
     User = {
-        'class': entries.User,
+        'class': User,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
-    Hostname = {'class': entries.Hostname}
-    Model = {'class': entries.Model}
+    Hostname = {'class': Hostname}
+    Model = {'class': Model}
     Distro = {'class': Distro}
-    Kernel = {'class': entries.Kernel}
-    Uptime = {'class': entries.Uptime}
-    WindowManager = {'class': WindowManager}
-    DesktopEnvironment = {'class': DesktopEnvironment}
+    Kernel = {'class': Kernel}
+    Uptime = {'class': Uptime}
+    WindowManager = {
+        'class': WindowManager,
+        'kwargs': {
+            'processes': PROCESSES,
+            'not_detected': CONFIG.get('default_strings')['not_detected'],
+        }
+    }
+    DesktopEnvironment = {
+        'class': DesktopEnvironment,
+        'kwargs': {
+            'processes': PROCESSES,
+            'not_detected': CONFIG.get('default_strings')['not_detected'],
+        }
+    }
     Shell = {
-        'class': entries.Shell,
+        'class': Shell,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected'],
         }
     }
     Terminal = {
-        'class': entries.Terminal,
+        'class': Terminal,
         'not_detected': CONFIG.get('default_strings')['not_detected'],
         'use_unicode': CONFIG.get('colors_palette')['use_unicode'],
         'clear_color': COLOR_DICT['clear']
     }
     Packages = {
-        'class': entries.Packages,
+        'class': Packages,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
     Temperature = {
-        'class': entries.Temperature,
+        'class': Temperature,
         'kwargs': {
             'use_fahrenheit': CONFIG.get('temperature')['use_fahrenheit'],
             'char_before_unit': CONFIG.get('temperature')['char_before_unit'],
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
-    CPU = {'class': entries.CPU}
+    CPU = {'class': CPU}
     GPU = {
-         'class': entries.GPU,
+         'class': GPU,
          'kwargs': {
            'not_detected': CONFIG.get('default_strings')['not_detected']
          }
     }
-    RAM = {'class': entries.RAM}
-    Disk = {'class': entries.Disk}
+    RAM = {'class': RAM}
+    Disk = {'class': Disk}
     LAN_IP = {
-        'class': entries.LanIp,
+        'class': LanIp,
         'kwargs': {
             'ip_max_count': CONFIG.get('ip_settings')['lan_ip_max_count'],
             'no_address': CONFIG.get('default_strings')['no_address']
         }
     }
     WAN_IP = {
-        'class': entries.WanIp,
+        'class': WanIp,
         'kwargs': {
             'ipv6_support': CONFIG.get('ip_settings')['wan_ip_v6_support'],
             'ipv6_timeout': CONFIG.get('timeout')['ipv6_detection'],
