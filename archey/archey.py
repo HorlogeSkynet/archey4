@@ -90,14 +90,6 @@ class DesktopEnvironment:
         self.value = desktop_environment
 
 
-class Shell:
-    def __init__(self):
-        self.value = os.getenv(
-            'SHELL',
-            CONFIG.get('default_strings')['not_detected']
-        )
-
-
 # ----------- Classes Index ----------- #
 
 class Classes(Enum):
@@ -114,7 +106,12 @@ class Classes(Enum):
     Uptime = {'class': entries.Uptime}
     WindowManager = {'class': WindowManager}
     DesktopEnvironment = {'class': DesktopEnvironment}
-    Shell = {'class': Shell}
+    Shell = {
+        'class': entries.Shell,
+        'kwargs': {
+            'not_detected': CONFIG.get('default_strings')['not_detected'],
+        }
+    }
     Terminal = {
         'class': entries.Terminal,
         'not_detected': CONFIG.get('default_strings')['not_detected'],

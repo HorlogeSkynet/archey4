@@ -3,6 +3,7 @@ from .hostname import Hostname
 from .model import Model
 from .kernel import Kernel
 from .uptime import Uptime
+from .shell import Shell
 from .terminal import Terminal
 from .packages import Packages
 from .temperature import Temperature
