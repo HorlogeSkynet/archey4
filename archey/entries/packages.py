@@ -1,7 +1,10 @@
+"""Number of installed packages detection class"""
+
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 
 class Packages:
+    """Relies on the first found packages manager to list the installed packages"""
     def __init__(self, not_detected=None):
         for packages_tool in [['dnf', 'list', 'installed'],
                               ['dpkg', '--get-selections'],
@@ -46,4 +49,3 @@ class Packages:
             packages = not_detected
 
         self.value = packages
-

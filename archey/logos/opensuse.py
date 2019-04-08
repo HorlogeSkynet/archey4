@@ -1,4 +1,6 @@
-OPENUSE = """
+"""openSUSE logo"""
+
+OPENSUSE = """
 {c[0]}            .;ldkO0000Okdl;.              {r[0]}
 {c[0]}        .;d00xl:^''''''^:ok00d;.          {r[1]}
 {c[0]}      .d00l'                'o00d.        {r[2]}
@@ -18,4 +20,3 @@ OPENUSE = """
 {c[0]}         'lkK0xl:;,,,,;:ldO0kl'           {r[16]}
 {c[0]}             '^:ldxkkkkxdl:^'             {r[17]}\n
 """
-

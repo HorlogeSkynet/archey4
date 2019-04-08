@@ -1,17 +1,17 @@
+"""Archey configuration module"""
+
 import os
 import sys
 import json
 
-# ----------- Configuration ----------- #
-
 
 class Configuration:
+    """
+    The default needed configuration which will be used by Archey is present below.
+    Values present in the `self.config` dictionary below are needed.
+    New optional values may be added with `_update_recursive()` method.
+    """
     def __init__(self):
-        """
-        Represents the default configuration which will be used by Archey.
-        Values present in the dictionary below are needed.
-        New optional values may be added with `_update_recursive()` method.
-        """
         self.config = {
             'colors_palette': {
                 'use_unicode': False

@@ -1,8 +1,12 @@
+"""GPU information detection class"""
+
 import re
+
 from subprocess import check_output, CalledProcessError
 
 
 class GPU:
+    """Relies on `lspci` to retrieve graphics device(s) information"""
     def __init__(self, not_detected=None):
         """
         Some explanations are needed here :
@@ -37,4 +41,3 @@ class GPU:
             gpuinfo = not_detected
 
         self.value = gpuinfo
-

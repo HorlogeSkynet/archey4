@@ -1,3 +1,5 @@
+"""Linux Mint logo"""
+
 LINUX_MINT = """
 {c[1]}                                       {r[0]}
 {c[1]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {r[1]}
@@ -18,4 +20,3 @@ LINUX_MINT = """
 {c[1]}                                       {r[16]}
 {c[1]}                                       {r[17]}\n
 """
-

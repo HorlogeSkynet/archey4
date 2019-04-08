@@ -1,3 +1,5 @@
+"""Lists of windows managers and desktop environments supported by Archey"""
+
 DE_DICT = {
     'cinnamon': 'Cinnamon',
     'gnome-session': 'GNOME',

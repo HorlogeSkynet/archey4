@@ -1,7 +1,10 @@
+"""Local IP addresses detection class"""
+
 import netifaces
 
 
 class LanIp:
+    """Relies on the `netifaces` module to detect LAN IP addresses"""
     def __init__(self, ip_max_count=False, no_address=None):
         addresses = []
 

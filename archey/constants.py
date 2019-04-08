@@ -1,7 +1,8 @@
+"""Logos colors and distributions / logos matching"""
+
 import logos
 from distributions import Distributions
 
-# ------------ Dictionaries ----------- #
 
 COLOR_DICT = {
     Distributions.ARCH_LINUX: ['\x1b[0;34m', '\x1b[1;34m'],
@@ -35,7 +36,7 @@ LOGOS_DICT = {
     Distributions.MANJARO_LINUX: logos.MANJARO,
     Distributions.LINUX: logos.LINUX,
     Distributions.LINUX_MINT: logos.LINUX_MINT,
-    Distributions.OPENSUSE: logos.OPENUSE,
+    Distributions.OPENSUSE: logos.OPENSUSE,
     Distributions.RED_HAT: logos.RED_HAT,
     Distributions.SLACKWARE: logos.SLACKWARE,
     Distributions.UBUNTU: logos.UBUNTU,

@@ -1,0 +1,15 @@
+[MASTER]
+# Needed to import the `logos` submodule.
+init-hook='import sys; sys.path.append("archey/")'
+
+# C sources of the `netifaces` module won't be available.
+# Let's ignore it during linting please.
+extension-pkg-whitelist=netifaces
+
+# Let's use two CPUs !
+jobs=2
+
+
+[DESIGN]
+# For entries classes, we only use the `__init__` magic method.
+min-public-methods=0

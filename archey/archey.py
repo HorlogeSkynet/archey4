@@ -1,35 +1,37 @@
 #!/usr/bin/env python3
 
+"""
+Archey main file.
+It loads each entry as a different class coming from the `entries` module.
+Logos are stored under the `logos` module.
+"""
 
 import os
-import re
 import sys
 
 from enum import Enum
-from subprocess import CalledProcessError, DEVNULL, check_output
-
-import distro
+from subprocess import check_output
 
 from output import Output
 from configuration import Configuration
-from entries.user import User
-from entries.hostname import Hostname
-from entries.model import Model
-from entries.distro import Distro
-from entries.kernel import Kernel
-from entries.uptime import Uptime
-from entries.window_manager import WindowManager
-from entries.desktop_environment import DesktopEnvironment
-from entries.shell import Shell
-from entries.terminal import Terminal
-from entries.packages import Packages
-from entries.temperature import Temperature
-from entries.cpu import CPU
-from entries.gpu import GPU
-from entries.ram import RAM
-from entries.disk import Disk
-from entries.lan_ip import LanIp
-from entries.wan_ip import WanIp
+from entries.user import User as e_User
+from entries.hostname import Hostname as e_Hostname
+from entries.model import Model as e_Model
+from entries.distro import Distro as e_Distro
+from entries.kernel import Kernel as e_Kernel
+from entries.uptime import Uptime as e_Uptime
+from entries.window_manager import WindowManager as e_WindowManager
+from entries.desktop_environment import DesktopEnvironment as e_DesktopEnvironment
+from entries.shell import Shell as e_Shell
+from entries.terminal import Terminal as e_Terminal
+from entries.packages import Packages as e_Packages
+from entries.temperature import Temperature as e_Temperature
+from entries.cpu import CPU as e_CPU
+from entries.gpu import GPU as e_GPU
+from entries.ram import RAM as e_RAM
+from entries.disk import Disk as e_Disk
+from entries.lan_ip import LanIp as e_LanIp
+from entries.wan_ip import WanIp as e_WanIp
 from constants import COLOR_DICT
 
 # ---------- Global variables --------- #
@@ -51,77 +53,94 @@ except FileNotFoundError:
 
 # ----------- Classes Index ----------- #
 
-
 class Classes(Enum):
+    """
+    One more enumeration to store and declare each one of our entries.
+    The string representation of keys will act as entries names.
+    Values will be set under the `value` attribute of each class.
+    """
     User = {
-        'class': User,
+        'class': e_User,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
-    Hostname = {'class': Hostname}
-    Model = {'class': Model}
-    Distro = {'class': Distro}
-    Kernel = {'class': Kernel}
-    Uptime = {'class': Uptime}
+    Hostname = {'class': e_Hostname}
+    Model = {
+        'class': e_Model,
+        'kwargs': {
+            'virtual_environment': CONFIG.get(
+                'default_strings'
+            )['virtual_environment'],
+            'bare_metal_environment': CONFIG.get(
+                'default_strings'
+            )['bare_metal_environment'],
+            'not_detected': CONFIG.get(
+                'default_strings'
+            )['not_detected'],
+        }
+    }
+    Distro = {'class': e_Distro}
+    Kernel = {'class': e_Kernel}
+    Uptime = {'class': e_Uptime}
     WindowManager = {
-        'class': WindowManager,
+        'class': e_WindowManager,
         'kwargs': {
             'processes': PROCESSES,
             'not_detected': CONFIG.get('default_strings')['not_detected'],
         }
     }
     DesktopEnvironment = {
-        'class': DesktopEnvironment,
+        'class': e_DesktopEnvironment,
         'kwargs': {
             'processes': PROCESSES,
             'not_detected': CONFIG.get('default_strings')['not_detected'],
         }
     }
     Shell = {
-        'class': Shell,
+        'class': e_Shell,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected'],
         }
     }
     Terminal = {
-        'class': Terminal,
+        'class': e_Terminal,
         'not_detected': CONFIG.get('default_strings')['not_detected'],
         'use_unicode': CONFIG.get('colors_palette')['use_unicode'],
         'clear_color': COLOR_DICT['clear']
     }
     Packages = {
-        'class': Packages,
+        'class': e_Packages,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
     Temperature = {
-        'class': Temperature,
+        'class': e_Temperature,
         'kwargs': {
             'use_fahrenheit': CONFIG.get('temperature')['use_fahrenheit'],
             'char_before_unit': CONFIG.get('temperature')['char_before_unit'],
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
-    CPU = {'class': CPU}
+    CPU = {'class': e_CPU}
     GPU = {
-         'class': GPU,
-         'kwargs': {
-           'not_detected': CONFIG.get('default_strings')['not_detected']
-         }
+        'class': e_GPU,
+        'kwargs': {
+            'not_detected': CONFIG.get('default_strings')['not_detected']
+        }
     }
-    RAM = {'class': RAM}
-    Disk = {'class': Disk}
+    RAM = {'class': e_RAM}
+    Disk = {'class': e_Disk}
     LAN_IP = {
-        'class': LanIp,
+        'class': e_LanIp,
         'kwargs': {
             'ip_max_count': CONFIG.get('ip_settings')['lan_ip_max_count'],
             'no_address': CONFIG.get('default_strings')['no_address']
         }
     }
     WAN_IP = {
-        'class': WanIp,
+        'class': e_WanIp,
         'kwargs': {
             'ipv6_support': CONFIG.get('ip_settings')['wan_ip_v6_support'],
             'ipv6_timeout': CONFIG.get('timeout')['ipv6_detection'],
@@ -134,6 +153,7 @@ class Classes(Enum):
 # ---------------- Main --------------- #
 
 def main():
+    """Simple entry point"""
     output = Output()
     for key in Classes:
         if CONFIG.get('entries', {}).get(key.name, True):

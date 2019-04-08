@@ -1,9 +1,13 @@
-from enum import Enum
+"""Distributions enumeration"""
 
-# ----- Distributions fingerprints ---- #
+from enum import Enum
 
 
 class Distributions(Enum):
+    """
+    This enumeration lists supported operating systems (keys).
+    Values contain their not-yet-compiled REGEXP format string.
+    """
     ARCH_LINUX = 'Arch.*'
     BUNSENLABS = 'BunsenLabs'
     CRUNCHBANG = 'CrunchBang'
@@ -19,4 +23,3 @@ class Distributions(Enum):
     SLACKWARE = 'Slackware'
     UBUNTU = 'Ubuntu'
     WINDOWS = 'Windows'
-

@@ -1,14 +1,13 @@
+"""Hardware model information detection class"""
+
 import re
 
-from subprocess import (
-    CalledProcessError,
-    DEVNULL,
-    check_output,
-)
+from subprocess import CalledProcessError, DEVNULL, check_output
 
 
 class Model:
-    def __init__(self):
+    """Uses multiple methods to retrieve some information about the host hardware"""
+    def __init__(self, virtual_environment, bare_metal_environment, not_detected):
         try:
             with open('/sys/devices/virtual/dmi/id/product_name') as file:
                 model = file.read().rstrip()
@@ -52,19 +51,14 @@ class Model:
                             ).rstrip()
 
                         except (FileNotFoundError, CalledProcessError):
-                            model = CONFIG.get(
-                                'default_strings'
-                            )['virtual_environment']
+                            model = virtual_environment
 
                         model += ' ({0})'.format(virt_what)
 
                     else:
-                        model = CONFIG.get(
-                            'default_strings'
-                        )['bare_metal_environment']
+                        model = bare_metal_environment
 
                 except (FileNotFoundError, CalledProcessError):
-                    model = CONFIG.get('default_strings')['not_detected']
+                    model = not_detected
 
         self.value = model
-

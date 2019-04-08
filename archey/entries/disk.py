@@ -1,9 +1,14 @@
+"""Disk usage detection class"""
+
 import re
+
 from subprocess import check_output
+
 from constants import COLOR_DICT
 
 
 class Disk:
+    """Uses `df` command output to compute the total disk usage across devices"""
     def __init__(self):
         total = re.sub(
             ',', '.',
@@ -25,4 +30,3 @@ class Disk:
             COLOR_DICT['clear'],
             re.sub('GB', ' GB', total[2])
         )
-

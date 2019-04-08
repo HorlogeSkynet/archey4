@@ -1,3 +1,5 @@
+"""Debian logo"""
+
 DEBIAN = """
 {c[1]}                                  {r[0]}
 {c[1]}          _sudZUZ#Z#XZo=_         {r[1]}

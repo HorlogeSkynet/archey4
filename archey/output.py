@@ -1,15 +1,23 @@
+"""
+Output class file.
+It supports entries lazy-insertion, logo detection, and final printing.
+"""
+
 import re
 import sys
-import distro
 from subprocess import check_output
+
+import distro
 
 from distributions import Distributions
 from constants import LOGOS_DICT, COLOR_DICT
 
-# ----------- Output handler ---------- #
-
 
 class Output:
+    """
+    This is the object handling output entries populating.
+    It also handles the logo choice based on some system detections.
+    """
     def __init__(self):
         # First we check whether the Kernel has been compiled as a WSL.
         if re.search(
@@ -22,10 +30,9 @@ class Output:
 
             for distribution in Distributions:
                 if re.fullmatch(
-                       distribution.value,
-                       distribution_id,
-                        re.IGNORECASE
-                   ):
+                        distribution.value,
+                        distribution_id,
+                        re.IGNORECASE):
                     self.distribution = distribution
                     break
 
@@ -36,6 +43,7 @@ class Output:
         self.results = []
 
     def append(self, key, value):
+        """Append a pre-formatted entry to the final output content"""
         self.results.append(
             '{0}{1}:{2} {3}'.format(
                 COLOR_DICT[self.distribution][1],
@@ -46,6 +54,10 @@ class Output:
         )
 
     def output(self):
+        """
+        Finally render the output entries.
+        It handles text centering additionally to value and colors replacing.
+        """
         # Let's center the entries according to the logo (handles odd numbers)
         self.results[0:0] = [''] * ((18 - len(self.results)) // 2)
         self.results.extend([''] * (18 - len(self.results)))
@@ -64,4 +76,3 @@ class Output:
                 'Please disable Unicode within your configuration file.',
                 file=sys.stderr
             )
-

@@ -1,9 +1,16 @@
+"""Temperature detection class"""
+
 import re
+
 from glob import glob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 
 class Temperature:
+    """
+    On Raspberry, retrieves temperature from the `vcgencmd` binary.
+    Anyway, retrieves values from system thermal zones files.
+    """
     def __init__(self,
                  use_fahrenheit=False,
                  char_before_unit=' ',
@@ -69,4 +76,3 @@ class Temperature:
         Simple Celsius to Fahrenheit conversion method
         """
         return temp * (9 / 5) + 32
-

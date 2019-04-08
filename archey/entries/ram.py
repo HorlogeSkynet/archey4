@@ -1,10 +1,17 @@
+"""RAM usage detection class"""
+
 import re
+
 from subprocess import check_output
 
 from constants import COLOR_DICT
 
 
 class RAM:
+    """
+    First tries to use the `free` command to retrieve RAM usage.
+    If not available, falls back on the parsing of `/proc/meminfo` file.
+    """
     def __init__(self):
         try:
             ram = ''.join(
@@ -40,4 +47,3 @@ class RAM:
             COLOR_DICT['clear'],
             int(total)
         )
-

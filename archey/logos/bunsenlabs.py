@@ -1,3 +1,5 @@
+"""Bunsenlabs logo"""
+
 BUNSENLABS = """
 {c[0]}           .{c[1]}..{c[0]}+hhy+-`         \0
 {c[0]}        `+hd{c[1]}-{c[0]}+dddd{c[2]}hyso{c[0]}+//:    \0

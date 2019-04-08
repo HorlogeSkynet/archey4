@@ -1,3 +1,5 @@
+"""Arch Linux logo"""
+
 ARCH_LINUX = """
 {c[1]}               +                 {r[0]}
 {c[1]}               #                 {r[1]}

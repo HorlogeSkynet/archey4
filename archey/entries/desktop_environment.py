@@ -1,10 +1,16 @@
+"""Desktop environment detection class"""
+
 import os
 
-from ._constants import DE_DICT
+from .constants import DE_DICT
 
 
 class DesktopEnvironment:
-    def __init__(self, processes=[], not_detected=None):
+    """
+    Just iterate over running processes to find a known-entry.
+    If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
+    """
+    def __init__(self, processes, not_detected=None):
         for key, value in DE_DICT.items():
             if key in processes:
                 desktop_environment = value

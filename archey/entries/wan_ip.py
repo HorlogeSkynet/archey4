@@ -1,4 +1,7 @@
+"""Public IP address detection class"""
+
 import sys
+
 from subprocess import (
     check_output,
     DEVNULL,
@@ -8,6 +11,7 @@ from subprocess import (
 
 
 class WanIp:
+    """Uses different ways to retrieve the public IPv{4,6} addresses"""
     def __init__(self,
                  ipv6_support=False,
                  ipv6_timeout=0,

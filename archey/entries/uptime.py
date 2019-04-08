@@ -1,4 +1,8 @@
+"""Uptime detection class"""
+
+
 class Uptime:
+    """Returns a pretty-formatted string representing the host uptime"""
     def __init__(self):
         with open('/proc/uptime') as file:
             fuptime = int(file.read().split('.')[0])
@@ -38,4 +42,3 @@ class Uptime:
                 uptime = '< 1 minute'
 
         self.value = uptime
-

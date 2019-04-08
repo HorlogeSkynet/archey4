@@ -1,8 +1,15 @@
+"""CPU information detection class"""
+
 import re
+
 from subprocess import check_output
 
 
 class CPU:
+    """
+    Parse `/proc/cpuinfo` file to retrieve the model name.
+    If no information could be retrieved, calls `lscpu`.
+    """
     def __init__(self):
         model_name_regex = re.compile(
             r'^model name\s*:\s*(.*)$',
@@ -26,4 +33,3 @@ class CPU:
 
         # Sometimes CPU model name contains extra ugly white-spaces.
         self.value = re.sub(r'\s+', ' ', cpuinfo.group(1))
-

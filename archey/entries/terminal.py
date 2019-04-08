@@ -1,7 +1,13 @@
+"""Terminal detection class"""
+
 import os
 
 
 class Terminal:
+    """
+    Simple terminal detection based on the `TERM` environment variable.
+    It also displays the colors palette afterwards.
+    """
     def __init__(self,
                  not_detected=None,
                  use_unicode=False,
@@ -24,4 +30,3 @@ class Terminal:
         ])
 
         self.value = '{0} {1}'.format(terminal, colors)
-
