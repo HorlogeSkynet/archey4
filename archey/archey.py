@@ -141,7 +141,7 @@ class Classes(Enum):
         'class': e_Disk,
         'kwargs': {
           'sensor_color': COLOR_DICT['sensors'],
-          'clear_clear': COLOR_DICT['clear']
+          'clear_color': COLOR_DICT['clear']
         }
     }
     LAN_IP = {
