@@ -1,7 +1,7 @@
 """Logos colors and distributions / logos matching"""
 
-import logos
-from distributions import Distributions
+from . import logos 
+from .distributions import Distributions
 
 
 COLOR_DICT = {

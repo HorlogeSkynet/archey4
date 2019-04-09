@@ -9,8 +9,8 @@ from subprocess import check_output
 
 import distro
 
-from distributions import Distributions
-from constants import LOGOS_DICT, COLOR_DICT
+from .distributions import Distributions
+from .constants import LOGOS_DICT, COLOR_DICT
 
 
 class Output:
