@@ -4,12 +4,10 @@ import re
 
 from subprocess import check_output
 
-from constants import COLOR_DICT
-
 
 class Disk:
     """Uses `df` command output to compute the total disk usage across devices"""
-    def __init__(self):
+    def __init__(self, sensor_color, clear_color):
         total = re.sub(
             ',', '.',
             check_output(
@@ -25,8 +23,8 @@ class Disk:
         ).split()
 
         self.value = '{0}{1}{2} / {3}'.format(
-            COLOR_DICT['sensors'][int(float(total[5][:-1]) // 33.34)],
+            sensor_color[int(float(total[5][:-1]) // 33.34)],
             re.sub('GB', ' GB', total[3]),
-            COLOR_DICT['clear'],
+            clear_color,
             re.sub('GB', ' GB', total[2])
         )

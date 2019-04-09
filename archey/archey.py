@@ -130,8 +130,20 @@ class Classes(Enum):
             'not_detected': CONFIG.get('default_strings')['not_detected']
         }
     }
-    RAM = {'class': e_RAM}
-    Disk = {'class': e_Disk}
+    RAM = {
+        'class': e_RAM,
+        'kwargs': {
+          'sensor_color': COLOR_DICT['sensors'],
+          'clear_color': COLOR_DICT['clear']
+        }
+    }
+    Disk = {
+        'class': e_Disk,
+        'kwargs': {
+          'sensor_color': COLOR_DICT['sensors'],
+          'clear_clear': COLOR_DICT['clear']
+        }
+    }
     LAN_IP = {
         'class': e_LanIp,
         'kwargs': {
