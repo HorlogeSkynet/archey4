@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import User
+from archey.entries.user import User
 
 
 class TestUserEntry(unittest.TestCase):

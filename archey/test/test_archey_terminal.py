@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Terminal
+from archey.entries.terminal import Terminal
 
 
 class TestTerminalEntry(unittest.TestCase):

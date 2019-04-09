@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import mock_open, patch
 
-from archey.archey import Model
+from archey.entries.model import Model
 
 
 class TestModelEntry(unittest.TestCase):

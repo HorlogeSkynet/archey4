@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Temperature
+from archey.entries.temperature import Temperature
 
 
 class TestTemperatureEntry(unittest.TestCase):

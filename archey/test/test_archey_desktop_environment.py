@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import DesktopEnvironment
+from archey.entries.desktop_environment import DesktopEnvironment
 
 
 class TestDesktopEnvironmentEntry(unittest.TestCase):

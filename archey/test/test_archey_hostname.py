@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Hostname
+from archey.entries.hostname import Hostname
 
 
 class TestHostnameEntry(unittest.TestCase):

@@ -4,7 +4,7 @@ import sys
 import tempfile
 import unittest
 
-from archey.archey import Configuration
+from archey.configuration import Configuration
 
 
 class TestConfigurationUtil(unittest.TestCase):

@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import LanIp
+from archey.entries.lan_ip import LanIp
 
 
 class TestLanIpEntryAutomatic(unittest.TestCase):

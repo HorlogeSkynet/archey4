@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import WindowManager
+from archey.entries.window_manager import WindowManager
 
 
 class TestWindowManagerEntry(unittest.TestCase):

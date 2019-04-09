@@ -2,7 +2,7 @@
 import unittest
 from subprocess import TimeoutExpired
 
-from archey.archey import WanIp
+from archey.entries.wan_ip import WanIp
 
 
 class TestWanIpEntry(unittest.TestCase):

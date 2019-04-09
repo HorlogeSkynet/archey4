@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Disk
+from archey.entries.disk import Disk
 
 
 class TestDiskEntry(unittest.TestCase):

@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import mock_open, patch
 
-from archey.archey import RAM
+from archey.entries.ram import RAM
 
 
 class TestRAMEntry(unittest.TestCase):

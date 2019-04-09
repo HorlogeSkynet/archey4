@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Kernel
+from archey.entries.kernel import Kernel
 
 
 class TestKernelEntry(unittest.TestCase):

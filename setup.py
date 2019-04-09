@@ -13,8 +13,8 @@ setup(
     author='Samuel FORESTIER',  # Not alone
     author_email='dev@samuel.domains',
     license='GPLv3',
-    packages=find_packages(exclude=['test']),
-    test_suite='test',
+    packages=find_packages(exclude=['archey.test']),
+    test_suite='archey.test',
     install_requires=[
         'distro',
         'netifaces'

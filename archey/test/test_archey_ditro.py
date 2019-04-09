@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Distro
+from archey.entries.distro import Distro
 
 
 class TestDistroEntry(unittest.TestCase):

@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Packages
+from archey.entries.packages import Packages
 
 
 class TestPackagesEntry(unittest.TestCase):

@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import mock_open, patch
 
-from archey.archey import CPU
+from archey.entries.cpu import CPU
 
 
 class TestCPUEntry(unittest.TestCase):

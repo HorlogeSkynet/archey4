@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import mock_open, patch
 
-from archey.archey import Uptime
+from archey.entries.uptime import Uptime
 
 
 class TestUptimeEntry(unittest.TestCase):

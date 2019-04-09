@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import GPU
+from archey.entries.gpu import GPU
 
 
 class TestGPUEntry(unittest.TestCase):

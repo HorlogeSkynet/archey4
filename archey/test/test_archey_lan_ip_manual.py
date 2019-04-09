@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from subprocess import Popen, check_output
 
-from archey.archey import LanIp
+from archey.entries.lan_ip import LanIp
 
 
 # --------------------------------------------------------------------------------

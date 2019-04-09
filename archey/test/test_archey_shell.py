@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Shell
+from archey.entries.shell import Shell
 
 
 class TestShellEntry(unittest.TestCase):

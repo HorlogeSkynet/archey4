@@ -2,7 +2,8 @@
 import unittest
 from unittest.mock import patch
 
-from archey.archey import Distributions, Output
+from archey.output import Output
+from archey.entries.distributions import Distributions
 
 
 class TestOutputUtil(unittest.TestCase):
