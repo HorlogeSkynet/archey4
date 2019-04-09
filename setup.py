@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
@@ -13,7 +13,7 @@ setup(
     author='Samuel FORESTIER',  # Not alone
     author_email='dev@samuel.domains',
     license='GPLv3',
-    packages=['archey'],
+    packages=find_packages(exclude=['test']),
     test_suite='test',
     install_requires=[
         'distro',
