@@ -133,15 +133,15 @@ class Classes(Enum):
     RAM = {
         'class': e_RAM,
         'kwargs': {
-          'sensor_color': COLOR_DICT['sensors'],
-          'clear_color': COLOR_DICT['clear']
+            'sensor_color': COLOR_DICT['sensors'],
+            'clear_color': COLOR_DICT['clear']
         }
     }
     Disk = {
         'class': e_Disk,
         'kwargs': {
-          'sensor_color': COLOR_DICT['sensors'],
-          'clear_color': COLOR_DICT['clear']
+            'sensor_color': COLOR_DICT['sensors'],
+            'clear_color': COLOR_DICT['clear']
         }
     }
     LAN_IP = {

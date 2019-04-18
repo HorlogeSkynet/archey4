@@ -1,7 +1,4 @@
 [MASTER]
-# Needed to import the `logos` submodule.
-init-hook='import sys; sys.path.append("archey/")'
-
 # C sources of the `netifaces` module won't be available.
 # Let's ignore it during linting please.
 extension-pkg-whitelist=netifaces

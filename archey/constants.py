@@ -1,6 +1,6 @@
 """Logos colors and distributions / logos matching"""
 
-from . import logos 
+from . import logos
 from .distributions import Distributions
 
 
