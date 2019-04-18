@@ -14,6 +14,7 @@ from subprocess import check_output
 
 from .output import Output
 from .configuration import Configuration
+from .constants import COLOR_DICT
 from .entries.user import User as e_User
 from .entries.hostname import Hostname as e_Hostname
 from .entries.model import Model as e_Model
@@ -32,7 +33,6 @@ from .entries.ram import RAM as e_RAM
 from .entries.disk import Disk as e_Disk
 from .entries.lan_ip import LanIp as e_LanIp
 from .entries.wan_ip import WanIp as e_WanIp
-from .constants import COLOR_DICT
 
 # ---------- Global variables --------- #
 

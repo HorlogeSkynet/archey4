@@ -131,10 +131,10 @@ $ cp archey/config.json ~/.config/archey4/config.json
 $ archey
 ```
 
-or if you only want to try this out :
+or if you only want to try this out (for instance, from source) :
 
 ```shell
-$ python3 archey/archey.py
+$ python3 -m archey
 ```
 
 ## Configuration (optional)
