@@ -5,10 +5,14 @@ python:
   - "3.6"
   - "3.7-dev"
 install:
+  # Archey package installation (and dependencies).
   - pip3 install .
+  # Pylint dependency (see below).
   - pip3 install pylint
 script:
+  # Simple execution.
+  - python3 -m archey
+  # Tests suite.
   - python3 setup.py test
-  - python3 archey/archey.py
+  # Lint all the things !
   - pylint archey/
-  - pylint test/   --jobs=2 --disable=missing-docstring,too-few-public-methods,unused-argument,protected-access,no-value-for-parameter
