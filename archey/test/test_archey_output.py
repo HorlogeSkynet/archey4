@@ -1,9 +1,11 @@
+"""Test module for `archey.output`"""
+
 
 import unittest
 from unittest.mock import patch
 
 from archey.output import Output
-from archey.entries.distributions import Distributions
+from archey.distributions import Distributions
 
 
 class TestOutputUtil(unittest.TestCase):
@@ -11,16 +13,17 @@ class TestOutputUtil(unittest.TestCase):
     Simple test cases to check the behavior of `Output` main class.
     """
     @patch(
-        'archey.archey.check_output',
+        'archey.output.check_output',
         return_value="""\
 'X.Y.Z-R-ARCH'
 """)
     @patch(
-        'archey.archey.distro.id',
+        'archey.output.distro.id',
         return_value="""\
 debian\
 """)
-    def test_init_known_distro(self, distro_id_mock, check_output_mock):
+    def test_init_known_distro(self, distro_id_mock, check_output_mock):  # pylint: disable=unused-argument
+        """Test known distribution output"""
         output = Output()
 
         self.assertEqual(
@@ -29,16 +32,17 @@ debian\
         )
 
     @patch(
-        'archey.archey.check_output',
+        'archey.output.check_output',
         return_value="""\
 X.Y.Z-R-ARCH
 """)
     @patch(
-        'archey.archey.distro.id',
+        'archey.output.distro.id',
         return_value="""\
 an-unknown-distro-id\
 """)
-    def test_init_unknown_distro(self, distro_id_mock, check_output_mock):
+    def test_init_unknown_distro(self, distro_id_mock, check_output_mock):  # pylint: disable=unused-argument
+        """Test unknown distribution output"""
         output = Output()
 
         self.assertEqual(
@@ -47,16 +51,17 @@ an-unknown-distro-id\
         )
 
     @patch(
-        'archey.archey.check_output',
+        'archey.output.check_output',
         return_value="""\
 X.Y.Z-R-Microsoft
 """)
     @patch(
-        'archey.archey.distro.id',
+        'archey.output.distro.id',
         return_value="""\
 opensuse\
 """)
-    def test_init_windows_subsystem(self, distro_id_mock, check_output_mock):
+    def test_init_windows_subsystem(self, distro_id_mock, check_output_mock):  # pylint: disable=unused-argument
+        """Test output for Windows Subsystem Linux"""
         output = Output()
 
         self.assertEqual(
@@ -65,13 +70,14 @@ opensuse\
         )
 
     @patch.dict(
-        'archey.archey.COLOR_DICT',
+        'archey.output.COLOR_DICT',
         {
             Distributions.DEBIAN: ['COLOR_0', 'COLOR_1'],
             'clear': 'CLEAR'
         }
     )
     def test_append(self):
+        """Test the `append` method, for new entries"""
         output = Output()
 
         # Let's manually set the distribution for the test case...
@@ -85,14 +91,14 @@ opensuse\
         )
 
     @patch.dict(
-        'archey.archey.COLOR_DICT',
+        'archey.output.COLOR_DICT',
         {
             Distributions.DEBIAN: ['COLOR_0', 'COLOR_1'],
             'clear': 'CLEAR'
         }
     )
     @patch.dict(
-        'archey.archey.LOGOS_DICT',
+        'archey.output.LOGOS_DICT',
         {
             Distributions.DEBIAN: """\
 {c[0]} {r[0]} {c[1]}
@@ -118,11 +124,12 @@ opensuse\
         }
     )
     @patch(
-        'archey.archey.print',
+        'archey.output.print',
         return_value=None,  # Let's badly mute the class outputs
         create=True
     )
-    def test_centered_output(self, print_mock):
+    def test_centered_output(self, print_mock):  # pylint: disable=unused-argument
+        """Test how the `output` method handle centering operations"""
         output = Output()
 
         # Let's manually set the distribution for the test case...
