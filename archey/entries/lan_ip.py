@@ -17,7 +17,11 @@ class LanIp:
             for addr_type in [netifaces.AF_INET, netifaces.AF_INET6]:
                 if addr_type in interface_addrs:
                     for interface_addr in interface_addrs[addr_type]:
-                        addresses.append(interface_addr['addr'])
+                        # Filter out loopback addresses.
+                        if (addr_type != netifaces.AF_INET or \
+                                not interface_addr['addr'].startswith('127.')) and \
+                                interface_addr['addr'] != '::1':
+                            addresses.append(interface_addr['addr'].split('%')[0])
 
         if ip_max_count is not False:
             addresses = addresses[:ip_max_count]
