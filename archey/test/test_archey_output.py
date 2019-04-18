@@ -22,7 +22,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value="""\
 debian\
 """)
-    def test_init_known_distro(self, distro_id_mock, check_output_mock):  # pylint: disable=unused-argument
+    def test_init_known_distro(self, _, __):
         """Test known distribution output"""
         output = Output()
 
@@ -41,7 +41,7 @@ X.Y.Z-R-ARCH
         return_value="""\
 an-unknown-distro-id\
 """)
-    def test_init_unknown_distro(self, distro_id_mock, check_output_mock):  # pylint: disable=unused-argument
+    def test_init_unknown_distro(self, _, __):
         """Test unknown distribution output"""
         output = Output()
 
@@ -60,7 +60,7 @@ X.Y.Z-R-Microsoft
         return_value="""\
 opensuse\
 """)
-    def test_init_windows_subsystem(self, distro_id_mock, check_output_mock):  # pylint: disable=unused-argument
+    def test_init_windows_subsystem(self, _, __):
         """Test output for Windows Subsystem Linux"""
         output = Output()
 
@@ -128,7 +128,7 @@ opensuse\
         return_value=None,  # Let's badly mute the class outputs
         create=True
     )
-    def test_centered_output(self, print_mock):  # pylint: disable=unused-argument
+    def test_centered_output(self, _):
         """Test how the `output` method handle centering operations"""
         output = Output()
 
