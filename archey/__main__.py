@@ -105,9 +105,11 @@ class Classes(Enum):
     }
     Terminal = {
         'class': e_Terminal,
-        'not_detected': CONFIG.get('default_strings')['not_detected'],
-        'use_unicode': CONFIG.get('colors_palette')['use_unicode'],
-        'clear_color': COLOR_DICT['clear']
+        'kwargs': {
+            'not_detected': CONFIG.get('default_strings')['not_detected'],
+            'use_unicode': CONFIG.get('colors_palette')['use_unicode'],
+            'clear_color': COLOR_DICT['clear']
+        }
     }
     Packages = {
         'class': e_Packages,
