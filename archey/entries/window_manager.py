@@ -16,7 +16,7 @@ class WindowManager:
     Uses `wmctrl` to retrieve some information about the window manager.
     If not available, fall back on a simple iteration over the processes.
     """
-    def __init__(self, processes, not_detected=None):
+    def __init__(self, processes=None, not_detected=None):
         try:
             window_manager = re.search(
                 '(?<=Name: ).*',

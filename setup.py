@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+This is the Archey 4's `setup.py` file, allowing us to distribute it as a package...
+... with cool meta-data.
+"""
 
 from setuptools import setup, find_packages
 

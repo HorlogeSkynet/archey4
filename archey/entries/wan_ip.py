@@ -13,7 +13,7 @@ from subprocess import (
 class WanIp:
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
     def __init__(self,
-                 ipv6_support=False,
+                 ipv6_support=True,
                  ipv6_timeout=0,
                  ipv4_timeout=0,
                  no_address=None):
