@@ -1,3 +1,4 @@
+"""Test module for `archey.configuration`"""
 
 import os
 import sys
@@ -15,6 +16,7 @@ class TestConfigurationUtil(unittest.TestCase):
     Values will be manually set in the tests below.
     """
     def test_get(self):
+        """Test the `get` binder method to configuration elements"""
         configuration = Configuration()
         configuration.config = {
             'ip_settings': {
@@ -36,6 +38,7 @@ class TestConfigurationUtil(unittest.TestCase):
         self.assertIsNone(configuration.config.get('does_not_exist_either'))
 
     def test_load_configuration(self):
+        """Test for configuration loading from file, and overriding flag"""
         configuration = Configuration()
         configuration.config = {
             'allow_overriding': True,
@@ -93,7 +96,7 @@ class TestConfigurationUtil(unittest.TestCase):
             )
             # The `stderr` file descriptor has changed due to
             #   the `suppress_warnings` option.
-            self.assertNotEqual(configuration._stderr, sys.stderr)
+            self.assertNotEqual(configuration._stderr, sys.stderr)  # pylint: disable=protected-access
 
             # Let's try to load the `config.json` file present in this project.
             configuration.load_configuration(os.getcwd() + '/archey/')
@@ -118,6 +121,7 @@ class TestConfigurationUtil(unittest.TestCase):
             )
 
     def test_update_recursive(self):
+        """Test for the `_update_recursive` private method"""
         configuration = Configuration()
         configuration.config = {
             'allow_overriding': True,
@@ -138,7 +142,7 @@ class TestConfigurationUtil(unittest.TestCase):
         }
 
         # We change existing values, add new ones, and omit some others.
-        configuration._update_recursive(
+        configuration._update_recursive(  # pylint: disable=protected-access
             configuration.config,
             {
                 'suppress_warnings': True,

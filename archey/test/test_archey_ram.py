@@ -1,3 +1,4 @@
+"""Test module for Archey's RAM usage detection module"""
 
 import unittest
 from unittest.mock import mock_open, patch
@@ -12,22 +13,23 @@ class TestRAMEntry(unittest.TestCase):
     """
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.ram.check_output',
         return_value="""\
           total     used    free    shared  buff/cache   available
 Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
-    def test_free_dash_m(self, check_output_mock):
+    def test_free_dash_m(self, _):
+        """Test `free -m` output parsing"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['3341', '7412']))
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.ram.check_output',
         side_effect=IndexError()  # `free` call will fail
     )
     @patch(
-        'archey.archey.open',
+        'archey.entries.ram.open',
         mock_open(
             read_data="""\
 MemTotal:        7590580 kB
@@ -50,7 +52,8 @@ Dirty:               200 kB
 """),  # Some content have been truncated (because the following is useless)
         create=True
     )
-    def test_proc_meminfo(self, check_output_mock):
+    def test_proc_meminfo(self, _):
+        """Test `/proc/meminfo` parsing (when `free` is not available)"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['3556', '7412']))
 

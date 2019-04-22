@@ -1,3 +1,4 @@
+"""Test module for Archey's CPU detection module"""
 
 import unittest
 from unittest.mock import mock_open, patch
@@ -10,7 +11,7 @@ class TestCPUEntry(unittest.TestCase):
     Here, we mock the `open` call on `/proc/cpuinfo` with fake content.
     """
     @patch(
-        'archey.archey.open',
+        'archey.entries.cpu.open',
         mock_open(
             read_data="""\
 processor\t: 0
@@ -22,10 +23,11 @@ model name\t: CPU-MODEL-NAME
         create=True
     )
     def test_model_name_match_cpuinfo(self):
+        """Test `/proc/cpuinfo` parsing"""
         self.assertEqual(CPU().value, 'CPU-MODEL-NAME')
 
     @patch(
-        'archey.archey.open',
+        'archey.entries.cpu.open',
         mock_open(
             read_data="""\
 processor\t: 0
@@ -36,7 +38,7 @@ model\t\t: YY
         create=True
     )
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.cpu.check_output',
         return_value="""\
 Architecture:        x86_64
 CPU op-mode(s):      32-bit, 64-bit
@@ -52,8 +54,10 @@ CPU family:          Z
 Model:               \xde\xad\xbe\xef
 Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
 """)
-    def test_model_name_match_lscpu(self, check_output_mock):
+    def test_model_name_match_lscpu(self, _):
         """
+        Test model name parsing from `lscpu` output.
+
         See issue #29 (ARM architectures).
         `/proc/cpuinfo` will not contain `model name` info.
         `lscpu` output will be used instead.
@@ -61,7 +65,7 @@ Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
         self.assertEqual(CPU().value, 'CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO')
 
     @patch(
-        'archey.archey.open',
+        'archey.entries.cpu.open',
         mock_open(
             read_data="""\
 processor\t: 0
@@ -73,6 +77,7 @@ model name\t: CPU  MODEL\t  NAME
         create=True
     )
     def test_spaces_squeezing(self):
+        """Test name sanitizing, needed on some platformd"""
         self.assertEqual(CPU().value, 'CPU MODEL NAME')
 
 

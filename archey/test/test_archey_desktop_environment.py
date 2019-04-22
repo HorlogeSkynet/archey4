@@ -1,3 +1,4 @@
+"""Test module for Archey's desktop environment detection module"""
 
 import unittest
 from unittest.mock import patch
@@ -9,29 +10,37 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
     """
     With the help of a fake running processes list, we test the DE matching.
     """
-    @patch('archey.archey.PROCESSES', [  # Fake running processes list
-        'do',
-        'you',
-        'like',
-        'cinnamon',  # Match !
-        'tea'
-    ])
     def test_match(self):
-        self.assertEqual(DesktopEnvironment().value, 'Cinnamon')
+        """Simple list matching"""
+        processes = [  # Fake running processes list
+            'do',
+            'you',
+            'like',
+            'cinnamon',  # Match !
+            'tea'
+        ]
+        self.assertEqual(
+            DesktopEnvironment(processes, 'Not detected').value,
+            'Cinnamon'
+        )
 
-    @patch('archey.archey.PROCESSES', [  # Fake running processes list
-        'do',
-        'you',
-        'like',
-        'unsweetened',  # Mismatch...
-        'coffee'
-    ])
     @patch(
-        'archey.archey.os.getenv',
+        'archey.entries.desktop_environment.os.getenv',
         return_value='DESKTOP ENVIRONMENT'
     )
-    def test_mismatch(self, getenv_mock):
-        self.assertEqual(DesktopEnvironment().value, 'DESKTOP ENVIRONMENT')
+    def test_mismatch(self, _):
+        """Simple list (mis-)-matching"""
+        processes = [  # Fake running processes list
+            'do',
+            'you',
+            'like',
+            'unsweetened',  # Mismatch...
+            'coffee'
+        ]
+        self.assertEqual(
+            DesktopEnvironment(processes, 'Not detected').value,
+            'DESKTOP ENVIRONMENT'
+        )
 
 
 if __name__ == '__main__':

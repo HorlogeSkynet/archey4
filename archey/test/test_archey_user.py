@@ -1,3 +1,4 @@
+"""Test module for Archey's session user name detection module"""
 
 import unittest
 from unittest.mock import patch
@@ -10,10 +11,11 @@ class TestUserEntry(unittest.TestCase):
     For this entry, we'll check the output by mocking the `getenv` call.
     """
     @patch(
-        'archey.archey.os.getenv',
+        'archey.entries.user.os.getenv',
         return_value='USERNAME'
     )
-    def test(self, getenv_mock):
+    def test(self, _):
+        """Simple mock, simple test"""
         self.assertEqual(User().value, 'USERNAME')
 
 

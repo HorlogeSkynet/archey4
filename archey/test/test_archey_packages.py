@@ -1,3 +1,4 @@
+"""Test module for Archey's installed system packages detection module"""
 
 import unittest
 from unittest.mock import patch
@@ -12,7 +13,7 @@ class TestPackagesEntry(unittest.TestCase):
     Sorry for the code style, mocking this class is pretty boring.
     """
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         return_value="""\
 Installed Packages
 GConf2.x86_64                  3.2.6-17.fc26           @@commandline
@@ -20,11 +21,12 @@ GeoIP.x86_64                   1.6.11-1.fc26           @@commandline
 GeoIP-GeoLite-data.noarch      2017.07-1.fc26          @@commandline
 GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
 """)
-    def test_match_with_dnf(self, check_output_mock):
+    def test_match_with_dnf(self, _):
+        """Simple test for the DNF packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
             """\
@@ -36,11 +38,12 @@ adwaita-icon-theme      install
 albatross-gtk-theme     deinstall
 alien                   install
 """])
-    def test_match_with_dpkg(self, check_output_mock):
+    def test_match_with_dpkg(self, _):
+        """Simple test for the DPKG packages manager"""
         self.assertEqual(Packages().value, 6)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
             FileNotFoundError(),
@@ -57,11 +60,12 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
 [ebuild   R    ] x11-misc/shared-mime-info-1.9 \n\
 
 """])
-    def test_match_with_emerge(self, check_output_mock):
+    def test_match_with_emerge(self, _):
+        """Simple test for the Emerge packages manager"""
         self.assertEqual(Packages().value, 5)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
             FileNotFoundError(),
@@ -72,11 +76,12 @@ archey4 v4.3.3-1
 archlinux-keyring 20180108-1
 argon2 20171227-3
 """])
-    def test_match_with_pacman(self, check_output_mock):
+    def test_match_with_pacman(self, _):
+        """Simple test for the Pacman packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
             FileNotFoundError(),
@@ -88,11 +93,12 @@ bluez-libs-3.7-1.1
 setarch-2.0-1.1
 MySQL-client-3.23.57-1
 """])
-    def test_match_with_rpm(self, check_output_mock):
+    def test_match_with_rpm(self, _):
+        """Simple test for the RPM packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
             FileNotFoundError(),
@@ -107,11 +113,12 @@ GeoIP.x86_64                    1.5.0-11.el7        @base            \n\
 ModemManager.x86_64             1.6.0-2.el7         @base            \n\
 ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
 """])
-    def test_match_with_yum(self, check_output_mock):
+    def test_match_with_yum(self, _):
+        """Simple test for the Yum packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
             FileNotFoundError(),
@@ -131,11 +138,12 @@ i  | make          | GNU make                            | package    \n\
 i  | GNOME Nibbles | Guide a worm around a maze          | application
 i  | at            | A Job Manager                       | package    \n\
 """])
-    def test_match_with_zypper(self, check_output_mock):
+    def test_match_with_zypper(self, _):
+        """Simple test for the Zypper packages manager"""
         self.assertEqual(Packages().value, 5)
 
     @patch(
-        'archey.archey.check_output',
+        'archey.entries.packages.check_output',
         side_effect=[  # No packages manager will be found
             FileNotFoundError(),
             FileNotFoundError(),
@@ -146,12 +154,12 @@ i  | at            | A Job Manager                       | package    \n\
             FileNotFoundError()
         ]
     )
-    @patch.dict(
-        'archey.archey.CONFIG.config',
-        {'default_strings': {'not_detected': 'Not detected'}}
-    )
-    def test_no_packages_manager(self, check_output_mock):
-        self.assertEqual(Packages().value, 'Not detected')
+    def test_no_packages_manager(self, _):
+        """No packages manager is available at the moment..."""
+        self.assertEqual(
+            Packages('Not detected').value,
+            'Not detected'
+        )
 
 
 if __name__ == '__main__':

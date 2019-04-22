@@ -1,3 +1,4 @@
+"""Test module for Archey's shell detection module"""
 
 import unittest
 from unittest.mock import patch
@@ -10,10 +11,11 @@ class TestShellEntry(unittest.TestCase):
     For this entry, we'll just verify that the output is non-null.
     """
     @patch(
-        'archey.archey.os.getenv',
+        'archey.entries.shell.os.getenv',
         return_value='SHELL'
     )
-    def test(self, getenv_mock):
+    def test(self, _):
+        """Simple mock, simple test"""
         self.assertEqual(Shell().value, 'SHELL')
 
 
