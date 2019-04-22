@@ -2,16 +2,15 @@
 
 import os
 
+from ..constants import COLOR_DICT
+
 
 class Terminal:
     """
     Simple terminal detection based on the `TERM` environment variable.
     It also displays the colors palette afterwards.
     """
-    def __init__(self,
-                 not_detected=None,
-                 use_unicode=False,
-                 clear_color='\x1b[0m'):
+    def __init__(self, not_detected=None, use_unicode=False):
         terminal = os.getenv(
             'TERM',
             not_detected
@@ -25,7 +24,7 @@ class Terminal:
                 i,
                 '\u2588' if use_unicode
                 else '#',
-                clear_color
+                COLOR_DICT['clear']
             ) for i in range(7, 0, -1)
         ])
 

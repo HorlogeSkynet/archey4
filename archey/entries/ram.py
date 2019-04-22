@@ -4,13 +4,15 @@ import re
 
 from subprocess import check_output
 
+from ..constants import COLOR_DICT
+
 
 class RAM:
     """
     First tries to use the `free` command to retrieve RAM usage.
     If not available, falls back on the parsing of `/proc/meminfo` file.
     """
-    def __init__(self, sensor_color, clear_color):
+    def __init__(self):
         try:
             ram = ''.join(
                 filter(
@@ -40,8 +42,8 @@ class RAM:
                 used += ram['Cached'] + ram['Buffers']
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-            sensor_color[int(((used / total) * 100) // 33.34)],
+            COLOR_DICT['sensors'][int(((used / total) * 100) // 33.34)],
             int(used),
-            clear_color,
+            COLOR_DICT['clear'],
             int(total)
         )

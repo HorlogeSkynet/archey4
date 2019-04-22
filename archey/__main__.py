@@ -14,7 +14,6 @@ from subprocess import check_output
 
 from .output import Output
 from .configuration import Configuration
-from .constants import COLOR_DICT
 from .entries.user import User as e_User
 from .entries.hostname import Hostname as e_Hostname
 from .entries.model import Model as e_Model
@@ -107,8 +106,7 @@ class Classes(Enum):
         'class': e_Terminal,
         'kwargs': {
             'not_detected': CONFIG.get('default_strings')['not_detected'],
-            'use_unicode': CONFIG.get('colors_palette')['use_unicode'],
-            'clear_color': COLOR_DICT['clear']
+            'use_unicode': CONFIG.get('colors_palette')['use_unicode']
         }
     }
     Packages = {
@@ -133,18 +131,10 @@ class Classes(Enum):
         }
     }
     RAM = {
-        'class': e_RAM,
-        'kwargs': {
-            'sensor_color': COLOR_DICT['sensors'],
-            'clear_color': COLOR_DICT['clear']
-        }
+        'class': e_RAM
     }
     Disk = {
-        'class': e_Disk,
-        'kwargs': {
-            'sensor_color': COLOR_DICT['sensors'],
-            'clear_color': COLOR_DICT['clear']
-        }
+        'class': e_Disk
     }
     LAN_IP = {
         'class': e_LanIp,
