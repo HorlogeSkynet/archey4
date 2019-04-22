@@ -21,6 +21,7 @@ See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 * Workaround for Tinkerboard Linux builds by @thisforeda <thisforeda@live.cn>
 * Windows Subsystem Linux file-systems support by @Naragato <development@simonbalarabe.com>
 * `lsb-release` dropping support guidance by Eli Schwartz <eschwartz93@gmail.com>
+* Major software architecture rework by @lannuttia <lannuttia@gmail.com>
 
 Currently maintained by Samuel Forestier <dev@samuel.domains>
 
