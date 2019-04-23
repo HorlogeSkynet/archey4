@@ -1,5 +1,3 @@
-"""Windows manager detection class"""
-
 import re
 
 from subprocess import (
@@ -8,7 +6,42 @@ from subprocess import (
     CalledProcessError
 )
 
-from .constants import WM_DICT
+"""Lists of windows managers supported by Archey"""
+
+WM_DICT = {
+    'awesome': 'Awesome',
+    'beryl': 'Beryl',
+    'blackbox': 'Blackbox',
+    'bspwm': 'bspwm',
+    'cinnamon': 'Cinnamon',
+    'compiz': 'Compiz',
+    'dwm': 'DWM',
+    'enlightenment': 'Enlightenment',
+    'herbstluftwm': 'herbstluftwm',
+    'fluxbox': 'Fluxbox',
+    'fvwm': 'FVWM',
+    'i3': 'i3',
+    'icewm': 'IceWM',
+    'kwin_x11': 'KWin',
+    'metacity': 'Metacity',
+    'musca': 'Musca',
+    'openbox': 'Openbox',
+    'pekwm': 'PekWM',
+    'qtile': 'QTile',
+    'ratpoison': 'ratpoison',
+    'scrotwm': 'ScrotWM',
+    'stumpwm': 'StumpWM',
+    'subtle': 'Subtle',
+    'monsterwm': 'MonsterWM',
+    'wingo': 'Wingo',
+    'wmaker': 'Window Maker',
+    'wmfs': 'Wmfs',
+    'wmii': 'wmii',
+    'xfwm4': 'Xfwm',
+    'xmonad': 'xmonad'
+}
+
+"""Windows manager detection class"""
 
 
 class WindowManager:

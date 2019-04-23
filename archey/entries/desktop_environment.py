@@ -1,8 +1,20 @@
-"""Desktop environment detection class"""
-
 import os
 
-from .constants import DE_DICT
+"""Lists of desktop environments supported by Archey"""
+
+DE_DICT = {
+    'cinnamon': 'Cinnamon',
+    'gnome-session': 'GNOME',
+    'gnome-shell': 'GNOME',
+    'mate-session': 'MATE',
+    'ksmserver': 'KDE',
+    'xfce4-session': 'Xfce',
+    'fur-box-session': 'Fur Box',
+    'lxsession': 'LXDE',
+    'lxqt-session': 'LXQt'
+}
+
+"""Desktop environment detection class"""
 
 
 class DesktopEnvironment:
