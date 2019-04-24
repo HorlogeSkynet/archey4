@@ -1,6 +1,6 @@
-import os
+"""Desktop environment detection class"""
 
-"""Lists of desktop environments supported by Archey"""
+import os
 
 DE_DICT = {
     'cinnamon': 'Cinnamon',
@@ -13,8 +13,6 @@ DE_DICT = {
     'lxsession': 'LXDE',
     'lxqt-session': 'LXQt'
 }
-
-"""Desktop environment detection class"""
 
 
 class DesktopEnvironment:

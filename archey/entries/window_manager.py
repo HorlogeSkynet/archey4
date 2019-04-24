@@ -1,3 +1,5 @@
+"""Windows manager detection class"""
+
 import re
 
 from subprocess import (
@@ -5,8 +7,6 @@ from subprocess import (
     DEVNULL,
     CalledProcessError
 )
-
-"""Lists of windows managers supported by Archey"""
 
 WM_DICT = {
     'awesome': 'Awesome',
@@ -40,8 +40,6 @@ WM_DICT = {
     'xfwm4': 'Xfwm',
     'xmonad': 'xmonad'
 }
-
-"""Windows manager detection class"""
 
 
 class WindowManager:
