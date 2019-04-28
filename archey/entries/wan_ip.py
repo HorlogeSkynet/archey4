@@ -2,12 +2,7 @@
 
 import sys
 
-from subprocess import (
-    check_output,
-    DEVNULL,
-    TimeoutExpired,
-    CalledProcessError
-)
+from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
 
 
 class WanIp:

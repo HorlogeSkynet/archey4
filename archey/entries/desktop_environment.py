@@ -2,6 +2,7 @@
 
 import os
 
+
 DE_DICT = {
     'cinnamon': 'Cinnamon',
     'gnome-session': 'GNOME',

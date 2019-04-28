@@ -2,11 +2,8 @@
 
 import re
 
-from subprocess import (
-    check_output,
-    DEVNULL,
-    CalledProcessError
-)
+from subprocess import check_output, DEVNULL, CalledProcessError
+
 
 WM_DICT = {
     'awesome': 'Awesome',
