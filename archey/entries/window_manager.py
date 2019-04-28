@@ -4,6 +4,9 @@ import re
 
 from subprocess import check_output, DEVNULL, CalledProcessError
 
+from ..configuration import Configuration
+from ..processes import Processes
+
 
 WM_DICT = {
     'awesome': 'Awesome',
@@ -44,7 +47,7 @@ class WindowManager:
     Uses `wmctrl` to retrieve some information about the window manager.
     If not available, fall back on a simple iteration over the processes.
     """
-    def __init__(self, processes=None, not_detected=None):
+    def __init__(self):
         try:
             window_manager = re.search(
                 '(?<=Name: ).*',
@@ -56,11 +59,11 @@ class WindowManager:
 
         except (FileNotFoundError, CalledProcessError):
             for key, value in WM_DICT.items():
-                if key in processes:
+                if key in Processes().get():
                     window_manager = value
                     break
 
             else:
-                window_manager = not_detected
+                window_manager = Configuration().get('default_strings')['not_detected']
 
         self.value = window_manager

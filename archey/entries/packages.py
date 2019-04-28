@@ -2,10 +2,12 @@
 
 from subprocess import check_output, DEVNULL, CalledProcessError
 
+from ..configuration import Configuration
+
 
 class Packages:
     """Relies on the first found packages manager to list the installed packages"""
-    def __init__(self, not_detected=None):
+    def __init__(self):
         for packages_tool in [['dnf', 'list', 'installed'],
                               ['dpkg', '--get-selections'],
                               ['emerge', '-ep', 'world'],
@@ -46,6 +48,6 @@ class Packages:
                 pass
 
         else:
-            packages = not_detected
+            packages = Configuration().get('default_strings')['not_detected']
 
         self.value = packages

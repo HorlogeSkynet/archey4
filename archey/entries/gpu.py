@@ -4,10 +4,15 @@ import re
 
 from subprocess import check_output, CalledProcessError
 
+from ..configuration import Configuration
+
 
 class GPU:
     """Relies on `lspci` to retrieve graphics device(s) information"""
-    def __init__(self, not_detected=None):
+    def __init__(self):
+        # Retrieve a default string from configuration.
+        not_detected = Configuration().get('default_strings')['not_detected']
+
         """
         Some explanations are needed here :
         * We call `lspci` program to retrieve hardware devices

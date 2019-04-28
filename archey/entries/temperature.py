@@ -5,16 +5,18 @@ import re
 from glob import glob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
+from ..configuration import Configuration
+
 
 class Temperature:
     """
     On Raspberry, retrieves temperature from the `vcgencmd` binary.
     Anyway, retrieves values from system thermal zones files.
     """
-    def __init__(self,
-                 use_fahrenheit=False,
-                 char_before_unit=' ',
-                 not_detected=None):
+    def __init__(self):
+        # The configuration object is needed to retrieve some settings below.
+        configuration = Configuration()
+
         temps = []
 
         try:
@@ -31,7 +33,7 @@ class Temperature:
 
             temps.append(
                 self._convert_to_fahrenheit(temp)
-                if use_fahrenheit else temp
+                if configuration.get('temperature')['use_fahrenheit'] else temp
             )
 
         except (FileNotFoundError, CalledProcessError):
@@ -49,26 +51,26 @@ class Temperature:
                 if temp != 0.0:
                     temps.append(
                         self._convert_to_fahrenheit(temp)
-                        if use_fahrenheit
+                        if configuration.get('temperature')['use_fahrenheit']
                         else temp
                     )
 
         if temps:
             self.value = '{0}{1}{2}'.format(
                 str(round(sum(temps) / len(temps), 1)),
-                char_before_unit,
-                'F' if use_fahrenheit else 'C'
+                configuration.get('temperature')['char_before_unit'],
+                'F' if configuration.get('temperature')['use_fahrenheit'] else 'C'
             )
 
             if len(temps) > 1:
                 self.value += ' (Max. {0}{1}{2})'.format(
                     str(round(max(temps), 1)),
-                    char_before_unit,
-                    'F' if use_fahrenheit else 'C'
+                    configuration.get('temperature')['char_before_unit'],
+                    'F' if configuration.get('temperature')['use_fahrenheit'] else 'C'
                 )
 
         else:
-            self.value = not_detected
+            self.value = configuration.get('default_strings')['not_detected']
 
     @staticmethod
     def _convert_to_fahrenheit(temp):

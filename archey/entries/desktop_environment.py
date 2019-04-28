@@ -2,6 +2,9 @@
 
 import os
 
+from ..configuration import Configuration
+from ..processes import Processes
+
 
 DE_DICT = {
     'cinnamon': 'Cinnamon',
@@ -21,9 +24,9 @@ class DesktopEnvironment:
     Just iterate over running processes to find a known-entry.
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
-    def __init__(self, processes, not_detected=None):
+    def __init__(self):
         for key, value in DE_DICT.items():
-            if key in processes:
+            if key in Processes().get():
                 desktop_environment = value
                 break
 
@@ -31,7 +34,7 @@ class DesktopEnvironment:
             # Let's rely on an environment var if the loop above didn't `break`
             desktop_environment = os.getenv(
                 'XDG_CURRENT_DESKTOP',
-                not_detected
+                Configuration().get('default_strings')['not_detected']
             )
 
         self.value = desktop_environment

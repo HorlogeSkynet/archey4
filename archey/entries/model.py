@@ -4,10 +4,12 @@ import re
 
 from subprocess import CalledProcessError, DEVNULL, check_output
 
+from ..configuration import Configuration
+
 
 class Model:
     """Uses multiple methods to retrieve some information about the host hardware"""
-    def __init__(self, virtual_environment, bare_metal_environment, not_detected):
+    def __init__(self):
         try:
             with open('/sys/devices/virtual/dmi/id/product_name') as file:
                 model = file.read().rstrip()
@@ -30,6 +32,9 @@ class Model:
                 )
 
             else:
+                # The configuration object is needed to retrieve some settings below.
+                configuration = Configuration()
+
                 # A tricky way to retrieve some details about hypervisor...
                 # ... within virtual contexts.
                 # `archey` needs to be run as root although.
@@ -51,14 +56,14 @@ class Model:
                             ).rstrip()
 
                         except (FileNotFoundError, CalledProcessError):
-                            model = virtual_environment
+                            model = configuration.get('default_strings')['virtual_environment']
 
                         model += ' ({0})'.format(virt_what)
 
                     else:
-                        model = bare_metal_environment
+                        model = configuration.get('default_strings')['bare_metal_environment']
 
                 except (FileNotFoundError, CalledProcessError):
-                    model = not_detected
+                    model = configuration.get('default_strings')['not_detected']
 
         self.value = model

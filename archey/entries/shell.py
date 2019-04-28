@@ -2,11 +2,13 @@
 
 import os
 
+from ..configuration import Configuration
+
 
 class Shell:
     """Simple shell detection based on the `SHELL` environment variable"""
-    def __init__(self, not_detected=None):
+    def __init__(self):
         self.value = os.getenv(
             'SHELL',
-            not_detected
+            Configuration().get('default_strings')['not_detected']
         )

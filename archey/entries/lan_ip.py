@@ -2,10 +2,15 @@
 
 import netifaces
 
+from ..configuration import Configuration
+
 
 class LanIp:
     """Relies on the `netifaces` module to detect LAN IP addresses"""
-    def __init__(self, ip_max_count=False, no_address=None):
+    def __init__(self):
+        # The configuration object is needed to retrieve some settings below.
+        configuration = Configuration()
+
         addresses = []
 
         # Loop through all available network interfaces.
@@ -23,7 +28,7 @@ class LanIp:
                                 interface_addr['addr'] != '::1':
                             addresses.append(interface_addr['addr'].split('%')[0])
 
-        if ip_max_count is not False:
-            addresses = addresses[:ip_max_count]
+        if configuration.get('ip_settings')['lan_ip_max_count'] is not False:
+            addresses = addresses[:configuration.get('ip_settings')['lan_ip_max_count']]
 
-        self.value = ', '.join(addresses) or no_address
+        self.value = ', '.join(addresses) or configuration.get('default_strings')['no_address']
