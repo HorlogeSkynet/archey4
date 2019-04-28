@@ -58,8 +58,9 @@ class WindowManager:
             ).group(0)
 
         except (FileNotFoundError, CalledProcessError):
+            processes = Processes().get()
             for key, value in WM_DICT.items():
-                if key in Processes().get():
+                if key in processes:
                     window_manager = value
                     break
 

@@ -25,8 +25,9 @@ class DesktopEnvironment:
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
     def __init__(self):
+        processes = Processes().get()
         for key, value in DE_DICT.items():
-            if key in Processes().get():
+            if key in processes:
                 desktop_environment = value
                 break
 
