@@ -41,7 +41,14 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.glob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    def test_vcgencmd_only_no_max(self, _, __):
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': False},
+            {'char_before_unit': ' '}
+        ]
+    )
+    def test_vcgencmd_only_no_max(self, _, __, ___):
         """
         Test for `vcgencmd` output only (no sensor files).
         Only one value is retrieved, so no maximum is displayed (see #39).
@@ -53,7 +60,14 @@ class TestTemperatureEntry(unittest.TestCase):
         return_value='temp=40.0\'C\n'
     )
     @patch('archey.entries.temperature.glob')
-    def test_vcgencmd_and_files(self, glob_mock, _):
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': False},
+            {'char_before_unit': ' '}
+        ]
+    )
+    def test_vcgencmd_and_files(self, _, glob_mock, __):
         """Tests `vcgencmd` output AND sensor files"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertRegex(Temperature().value, r'45\.0.?.? \(Max\. 50\.0.?.?\)')
@@ -63,11 +77,18 @@ class TestTemperatureEntry(unittest.TestCase):
         side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
     )
     @patch('archey.entries.temperature.glob')
-    def test_files_only_plus_fahrenheit(self, glob_mock, _):
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': True},
+            {'char_before_unit': '@'}
+        ]
+    )
+    def test_files_only_plus_fahrenheit(self, _, glob_mock, __):
         """Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertRegex(
-            Temperature(use_fahrenheit=True, char_before_unit='@').value,
+            Temperature().value,
             r'116\.0@F \(Max\. 122\.0@F\)'  # 46.6 converted into Fahrenheit
         )
 
@@ -79,12 +100,17 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.glob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    def test_no_output(self, _, __):
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': None},    # Needed key.
+            {'char_before_unit': None},  # Needed key.
+            {'not_detected': 'Not detected'}
+        ]
+    )
+    def test_no_output(self, _, __, ___):
         """Test when no value could be retrieved (anyhow)"""
-        self.assertEqual(
-            Temperature(not_detected='Not detected').value,
-            'Not detected'
-        )
+        self.assertEqual(Temperature().value, 'Not detected')
 
 
 if __name__ == '__main__':

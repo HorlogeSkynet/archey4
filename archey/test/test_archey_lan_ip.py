@@ -24,11 +24,18 @@ class TestLanIpEntry(unittest.TestCase):
                 }]
             },
             {
-                netifaces.AF_INET: [{
-                    'addr': '192.168.0.11',
-                    'netmask': '255.255.255.0',
-                    'broadcast': '192.168.0.255'
-                }]
+                netifaces.AF_INET: [
+                    {
+                        'addr': '192.168.0.11',
+                        'netmask': '255.255.255.0',
+                        'broadcast': '192.168.0.255'
+                    },
+                    {
+                        'addr': '192.168.1.11',
+                        'netmask': '255.255.255.0',
+                        'broadcast': '192.168.1.255'
+                    }
+                ]
             },
             {
                 netifaces.AF_INET: [{
@@ -38,11 +45,15 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    def test_multiple_interfaces(self, _, __):
+    @patch(
+        'archey.entries.lan_ip.Configuration.get',
+        return_value={'lan_ip_max_count': False}
+    )
+    def test_multiple_interfaces(self, _, __, ___):
         """Test for multiple interfaces, multiple addresses (including a loopback one)"""
         self.assertEqual(
             LanIp().value,
-            '192.168.0.11, 172.34.56.78'
+            '192.168.0.11, 192.168.1.11, 172.34.56.78'
         )
 
     @patch(
@@ -94,10 +105,14 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    def test_ipv6_and_limit_and_ether(self, _, __):
+    @patch(
+        'archey.entries.lan_ip.Configuration.get',
+        return_value={'lan_ip_max_count': 2}
+    )
+    def test_ipv6_and_limit_and_ether(self, _, __, ___):
         """Test for IPv6 support, final set length limit and Ethernet interface filtering"""
         self.assertEqual(
-            LanIp(ip_max_count=2).value,
+            LanIp().value,
             '192.168.1.55, 2001::45:6789:abcd:6817'
         )
 
@@ -105,12 +120,16 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.entries.lan_ip.netifaces.interfaces',
         return_value=[]  # No interface returned by `netifaces`.
     )
-    def test_no_network_interface(self, _):
+    @patch(
+        'archey.entries.lan_ip.Configuration.get',
+        side_effect=[
+            {'lan_ip_max_count': None},  # Needed key.
+            {'no_address': 'No Address'}
+        ]
+    )
+    def test_no_network_interface(self, _, __):
         """Test when the device does not have any network interface"""
-        self.assertEqual(
-            LanIp(no_address='No Address').value,
-            'No Address'
-        )
+        self.assertEqual(LanIp().value, 'No Address')
 
     @patch(
         'archey.entries.lan_ip.netifaces.interfaces',
@@ -139,12 +158,16 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    def test_no_network_address(self, _, __):
+    @patch(
+        'archey.entries.lan_ip.Configuration.get',
+        side_effect=[
+            {'lan_ip_max_count': None},  # Needed key.
+            {'no_address': 'No Address'}
+        ]
+    )
+    def test_no_network_address(self, _, __, ___):
         """Test when the network interface(s) do not have any IP address"""
-        self.assertEqual(
-            LanIp(no_address='No Address').value,
-            'No Address'
-        )
+        self.assertEqual(LanIp().value, 'No Address')
 
 
 if __name__ == '__main__':

@@ -15,7 +15,14 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.entries.terminal.os.getenv',
         return_value='TERMINAL'
     )
-    def test_without_unicode(self, _):
+    @patch(
+        'archey.entries.terminal.Configuration.get',
+        side_effect=[
+            {'not_detected': None},  # Needed key.
+            {'use_unicode': False}
+        ]
+    )
+    def test_without_unicode(self, _, __):
         """Test simple output, without Unicode support (default)"""
         output = Terminal().value
         self.assertTrue(output.startswith('TERMINAL '))
@@ -25,19 +32,33 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.entries.terminal.os.getenv',
         return_value='TERMINAL'
     )
-    def test_with_unicode(self, _):
+    @patch(
+        'archey.entries.terminal.Configuration.get',
+        side_effect=[
+            {'not_detected': None},  # Needed key.
+            {'use_unicode': True}
+        ]
+    )
+    def test_with_unicode(self, _, __):
         """Test simple output, with Unicode support !"""
-        output = Terminal(use_unicode=True).value
+        output = Terminal().value
         self.assertTrue(output.startswith('TERMINAL '))
         self.assertEqual(output.count('\u2588'), 7 * 2)
 
     @patch(
         'archey.entries.terminal.os.getenv',
-        return_value='Not detected'  # The "Not detected" string is set here, not from configuration
+        return_value='Not detected'  # Set the "Not detected" string here, as we mock `os.getenv`.
     )
-    def test_not_detected(self, _):
+    @patch(
+        'archey.entries.terminal.Configuration.get',
+        side_effect=[
+            {'not_detected': None},  # Needed key.
+            {'use_unicode': False}
+        ]
+    )
+    def test_not_detected(self, _, __):
         """Test simple output, with Unicode support !"""
-        output = Terminal(not_detected='Not detected').value
+        output = Terminal().value
         self.assertTrue(output.startswith('Not detected '))
         self.assertEqual(output.count('#'), 7 * 2)
 

@@ -27,7 +27,7 @@ class TestModelEntry(unittest.TestCase):
     def test_regular(self):
         """Sometimes, it could be quite simple..."""
         self.assertEqual(
-            Model(None, None, None).value,
+            Model().value,
             'MY-LAPTOP-MODEL'
         )
 
@@ -41,7 +41,7 @@ class TestModelEntry(unittest.TestCase):
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = self._special_func_for_mock_open
             self.assertEqual(
-                Model(None, None, None).value,
+                Model().value,
                 'Raspberry Pi HARDWARE (Rev. REVISION)'
             )
 
@@ -62,7 +62,7 @@ class TestModelEntry(unittest.TestCase):
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = self._special_func_for_mock_open
             self.assertEqual(
-                Model(None, None, None).value,
+                Model().value,
                 'MY-LAPTOP-MODEL (xen, xen-domU)'
             )
 
@@ -73,7 +73,11 @@ class TestModelEntry(unittest.TestCase):
             FileNotFoundError()  # `dmidecode` call will fail
         ]
     )
-    def test_virtual_environment_without_dmidecode(self, _):
+    @patch(
+        'archey.entries.model.Configuration.get',
+        return_value={'virtual_environment': 'Virtual Environment'}
+    )
+    def test_virtual_environment_without_dmidecode(self, _, __):
         """Test for virtual machine (with a failing `dmidecode` call)"""
         self.return_values = [
             FileNotFoundError(),      # First `open` call will fail
@@ -83,7 +87,7 @@ class TestModelEntry(unittest.TestCase):
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = self._special_func_for_mock_open
             self.assertEqual(
-                Model('Virtual Environment', None, None).value,
+                Model().value,
                 'Virtual Environment (xen, xen-domU)'
             )
 
@@ -92,7 +96,11 @@ class TestModelEntry(unittest.TestCase):
         return_value="""\
 \
 """)
-    def test_bare_metal(self, _):
+    @patch(
+        'archey.entries.model.Configuration.get',
+        return_value={'bare_metal_environment': 'Bare-metal Environment'}
+    )
+    def test_bare_metal(self, _, __):
         """Test for "bare-metal" devices, with no further information"""
         self.return_values = [
             FileNotFoundError(),      # First `open` call will fail
@@ -101,16 +109,17 @@ class TestModelEntry(unittest.TestCase):
 
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = self._special_func_for_mock_open
-            self.assertEqual(
-                Model(None, 'Bare-metal Environment', None).value,
-                'Bare-metal Environment'
-            )
+            self.assertEqual(Model().value, 'Bare-metal Environment')
 
     @patch(
         'archey.entries.model.check_output',
         side_effect=FileNotFoundError()
     )
-    def test_no_match(self, _):
+    @patch(
+        'archey.entries.model.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
+    )
+    def test_no_match(self, _, __):
         """Test when no information could be retrieved"""
         self.return_values = [
             FileNotFoundError(),      # First `open` call will fail
@@ -119,10 +128,7 @@ class TestModelEntry(unittest.TestCase):
 
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = self._special_func_for_mock_open
-            self.assertEqual(
-                Model(None, None, 'Not detected').value,
-                'Not detected'
-            )
+            self.assertEqual(Model().value, 'Not detected')
 
     def _special_func_for_mock_open(self):
         """

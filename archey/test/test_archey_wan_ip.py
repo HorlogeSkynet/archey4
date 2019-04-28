@@ -19,7 +19,15 @@ class TestWanIpEntry(unittest.TestCase):
             'XXX.YY.ZZ.TTT\n'
         ]
     )
-    def test_ipv6_and_ipv4(self, _):
+    @patch(
+        'archey.entries.wan_ip.Configuration.get',
+        side_effect=[
+            {'wan_ip_v6_support': True},
+            {'ipv6_detection': None},  # Needed key.
+            {'ipv4_detection': None}   # Needed key.
+        ]
+    )
+    def test_ipv6_and_ipv4(self, _, __):
         """Test the regular case : Both IPv4 and IPv6 are retrieved"""
         self.assertEqual(
             WanIp().value,
@@ -30,10 +38,17 @@ class TestWanIpEntry(unittest.TestCase):
         'archey.entries.wan_ip.check_output',
         return_value='XXX.YY.ZZ.TTT'
     )
-    def test_ipv4_only(self, _):
+    @patch(
+        'archey.entries.wan_ip.Configuration.get',
+        side_effect=[
+            {'wan_ip_v6_support': False},
+            {'ipv4_detection': None}  # Needed key.
+        ]
+    )
+    def test_ipv4_only(self, _, __):
         """Test only public IPv4 detection"""
         self.assertEqual(
-            WanIp(ipv6_support=False).value,
+            WanIp().value,
             'XXX.YY.ZZ.TTT'
         )
 
@@ -45,7 +60,16 @@ class TestWanIpEntry(unittest.TestCase):
             'XXX.YY.ZZ.TTT'              # The IPv4 address is detected
         ]
     )
-    def test_ipv6_timeout(self, _):
+    @patch(
+        'archey.entries.wan_ip.Configuration.get',
+        side_effect=[
+            {'wan_ip_v6_support': True},
+            {'ipv6_detection': None},  # Needed key.
+            {'ipv6_detection': None},  # Needed key.
+            {'ipv4_detection': None}   # Needed key.
+        ]
+    )
+    def test_ipv6_timeout(self, _, __):
         """Test when `dig` call timeout for the IPv6 detection"""
         self.assertEqual(
             WanIp().value,
@@ -59,12 +83,18 @@ class TestWanIpEntry(unittest.TestCase):
             TimeoutExpired('wget', 1)  # Second one too
         ]
     )
-    def test_ipv4_timeout_twice(self, _):
+    @patch(
+        'archey.entries.wan_ip.Configuration.get',
+        side_effect=[
+            {'wan_ip_v6_support': False},
+            {'ipv4_detection': None},  # Needed key.
+            {'ipv4_detection': None},  # Needed key.
+            {'no_address': 'No Address'}
+        ]
+    )
+    def test_ipv4_timeout_twice(self, _, __):
         """Test when both `dig` and `wget` trigger timeouts..."""
-        self.assertEqual(
-            WanIp(ipv6_support=False, no_address='No Address').value,
-            'No Address'
-        )
+        self.assertEqual(WanIp().value, 'No Address')
 
     @patch(
         'archey.entries.wan_ip.check_output',
@@ -73,12 +103,17 @@ class TestWanIpEntry(unittest.TestCase):
             ''
         ]
     )
-    def test_no_address(self, _):
+    @patch(
+        'archey.entries.wan_ip.Configuration.get',
+        side_effect=[
+            {'wan_ip_v6_support': False},
+            {'ipv4_detection': None},  # Needed key.
+            {'no_address': 'No Address'}
+        ]
+    )
+    def test_no_address(self, _, __):
         """Test when no address could be retrieved"""
-        self.assertEqual(
-            WanIp(no_address='No Address').value,
-            'No Address'
-        )
+        self.assertEqual(WanIp().value, 'No Address')
 
 
 if __name__ == '__main__':

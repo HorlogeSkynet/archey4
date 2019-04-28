@@ -74,9 +74,13 @@ XX:YY.H IDE interface: IIIIIIIIIIIIIIII
 XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 """)
-    def test_no_match(self, _):
+    @patch(
+        'archey.entries.gpu.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
+    )
+    def test_no_match(self, _, __):
         """Test (non-)detection when there is not any graphical candidate"""
-        self.assertEqual(GPU('Not detected').value, 'Not detected')
+        self.assertEqual(GPU().value, 'Not detected')
 
 
 if __name__ == '__main__':

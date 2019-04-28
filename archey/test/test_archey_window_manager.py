@@ -28,32 +28,44 @@ Window manager's "showing the desktop" mode: OFF
         'archey.entries.window_manager.check_output',
         side_effect=FileNotFoundError()  # `wmctrl` call will fail
     )
-    def test_no_wmctrl_match(self, _):
-        """Test basic detection based on a (fake) processes list"""
-        processes = [
+    @patch(
+        'archey.entries.window_manager.Processes.get',
+        return_value=[  # Fake running processes list
             'some',
             'awesome',  # Match !
             'programs',
             'running',
             'here'
         ]
-        self.assertEqual(WindowManager(processes).value, 'Awesome')
+    )
+    def test_no_wmctrl_match(self, _, __):
+        """Test basic detection based on a (fake) processes list"""
+        self.assertEqual(WindowManager().value, 'Awesome')
 
     @patch(
         'archey.entries.window_manager.check_output',
         side_effect=FileNotFoundError()  # `wmctrl` call will fail
     )
-    def test_no_wmctrl_mismatch(self, _):
-        """Test (non-detection) when processes list do not contain any known value"""
-        processes = [
+    @patch(
+        'archey.entries.window_manager.Processes.get',
+        return_value=[  # Fake running processes list
             'some',
             'weird',  # Mismatch !
             'programs',
             'running',
             'here'
         ]
+    )
+    @patch(
+        'archey.entries.window_manager.Configuration.get',
+        return_value={
+            'not_detected': 'Not detected'
+        }
+    )
+    def test_no_wmctrl_mismatch(self, _, __, ___):
+        """Test (non-detection) when processes list do not contain any known value"""
         self.assertEqual(
-            WindowManager(processes, 'Not detected').value,
+            WindowManager().value,
             'Not detected'
         )
 
