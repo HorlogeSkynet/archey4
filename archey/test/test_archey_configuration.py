@@ -17,8 +17,9 @@ class TestConfigurationUtil(unittest.TestCase):
     """
     def test_get(self):
         """Test the `get` binder method to configuration elements"""
+        # pylint: disable=protected-access
         configuration = Configuration()
-        configuration.config = {
+        configuration._config = {
             'ip_settings': {
                 'lan_ip_max_count': 2,
             },
@@ -28,19 +29,19 @@ class TestConfigurationUtil(unittest.TestCase):
         }
 
         self.assertEqual(
-            configuration.config.get('ip_settings')['lan_ip_max_count'],
+            configuration._config.get('ip_settings')['lan_ip_max_count'],
             2
         )
         self.assertFalse(
-            configuration.config.get('temperature')['use_fahrenheit']
+            configuration._config.get('temperature')['use_fahrenheit']
         )
-        self.assertTrue(configuration.config.get('does_not_exist', True))
-        self.assertIsNone(configuration.config.get('does_not_exist_either'))
+        self.assertTrue(configuration._config.get('does_not_exist', True))
+        self.assertIsNone(configuration._config.get('does_not_exist_either'))
 
     def test_load_configuration(self):
         """Test for configuration loading from file, and overriding flag"""
         configuration = Configuration()
-        configuration.config = {
+        configuration._config = {  # pylint: disable=protected-access
             'allow_overriding': True,
             'suppress_warnings': False,
             'colors_palette': {
@@ -79,7 +80,7 @@ class TestConfigurationUtil(unittest.TestCase):
 
             # Let's check the result :S
             self.assertDictEqual(
-                configuration.config,
+                configuration._config,  # pylint: disable=protected-access
                 {
                     'allow_overriding': False,
                     'suppress_warnings': True,
@@ -104,7 +105,7 @@ class TestConfigurationUtil(unittest.TestCase):
             # It should not happen as `allow_overriding` has been set to false.
             # Thus, the configuration is supposed to be the same as before.
             self.assertDictEqual(
-                configuration.config,
+                configuration._config,  # pylint: disable=protected-access
                 {
                     'allow_overriding': False,
                     'suppress_warnings': True,
@@ -123,7 +124,7 @@ class TestConfigurationUtil(unittest.TestCase):
     def test_update_recursive(self):
         """Test for the `_update_recursive` private method"""
         configuration = Configuration()
-        configuration.config = {
+        configuration._config = {  # pylint: disable=protected-access
             'allow_overriding': True,
             'suppress_warnings': False,
             'colors_palette': {
@@ -143,7 +144,7 @@ class TestConfigurationUtil(unittest.TestCase):
 
         # We change existing values, add new ones, and omit some others.
         configuration._update_recursive(  # pylint: disable=protected-access
-            configuration.config,
+            configuration._config,  # pylint: disable=protected-access
             {
                 'suppress_warnings': True,
                 'colors_palette': {
@@ -167,7 +168,7 @@ class TestConfigurationUtil(unittest.TestCase):
         )
 
         self.assertDictEqual(
-            configuration.config,
+            configuration._config,  # pylint: disable=protected-access
             {
                 'allow_overriding': True,
                 'suppress_warnings': True,

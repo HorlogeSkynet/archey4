@@ -14,7 +14,7 @@ class Configuration(metaclass=Singleton):
     New optional values may be added with `_update_recursive()` method.
     """
     def __init__(self):
-        self.config = {
+        self._config = {
             'colors_palette': {
                 'use_unicode': False
             },
@@ -50,7 +50,7 @@ class Configuration(metaclass=Singleton):
         """
         A binding method to imitate the `dict.get()` behavior.
         """
-        return self.config.get(key, default)
+        return self._config.get(key, default)
 
     def load_configuration(self, path):
         """
@@ -58,7 +58,7 @@ class Configuration(metaclass=Singleton):
         It will try to load any `config.json` present under `path`.
         """
         # If a previous configuration file has denied overriding...
-        if not self.config.get('allow_overriding', True):
+        if not self._config.get('allow_overriding', True):
             #  ... don't load this one.
             return
 
@@ -69,10 +69,10 @@ class Configuration(metaclass=Singleton):
 
         try:
             with open(path) as file:
-                self._update_recursive(self.config, json.load(file))
+                self._update_recursive(self._config, json.load(file))
 
             # If the user does not want any warning to appear : 2> /dev/null
-            if self.config.get('suppress_warnings', False):
+            if self._config.get('suppress_warnings', False):
                 # One more if statement to avoid multiple `open` calls.
                 if sys.stderr == self._stderr:
                     sys.stderr = open(os.devnull, 'w')
