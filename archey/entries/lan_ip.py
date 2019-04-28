@@ -28,7 +28,8 @@ class LanIp:
                                 interface_addr['addr'] != '::1':
                             addresses.append(interface_addr['addr'].split('%')[0])
 
-        if configuration.get('ip_settings')['lan_ip_max_count'] is not False:
-            addresses = addresses[:configuration.get('ip_settings')['lan_ip_max_count']]
+        lan_ip_max_count = configuration.get('ip_settings')['lan_ip_max_count']
+        if lan_ip_max_count is not False:
+            addresses = addresses[:lan_ip_max_count]
 
         self.value = ', '.join(addresses) or configuration.get('default_strings')['no_address']

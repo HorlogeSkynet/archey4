@@ -16,6 +16,8 @@ class Temperature:
     def __init__(self):
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
+        use_fahrenheit = configuration.get('temperature')['use_fahrenheit']
+        char_before_unit = configuration.get('temperature')['char_before_unit']
 
         temps = []
 
@@ -33,7 +35,7 @@ class Temperature:
 
             temps.append(
                 self._convert_to_fahrenheit(temp)
-                if configuration.get('temperature')['use_fahrenheit'] else temp
+                if use_fahrenheit else temp
             )
 
         except (FileNotFoundError, CalledProcessError):
@@ -51,22 +53,22 @@ class Temperature:
                 if temp != 0.0:
                     temps.append(
                         self._convert_to_fahrenheit(temp)
-                        if configuration.get('temperature')['use_fahrenheit']
+                        if use_fahrenheit
                         else temp
                     )
 
         if temps:
             self.value = '{0}{1}{2}'.format(
                 str(round(sum(temps) / len(temps), 1)),
-                configuration.get('temperature')['char_before_unit'],
-                'F' if configuration.get('temperature')['use_fahrenheit'] else 'C'
+                char_before_unit,
+                'F' if use_fahrenheit else 'C'
             )
 
             if len(temps) > 1:
                 self.value += ' (Max. {0}{1}{2})'.format(
                     str(round(max(temps), 1)),
-                    configuration.get('temperature')['char_before_unit'],
-                    'F' if configuration.get('temperature')['use_fahrenheit'] else 'C'
+                    char_before_unit,
+                    'F' if use_fahrenheit else 'C'
                 )
 
         else:
