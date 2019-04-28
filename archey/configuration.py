@@ -4,8 +4,10 @@ import os
 import sys
 import json
 
+from .singleton import Singleton
 
-class Configuration:
+
+class Configuration(metaclass=Singleton):
     """
     The default needed configuration which will be used by Archey is present below.
     Values present in the `self.config` dictionary below are needed.
