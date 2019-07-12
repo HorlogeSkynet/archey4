@@ -21,7 +21,7 @@ class WanIp:
                         'dig', '+short', '-6', 'AAAA', 'myip.opendns.com',
                         '@resolver1.ipv6-sandbox.opendns.com'
                     ],
-                    configuration.get('timeout')['ipv6_detection'],
+                    timeout=configuration.get('timeout')['ipv6_detection'],
                     stderr=DEVNULL, universal_newlines=True
                 ).rstrip()
 
@@ -31,7 +31,7 @@ class WanIp:
                         [
                             'wget', '-q6O-', 'https://v6.ident.me/'
                         ],
-                        configuration.get('timeout')['ipv6_detection'],
+                        timeout=configuration.get('timeout')['ipv6_detection'],
                         universal_newlines=True
                     )
 
@@ -55,7 +55,7 @@ class WanIp:
                     'dig', '+short', '-4', 'A', 'myip.opendns.com',
                     '@resolver1.opendns.com'
                 ],
-                configuration.get('timeout')['ipv4_detection'],
+                timeout=configuration.get('timeout')['ipv4_detection'],
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
 
@@ -65,7 +65,7 @@ class WanIp:
                     [
                         'wget', '-q4O-', 'https://v4.ident.me/'
                     ],
-                    configuration.get('timeout')['ipv4_detection'],
+                    timeout=configuration.get('timeout')['ipv4_detection'],
                     universal_newlines=True
                 )
 
