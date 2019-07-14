@@ -4,7 +4,7 @@ import re
 
 from subprocess import check_output, CalledProcessError
 
-from ..configuration import Configuration
+from archey.configuration import Configuration
 
 
 class GPU:

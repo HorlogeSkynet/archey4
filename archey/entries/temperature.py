@@ -5,7 +5,7 @@ import re
 from glob import glob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
-from ..configuration import Configuration
+from archey.configuration import Configuration
 
 
 class Temperature:

@@ -4,7 +4,7 @@ import re
 
 from subprocess import check_output
 
-from ..constants import COLOR_DICT
+from archey.constants import COLOR_DICT
 
 
 class RAM:

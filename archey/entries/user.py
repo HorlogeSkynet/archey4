@@ -2,7 +2,7 @@
 
 import os
 
-from ..configuration import Configuration
+from archey.configuration import Configuration
 
 
 class User:

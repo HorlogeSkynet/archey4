@@ -1,7 +1,7 @@
 """Logos colors and distributions / logos matching"""
 
-from . import logos
-from .distributions import Distributions
+import archey.logos as logos
+from archey.distributions import Distributions
 
 
 COLOR_DICT = {

@@ -4,7 +4,7 @@ import re
 
 from subprocess import CalledProcessError, DEVNULL, check_output
 
-from ..configuration import Configuration
+from archey.configuration import Configuration
 
 
 class Model:

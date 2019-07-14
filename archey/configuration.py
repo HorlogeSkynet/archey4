@@ -4,7 +4,7 @@ import os
 import sys
 import json
 
-from .singleton import Singleton
+from archey.singleton import Singleton
 
 
 class Configuration(metaclass=Singleton):

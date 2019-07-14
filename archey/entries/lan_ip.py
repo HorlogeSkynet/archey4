@@ -2,7 +2,7 @@
 
 import netifaces
 
-from ..configuration import Configuration
+from archey.configuration import Configuration
 
 
 class LanIp:

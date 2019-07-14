@@ -8,30 +8,30 @@ Logos are stored under the `logos` module.
 
 from enum import Enum
 
-from .output import Output
-from .configuration import Configuration
-from .processes import Processes
-from .entries.user import User as e_User
-from .entries.hostname import Hostname as e_Hostname
-from .entries.model import Model as e_Model
-from .entries.distro import Distro as e_Distro
-from .entries.kernel import Kernel as e_Kernel
-from .entries.uptime import Uptime as e_Uptime
-from .entries.window_manager import WindowManager as e_WindowManager
-from .entries.desktop_environment import DesktopEnvironment as e_DesktopEnvironment
-from .entries.shell import Shell as e_Shell
-from .entries.terminal import Terminal as e_Terminal
-from .entries.packages import Packages as e_Packages
-from .entries.temperature import Temperature as e_Temperature
-from .entries.cpu import CPU as e_CPU
-from .entries.gpu import GPU as e_GPU
-from .entries.ram import RAM as e_RAM
-from .entries.disk import Disk as e_Disk
-from .entries.lan_ip import LanIp as e_LanIp
-from .entries.wan_ip import WanIp as e_WanIp
+from archey.output import Output
+from archey.configuration import Configuration
+from archey.processes import Processes
+from archey.entries.user import User as e_User
+from archey.entries.hostname import Hostname as e_Hostname
+from archey.entries.model import Model as e_Model
+from archey.entries.distro import Distro as e_Distro
+from archey.entries.kernel import Kernel as e_Kernel
+from archey.entries.uptime import Uptime as e_Uptime
+from archey.entries.window_manager import WindowManager as e_WindowManager
+from archey.entries.desktop_environment import DesktopEnvironment as e_DesktopEnvironment
+from archey.entries.shell import Shell as e_Shell
+from archey.entries.terminal import Terminal as e_Terminal
+from archey.entries.packages import Packages as e_Packages
+from archey.entries.temperature import Temperature as e_Temperature
+from archey.entries.cpu import CPU as e_CPU
+from archey.entries.gpu import GPU as e_GPU
+from archey.entries.ram import RAM as e_RAM
+from archey.entries.disk import Disk as e_Disk
+from archey.entries.lan_ip import LanIp as e_LanIp
+from archey.entries.wan_ip import WanIp as e_WanIp
 
 
-class Classes(Enum):
+class Entries(Enum):
     """
     An enumeration to store and declare each one of our entries.
     The string representation of keys will act as entries names.
@@ -67,9 +67,9 @@ def main():
     configuration = Configuration()
 
     output = Output()
-    for key in Classes:
-        if configuration.get('entries', {}).get(key.name, True):
-            output.append(key.name, key.value().value)
+    for entry in Entries:
+        if configuration.get('entries', {}).get(entry.name, True):
+            output.append(entry.name, entry.value().value)
 
     output.output()
 

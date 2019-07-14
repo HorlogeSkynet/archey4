@@ -2,9 +2,8 @@
 
 import os
 
-from ..constants import COLOR_DICT
-
-from ..configuration import Configuration
+from archey.constants import COLOR_DICT
+from archey.configuration import Configuration
 
 
 class Terminal:

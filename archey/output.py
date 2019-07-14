@@ -9,8 +9,8 @@ from subprocess import check_output
 
 import distro
 
-from .distributions import Distributions
-from .constants import LOGOS_DICT, COLOR_DICT
+from archey.distributions import Distributions
+from archey.constants import COLOR_DICT, LOGOS_DICT
 
 
 class Output:

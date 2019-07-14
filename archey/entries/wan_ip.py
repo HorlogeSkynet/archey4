@@ -4,7 +4,7 @@ import sys
 
 from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
 
-from ..configuration import Configuration
+from archey.configuration import Configuration
 
 
 class WanIp:

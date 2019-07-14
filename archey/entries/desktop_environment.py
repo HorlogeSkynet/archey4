@@ -2,8 +2,8 @@
 
 import os
 
-from ..configuration import Configuration
-from ..processes import Processes
+from archey.configuration import Configuration
+from archey.processes import Processes
 
 
 DE_DICT = {

@@ -4,8 +4,8 @@ import re
 
 from subprocess import check_output, DEVNULL, CalledProcessError
 
-from ..configuration import Configuration
-from ..processes import Processes
+from archey.configuration import Configuration
+from archey.processes import Processes
 
 
 WM_DICT = {

@@ -5,7 +5,7 @@ import sys
 
 from subprocess import check_output
 
-from .singleton import Singleton
+from archey.singleton import Singleton
 
 
 class Processes(metaclass=Singleton):
