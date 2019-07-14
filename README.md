@@ -109,8 +109,7 @@ $ sudo pip3 uninstall archey4
 # _________________________________________
 
 # But if you don't have PIP, no worries :
-$ sudo cp archey/archey.py /usr/local/bin/archey
-$ sudo chmod +x /usr/local/bin/archey
+$ sudo python3 setup.py install
 # _______________________________________
 
 ### Step 3 (Optional) : Configuration files
@@ -123,6 +122,13 @@ $ sudo cp archey/config.json /etc/archey4/config.json
 $ mkdir ~/.config/archey4
 $ cp archey/config.json ~/.config/archey4/config.json
 # _____________________________
+
+### Step 4 (Optional) : I want a standalone script, as before !
+
+# You can go through StickyTape for this.
+$ sudo pip3 install stickytape
+$ stickytape --add-python-path . --output-file dist/archey.py archey/__main__.py
+$ python3 dist/archey.py
 ```
 
 ## Usage
@@ -198,7 +204,7 @@ Tests are now available. Here is a short procedure to run them (you'll only need
 ```shell
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
-# If you have `setuptools` installed
+# If you got `setuptools` installed
 $ python3 setup.py test
 # But if you still don't, no worries !
 $ python3 -m unittest

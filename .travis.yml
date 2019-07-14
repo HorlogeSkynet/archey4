@@ -9,8 +9,8 @@ python:
 install:
   # Archey package installation (and dependencies).
   - pip3 install .
-  # Pylint dependency (see below).
-  - pip3 install pylint
+  # Pylint and Stickytape external dependencies (see below).
+  - pip3 install pylint stickytape
 script:
   # Simple execution.
   - python3 -m archey
@@ -19,3 +19,6 @@ script:
   - python3 -m unittest
   # Lint all the things !
   - pylint archey/
+  # Build a standalone script from sources.
+  - stickytape --add-python-path . --output-file dist/archey.py archey/__main__.py
+  - python3 dist/archey.py
