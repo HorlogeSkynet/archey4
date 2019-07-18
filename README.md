@@ -125,10 +125,22 @@ $ cp archey/config.json ~/.config/archey4/config.json
 
 ### Step 4 (Optional) : I want a standalone script, as before !
 
-# You can go through StickyTape for this.
+# You can go through StickyTape for this :
 $ sudo pip3 install stickytape
-$ stickytape --add-python-path . --output-file dist/archey.py archey/__main__.py
-$ python3 dist/archey.py
+$ stickytape --add-python-path . --output-file dist/archey archey/__main__.py
+$ python3 dist/archey
+# ________________________________________
+
+# You can either use PyInstaller :
+$ sudo pip3 install pyinstaller
+$ pyinstaller --name archey --onefile archey/__main__.py
+$ ./dist/archey
+# ________________________________
+
+# You can now move this script anywhere, as before :
+$ chmod +x dist/archey
+$ sudo mv dist/archey /usr/local/bin/
+# __________________________________________________
 ```
 
 ## Usage

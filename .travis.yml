@@ -6,19 +6,29 @@ python:
   - "3.6"
   - "3.7-dev"
   - "3.8-dev"
+
 install:
   # Archey package installation (and dependencies).
   - pip3 install .
-  # Pylint and Stickytape external dependencies (see below).
-  - pip3 install pylint stickytape
+
+  # Pylint, Stickytape and PyInstaller external dependencies (see below).
+  - pip3 install pylint stickytape pyinstaller
+
 script:
   # Simple execution.
   - python3 -m archey
+
   # Tests suite.
   - python3 setup.py test
   - python3 -m unittest
+
   # Lint all the things !
   - pylint archey/
-  # Build a standalone script from sources.
-  - stickytape --add-python-path . --output-file dist/archey.py archey/__main__.py
-  - python3 dist/archey.py
+
+  # Build a standalone script from sources (Stickytape).
+  - stickytape --add-python-path . --output-file dist/archey archey/__main__.py
+  - python3 dist/archey
+
+  # Build a standalone script from sources (PyInstaller).
+  - pyinstaller --name dist/archey --onefile archey/__main__.py
+  - ./dist/archey
