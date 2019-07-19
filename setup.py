@@ -25,7 +25,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'archey = archey.archey:main'
+            'archey = archey.__main__:main'
         ]
     },
     long_description='Maintained fork of the original Archey Linux system tool'
