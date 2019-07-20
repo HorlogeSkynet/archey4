@@ -30,5 +30,5 @@ script:
   - python3 dist/archey
 
   # Build a standalone script from sources (PyInstaller).
-  - pyinstaller --name dist/archey --onefile archey/__main__.py
+  - pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py
   - ./dist/archey
