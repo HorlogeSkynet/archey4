@@ -133,7 +133,7 @@ $ python3 dist/archey
 
 # You can either use PyInstaller :
 $ sudo pip3 install pyinstaller
-$ pyinstaller --name archey --onefile archey/__main__.py
+$ pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py
 $ ./dist/archey
 # ________________________________
 
