@@ -8,6 +8,7 @@ from archey.processes import Processes
 
 DE_DICT = {
     'cinnamon': 'Cinnamon',
+    'dde-dock': 'Deepin',
     'gnome-session': 'GNOME',
     'gnome-shell': 'GNOME',
     'mate-session': 'MATE',

@@ -15,6 +15,7 @@ WM_DICT = {
     'bspwm': 'bspwm',
     'cinnamon': 'Cinnamon',
     'compiz': 'Compiz',
+    'deepin-wm': 'Deepin WM',
     'dwm': 'DWM',
     'enlightenment': 'Enlightenment',
     'herbstluftwm': 'herbstluftwm',
