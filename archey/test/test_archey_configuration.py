@@ -125,12 +125,12 @@ class TestConfigurationUtil(unittest.TestCase):
         configuration._config = {  # pylint: disable=protected-access
             'allow_overriding': True,
             'suppress_warnings': False,
-            'colors_palette': {
-                'use_unicode': False
-            },
             'default_strings': {
                 'no_address': 'No Address',
                 'not_detected': 'Not detected'
+            },
+            'colors_palette': {
+                'use_unicode': False
             },
             'ip_settings': {
                 'lan_ip_max_count': 2
