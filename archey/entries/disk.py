@@ -1,7 +1,10 @@
 """Disk usage detection class"""
 
 from bisect import bisect
-from subprocess import check_output
+
+import re
+
+from subprocess import check_output, CalledProcessError
 
 from archey.constants import COLOR_DICT
 from archey.configuration import Configuration
@@ -20,6 +23,7 @@ class Disk:
         disk_limits = Configuration().get('limits')['disk']
 
         self._run_df_usage()
+        self._run_btrfs_fi_show()
 
         # Based on the disk percentage usage, select the corresponding threshold color.
         color_selector = bisect(
@@ -29,22 +33,48 @@ class Disk:
 
         self.value = '{0}{1} GB{2} / {3} GB'.format(
             COLOR_DICT['sensors'][color_selector],
-            self._usage['used'],
+            round(self._usage['used'], 1),
             COLOR_DICT['clear'],
-            self._usage['total']
+            round(self._usage['total'], 1)
         )
 
     def _run_df_usage(self):
         df_output = check_output(
             [
-                'df', '-l', '-B', 'GB', '--total',
-                '-t', 'ext4', '-t', 'ext3', '-t', 'ext2',
-                '-t', 'reiserfs', '-t', 'jfs', '-t', 'zfs',
-                '-t', 'ntfs', '-t', 'fat32', '-t', 'fuseblk',
-                '-t', 'xfs', '-t', 'simfs', '-t', 'lxfs'
+                'df', '-l', '-P', '-B', 'GB', '--total',
+                '-t', 'ext2', '-t', 'ext3', '-t', 'ext4',
+                '-t', 'fat32',
+                '-t', 'fuseblk',
+                '-t', 'jfs',
+                '-t', 'lxfs',
+                '-t', 'ntfs',
+                '-t', 'reiserfs',
+                '-t', 'simfs',
+                '-t', 'xfs',
+                '-t', 'zfs'
             ],
             env={'LANG': 'C'}, universal_newlines=True
         ).splitlines()[-1].split()
 
         self._usage['used'] += int(df_output[2].rstrip('GB'))
         self._usage['total'] += int(df_output[1].rstrip('GB'))
+
+    def _run_btrfs_fi_show(self):
+        try:
+            # Here we ask for (local) BTRFS file-systems details.
+            btrfs_output = check_output(
+                ['btrfs', 'filesystem', 'show', '--gbytes'],
+                env={'LANG': 'C'}, universal_newlines=True
+            )
+        except (FileNotFoundError, CalledProcessError):
+            # `btrfs` CLI tool doesn't look available.
+            return
+
+        # JSON output support landed very "late" in `btrfs-progs` user-space binaries.
+        # We are parsing it the hard way to increase compatibility...
+        size_used_regex = re.compile(r"size (\d+\.\d+)GiB used (\d+\.\d+)GiB")
+        for line in btrfs_output.splitlines():
+            matches = size_used_regex.search(line)
+            if matches:
+                self._usage['used'] += float(matches.group(2))
+                self._usage['total'] += float(matches.group(1))
