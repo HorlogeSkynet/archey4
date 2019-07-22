@@ -34,6 +34,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 * `python3`
 * `python3-distro` (`python-distro` on Arch Linux)
+* `python3-netifaces` (`python-netifaces` on Arch Linux)
 * `procps` (potentially `procps-ng`)
 
 ### Highly recommended packages
@@ -41,7 +42,6 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | Environments |  Packages  |                Reasons                | Notes |
 | :----------- | :--------: | :-----------------------------------: | :---: |
 | All          | `dnsutils` or `bind-tools` | **WAN_IP** would be detected faster | Would provide `dig` |
-| All          | `net-tools` | **LAN_IP** would be detected faster | Would provide `hostname` |
 | Graphical    |  `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
 | Graphical    |  `wmctrl` | **WindowManager** would be more accurate | φ |
 | Virtual      | `virt-what` and `dmidecode` | **Model** would contain details about the hypervisor | `archey` would have to be run as **root** |
@@ -109,8 +109,7 @@ $ sudo pip3 uninstall archey4
 # _________________________________________
 
 # But if you don't have PIP, no worries :
-$ sudo cp archey/archey.py /usr/local/bin/archey
-$ sudo chmod +x /usr/local/bin/archey
+$ sudo python3 setup.py install
 # _______________________________________
 
 ### Step 3 (Optional) : Configuration files
@@ -123,6 +122,25 @@ $ sudo cp archey/config.json /etc/archey4/config.json
 $ mkdir ~/.config/archey4
 $ cp archey/config.json ~/.config/archey4/config.json
 # _____________________________
+
+### Step 4 (Optional) : I want a standalone script, as before !
+
+# You can go through StickyTape for this :
+$ sudo pip3 install stickytape
+$ stickytape --add-python-path . --output-file dist/archey archey/__main__.py
+$ python3 dist/archey
+# ________________________________________
+
+# You can either use PyInstaller :
+$ sudo pip3 install pyinstaller
+$ pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py
+$ ./dist/archey
+# ________________________________
+
+# You can now move this script anywhere, as before :
+$ chmod +x dist/archey
+$ sudo mv dist/archey /usr/local/bin/
+# __________________________________________________
 ```
 
 ## Usage
@@ -131,10 +149,10 @@ $ cp archey/config.json ~/.config/archey4/config.json
 $ archey
 ```
 
-or if you only want to try this out :
+or if you only want to try this out (for instance, from source) :
 
 ```shell
-$ python3 archey/archey.py
+$ python3 -m archey
 ```
 
 ## Configuration (optional)
@@ -198,7 +216,7 @@ Tests are now available. Here is a short procedure to run them (you'll only need
 ```shell
 $ git clone https://github.com/HorlogeSkynet/archey4.git
 $ cd archey4/
-# If you have `setuptools` installed
+# If you got `setuptools` installed
 $ python3 setup.py test
 # But if you still don't, no worries !
 $ python3 -m unittest
