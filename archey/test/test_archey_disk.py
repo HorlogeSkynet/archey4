@@ -13,10 +13,10 @@ class TestDiskEntry(unittest.TestCase):
     @patch(
         'archey.entries.disk.check_output',
         return_value="""\
-Filesystem       Type 1GB-blocks  Used Available Use% Mounted on
-/dev/mapper/root ext4      512GB  14GB     498GB   2% /
-/dev/mapper/home ext3      512GB  47GB     465GB   9% /home
-total            -        1024GB  61GB     963GB  11% -
+Filesystem       1GB-blocks  Used Available Use% Mounted on
+/dev/mapper/root      512GB  14GB     498GB   2% /
+/dev/mapper/home      512GB  47GB     465GB   9% /home
+total                1024GB  61GB     963GB  11% -
 """)
     @patch(
         'archey.entries.disk.Configuration.get',
