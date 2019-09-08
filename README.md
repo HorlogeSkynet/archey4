@@ -41,14 +41,12 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 | Environments |  Packages  |                Reasons                | Notes |
 | :----------- | :--------: | :-----------------------------------: | :---: |
-| All          | `dnsutils` or `bind-tools` | **WAN_IP** would be detected faster | Would provide `dig` |
+| All          | `dnsutils` or `bind-tools` | **WAN\_IP** would be detected faster | Would provide `dig` |
 | Graphical    |  `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
 | Graphical    |  `wmctrl` | **WindowManager** would be more accurate | φ |
 | Virtual      | `virt-what` and `dmidecode` | **Model** would contain details about the hypervisor | `archey` would have to be run as **root** |
 
 ### :warning: Various notes to read before going down :warning:
-
-**Without `dnsutils` or `bind-tools` installed, you'll need `wget` in order to retrieve your public IP address.**
 
 **Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from PIP](#install-with-pip).**
 
@@ -233,3 +231,5 @@ Any improvement would be appreciated.
 * If you experience any trouble during the installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
 
 * If you had to adapt the script to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
+
+* When looking up your public IP address (**WAN\_IP**), Archey will try at first to run a DNS query for `myip.opendns.com`, against OpenDNS's resolver(s). On error, it would fall back on regular HTTPS request(s) to <https://ident.me> ([server sources](https://github.com/pcarrier/identme)).
