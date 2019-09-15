@@ -60,7 +60,7 @@ class TestTemperatureEntry(unittest.TestCase):
         Test for `vcgencmd` output only (no sensor files).
         Only one value is retrieved, so no maximum is displayed (see #39).
         """
-        self.assertRegex(Temperature().value, r'42\.8.?.?')
+        self.assertEqual(Temperature().value, '42.8 C')
 
     @patch(
         'archey.entries.temperature.check_output',
@@ -80,7 +80,7 @@ class TestTemperatureEntry(unittest.TestCase):
     def test_vcgencmd_and_files(self, _, glob_mock, __):
         """Tests `vcgencmd` output AND sensor files"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
-        self.assertRegex(Temperature().value, r'45\.0.?.? \(Max\. 50\.0.?.?\)')
+        self.assertEqual(Temperature().value, '45.0 C (Max. 50.0 C)')
 
     @patch(
         'archey.entries.temperature.check_output',
@@ -156,19 +156,19 @@ class TestTemperatureEntry(unittest.TestCase):
       }
    },
    "the-chipsets-names":{
-      "Package id 0":{
+      "what-are":{
          "temp1_input": 45.000,
          "temp1_max": 100.000,
          "temp1_crit": 100.000,
          "temp1_crit_alarm": 0.000
       },
-      "Core 0":{
+      "those":{
          "temp2_input": 43.000,
          "temp2_max": 100.000,
          "temp2_crit": 100.000,
          "temp2_crit_alarm": 0.000
       },
-      "Core 1":{
+      "identifiers":{
          "temp3_input": 44.000,
          "temp3_max": 100.000,
          "temp3_crit": 100.000,
@@ -177,7 +177,7 @@ class TestTemperatureEntry(unittest.TestCase):
    }
 }
 """,
-            FileNotFoundError() # No temperature from `vcgencmd` call.
+            FileNotFoundError()  # No temperature from `vcgencmd` call.
         ]
     )
     @patch(
