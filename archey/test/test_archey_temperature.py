@@ -246,6 +246,34 @@ class TestTemperatureEntry(unittest.TestCase):
             '46.7oC (Max. 50.0oC)'
         )
 
+    @patch(
+        'archey.entries.temperature.check_output',
+        side_effect=[
+            FileNotFoundError(),  # No temperature from `sensors` call.
+            FileNotFoundError()   # No temperature from `vcgencmd` call.
+        ]
+    )
+    @patch(
+        'archey.entries.temperature.glob',
+        return_value=[]  # No temperature from file will be retrieved.
+    )
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'not_detected': "Not detected"}  # Needed key.
+        ]
+    )
+    def test_celsius_to_fahrenheit_conversion(self, _, __, ___):
+        """Simple tests for the `_convert_to_fahrenheit` static method"""
+        temperature = Temperature()
+        # pylint: disable=protected-access
+        self.assertAlmostEqual(temperature._convert_to_fahrenheit(-273.15), -459.67)
+        self.assertAlmostEqual(temperature._convert_to_fahrenheit(0.0), 32.0)
+        self.assertAlmostEqual(temperature._convert_to_fahrenheit(21.0), 69.8)
+        self.assertAlmostEqual(temperature._convert_to_fahrenheit(37.0), 98.6)
+        self.assertAlmostEqual(temperature._convert_to_fahrenheit(100.0), 212.0)
+        # pylint: enable=protected-access
+
 
 if __name__ == '__main__':
     unittest.main()
