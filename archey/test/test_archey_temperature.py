@@ -2,15 +2,19 @@
 
 import os
 import tempfile
+
+from subprocess import CalledProcessError
+
 import unittest
 from unittest.mock import patch
+
 
 from archey.entries.temperature import Temperature
 
 
 class TestTemperatureEntry(unittest.TestCase):
     """
-    Based on `vcgencmd` and some sensor files, this module verifies temperature computations.
+    Based on `sensors`, `vcgencmd` and thermal files, this module verifies temperature computations.
     """
 
     def setUp(self):
@@ -35,7 +39,10 @@ class TestTemperatureEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.temperature.check_output',
-        return_value='temp=42.8\'C\n'
+        side_effect=[
+            FileNotFoundError(),
+            'temp=42.8\'C\n'
+        ]
     )
     @patch(
         'archey.entries.temperature.glob',
@@ -57,7 +64,10 @@ class TestTemperatureEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.temperature.check_output',
-        return_value='temp=40.0\'C\n'
+        side_effect=[
+            FileNotFoundError(),
+            'temp=40.0\'C\n'
+        ]
     )
     @patch('archey.entries.temperature.glob')
     @patch(
@@ -74,7 +84,10 @@ class TestTemperatureEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
+        side_effect=[
+            FileNotFoundError(),  # No temperature from `sensors` call
+            FileNotFoundError()   # No temperature from `vcgencmd` call
+        ]
     )
     @patch('archey.entries.temperature.glob')
     @patch(
@@ -84,33 +97,154 @@ class TestTemperatureEntry(unittest.TestCase):
             {'char_before_unit': '@'}
         ]
     )
-    def test_files_only_plus_fahrenheit(self, _, glob_mock, __):
+    def test_files_only_in_fahrenheit(self, _, glob_mock, __):
         """Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
-        self.assertRegex(
+        self.assertEqual(
             Temperature().value,
-            r'116\.0@F \(Max\. 122\.0@F\)'  # 46.6 converted into Fahrenheit
+            '116.0@F (Max. 122.0@F)'  # 46.7 and 50.0 converted into Fahrenheit.
         )
 
     @patch(
         'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
+        side_effect=[
+            FileNotFoundError(),  # No temperature from `sensors` call.
+            FileNotFoundError()   # No temperature from `vcgencmd` call.
+        ]
     )
     @patch(
         'archey.entries.temperature.glob',
-        return_value=[]  # No temperature from file will be retrieved
+        return_value=[]  # No temperature from file will be retrieved.
     )
     @patch(
         'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': None},    # Needed key.
-            {'char_before_unit': None},  # Needed key.
-            {'not_detected': 'Not detected'}
-        ]
+        return_value={'not_detected': 'Not detected'}
     )
     def test_no_output(self, _, __, ___):
         """Test when no value could be retrieved (anyhow)"""
         self.assertEqual(Temperature().value, 'Not detected')
+
+    @patch(
+        'archey.entries.temperature.check_output',  # Mock the `sensors` call.
+        side_effect=[
+            """\
+{
+   "who-care-about":{
+      "temp1":{
+         "temp1_input": 45.000,
+         "temp1_crit": 128.000
+      },
+      "temp2":{
+         "temp2_input": 0.000,
+         "temp2_crit": 128.000
+      },
+      "temp3":{
+         "temp3_input": 38.000,
+         "temp3_crit": 128.000
+      },
+      "temp4":{
+         "temp4_input": 39.000,
+         "temp4_crit": 128.000
+      },
+      "temp5":{
+         "temp5_input": 0.000,
+         "temp5_crit": 128.000
+      },
+      "temp6":{
+         "temp6_input": 114.000,
+         "temp6_crit": 128.000
+      }
+   },
+   "the-chipsets-names":{
+      "Package id 0":{
+         "temp1_input": 45.000,
+         "temp1_max": 100.000,
+         "temp1_crit": 100.000,
+         "temp1_crit_alarm": 0.000
+      },
+      "Core 0":{
+         "temp2_input": 43.000,
+         "temp2_max": 100.000,
+         "temp2_crit": 100.000,
+         "temp2_crit_alarm": 0.000
+      },
+      "Core 1":{
+         "temp3_input": 44.000,
+         "temp3_max": 100.000,
+         "temp3_crit": 100.000,
+         "temp3_crit_alarm": 0.000
+      }
+   }
+}
+""",
+            FileNotFoundError() # No temperature from `vcgencmd` call.
+        ]
+    )
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': True},
+            {'char_before_unit': ' '}
+        ]
+    )
+    def test_sensors_only_in_fahrenheit(self, _, __):
+        """Test computations around `sensors` output and Fahrenheit (naive) conversion"""
+        self.assertEqual(
+            Temperature().value,
+            '126.6 F (Max. 237.2 F)'  # 52.6 and 114.0 converted into Fahrenheit.
+        )
+
+    @patch(
+        'archey.entries.temperature.check_output',
+        side_effect=[
+            CalledProcessError(1, 'sensors'),  # `sensors` will hard fail.
+            FileNotFoundError()                # No temperature from `vcgencmd` call
+        ]
+    )
+    @patch('archey.entries.temperature.glob')
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': False},
+            {'char_before_unit': 'o'}
+        ]
+    )
+    def test_sensors_error_1(self, _, glob_mock, ___):
+        """Test `sensors` (hard) failure handling and polling from files in Celsius"""
+        glob_mock.return_value = [file.name for file in self.tempfiles]
+        self.assertEqual(
+            Temperature().value,
+            '46.7oC (Max. 50.0oC)'
+        )
+
+    @patch(
+        'archey.entries.temperature.check_output',
+        side_effect=[  # JSON decoding from `sensors` will fail..
+            """\
+{
+    "Is this JSON valid ?": [
+        "You", "should", "look", "twice.",
+    ]
+}
+""",
+            FileNotFoundError()  # No temperature from `vcgencmd` call
+        ]
+    )
+    @patch('archey.entries.temperature.glob')
+    @patch(
+        'archey.entries.temperature.Configuration.get',
+        side_effect=[
+            {'use_fahrenheit': False},
+            {'char_before_unit': 'o'}
+        ]
+    )
+    def test_sensors_error_2(self, _, glob_mock, ___):
+        """Test `sensors` (hard) failure handling and polling from files in Celsius"""
+        glob_mock.return_value = [file.name for file in self.tempfiles]
+        self.assertEqual(
+            Temperature().value,
+            '46.7oC (Max. 50.0oC)'
+        )
 
 
 if __name__ == '__main__':
