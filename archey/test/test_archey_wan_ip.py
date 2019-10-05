@@ -4,13 +4,14 @@ import unittest
 from unittest.mock import patch
 
 from subprocess import TimeoutExpired
+from urllib.error import URLError
 
 from archey.entries.wan_ip import WanIp
 
 
 class TestWanIpEntry(unittest.TestCase):
     """
-    Here, we mock the `check_output` call to `dig` or `wget`.
+    Here, we mock calls to `dig` or `urlopen`.
     """
     @patch(
         'archey.entries.wan_ip.check_output',
@@ -55,10 +56,16 @@ class TestWanIpEntry(unittest.TestCase):
     @patch(
         'archey.entries.wan_ip.check_output',
         side_effect=[
-            TimeoutExpired('dig', 1),    # First `check_output` call will fail
-            '0123::4567:89a:dead:beef',  # `wget` will "work"
-            'XXX.YY.ZZ.TTT'              # The IPv4 address is detected
+            TimeoutExpired('dig', 1),  # `check_output` call will fail
+            'XXX.YY.ZZ.TTT'            # The IPv4 address is detected
         ]
+    )
+    @patch(
+        'archey.entries.wan_ip.urlopen',  # `urlopen`'s `getcode` & `read` special mocking.
+        **{
+            'return_value.getcode.return_value': 200,
+            'return_value.read.return_value': b'0123::4567:89a:dead:beef\n'
+        }
     )
     @patch(
         'archey.entries.wan_ip.Configuration.get',
@@ -69,7 +76,7 @@ class TestWanIpEntry(unittest.TestCase):
             {'ipv4_detection': None}   # Needed key.
         ]
     )
-    def test_ipv6_timeout(self, _, __):
+    def test_ipv6_timeout(self, _, __, ___):
         """Test when `dig` call timeout for the IPv6 detection"""
         self.assertEqual(
             WanIp().value,
@@ -78,10 +85,11 @@ class TestWanIpEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.wan_ip.check_output',
-        side_effect=[
-            TimeoutExpired('dig', 1),  # First `check_output` call will fail
-            TimeoutExpired('wget', 1)  # Second one too
-        ]
+        side_effect=TimeoutExpired('dig', 1)  # `check_output` call will fail
+    )
+    @patch(
+        'archey.entries.wan_ip.urlopen',
+        side_effect=URLError('<urlopen error timed out>')  # `urlopen` call will fail
     )
     @patch(
         'archey.entries.wan_ip.Configuration.get',
@@ -92,16 +100,17 @@ class TestWanIpEntry(unittest.TestCase):
             {'no_address': 'No Address'}
         ]
     )
-    def test_ipv4_timeout_twice(self, _, __):
+    def test_ipv4_timeout_twice(self, _, __, ___):
         """Test when both `dig` and `wget` trigger timeouts..."""
         self.assertEqual(WanIp().value, 'No Address')
 
     @patch(
         'archey.entries.wan_ip.check_output',
-        side_effect=[
-            '',  # No address will be returned
-            ''
-        ]
+        return_value=''  # No address will be returned
+    )
+    @patch(
+        'urllib.request.urlopen',
+        return_value=None  # No object will be returned
     )
     @patch(
         'archey.entries.wan_ip.Configuration.get',
@@ -111,7 +120,7 @@ class TestWanIpEntry(unittest.TestCase):
             {'no_address': 'No Address'}
         ]
     )
-    def test_no_address(self, _, __):
+    def test_no_address(self, _, __, ___):
         """Test when no address could be retrieved"""
         self.assertEqual(WanIp().value, 'No Address')
 
