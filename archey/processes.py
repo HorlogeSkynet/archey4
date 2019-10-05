@@ -20,7 +20,7 @@ class Processes(metaclass=Singleton):
         except FileNotFoundError:
             print('Please, install first `procps` on your distribution.',
                   file=sys.stderr)
-            exit()
+            sys.exit(1)
 
     def get(self):
         """Simple getter to retrieve the processes list"""
