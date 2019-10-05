@@ -42,8 +42,9 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | Environments |  Packages  |                Reasons                | Notes |
 | :----------- | :--------: | :-----------------------------------: | :---: |
 | All          | `dnsutils` or `bind-tools` | **WAN\_IP** would be detected faster | Would provide `dig` |
-| Graphical    |  `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
-| Graphical    |  `wmctrl` | **WindowManager** would be more accurate | φ |
+| All          | `lm-sensors` or `lm_sensors` | **Temperature** would be more accurate | φ |
+| Graphical    | `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
+| Graphical    | `wmctrl` | **WindowManager** would be more accurate | φ |
 | Virtual      | `virt-what` and `dmidecode` | **Model** would contain details about the hypervisor | `archey` would have to be run as **root** |
 
 ### :warning: Various notes to read before going down :warning:
