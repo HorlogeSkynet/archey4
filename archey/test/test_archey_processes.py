@@ -40,7 +40,8 @@ there
         )
 
         # The class has been instantiated twice, but `check_output` has been called only once.
-        check_output_mock.assert_called_once()
+        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
+        self.assertEqual(check_output_mock.call_count, 1)
 
     @patch.dict(
         'archey.singleton.Singleton._instances',
