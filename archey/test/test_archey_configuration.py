@@ -17,9 +17,8 @@ class TestConfigurationUtil(unittest.TestCase):
     """
     def test_get(self):
         """Test the `get` binder method to configuration elements"""
-        # pylint: disable=protected-access
         configuration = Configuration()
-        configuration._config = {
+        configuration._config = {  # pylint: disable=protected-access
             'ip_settings': {
                 'lan_ip_max_count': 2,
             },
@@ -29,14 +28,14 @@ class TestConfigurationUtil(unittest.TestCase):
         }
 
         self.assertEqual(
-            configuration._config.get('ip_settings')['lan_ip_max_count'],
+            configuration.get('ip_settings')['lan_ip_max_count'],
             2
         )
         self.assertFalse(
-            configuration._config.get('temperature')['use_fahrenheit']
+            configuration.get('temperature')['use_fahrenheit']
         )
-        self.assertTrue(configuration._config.get('does_not_exist', True))
-        self.assertIsNone(configuration._config.get('does_not_exist_either'))
+        self.assertTrue(configuration.get('does_not_exist', True))
+        self.assertIsNone(configuration.get('does_not_exist_either'))
 
     def test_load_configuration(self):
         """Test for configuration loading from file, and overriding flag"""
@@ -57,8 +56,8 @@ class TestConfigurationUtil(unittest.TestCase):
 
         with tempfile.TemporaryDirectory(suffix='/') as temp_dir:
             # We create a fake temporary configuration file
-            file = open(temp_dir + 'config.json', 'w')
-            file.write("""\
+            with open(temp_dir + 'config.json', 'w') as file:
+                file.write("""\
 {
     "allow_overriding": false,
     "suppress_warnings": true,
@@ -73,7 +72,6 @@ class TestConfigurationUtil(unittest.TestCase):
     }
 }
 """)
-            file.close()
 
             # Let's load it into our `Configuration` instance
             configuration.load_configuration(temp_dir)
