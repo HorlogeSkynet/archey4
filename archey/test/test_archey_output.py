@@ -1,6 +1,5 @@
 """Test module for `archey.output`"""
 
-
 import unittest
 from unittest.mock import patch
 
