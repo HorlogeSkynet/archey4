@@ -1,11 +1,13 @@
 """RAM usage detection class"""
 
 import re
+from bisect import bisect
 
 from subprocess import check_output
 
 from archey.constants import COLOR_DICT
 
+from archey.configuration import Configuration
 
 class RAM:
     """
@@ -13,6 +15,9 @@ class RAM:
     If not available, falls back on the parsing of `/proc/meminfo` file.
     """
     def __init__(self):
+        # The configuration object is needed to retrieve some settings below.
+        configuration = Configuration()
+
         try:
             ram = ''.join(
                 filter(
@@ -41,8 +46,11 @@ class RAM:
             if used < 0:
                 used += ram['Cached'] + ram['Buffers']
 
+        low_limit = configuration.get('ram_limits')['low']
+        medium_limit = configuration.get('ram_limits')['medium']
+
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-            COLOR_DICT['sensors'][int(((used / total) * 100) // 33.34)],
+            COLOR_DICT['sensors'][bisect([low_limit, medium_limit], (used / total) * 100)],
             int(used),
             COLOR_DICT['clear'],
             int(total)
