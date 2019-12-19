@@ -29,7 +29,7 @@ Swap:      7607        5    7602
     def test_free_dash_m(self, _, __):
         """Test `free -m` output parsing for low ram use case"""
         ram = RAM().value
-        self.assertTrue(all(i in ram for i in ['\x1b[0;33m' '3341', '7412']))
+        self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3341', '7412']))
 
     @patch(
         'archey.entries.ram.check_output',
@@ -48,7 +48,7 @@ Swap:          4095          39        4056
     def test_free_dash_m_warning(self, _, __):
         """Test `free -m` output parsing for warning ram use case"""
         ram = RAM().value
-        self.assertTrue(all(i in ram for i in ['\x1b[0;32m' '2043', '15658']))
+        self.assertTrue(all(i in ram for i in ['\x1b[0;32m', '2043', '15658']))
 
     @patch(
         'archey.entries.ram.check_output',
@@ -67,7 +67,7 @@ Swap:          4095         160        3935
     def test_free_dash_m_danger(self, _, __):
         """Test `free -m` output parsing for danger ram use case"""
         ram = RAM().value
-        self.assertTrue(all(i in ram for i in ['\x1b[0;31m' '12341', '15658']))
+        self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '12341', '15658']))
 
 
     @patch(
@@ -108,7 +108,7 @@ Dirty:               200 kB
     def test_proc_meminfo(self, _, __):
         """Test `/proc/meminfo` parsing (when `free` is not available)"""
         ram = RAM().value
-        self.assertTrue(all(i in ram for i in ['\x1b[0;33m' '3556', '7412']))
+        self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3556', '7412']))
 
 
 if __name__ == '__main__':
