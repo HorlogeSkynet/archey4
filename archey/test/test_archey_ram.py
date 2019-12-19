@@ -22,8 +22,8 @@ Swap:      7607        5    7602
     @patch(
         'archey.entries.ram.Configuration.get',
         side_effect=[
-            {'low': 33.3},
-            {'medium': 66.7}
+            {'ram': {'warning': 33.3}},
+            {'ram': {'danger': 66.7}},
         ]
     )
     def test_free_dash_m(self, _, __):
@@ -41,8 +41,8 @@ Swap:          4095          39        4056
     @patch(
         'archey.entries.ram.Configuration.get',
         side_effect=[
-            {'low': 33.3},
-            {'medium': 66.7}
+            {'ram': {'warning': 33.3}},
+            {'ram': {'danger': 66.7}},
         ]
     )
     def test_free_dash_m_warning(self, _, __):
@@ -60,8 +60,8 @@ Swap:          4095         160        3935
     @patch(
         'archey.entries.ram.Configuration.get',
         side_effect=[
-            {'low': 33.3},
-            {'medium': 66.7}
+            {'ram': {'warning': 33.3}},
+            {'ram': {'danger': 66.7}},
         ]
     )
     def test_free_dash_m_danger(self, _, __):
@@ -77,8 +77,8 @@ Swap:          4095         160        3935
     @patch(
         'archey.entries.ram.Configuration.get',
         side_effect=[
-            {'low': 33.3},
-            {'medium': 66.7}
+            {'ram': {'warning': 33.3}},
+            {'ram': {'danger': 66.7}},
         ]
     )
     @patch(

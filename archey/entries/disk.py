@@ -30,11 +30,11 @@ class Disk:
             ).splitlines()[-1]
         ).split()
 
-        low_limit = configuration.get('disk_limits')['low']
-        medium_limit = configuration.get('disk_limits')['medium']
+        warning_limit = configuration.get('limits')['disk']['warning']
+        danger_limit = configuration.get('limits')['disk']['danger']
 
         self.value = '{0}{1}{2} / {3}'.format(
-            COLOR_DICT['sensors'][bisect([low_limit, medium_limit], float(total[5][:-1]))],
+            COLOR_DICT['sensors'][bisect([warning_limit, danger_limit], float(total[5][:-1]))],
             re.sub('GB', ' GB', total[3]),
             COLOR_DICT['clear'],
             re.sub('GB', ' GB', total[2])

@@ -36,13 +36,15 @@ class Configuration(metaclass=Singleton):
                 'ipv4_detection': 1,
                 'ipv6_detection': 1
             },
-            'ram_limits': {
-                'low': 33.3,
-                'medium': 66.7
-            },
-            'disk_limits': {
-                'low': 50,
-                'medium': 75
+            'limits': {
+                'ram': {
+                    'warning': 33.3,
+                    'danger': 66.7
+                },
+                'disk': {
+                    'warning': 50,
+                    'danger': 75
+                }
             }
         }
 

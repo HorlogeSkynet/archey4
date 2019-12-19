@@ -21,8 +21,8 @@ total            -        1024GB  61GB     963GB  11% -
     @patch(
         'archey.entries.disk.Configuration.get',
         side_effect=[
-            {'low': 50},
-            {'medium': 75}
+            {'disk': {'warning': 50}},
+            {'disk': {'danger': 75}},
         ]
     )
     def test(self, _, __):
@@ -43,8 +43,8 @@ total            -        1024GB 661GB     363GB  65% -
     @patch(
         'archey.entries.disk.Configuration.get',
         side_effect=[
-            {'low': 50},
-            {'medium': 75}
+            {'disk': {'warning': 50}},
+            {'disk': {'danger': 75}},
         ]
     )
     def test_warning(self, _, __):
@@ -65,8 +65,8 @@ total            -        1024GB 861GB     163GB  84% -
     @patch(
         'archey.entries.disk.Configuration.get',
         side_effect=[
-            {'low': 50},
-            {'medium': 75}
+            {'disk': {'warning': 50}},
+            {'disk': {'danger': 75}},
         ]
     )
     def test_danger(self, _, __):

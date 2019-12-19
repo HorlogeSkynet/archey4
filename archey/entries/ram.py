@@ -46,11 +46,11 @@ class RAM:
             if used < 0:
                 used += ram['Cached'] + ram['Buffers']
 
-        low_limit = configuration.get('ram_limits')['low']
-        medium_limit = configuration.get('ram_limits')['medium']
+        warning_limit = configuration.get('limits')['ram']['warning']
+        danger_limit = configuration.get('limits')['ram']['danger']
 
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-            COLOR_DICT['sensors'][bisect([low_limit, medium_limit], (used / total) * 100)],
+            COLOR_DICT['sensors'][bisect([warning_limit, danger_limit], (used / total) * 100)],
             int(used),
             COLOR_DICT['clear'],
             int(total)
