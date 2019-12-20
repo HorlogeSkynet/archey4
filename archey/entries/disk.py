@@ -1,20 +1,19 @@
 """Disk usage detection class"""
 
 import re
-from bisect import bisect
 
+from bisect import bisect
 from subprocess import check_output
 
 from archey.constants import COLOR_DICT
-
 from archey.configuration import Configuration
 
 
 class Disk:
     """Uses `df` command output to compute the total disk usage across devices"""
     def __init__(self):
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
+        # Fetch the user-defined RAM limits from configuration.
+        disk_limits = Configuration().get('limits')['disk']
 
         total = re.sub(
             ',', '.',
@@ -30,11 +29,14 @@ class Disk:
             ).splitlines()[-1]
         ).split()
 
-        warning_limit = configuration.get('limits')['disk']['warning']
-        danger_limit = configuration.get('limits')['disk']['danger']
+        # Based on the disk percentage usage, select the corresponding threshold color.
+        color_selector = bisect(
+            [disk_limits['warning'], disk_limits['danger']],
+            float(total[5][:-1])
+        )
 
         self.value = '{0}{1}{2} / {3}'.format(
-            COLOR_DICT['sensors'][bisect([warning_limit, danger_limit], float(total[5][:-1]))],
+            COLOR_DICT['sensors'][color_selector],
             re.sub('GB', ' GB', total[3]),
             COLOR_DICT['clear'],
             re.sub('GB', ' GB', total[2])

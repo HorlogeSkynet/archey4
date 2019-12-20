@@ -11,7 +11,6 @@ class TestRAMEntry(unittest.TestCase):
     Here, we mock the `check_output` call to `free` using all three levels of available ram.
     In the last test, mock with `/proc/meminfo` file opening during the manual way.
     """
-
     @patch(
         'archey.entries.ram.check_output',
         return_value="""\
@@ -21,15 +20,17 @@ Swap:      7607        5    7602
 """)
     @patch(
         'archey.entries.ram.Configuration.get',
-        side_effect=[
-            {'ram': {'warning': 33.3}},
-            {'ram': {'danger': 66.7}},
-        ]
+        return_value={
+            'ram': {
+                'warning': 25,
+                'danger': 45
+            },
+        }
     )
     def test_free_dash_m(self, _, __):
-        """Test `free -m` output parsing for low ram use case"""
+        """Test `free -m` output parsing for low RAM use case and tweaked limits"""
         ram = RAM().value
-        self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3341', '7412']))
+        self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '3341', '7412']))
 
     @patch(
         'archey.entries.ram.check_output',
@@ -40,13 +41,15 @@ Swap:          4095          39        4056
 """)
     @patch(
         'archey.entries.ram.Configuration.get',
-        side_effect=[
-            {'ram': {'warning': 33.3}},
-            {'ram': {'danger': 66.7}},
-        ]
+        return_value={
+            'ram': {
+                'warning': 33.3,
+                'danger': 66.7
+            },
+        }
     )
     def test_free_dash_m_warning(self, _, __):
-        """Test `free -m` output parsing for warning ram use case"""
+        """Test `free -m` output parsing for warning RAM use case"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;32m', '2043', '15658']))
 
@@ -59,16 +62,17 @@ Swap:          4095         160        3935
 """)
     @patch(
         'archey.entries.ram.Configuration.get',
-        side_effect=[
-            {'ram': {'warning': 33.3}},
-            {'ram': {'danger': 66.7}},
-        ]
+        return_value={
+            'ram': {
+                'warning': 33.3,
+                'danger': 66.7
+            },
+        }
     )
     def test_free_dash_m_danger(self, _, __):
-        """Test `free -m` output parsing for danger ram use case"""
+        """Test `free -m` output parsing for danger RAM use case"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '12341', '15658']))
-
 
     @patch(
         'archey.entries.ram.check_output',
@@ -76,10 +80,12 @@ Swap:          4095         160        3935
     )
     @patch(
         'archey.entries.ram.Configuration.get',
-        side_effect=[
-            {'ram': {'warning': 33.3}},
-            {'ram': {'danger': 66.7}},
-        ]
+        return_value={
+            'ram': {
+                'warning': 33.3,
+                'danger': 66.7
+            },
+        }
     )
     @patch(
         'archey.entries.ram.open',
