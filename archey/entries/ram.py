@@ -2,9 +2,11 @@
 
 import re
 
+from bisect import bisect
 from subprocess import check_output
 
 from archey.constants import COLOR_DICT
+from archey.configuration import Configuration
 
 
 class RAM:
@@ -13,6 +15,9 @@ class RAM:
     If not available, falls back on the parsing of `/proc/meminfo` file.
     """
     def __init__(self):
+        # Fetch the user-defined RAM limits from configuration.
+        ram_limits = Configuration().get('limits')['ram']
+
         try:
             ram = ''.join(
                 filter(
@@ -41,8 +46,14 @@ class RAM:
             if used < 0:
                 used += ram['Cached'] + ram['Buffers']
 
+        # Based on the RAM percentage usage, select the corresponding threshold color.
+        color_selector = bisect(
+            [ram_limits['warning'], ram_limits['danger']],
+            (used / total) * 100
+        )
+
         self.value = '{0}{1} MB{2} / {3} MB'.format(
-            COLOR_DICT['sensors'][int(((used / total) * 100) // 33.34)],
+            COLOR_DICT['sensors'][color_selector],
             int(used),
             COLOR_DICT['clear'],
             int(total)

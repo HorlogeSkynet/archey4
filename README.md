@@ -205,6 +205,17 @@ Below, some further explanations of each option available :
 	"timeout": {
 		// Some values you can adjust if the default ones look undersized for your system (seconds).
 	}
+	"limits": {
+		// Some threshold values you can adjust affecting disk/ram warning/danger color (percent).
+		'ram': {
+			"warning": 33.3,
+			"danger": 66.7
+		},
+		'disk': {
+			"warning": 50,
+			"danger": 75
+		}
+	}
 }
 ```
 

@@ -35,6 +35,16 @@ class Configuration(metaclass=Singleton):
             'timeout': {
                 'ipv4_detection': 1,
                 'ipv6_detection': 1
+            },
+            'limits': {
+                'ram': {
+                    'warning': 33.3,
+                    'danger': 66.7
+                },
+                'disk': {
+                    'warning': 50,
+                    'danger': 75
+                }
             }
         }
 
