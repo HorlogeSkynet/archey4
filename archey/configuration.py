@@ -26,6 +26,7 @@ class Configuration(metaclass=Singleton):
             },
             'ip_settings': {
                 'lan_ip_max_count': 2,
+                'lan_ip_v6_support': True,
                 'wan_ip_v6_support': True
             },
             'limits': {
