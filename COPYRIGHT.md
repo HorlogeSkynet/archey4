@@ -15,13 +15,14 @@ See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 * ASCII art by Brett Bohnenkamper <kittykatt@silverirc.com>
 * Changes Jerome Launay <jerome@projet-libre.org>
 * Fedora support by YeOK <yeok@henpen.org>
-* First IP handling by Normand Cyr <normand.cyr@gmail.com>
+* First IP handling by Normand Cyr (@normcyr) <normand.cyr@gmail.com>
 * First IPv6 support and Windows Subsystems handling by @Si13n7 <admin@si13n7.com>
-* Timeout improvements and `hostname` investigations by @AdJaGu <AdJaGu@users.noreply.github.com>
+* Timeout improvements and `hostname` investigations by @AdJaGu
 * Workaround for Tinkerboard Linux builds by @thisforeda <thisforeda@live.cn>
 * Windows Subsystem Linux file-systems support by @Naragato <development@simonbalarabe.com>
 * `lsb-release` dropping support guidance by Eli Schwartz <eschwartz93@gmail.com>
 * Major software architecture rework by @lannuttia <lannuttia@gmail.com>
+* Configurable thresholds for disk and RAM colors by Chris Roth (@czr137)
 
 Currently maintained by Samuel Forestier <dev@samuel.domains>
 
