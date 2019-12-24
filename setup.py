@@ -5,7 +5,7 @@ This is the Archey 4's `setup.py` file, allowing us to distribute it as a packag
 ... with cool meta-data.
 """
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 setup(
