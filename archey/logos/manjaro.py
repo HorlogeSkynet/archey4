@@ -1,6 +1,6 @@
 """Manjaro logo"""
 
-MANJARO = """
+MANJARO = """\
 {c[0]} $$$$$$$$$$$$$$$$  $$$$$$$   {r[0]}
 {c[0]} M77777777777777M  M77777M   {r[1]}
 {c[0]} M77777777777777M  M77777M   {r[2]}
@@ -18,5 +18,5 @@ MANJARO = """
 {c[0]} M77777M  M77777M  M77777M   {r[14]}
 {c[0]} M77777M  M77777M  M77777M   {r[15]}
 {c[0]} M77777M  M77777M  M77777M   {r[16]}
-{c[0]} MMMMMMM  MMMMMMM  MMMMMMM   {r[17]}\n
+{c[0]} MMMMMMM  MMMMMMM  MMMMMMM   {r[17]}\
 """

@@ -1,6 +1,6 @@
 """Linux Mint logo"""
 
-LINUX_MINT = """
+LINUX_MINT = """\
 {c[1]}                                       {r[0]}
 {c[1]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {r[1]}
 {c[1]} MMm----::-://////////////oymNMd+`     {r[2]}
@@ -18,5 +18,5 @@ LINUX_MINT = """
 {c[1]}       `/dMNmy+/:-------------:/yMMM   {r[14]}
 {c[1]}          ./ydNMMMMMMMMMMMMMMMMMMMMM   {r[15]}
 {c[1]}                                       {r[16]}
-{c[1]}                                       {r[17]}\n
+{c[1]}                                       {r[17]}\
 """

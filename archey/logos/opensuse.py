@@ -1,6 +1,6 @@
 """openSUSE logo"""
 
-OPENSUSE = """
+OPENSUSE = """\
 {c[0]}            .;ldkO0000Okdl;.              {r[0]}
 {c[0]}        .;d00xl:^''''''^:ok00d;.          {r[1]}
 {c[0]}      .d00l'                'o00d.        {r[2]}
@@ -18,5 +18,5 @@ OPENSUSE = """
 {c[0]}     l0Ko.                    .c00l'      {r[14]}
 {c[0]}      'l0Kk:.              .;xK0l'        {r[15]}
 {c[0]}         'lkK0xl:;,,,,;:ldO0kl'           {r[16]}
-{c[0]}             '^:ldxkkkkxdl:^'             {r[17]}\n
+{c[0]}             '^:ldxkkkkxdl:^'             {r[17]}\
 """

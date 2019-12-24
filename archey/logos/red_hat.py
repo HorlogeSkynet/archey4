@@ -1,6 +1,6 @@
 """Red Hat logo"""
 
-RED_HAT = """
+RED_HAT = """\
 {c[1]}                                             {r[0]}
 {c[1]}              {c[2]}\\`.-..........\\`{c[1]}               {r[1]}
 {c[1]}             {c[2]}\\`////////::.\\`-/.{c[1]}              {r[2]}
@@ -18,5 +18,5 @@ RED_HAT = """
 {c[1]}  {c[0]}MMMM   MMMMMMMMMMMMMNdyNMMh\\`     hyhMMM{c[1]}   {r[14]}
 {c[1]}   {c[0]}MMMMMMMMMMMMMMMMyoNNNMMM+.   MMMMMMMM{c[1]}     {r[15]}
 {c[1]}    {c[0]}MMNMMMNNMMMMMNM+ mhsMNyyyyMNMMMMsMM{c[1]}      {r[16]}
-{c[1]}                                             {r[17]}\n
+{c[1]}                                             {r[17]}\
 """

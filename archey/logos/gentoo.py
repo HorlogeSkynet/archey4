@@ -1,6 +1,6 @@
 """Gentoo logo"""
 
-GENTOO = """
+GENTOO = """\
 {c[1]}          -/oyddmdhs+:.                {r[0]}
 {c[1]}      -o{c[0]}dNMMMMMMMMNNmhy+{c[1]}-`             {r[1]}
 {c[1]}    -y{c[0]}NMMMMMMMMMMMNNNmmdhy{c[1]}+-           {r[2]}
@@ -18,5 +18,5 @@ GENTOO = """
 {c[1]} yM{c[0]}MNNNNNNNmmmmmNNMmhs+/{c[1]}-`             {r[14]}
 {c[1]} /h{c[0]}MMNNNNNNNNMNdhs++/{c[1]}-`                {r[15]}
 {c[1]} `/{c[0]}ohdmmddhys+++/:{c[1]}.`                   {r[16]}
-{c[1]} `-//////:--.                          {r[17]}\n
+{c[1]} `-//////:--.                          {r[17]}\
 """
