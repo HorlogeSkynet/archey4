@@ -28,14 +28,6 @@ class Configuration(metaclass=Singleton):
                 'lan_ip_max_count': 2,
                 'wan_ip_v6_support': True
             },
-            'temperature': {
-                'char_before_unit': ' ',
-                'use_fahrenheit': False
-            },
-            'timeout': {
-                'ipv4_detection': 1,
-                'ipv6_detection': 1
-            },
             'limits': {
                 'ram': {
                     'warning': 33.3,
@@ -45,6 +37,14 @@ class Configuration(metaclass=Singleton):
                     'warning': 50,
                     'danger': 75
                 }
+            },
+            'temperature': {
+                'char_before_unit': ' ',
+                'use_fahrenheit': False
+            },
+            'timeout': {
+                'ipv4_detection': 1,
+                'ipv6_detection': 1
             }
         }
 

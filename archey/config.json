@@ -34,6 +34,16 @@
 		"lan_ip_max_count": 2,
 		"wan_ip_v6_support": true
 	},
+	"limits": {
+		"ram": {
+			"warning": 33.3,
+			"danger": 66.7
+		},
+		"disk": {
+			"warning": 50,
+			"danger": 75
+		}
+	},
 	"temperature": {
 		"char_before_unit": " ",
 		"use_fahrenheit": false
