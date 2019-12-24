@@ -53,7 +53,7 @@ class Configuration(metaclass=Singleton):
 
         # Now, let's load each optional configuration file in a "regular" order
         self.load_configuration('/etc/archey4/')
-        self.load_configuration(os.path.expanduser('~') + '/.config/archey4/')
+        self.load_configuration(os.path.expanduser('~/.config/archey4/'))
         self.load_configuration(os.path.dirname(os.path.realpath(__file__)))
 
     def get(self, key, default=None):
@@ -72,10 +72,7 @@ class Configuration(metaclass=Singleton):
             #  ... don't load this one.
             return
 
-        if not path.endswith('/'):
-            path += '/'
-
-        path += 'config.json'
+        path = os.path.join(path, 'config.json')
 
         try:
             with open(path) as file:
