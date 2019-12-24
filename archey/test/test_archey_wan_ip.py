@@ -101,7 +101,7 @@ class TestWanIpEntry(unittest.TestCase):
         ]
     )
     def test_ipv4_timeout_twice(self, _, __, ___):
-        """Test when both `dig` and `wget` trigger timeouts..."""
+        """Test when both `dig` and `URLOpen` trigger timeouts..."""
         self.assertEqual(WanIp().value, 'No Address')
 
     @patch(
