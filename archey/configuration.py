@@ -21,11 +21,11 @@ class Configuration(metaclass=Singleton):
             'default_strings': {
                 'no_address': 'No Address',
                 'not_detected': 'Not detected',
-                'virtual_environment': 'Virtual Environment',
-                'bare_metal_environment': 'Bare-metal Environment'
+                'virtual_environment': 'Virtual Environment'
             },
             'ip_settings': {
                 'lan_ip_max_count': 2,
+                'lan_ip_v6_support': True,
                 'wan_ip_v6_support': True
             },
             'limits': {

@@ -49,7 +49,9 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ### :warning: Various notes to read before going down :warning:
 
-**Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from PIP](#install-with-pip).**
+* **Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from PIP](#install-with-pip).**
+
+* **`virt-what` call will be skipped if `systemd` tools are available on your system.**
 
 ## Installation
 
@@ -192,6 +194,8 @@ Below, some further explanations of each option available :
 		// The maximum number of local addresses you want to display.
 		// `false` --> Unlimited.
 		"lan_ip_max_count": 2,
+		// `false` would make Archey displays only IPv4 LAN addresses.
+		"lan_ip_v6_support": true,
 		// `false` would make Archey displays only IPv4 WAN addresses.
 		"wan_ip_v6_support": true
 	},

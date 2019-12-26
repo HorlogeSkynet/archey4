@@ -15,12 +15,29 @@ class TestPackagesEntry(unittest.TestCase):
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
+accountsservice/stable,now 0.6.45-2 amd64 [installed,automatic]
+acl/stable,now 2.2.53-4 amd64 [installed,automatic]
+adb/stable,now 1:8.1.0+r23-5 amd64 [installed]
+adduser/stable,now 3.118 all [installed]
+adwaita-icon-theme/stable,now 3.30.1-1 all [installed,automatic]
+albatross-gtk-theme/stable,now 1.7.4-1 all [installed,automatic]
+alsa-utils/stable,now 1.1.8-2 amd64 [installed,automatic]
+""")
+    def test_match_with_apt(self, _):
+        """Simple test for the APT packages manager"""
+        self.assertEqual(Packages().value, 7)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            """\
 Installed Packages
 GConf2.x86_64                  3.2.6-17.fc26           @@commandline
 GeoIP.x86_64                   1.6.11-1.fc26           @@commandline
 GeoIP-GeoLite-data.noarch      2017.07-1.fc26          @@commandline
 GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
-""")
+"""])
     def test_match_with_dnf(self, _):
         """Simple test for the DNF packages manager"""
         self.assertEqual(Packages().value, 4)
@@ -28,6 +45,7 @@ GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
     @patch(
         'archey.entries.packages.check_output',
         side_effect=[
+            FileNotFoundError(),
             FileNotFoundError(),
             """\
 accountsservice         install
@@ -45,6 +63,7 @@ alien                   install
     @patch(
         'archey.entries.packages.check_output',
         side_effect=[
+            FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
             """\
@@ -70,6 +89,7 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
+            FileNotFoundError(),
             """\
 acl 2.2.52-4
 archey4 v4.3.3-1
@@ -87,6 +107,7 @@ argon2 20171227-3
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
+            FileNotFoundError(),
             """\
 cdrecord-2.01-10.7.el5
 bluez-libs-3.7-1.1
@@ -100,6 +121,7 @@ MySQL-client-3.23.57-1
     @patch(
         'archey.entries.packages.check_output',
         side_effect=[
+            FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
@@ -126,6 +148,7 @@ ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
+            FileNotFoundError(),
             """\
 Loading repository data...
 Reading installed packages...
@@ -145,6 +168,7 @@ i  | at            | A Job Manager                       | package    \n\
     @patch(
         'archey.entries.packages.check_output',
         side_effect=[  # No packages manager will be found
+            FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
