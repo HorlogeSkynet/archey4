@@ -31,7 +31,7 @@ class Disk:
             (self._usage['used'] / self._usage['total']) * 100
         )
 
-        self.value = '{0}{1} GB{2} / {3} GB'.format(
+        self.value = '{0}{1} GiB{2} / {3} GiB'.format(
             COLOR_DICT['sensors'][color_selector],
             round(self._usage['used'], 1),
             COLOR_DICT['clear'],
