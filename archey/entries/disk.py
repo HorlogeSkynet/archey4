@@ -72,9 +72,10 @@ class Disk:
 
         # JSON output support landed very "late" in `btrfs-progs` user-space binaries.
         # We are parsing it the hard way to increase compatibility...
-        size_used_regex = re.compile(r"size (\d+\.\d+)GiB used (\d+\.\d+)GiB")
-        for line in btrfs_output.splitlines():
-            matches = size_used_regex.search(line)
-            if matches:
-                self._usage['used'] += float(matches.group(2))
-                self._usage['total'] += float(matches.group(1))
+        for total, used in re.findall(
+                r"size (\d+\.\d+)GiB used (\d+\.\d+)GiB",
+                btrfs_output,
+                flags=re.MULTILINE
+            ):
+            self._usage['used'] += float(used)
+            self._usage['total'] += float(total)
