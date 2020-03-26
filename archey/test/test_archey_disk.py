@@ -1,5 +1,7 @@
 """Test module for Archey's disks usage detection module"""
 
+from subprocess import CalledProcessError
+
 import unittest
 from unittest.mock import patch
 
@@ -104,6 +106,27 @@ Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
         """Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '82.5', '1101.8']))
+
+    @patch(
+        'archey.entries.disk.check_output',
+        side_effect=[
+            CalledProcessError(1, "df: no file systems processed"),
+            '\n'
+        ]
+    )
+    @patch(
+        'archey.entries.disk.Configuration.get',
+        return_value={
+            'disk': {
+                'warning': 50,
+                'danger': 75
+            }
+        }
+    )
+    def test_failing_df_and_empty_btrfs(self, _, __):
+        """Test computations around `df` and `btrfs` outputs"""
+        disk = Disk().value
+        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0']))
 
 if __name__ == '__main__':
     unittest.main()

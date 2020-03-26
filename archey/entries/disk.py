@@ -28,7 +28,7 @@ class Disk:
         # Based on the disk percentage usage, select the corresponding threshold color.
         color_selector = bisect(
             [disk_limits['warning'], disk_limits['danger']],
-            (self._usage['used'] / self._usage['total']) * 100
+            (self._usage['used'] / (self._usage['total'] or 1)) * 100
         )
 
         self.value = '{0}{1} GiB{2} / {3} GiB'.format(
@@ -39,22 +39,26 @@ class Disk:
         )
 
     def _run_df_usage(self):
-        df_output = check_output(
-            [
-                'df', '-l', '-P', '-B', 'GB', '--total',
-                '-t', 'ext2', '-t', 'ext3', '-t', 'ext4',
-                '-t', 'fat32',
-                '-t', 'fuseblk',
-                '-t', 'jfs',
-                '-t', 'lxfs',
-                '-t', 'ntfs',
-                '-t', 'reiserfs',
-                '-t', 'simfs',
-                '-t', 'xfs',
-                '-t', 'zfs'
-            ],
-            env={'LANG': 'C'}, universal_newlines=True
-        ).splitlines()[-1].split()
+        try:
+            df_output = check_output(
+                [
+                    'df', '-l', '-P', '-B', 'GB', '--total',
+                    '-t', 'ext2', '-t', 'ext3', '-t', 'ext4',
+                    '-t', 'fat32',
+                    '-t', 'fuseblk',
+                    '-t', 'jfs',
+                    '-t', 'lxfs',
+                    '-t', 'ntfs',
+                    '-t', 'reiserfs',
+                    '-t', 'simfs',
+                    '-t', 'xfs',
+                    '-t', 'zfs'
+                ],
+                env={'LANG': 'C'}, universal_newlines=True
+            ).splitlines()[-1].split()
+        except CalledProcessError:
+            # It looks like there is not any file system matching our types.
+            return
 
         self._usage['used'] += int(df_output[2].rstrip('GB'))
         self._usage['total'] += int(df_output[1].rstrip('GB'))
