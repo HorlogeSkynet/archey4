@@ -91,30 +91,37 @@ Swap:          4095         160        3935
         'archey.entries.ram.open',
         mock_open(
             read_data="""\
-MemTotal:        7590580 kB
-MemFree:         1502940 kB
-MemAvailable:    3173804 kB
-Buffers:          156976 kB
-Cached:          2289164 kB
-SwapCached:          220 kB
-Active:          3426704 kB
-Inactive:        2254292 kB
-Active(anon):    2221228 kB
-Inactive(anon):  1725868 kB
-Active(file):    1205476 kB
-Inactive(file):   528424 kB
-Unevictable:          32 kB
-Mlocked:              32 kB
-SwapTotal:       7790588 kB
-SwapFree:        7785396 kB
-Dirty:               200 kB
-"""),  # Some content have been truncated (because the following is useless)
+MemTotal:        7581000 kB
+MemFree:          716668 kB
+MemAvailable:    3632244 kB
+Buffers:          478524 kB
+Cached:          2807032 kB
+SwapCached:        67092 kB
+Active:          3947284 kB
+Inactive:        2447708 kB
+Active(anon):    2268724 kB
+Inactive(anon):  1106220 kB
+Active(file):    1678560 kB
+Inactive(file):  1341488 kB
+Unevictable:         128 kB
+Mlocked:             128 kB
+SwapTotal:       7811068 kB
+SwapFree:        7277708 kB
+Dirty:               144 kB
+Writeback:             0 kB
+AnonPages:       3067204 kB
+Mapped:           852272 kB
+Shmem:            451056 kB
+Slab:             314100 kB
+SReclaimable:     200792 kB
+SUnreclaim:       113308 kB
+"""),  # Some lines have been ignored as they are useless for computations.
         create=True
     )
     def test_proc_meminfo(self, _, __):
         """Test `/proc/meminfo` parsing (when `free` is not available)"""
         ram = RAM().value
-        self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3556', '7412']))
+        self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3739', '7403']))
 
 
 if __name__ == '__main__':

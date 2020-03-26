@@ -40,11 +40,14 @@ class RAM:
                 }
 
             total = ram['MemTotal']
-            # Here, let's imitate the `free` command behavior
-            # (https://gitlab.com/procps-ng/procps/blob/master/proc/sysinfo.c#L787)
-            used = total - (ram['MemFree'] + ram['Cached'] + ram['Buffers'])
+            # Here, let's imitate Neofetch's behavior.
+            # See <https://github.com/dylanaraps/neofetch/wiki/Frequently-Asked-Questions>.
+            used = total + ram['Shmem'] - (
+                ram['MemFree'] + ram['Cached'] + ram['SReclaimable'] + ram['Buffers'])
+            # Imitates what `free` does when the obtained value happens to be incorrect.
+            # See <https://gitlab.com/procps-ng/procps/blob/master/proc/sysinfo.c#L790>.
             if used < 0:
-                used += ram['Cached'] + ram['Buffers']
+                used = total - ram['MemFree']
 
         # Based on the RAM percentage usage, select the corresponding threshold color.
         color_selector = bisect(
@@ -52,7 +55,7 @@ class RAM:
             (used / total) * 100
         )
 
-        self.value = '{0}{1} MB{2} / {3} MB'.format(
+        self.value = '{0}{1} MiB{2} / {3} MiB'.format(
             COLOR_DICT['sensors'][color_selector],
             int(used),
             COLOR_DICT['clear'],
