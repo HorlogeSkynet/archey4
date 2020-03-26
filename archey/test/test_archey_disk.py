@@ -126,7 +126,7 @@ Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
     def test_failing_df_and_empty_btrfs(self, _, __):
         """Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
-        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0']))
+        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0.0']))
 
 if __name__ == '__main__':
     unittest.main()

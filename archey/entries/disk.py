@@ -15,8 +15,8 @@ class Disk:
     def __init__(self):
         # This dictionary will store values obtained from sub-processes calls.
         self._usage = {
-            'used': 0,
-            'total': 0
+            'used': 0.0,
+            'total': 0.0
         }
 
         # Fetch the user-defined RAM limits from configuration.
