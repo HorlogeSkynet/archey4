@@ -87,6 +87,7 @@ Label: none  uuid: bb675216-6ea1-11ea-bc55-0242ac130003
 Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
 	Total devices 1 FS bytes used 0.00GiB
 	devid    1 size 9.36GiB used 1.24GiB path /dev/vda7
+
 """
         ]
     )
