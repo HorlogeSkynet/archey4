@@ -42,7 +42,7 @@ class Disk:
         try:
             df_output = check_output(
                 [
-                    'df', '-l', '-P', '-B', 'GB', '--total',
+                    'df', '-l', '-P', '-B', 'MB', '--total',
                     '-t', 'ext2', '-t', 'ext3', '-t', 'ext4',
                     '-t', 'fat32',
                     '-t', 'fuseblk',
@@ -60,8 +60,8 @@ class Disk:
             # It looks like there is not any file system matching our types.
             return
 
-        self._usage['used'] += int(df_output[2].rstrip('GB'))
-        self._usage['total'] += int(df_output[1].rstrip('GB'))
+        self._usage['used'] += float(df_output[2].rstrip('MB')) / 1024
+        self._usage['total'] += float(df_output[1].rstrip('MB')) / 1024
 
     def _run_btrfs_fi_show(self):
         try:
