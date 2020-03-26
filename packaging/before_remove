@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+# Removes symbolic link created by `after_install`.
+if [ -L /usr/bin/archey4 ]; then
+	rm /usr/bin/archey4
+fi

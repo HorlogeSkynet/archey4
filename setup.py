@@ -5,7 +5,13 @@ This is the Archey 4's `setup.py` file, allowing us to distribute it as a packag
 ... with cool meta-data.
 """
 
+import sys
+
 from setuptools import find_packages, setup
+
+
+# Packaging workaround, waiting for [jordansissel/fpm#1690].
+sys.dont_write_bytecode = True
 
 
 setup(
@@ -13,9 +19,9 @@ setup(
     version='4.6.0',
     description='Archey is a simple system information tool written in Python',
     keywords='archey python3 linux system-information monitoring',
-    url='http://git.io/archey4',
+    url='https://github.com/HorlogeSkynet/archey4',
     author='Samuel FORESTIER',  # Not alone
-    author_email='dev@samuel.domains',
+    author_email='dev+archey@samuel.domains',
     license='GPLv3',
     packages=find_packages(exclude=['archey.test']),
     test_suite='archey.test',
