@@ -41,7 +41,7 @@ AUTHOR_EMAIL="$(python3 setup.py --author-email)"
 
 # DRY.
 REVISION="${1:-1}"
-GPG_IDENTITY="$2"
+GPG_IDENTITY="${2:-}"
 DIST_OUTPUT='./dist'
 FAKE_CONFIG_FILE='etc/archey4/config.json'
 FPM_COMMON_ARGS=(
