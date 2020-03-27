@@ -20,7 +20,7 @@ class TestConfigurationUtil(unittest.TestCase):
         configuration = Configuration()
         configuration._config = {  # pylint: disable=protected-access
             'ip_settings': {
-                'lan_ip_max_count': 2,
+                'lan_ip_max_count': 2
             },
             'temperature': {
                 'use_fahrenheit': False
@@ -125,12 +125,12 @@ class TestConfigurationUtil(unittest.TestCase):
         configuration._config = {  # pylint: disable=protected-access
             'allow_overriding': True,
             'suppress_warnings': False,
-            'colors_palette': {
-                'use_unicode': False
-            },
             'default_strings': {
                 'no_address': 'No Address',
-                'not_detected': 'Not detected',
+                'not_detected': 'Not detected'
+            },
+            'colors_palette': {
+                'use_unicode': False
             },
             'ip_settings': {
                 'lan_ip_max_count': 2
@@ -151,7 +151,7 @@ class TestConfigurationUtil(unittest.TestCase):
                 'default_strings': {
                     'no_address': '\xde\xad \xbe\xef',
                     'not_detected': 'Not detected',
-                    'virtual_environment': 'Virtual Environment',
+                    'virtual_environment': 'Virtual Environment'
                 },
                 'temperature': {
                     'a_weird_new_dict': [
@@ -176,7 +176,7 @@ class TestConfigurationUtil(unittest.TestCase):
                 'default_strings': {
                     'no_address': '\xde\xad \xbe\xef',
                     'not_detected': 'Not detected',
-                    'virtual_environment': 'Virtual Environment',
+                    'virtual_environment': 'Virtual Environment'
                 },
                 'ip_settings': {
                     'lan_ip_max_count': 2
