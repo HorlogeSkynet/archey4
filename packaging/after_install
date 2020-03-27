@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+# Creates a symbolic link providing `archey4` command alias.
+ln -s -f /usr/bin/archey /usr/bin/archey4

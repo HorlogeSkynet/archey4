@@ -16,6 +16,7 @@ install:
 
 script:
   # Simple execution.
+  - ${VIRTUAL_ENV}/bin/archey
   - python3 -m archey
 
   # Tests suite.

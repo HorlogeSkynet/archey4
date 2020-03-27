@@ -41,7 +41,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * `python3`
 * `python3-distro` (`python-distro` on Arch Linux)
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
-* `procps` (potentially `procps-ng`)
+* `procps` (`procps-ng` on Arch Linux)
 
 ### Highly recommended packages
 
@@ -49,7 +49,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | :----------- | :--------: | :-----------------------------------: | :---: |
 | All          | `dnsutils` or `bind-tools` | **WAN\_IP** would be detected faster | Would provide `dig` |
 | All          | `lm-sensors` or `lm_sensors` | **Temperature** would be more accurate | φ |
-| Graphical    | `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
+| Graphical    | `pciutils` | **GPU** wouldn't be detected without it | Would provide `lspci` |
 | Graphical    | `wmctrl` | **WindowManager** would be more accurate | φ |
 | Virtual      | `virt-what` and `dmidecode` | **Model** would contain details about the hypervisor | `archey` would have to be run as **root** |
 
@@ -66,23 +66,9 @@ The answer is [here](https://blog.samuel.domains/archey4).
 First, grab a package for your distribution from the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest).  
 Now, it's time to use your favorite package manager. Some examples :
 
-* Arch-based distributions ([source](https://aur.archlinux.org/packages/archey4/))
-
-	```shell
-	$ sudo pacman -U ./archey4-v4.Y.Z-R-any.pkg.tar.xz
-	```
-
-* Debian-based distributions ([source](https://git.forestier.app/HorlogeSkynet/archey4-packaging))
-
-	```shell
-	$ sudo apt install ./archey4-v4.Y.Z-R-all.deb
-	```
-
-* RPM-based distributions (source will be available soon !)
-
-	```shell
-	$ sudo dnf install ./archey4-4.Y.Z-R.fc28.noarch.rpm
-	```
+* Arch-based distributions : `pacman -U ./archey4-v4.Y.Z-R-any.pkg.tar.xz`
+* Debian-based distributions : `apt install ./archey4_v4.Y.Z-R-all.deb`
+* RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.noarch.rpm`
 
 ### Install with PIP
 
@@ -255,3 +241,7 @@ Any improvement would be appreciated.
 * If you had to adapt the script to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
 
 * When looking up your public IP address (**WAN\_IP**), Archey will try at first to run a DNS query for `myip.opendns.com`, against OpenDNS's resolver(s). On error, it would fall back on regular HTTPS request(s) to <https://ident.me> ([server sources](https://github.com/pcarrier/identme)).
+
+## Notes to developers / maintainers
+
+You might be interested in checking/running the `packaging/build.sh` script.
