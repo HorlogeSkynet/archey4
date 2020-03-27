@@ -5,13 +5,15 @@ This is the Archey 4's `setup.py` file, allowing us to distribute it as a packag
 ... with cool meta-data.
 """
 
+import os
 import sys
 
 from setuptools import find_packages, setup
 
 
 # Packaging workaround, waiting for [jordansissel/fpm#1690].
-sys.dont_write_bytecode = True
+if os.getenv('PYTHONDONTWRITEBYTECODE'):
+    sys.dont_write_bytecode = True
 
 
 setup(
@@ -36,6 +38,7 @@ setup(
     },
     long_description='Maintained fork of the original Archey Linux system tool'
                      ' originally written by Melik Manukyan.',
+    long_description_content_type='text/plain',
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
