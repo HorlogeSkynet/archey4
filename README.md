@@ -67,7 +67,7 @@ First, grab a package for your distribution from the latest release [here](https
 Now, it's time to use your favorite package manager. Some examples :
 
 * Arch-based distributions : `pacman -U ./archey4-v4.Y.Z-R-any.pkg.tar.xz`
-* Debian-based distributions : `apt install ./archey4-v4.Y.Z-R-all.deb`
+* Debian-based distributions : `apt install ./archey4_v4.Y.Z-R-all.deb`
 * RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.noarch.rpm`
 
 ### Install with PIP
