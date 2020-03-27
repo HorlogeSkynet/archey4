@@ -24,7 +24,7 @@
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/pyversions/archey4.svg?style=for-the-badge"></a>
 </p>
 
-![archey4](https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.3.1)
+![archey4](https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.7.0)
 
 ## Why (again) a f\*cking new Archey fork ?
 
@@ -82,9 +82,9 @@ $ sudo pip3 install archey4
 ### Step 1 : Fetch the source ###
 
 # If you want the latest release :
-$ wget https://github.com/HorlogeSkynet/archey4/archive/v4.6.0.tar.gz
-$ tar xvzf v4.6.0.tar.gz
-$ cd archey4-4.6.0/
+$ wget https://github.com/HorlogeSkynet/archey4/archive/v4.7.0.tar.gz
+$ tar xvzf v4.7.0.tar.gz
+$ cd archey4-4.7.0/
 # _______________________________
 
 # If you want the latest changes :

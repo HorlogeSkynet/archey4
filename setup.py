@@ -18,7 +18,7 @@ if os.getenv('PYTHONDONTWRITEBYTECODE'):
 
 setup(
     name='archey4',
-    version='4.6.0',
+    version='4.7.0',
     description='Archey is a simple system information tool written in Python',
     keywords='archey python3 linux system-information monitoring',
     url='https://github.com/HorlogeSkynet/archey4',
