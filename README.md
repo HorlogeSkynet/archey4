@@ -41,7 +41,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * `python3`
 * `python3-distro` (`python-distro` on Arch Linux)
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
-* `procps` (potentially `procps-ng`)
+* `procps` (`procps-ng` on Arch Linux)
 
 ### Highly recommended packages
 
@@ -49,7 +49,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | :----------- | :--------: | :-----------------------------------: | :---: |
 | All          | `dnsutils` or `bind-tools` | **WAN\_IP** would be detected faster | Would provide `dig` |
 | All          | `lm-sensors` or `lm_sensors` | **Temperature** would be more accurate | φ |
-| Graphical    | `pciutils` or `pciutils-ng` | **GPU** wouldn't be detected without it | Would provide `lspci` |
+| Graphical    | `pciutils` | **GPU** wouldn't be detected without it | Would provide `lspci` |
 | Graphical    | `wmctrl` | **WindowManager** would be more accurate | φ |
 | Virtual      | `virt-what` and `dmidecode` | **Model** would contain details about the hypervisor | `archey` would have to be run as **root** |
 
