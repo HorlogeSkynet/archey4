@@ -107,7 +107,7 @@ fpm \
 	setup.py
 
 
-# Build a Arch Linux (.TAR.XZ) package.
+# Build an Arch Linux (.TAR.XZ) package.
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type pacman \
@@ -116,6 +116,10 @@ fpm \
 	--depends 'python >= 3.4' \
 	--depends 'python-distro' \
 	--depends 'python-netifaces' \
+	--conflicts 'archey-git' \
+	--conflicts 'archey2' \
+	--conflicts 'archey3-git' \
+	--conflicts 'pyarchey' \
 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 	--pacman-optional-depends 'lm-sensors: Temperature would be more accurate' \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
