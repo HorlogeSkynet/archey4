@@ -121,7 +121,7 @@ fpm \
 	--conflicts 'archey3-git' \
 	--conflicts 'pyarchey' \
 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
-	--pacman-optional-depends 'lm-sensors: Temperature would be more accurate' \
+	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
 	--pacman-optional-depends 'virt-what: Model would contain details about the hypervisor' \
