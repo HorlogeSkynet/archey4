@@ -150,7 +150,7 @@ $ python3 -m archey
 
 ## Configuration (optional)
 
-Since the version 4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
+Since v4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
 You can place a [`config.json`](archey/config.json) file in these locations :
 
 1. `/etc/archey4/config.json` (system preferences)
@@ -242,6 +242,11 @@ Any improvement would be appreciated.
 
 * When looking up your public IP address (**WAN\_IP**), Archey will try at first to run a DNS query for `myip.opendns.com`, against OpenDNS's resolver(s). On error, it would fall back on regular HTTPS request(s) to <https://ident.me> ([server sources](https://github.com/pcarrier/identme)).
 
-## Notes to developers / maintainers
+## Notes to users (, developers, and maintainers) about packaging
 
-You might be interested in checking/running the `packaging/build.sh` script.
+At the moment, [assets published on GitHub](https://github.com/HorlogeSkynet/archey4/releases/latest) are currently built with the `packaging/build.sh` script (a wrapper to [FPM](https://github.com/jordansissel/fpm), [Setuptools](https://github.com/pypa/setuptools) and [Twine](https://github.com/pypa/twine)).
+
+PIP source and wheel distributions (as long as Debian packages since v4.7.0) are GPG-signed using [this key](https://github.com/HorlogeSkynet.gpg).  
+Wheels (and their signatures) are uploaded on GitHub too, whereas source distributions could be watched [here](https://pypi.debian.net/archey4/).
+
+For the Arch Linux community, [an official package is (still) maintained on AUR](https://aur.archlinux.org/packages/archey4/).

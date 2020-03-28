@@ -8,7 +8,7 @@ Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>
 This program IS A FORK of the original Archey project <https://github.com/djmelik/archey>.
 
 Distributed under the terms of the GNU General Public License v3.  
-See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
+See <https://www.gnu.org/licenses/gpl-3.0.txt> for the full license text.
 
 ## Contributors
 
@@ -24,11 +24,4 @@ See <http://www.gnu.org/licenses/gpl.txt> for the full license text.
 * Major software architecture rework by @lannuttia <lannuttia@gmail.com>
 * Configurable thresholds for disk and RAM colors by Chris Roth (@czr137)
 
-Currently maintained by Samuel Forestier <dev@samuel.domains>
-
-## Packagers
-
-* Arch-based package : Samuel Forestier <dev@samuel.domains>
-* Debian-based package : Samuel Forestier <dev@samuel.domains>
-* PyPI wheel : Samuel Forestier <dev@samuel.domains>
-* RPM-based package : Gaëtan Menat <gaetan.menat@gmail.com>
+Currently maintained (and packaged) by Samuel Forestier <dev+archey@samuel.domains>

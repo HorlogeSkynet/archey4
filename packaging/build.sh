@@ -68,7 +68,7 @@ FPM_COMMON_ARGS=(
 mkdir -p etc/archey4 && cp archey/config.json "$FAKE_CONFIG_FILE"
 
 
-# Prevent SetupTools from generating byte-code files.
+# Prevent Setuptools from generating byte-code files.
 export PYTHONDONTWRITEBYTECODE=1
 
 
@@ -132,7 +132,7 @@ fpm \
 rm -rf etc/
 
 
-# Silence some SetupTools warning by re-enabling byte-code generation.
+# Silence some Setuptools warnings by re-enabling byte-code generation.
 unset PYTHONDONTWRITEBYTECODE
 
 # Build Python source TAR and WHEEL distribution packages.
