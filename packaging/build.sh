@@ -55,6 +55,7 @@ FPM_COMMON_ARGS=(
 	--architecture all \
 	--maintainer "$(printf '%s <%s>' "$AUTHOR" "$AUTHOR_EMAIL")" \
 	--after-install packaging/after_install \
+	--after-upgrade packaging/after_install \
 	--before-remove packaging/before_remove \
 	--python-bin python3 \
 	--no-python-fix-name \
