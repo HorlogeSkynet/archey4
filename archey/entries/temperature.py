@@ -67,21 +67,19 @@ class Temperature:
                 ['sensors', '-A', '-j'],
                 stderr=DEVNULL, universal_newlines=True
             )
-
         except (FileNotFoundError, CalledProcessError):
             return
 
         try:
             sensors_data = json.loads(sensors_output)
-
         # For backward compatibility with Python versions prior to 3.5.0
         #   we use `ValueError` instead of `json.JSONDecodeError`.
         except ValueError:
             return
 
         # Iterates over the chip-sets outputs to filter interesting values.
-        for _, chipset_data in sensors_data.items():
-            for _, values in chipset_data.items():
+        for chipset_data in sensors_data.values():
+            for values in chipset_data.values():
                 for key_name, value in values.items():
                     if key_name.endswith('_input') and value != 0.0:
                         self.temps.append(value)
@@ -94,7 +92,6 @@ class Temperature:
             with open(thermal_file) as file:
                 try:
                     temp = float(file.read().strip()) / 1000
-
                 except OSError:
                     continue
 
@@ -108,7 +105,6 @@ class Temperature:
                 ['/opt/vc/bin/vcgencmd', 'measure_temp'],
                 stderr=DEVNULL, universal_newlines=True
             )
-
         except (FileNotFoundError, CalledProcessError):
             return
 
