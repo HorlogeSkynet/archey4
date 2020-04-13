@@ -2,8 +2,6 @@
 
 from bisect import bisect
 
-import re
-
 from subprocess import check_output, CalledProcessError, DEVNULL
 
 from archey.constants import COLOR_DICT
@@ -80,7 +78,7 @@ class Disk:
         except CalledProcessError:
             # No btrfs filesystems present.
             return
-        
+
         # Eliminate duplicate mounts (e.g. different subvolumes)
         btrfs_unique_mounts = []
         for mountpoint in btrfs_mounts:
@@ -115,10 +113,10 @@ class Disk:
                 physical_device_size.append(float(line.split()[2].rstrip("GiB")))
             if line.startswith("Data ratio"):
                 data_ratios.append(float(line.split()[2]))
-        
-        # Divide physical space by the corresponding data ratio to get space 
+
+        # Divide physical space by the corresponding data ratio to get space
         # used for that group.
-        logical_device_used = [x / y for x,y in zip(physical_device_used, data_ratios)]
-        logical_device_size = [x / y for x,y in zip(physical_device_size, data_ratios)]
+        logical_device_used = [x / y for x, y in zip(physical_device_used, data_ratios)]
+        logical_device_size = [x / y for x, y in zip(physical_device_size, data_ratios)]
         self._usage['total'] += sum(logical_device_size)
         self._usage['used'] += sum(logical_device_used)
