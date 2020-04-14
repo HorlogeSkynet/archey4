@@ -115,7 +115,7 @@ fpm \
 	--output-type pacman \
 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
 	--depends 'procps-ng' \
-	--depends 'python >= 3.4' \
+	--depends 'python>=3.4' \
 	--depends 'python-distro' \
 	--depends 'python-netifaces' \
 	--conflicts 'archey-git' \
