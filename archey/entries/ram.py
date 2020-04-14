@@ -7,14 +7,17 @@ from subprocess import check_output
 
 from archey.constants import COLOR_DICT
 from archey.configuration import Configuration
+from archey.module import Module
 
 
-class RAM:
+class RAM(Module):
     """
     First tries to use the `free` command to retrieve RAM usage.
     If not available, falls back on the parsing of `/proc/meminfo` file.
     """
     def __init__(self):
+        self.name = Configuration().get("entry_names")["RAM"]
+
         # Fetch the user-defined RAM limits from configuration.
         ram_limits = Configuration().get('limits')['ram']
 

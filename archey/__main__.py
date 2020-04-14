@@ -6,7 +6,8 @@ It loads each entry as a different class coming from the `entries` module.
 Logos are stored under the `logos` module.
 """
 
-from enum import Enum
+from multiprocessing import Pool
+
 
 from archey.output import Output
 from archey.configuration import Configuration
@@ -31,31 +32,27 @@ from archey.entries.lan_ip import LanIp as e_LanIp
 from archey.entries.wan_ip import WanIp as e_WanIp
 
 
-class Entries(Enum):
-    """
-    An enumeration to store and declare each one of our entries.
-    The string representation of keys will act as entries names.
-    Values will be set under the `value` attribute of each obtained objects.
-    """
-    User = e_User
-    Hostname = e_Hostname
-    Model = e_Model
-    Distro = e_Distro
-    Kernel = e_Kernel
-    Uptime = e_Uptime
-    WindowManager = e_WindowManager
-    DesktopEnvironment = e_DesktopEnvironment
-    Shell = e_Shell
-    Terminal = e_Terminal
-    Packages = e_Packages
-    Temperature = e_Temperature
-    CPU = e_CPU
-    GPU = e_GPU
-    RAM = e_RAM
-    Disk = e_Disk
-    LAN_IP = e_LanIp
-    WAN_IP = e_WanIp
-
+# Dictionary of all module classes.
+ENTRIES = {
+    "User": e_User,
+    "Hostname": e_Hostname,
+    "Model": e_Model,
+    "Distro": e_Distro,
+    "Kernel": e_Kernel,
+    "Uptime": e_Uptime,
+    "WindowManager": e_WindowManager,
+    "DesktopEnvironment": e_DesktopEnvironment,
+    "Shell": e_Shell,
+    "Terminal": e_Terminal,
+    "Packages": e_Packages,
+    "Temperature": e_Temperature,
+    "CPU": e_CPU,
+    "GPU": e_GPU,
+    "RAM": e_RAM,
+    "Disk": e_Disk,
+    "LAN_IP": e_LanIp,
+    "WAN_IP": e_WanIp
+}
 
 def main():
     """Simple entry point"""
@@ -67,9 +64,11 @@ def main():
     configuration = Configuration()
 
     output = Output()
-    for entry in Entries:
-        if configuration.get('entries', {}).get(entry.name, True):
-            output.append(entry.name, entry.value().value)
+
+    for entry_key in ENTRIES:
+        if configuration.get('entries', {}).get(entry_key, True):
+            module = ENTRIES[entry_key]()
+            output.attach(module)
 
     output.output()
 

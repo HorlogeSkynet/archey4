@@ -39,25 +39,34 @@ class Output:
             else:
                 self.distribution = Distributions.LINUX
 
-        # Each class output will be added in the list below afterwards
+        # Modules will be added to this list in `attach`.
+        self.entries = []
+        # Output will be added in the list below afterwards
         self.results = []
 
-    def append(self, key, value):
+    def attach(self, module):
+        """Append a module to the list of modules"""
+        self.entries.append(module)
+
+    def append(self, module_name, module_value):
         """Append a pre-formatted entry to the final output content"""
         self.results.append(
             '{0}{1}:{2} {3}'.format(
                 COLOR_DICT[self.distribution][1],
-                key,
+                module_name,
                 COLOR_DICT['clear'],
-                value
+                module_value
             )
         )
 
     def output(self):
         """
-        Finally render the output entries.
-        It handles text centering additionally to value and colors replacing.
+        Get all entries to append their output then render the output entries.
+        It handles text centering, and value and color replacement.
         """
+        # For now, append module results by iteration.
+        for module in self.entries:
+            module.output(self)
         # Let's center the entries according to the logo (handles odd numbers)
         self.results[0:0] = [''] * ((18 - len(self.results)) // 2)
         self.results.extend([''] * (18 - len(self.results)))

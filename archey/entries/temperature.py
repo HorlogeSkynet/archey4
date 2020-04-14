@@ -7,9 +7,10 @@ from glob import glob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.configuration import Configuration
+from archey.module import Module
 
 
-class Temperature:
+class Temperature(Module):
     """
     Tries to compute an average temperature from `sensors` (LM-Sensors).
     If not available, falls back on system thermal zones files.
@@ -18,6 +19,8 @@ class Temperature:
     def __init__(self):
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
+
+        self.name = configuration.get("entry_names")["Temperature"]
 
         self.temps = []
 

@@ -8,11 +8,14 @@ from subprocess import check_output, CalledProcessError
 
 from archey.constants import COLOR_DICT
 from archey.configuration import Configuration
+from archey.module import Module
 
 
-class Disk:
+class Disk(Module):
     """Uses `df` command output to compute the total disk usage across devices"""
     def __init__(self):
+        self.name = Configuration().get("entry_names")["Disk"]
+
         # This dictionary will store values obtained from sub-processes calls.
         self._usage = {
             'used': 0.0,

@@ -3,13 +3,16 @@
 import netifaces
 
 from archey.configuration import Configuration
+from archey.module import Module
 
 
-class LanIp:
+class LanIp(Module):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
     def __init__(self):
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
+
+        self.name = configuration.get("entry_names")["LAN_IP"]
 
         addr_types = [netifaces.AF_INET]
         if configuration.get('ip_settings')['lan_ip_v6_support']:

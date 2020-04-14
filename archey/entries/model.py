@@ -6,11 +6,14 @@ import re
 from subprocess import CalledProcessError, DEVNULL, check_output
 
 from archey.configuration import Configuration
+from archey.module import Module
 
 
-class Model:
+class Model(Module):
     """Uses multiple methods to retrieve some information about the host hardware"""
     def __init__(self):
+        self.name = Configuration().get("entry_names")["Model"]
+
         self.value = None
 
         # The configuration object is needed to retrieve some default strings.
