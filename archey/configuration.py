@@ -15,6 +15,26 @@ class Configuration(metaclass=Singleton):
     """
     def __init__(self):
         self._config = {
+            'entry_names': {
+                'User': 'User',
+                'Hostname': 'Hostname',
+                'Model': 'Model',
+                'Distro': 'Distro',
+                'Kernel': 'Kernel',
+                'Uptime': 'Uptime',
+                'WindowManager': 'WindowManager',
+                'DesktopEnvironment': 'DesktopEnvironment',
+                'Shell': 'Shell',
+                'Terminal': 'Terminal',
+                'Packages': 'Packages',
+                'Temperature': 'Temperature',
+                'CPU': 'CPU',
+                'GPU': 'GPU',
+                'RAM': 'RAM',
+                'Disk': 'Disk',
+                'LAN_IP': 'LAN_IP',
+                'WAN_IP': 'WAN_IP'
+            },
             'colors_palette': {
                 'use_unicode': False
             },
