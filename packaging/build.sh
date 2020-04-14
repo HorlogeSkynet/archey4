@@ -22,6 +22,7 @@
 # Known packages errors (FPM bugs ?) :
 # * Debian :
 #     * Lintian : file-in-etc-not-marked-as-conffile etc/archey4/config.json
+#                 This causes the config file to be REMOVED even when NOT PURGING
 # * Arch Linux :
 #     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
 #
