@@ -18,9 +18,7 @@ class Processes(metaclass=Singleton):
             ).splitlines()
 
         except FileNotFoundError:
-            print('Please, install first `procps` on your distribution.',
-                  file=sys.stderr)
-            sys.exit(1)
+            sys.exit("FATAL: Required package procps not found.")
 
     def get(self):
         """Simple getter to retrieve the processes list"""

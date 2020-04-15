@@ -4,14 +4,14 @@ from subprocess import check_output
 
 import distro
 
-from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Distro(Module):
+class Distro(Entry):
     """Relies on the `distro` module and `uname` system program"""
     def __init__(self):
-        self.name = Configuration().get("entry_names")["Distro"]
+        super().__init__()
+
         self.value = '{0} [{1}]'.format(
             distro.name(pretty=True),
             check_output(

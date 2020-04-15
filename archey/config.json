@@ -1,45 +1,93 @@
 {
-	"allow_overriding": true,
 	"suppress_warnings": false,
 	"entries": {
-		"User": true,
-		"Hostname": true,
-		"Model": true,
-		"Distro": true,
-		"Kernel": true,
-		"Uptime": true,
-		"WindowManager": true,
-		"DesktopEnvironment": true,
-		"Shell": true,
-		"Terminal": true,
-		"Packages": true,
-		"Temperature": true,
-		"CPU": true,
-		"GPU": true,
-		"RAM": true,
-		"Disk": true,
-		"LAN_IP": true,
-		"WAN_IP": true
-	},
-	"entry_names": {
-		"User": "User",
-		"Hostname": "Hostname",
-		"Model": "Model",
-		"Distro": "Distro",
-		"Kernel": "Kernel",
-		"Uptime": "Uptime",
-		"WindowManager": "WindowManager",
-		"DesktopEnvironment": "DesktopEnvironment",
-		"Shell": "Shell",
-		"Terminal": "Terminal",
-		"Packages": "Packages",
-		"Temperature": "Temperature",
-		"CPU": "CPU",
-		"GPU": "GPU",
-		"RAM": "RAM",
-		"Disk": "Disk",
-		"LAN_IP": "LAN_IP",
-		"WAN_IP": "WAN_IP"
+		"User": {
+			"enabled": true,
+			"display_text": "User"
+		},
+		"Hostname": {
+			"enabled": true,
+			"display_text": "Hostname"
+		},
+		"Model": {
+			"enabled": true,
+			"display_text": "Model"
+		},
+		"Distro": {
+			"enabled": true,
+			"display_text": "Distro"
+		},
+		"Kernel": {
+			"enabled": true,
+			"display_text": "Kernel"
+		},
+		"Uptime": {
+			"enabled": true,
+			"display_text": "Uptime"
+		},
+		"WindowManager": {
+			"enabled": true,
+			"display_text": "Window Manager"
+		},
+		"DesktopEnvironment": {
+			"enabled": true,
+			"display_text": "Desktop Environment"
+		},
+		"Shell": {
+			"enabled": true,
+			"display_text": "Shell"
+		},
+		"Terminal": {
+			"enabled": true,
+			"display_text": "Terminal"
+		},
+		"Packages": {
+			"enabled": true,
+			"display_text": "Packages"
+		},
+		"Temperature": {
+			"enabled": true,
+			"display_text": "Temperature",
+			"char_before_unit": " ",
+			"use_fahrenheit": false
+		},
+		"CPU": {
+			"enabled": true,
+			"display_text": "CPU"
+		},
+		"GPU": {
+			"enabled": true,
+			"display_text": "GPU"
+		},
+		"RAM": {
+			"enabled": true,
+			"display_text": "RAM",
+			"usage_warnings": {
+				"warning": 33.3,
+				"danger": 66.7
+			}
+		},
+		"Disk": {
+			"enabled": true,
+			"display_text": "Disk",
+			"usage_warnings": {
+				"warning": 33.3,
+				"danger": 66.7
+			}
+		},
+		"LanIp": {
+			"enabled": true,
+			"display_text": "LAN IP",
+			"max_count": 2,
+			"ipv6_support": true
+		},
+		"WanIp": {
+			"enabled": true,
+			"display_text": "WAN IP",
+			"ipv6_support": true,
+			"ipv4_timeout_secs": 1,
+			"ipv6_timeout_secs": 1
+		}
 	},
 	"colors_palette": {
 		"use_unicode": false
@@ -48,28 +96,5 @@
 		"no_address": "No Address",
 		"not_detected": "Not detected",
 		"virtual_environment": "Virtual Environment"
-	},
-	"ip_settings": {
-		"lan_ip_max_count": 2,
-		"lan_ip_v6_support": true,
-		"wan_ip_v6_support": true
-	},
-	"limits": {
-		"ram": {
-			"warning": 33.3,
-			"danger": 66.7
-		},
-		"disk": {
-			"warning": 50,
-			"danger": 75
-		}
-	},
-	"temperature": {
-		"char_before_unit": " ",
-		"use_fahrenheit": false
-	},
-	"timeout": {
-		"ipv4_detection": 1,
-		"ipv6_detection": 1
 	}
 }

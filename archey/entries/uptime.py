@@ -1,13 +1,12 @@
 """Uptime detection class"""
 
-from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Uptime(Module):
+class Uptime(Entry):
     """Returns a pretty-formatted string representing the host uptime"""
     def __init__(self):
-        self.name = Configuration().get("entry_names")["Uptime"]
+        super().__init__()
 
         with open('/proc/uptime') as file:
             fuptime = int(file.read().split('.')[0])

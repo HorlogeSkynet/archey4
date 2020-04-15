@@ -4,7 +4,7 @@ import os
 
 from archey.configuration import Configuration
 from archey.processes import Processes
-from archey.module import Module
+from archey.entry import Entry
 
 
 DE_DICT = {
@@ -21,14 +21,13 @@ DE_DICT = {
 }
 
 
-class DesktopEnvironment(Module):
+class DesktopEnvironment(Entry):
     """
     Just iterate over running processes to find a known-entry.
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
     def __init__(self):
-        self.name = Configuration().get("entry_names")["DesktopEnvironment"]
-        
+        super().__init__()
         processes = Processes().get()
         for key, value in DE_DICT.items():
             if key in processes:
@@ -39,7 +38,7 @@ class DesktopEnvironment(Module):
             # Let's rely on an environment var if the loop above didn't `break`
             desktop_environment = os.getenv(
                 'XDG_CURRENT_DESKTOP',
-                Configuration().get('default_strings')['not_detected']
+                Configuration()['default_strings']['not_detected']
             )
 
         self.value = desktop_environment

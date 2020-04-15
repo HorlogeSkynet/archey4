@@ -3,14 +3,15 @@
 import os
 
 from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Shell(Module):
+class Shell(Entry):
     """Simple shell detection based on the `SHELL` environment variable"""
     def __init__(self):
-        self.name = Configuration().get("entry_names")["Shell"]
+        super().__init__()
+
         self.value = os.getenv(
             'SHELL',
-            Configuration().get('default_strings')['not_detected']
+            Configuration()['default_strings']['not_detected']
         )

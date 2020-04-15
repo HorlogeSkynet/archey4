@@ -3,19 +3,19 @@
 import netifaces
 
 from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class LanIp(Module):
+class LanIp(Entry):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
     def __init__(self):
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
+        super().__init__()
 
-        self.name = configuration.get("entry_names")["LAN_IP"]
+        # The configuration object is needed to retrieve some settings below.
+        self.configuration = Configuration()['entries']['LanIp']
 
         addr_types = [netifaces.AF_INET]
-        if configuration.get('ip_settings')['lan_ip_v6_support']:
+        if self.configuration['ipv6_support']:
             addr_types.append(netifaces.AF_INET6)
 
         ip_addrs = []
@@ -38,8 +38,8 @@ class LanIp(Module):
 
                     ip_addrs.append(if_addr['addr'].split('%')[0])
 
-        lan_ip_max_count = configuration.get('ip_settings')['lan_ip_max_count']
+        lan_ip_max_count = self.configuration['max_count']
         if lan_ip_max_count is not False:
             ip_addrs = ip_addrs[:lan_ip_max_count]
 
-        self.value = ', '.join(ip_addrs) or configuration.get('default_strings')['no_address']
+        self.value = ', '.join(ip_addrs) or Configuration()['default_strings']['no_address']

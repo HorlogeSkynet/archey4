@@ -2,14 +2,14 @@
 
 from subprocess import check_output
 
-from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Kernel(Module):
+class Kernel(Entry):
     """Another call to `uname` to retrieve kernel release information"""
     def __init__(self):
-        self.name = Configuration().get("entry_names")["Kernel"]
+        super().__init__()
+
         self.value = check_output(
             ['uname', '-r'],
             universal_newlines=True

@@ -8,13 +8,13 @@ from subprocess import check_output, CalledProcessError
 
 from archey.constants import COLOR_DICT
 from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Disk(Module):
+class Disk(Entry):
     """Uses `df` command output to compute the total disk usage across devices"""
     def __init__(self):
-        self.name = Configuration().get("entry_names")["Disk"]
+        super().__init__()
 
         # This dictionary will store values obtained from sub-processes calls.
         self._usage = {
@@ -23,7 +23,7 @@ class Disk(Module):
         }
 
         # Fetch the user-defined RAM limits from configuration.
-        disk_limits = Configuration().get('limits')['disk']
+        disk_limits = Configuration()['entries']['Disk']['usage_warnings']
 
         self._run_df_usage()
         self._run_btrfs_fi_show()

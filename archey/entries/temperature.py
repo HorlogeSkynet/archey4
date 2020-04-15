@@ -7,20 +7,20 @@ from glob import glob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Temperature(Module):
+class Temperature(Entry):
     """
     Tries to compute an average temperature from `sensors` (LM-Sensors).
     If not available, falls back on system thermal zones files.
     On Raspberry devices, retrieves temperature from the `vcgencmd` binary.
     """
     def __init__(self):
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
+        super().__init__()
 
-        self.name = configuration.get("entry_names")["Temperature"]
+        # The configuration object is needed to retrieve some settings below.
+        self.configuration = Configuration()['entries']['Temperature']
 
         self.temps = []
 
@@ -36,12 +36,12 @@ class Temperature(Module):
 
         # No value could be fetched...
         if not self.temps:
-            self.value = configuration.get('default_strings')['not_detected']
+            self.value = self.configuration['default_strings']['not_detected']
             return
 
         # Let's DRY some constants once.
-        use_fahrenheit = configuration.get('temperature')['use_fahrenheit']
-        char_before_unit = configuration.get('temperature')['char_before_unit']
+        use_fahrenheit = self.configuration['use_fahrenheit']
+        char_before_unit = self.configuration['char_before_unit']
 
         # Conversion to Fahrenheit if needed.
         if use_fahrenheit:

@@ -6,7 +6,7 @@ from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.configuration import Configuration
 from archey.processes import Processes
-from archey.module import Module
+from archey.entry import Entry
 
 
 WM_DICT = {
@@ -44,13 +44,13 @@ WM_DICT = {
 }
 
 
-class WindowManager(Module):
+class WindowManager(Entry):
     """
     Uses `wmctrl` to retrieve some information about the window manager.
     If not available, fall back on a simple iteration over the processes.
     """
     def __init__(self):
-        self.name = Configuration().get("entry_names")["WindowManager"]
+        super().__init__()
 
         try:
             window_manager = re.search(
@@ -69,6 +69,6 @@ class WindowManager(Module):
                     break
 
             else:
-                window_manager = Configuration().get('default_strings')['not_detected']
+                window_manager = Configuration()['default_strings']['not_detected']
 
         self.value = window_manager

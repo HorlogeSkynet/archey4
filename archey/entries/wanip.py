@@ -5,26 +5,26 @@ from urllib.error import URLError
 from urllib.request import urlopen
 
 from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class WanIp(Module):
+class WanIp(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
     def __init__(self):
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
+        super().__init__()
 
-        self.name = configuration.get("entry_names")["WAN_IP"]
+        # The configuration object is needed to retrieve some settings below.
+        self.configuration = Configuration()['entries']['WanIp']
 
         # IPv6 address retrieval (unless the user doesn't want it).
-        if configuration.get('ip_settings')['wan_ip_v6_support']:
+        if self.configuration['ipv6_support']:
             try:
                 ipv6_addr = check_output(
                     [
                         'dig', '+short', '-6', 'AAAA', 'myip.opendns.com',
                         '@resolver1.ipv6-sandbox.opendns.com'
                     ],
-                    timeout=configuration.get('timeout')['ipv6_detection'],
+                    timeout=self.configuration['ipv6_timeout_secs'],
                     stderr=DEVNULL, universal_newlines=True
                 ).rstrip()
 
@@ -32,7 +32,7 @@ class WanIp(Module):
                 try:
                     ipv6_addr = urlopen(
                         'https://v6.ident.me/',
-                        timeout=configuration.get('timeout')['ipv6_detection']
+                        timeout=self.configuration['ipv6_timeout_secs']
                     )
                     if ipv6_addr and ipv6_addr.getcode() == 200:
                         ipv6_addr = ipv6_addr.read().decode().strip()
@@ -52,7 +52,7 @@ class WanIp(Module):
                     'dig', '+short', '-4', 'A', 'myip.opendns.com',
                     '@resolver1.opendns.com'
                 ],
-                timeout=configuration.get('timeout')['ipv4_detection'],
+                timeout=self.configuration['ipv4_timeout_secs'],
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
 
@@ -60,7 +60,7 @@ class WanIp(Module):
             try:
                 ipv4_addr = urlopen(
                     'https://v4.ident.me/',
-                    timeout=configuration.get('timeout')['ipv4_detection']
+                    timeout=self.configuration['ipv4_timeout_secs']
                 )
                 if ipv4_addr and ipv4_addr.getcode() == 200:
                     ipv4_addr = ipv4_addr.read().decode().strip()
@@ -71,4 +71,4 @@ class WanIp(Module):
 
         self.value = ', '.join(
             filter(None, (ipv4_addr, ipv6_addr))
-        ) or configuration.get('default_strings')['no_address']
+        ) or Configuration()['default_strings']['no_address']

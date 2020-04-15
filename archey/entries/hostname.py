@@ -2,14 +2,14 @@
 
 from subprocess import check_output
 
-from archey.configuration import Configuration
-from archey.module import Module
+from archey.entry import Entry
 
 
-class Hostname(Module):
+class Hostname(Entry):
     """Simple call to `uname` to retrieve the host name"""
     def __init__(self):
-        self.name = Configuration().get("entry_names")["Hostname"]
+        super().__init__()
+
         self.value = check_output(
             ['uname', '-n'],
             universal_newlines=True
