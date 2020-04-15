@@ -34,9 +34,7 @@ class Configuration(metaclass=Singleton):
                 continue
 
         # Exit with an error if no configuration is found.
-        try:
-            self._config
-        except NameError:
+        if not hasattr(self, "_config"):
             sys.exit("FATAL: No configuration file found.")
 
         # Create an iterable `entries` consisting of the keys in the root

@@ -36,7 +36,7 @@ class Temperature(Entry):
 
         # No value could be fetched...
         if not self.temps:
-            self.value = self.configuration['default_strings']['not_detected']
+            self.value = Configuration()['default_strings']['not_detected']
             return
 
         # Let's DRY some constants once.
