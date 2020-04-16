@@ -86,7 +86,7 @@ fpm \
 	--python-install-bin usr/bin \
 	--python-install-lib usr/lib/python3/dist-packages \
 	--deb-priority 'optional' \
-	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what' \
+	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what, btrfs-tools' \
 	--deb-no-default-config-files \
 	setup.py
 
@@ -136,6 +136,7 @@ fpm \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
 	--pacman-optional-depends 'virt-what: Model would contain details about the hypervisor' \
+	--pacman-optional-depends 'btrfs-progs: Disk support for btrfs'
 	setup.py
 
 
