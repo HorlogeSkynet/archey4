@@ -3,7 +3,7 @@
 import json
 import re
 
-from glob import glob
+from glob import iglob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.configuration import Configuration
@@ -88,7 +88,7 @@ class Temperature:
 
     def _poll_thermal_zones(self):
         # We just check for values within files present in the path below.
-        for thermal_file in glob('/sys/class/thermal/thermal_zone*/temp'):
+        for thermal_file in iglob('/sys/class/thermal/thermal_zone*/temp'):
             with open(thermal_file) as file:
                 try:
                     temp = float(file.read().strip()) / 1000
