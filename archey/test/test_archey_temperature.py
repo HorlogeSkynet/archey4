@@ -129,7 +129,7 @@ class TestTemperatureEntry(unittest.TestCase):
         side_effect=[
             """\
 {
-   "who-care-about":{
+   "who-cares-about":{
       "temp1":{
          "temp1_input": 45.000,
          "temp1_crit": 128.000
@@ -173,6 +173,11 @@ class TestTemperatureEntry(unittest.TestCase):
          "temp3_max": 100.000,
          "temp3_crit": 100.000,
          "temp3_crit_alarm": 0.000
+      }
+   },
+   "crap-a-fan-chip":{
+      "fan1":{
+         "fan1_input": 3386.000
       }
    }
 }

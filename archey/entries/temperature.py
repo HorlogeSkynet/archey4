@@ -78,12 +78,16 @@ class Temperature:
             return
 
         # Iterates over the chip-sets outputs to filter interesting values.
-        for chipset_data in sensors_data.values():
-            for values in chipset_data.values():
-                for key_name, value in values.items():
-                    if key_name.endswith('_input') and value != 0.0:
+        for features in sensors_data.values():
+            for subfeatures in features.values():
+                for name, value in subfeatures.items():
+                    # These conditions check whether this sub-feature value is a correct
+                    #  temperature, as :
+                    # * It might be an input fan speed (from a control chip) ;
+                    # * Some chips/adapters might return null temperatures.
+                    if value != 0.0 and re.match(r"temp.*_input", name):
                         self.temps.append(value)
-                        # There is only one `*_input` field here, let's stop the current iteration.
+                        # There is only one `temp*_input` field, let's stop the current iteration.
                         break
 
     def _poll_thermal_zones(self):
