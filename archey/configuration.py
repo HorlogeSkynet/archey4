@@ -17,19 +17,33 @@ class Configuration(metaclass=Singleton):
         # "Save" `STDERR` file descriptor for `suppress_warnings` option.
         self._stderr = sys.stderr
 
-        # We will later attempt to find configuration files at these paths,
-        # in this order.
+        # Attempt to find configuration files at these paths, in this order.
         configuration_paths = [
             os.path.dirname(os.path.realpath(__file__)), # current $PATH
             '~/.config/archey4/',
             '/etc/archey4/'
         ]
 
-        # Load configuration from the first path that contains one.
+        self.populate_configuration(configuration_paths)
+
+        # Create an iterable `entries` consisting of the keys in the root
+        # configuration object.
+        self.entries = iter(self._config.get("entries"))
+
+    def populate_configuration(self, configuration_paths):
+        """
+        A method that populates the configuration of the instance, trying
+        `config.json` under each path passed to it, using the first existing
+        file.
+        """
         for path in configuration_paths:
+            file_path = os.path.join(path, 'config.json')
             try:
-                self._config = self.load_configuration(path)
+                with open(file_path) as config_file:
+                    self._config = self._load_configuration(config_file)
                 break
+            except ValueError:
+                print('\tin file: {0}'.format(file_path), file=sys.stderr)
             except FileNotFoundError:
                 continue
 
@@ -37,21 +51,13 @@ class Configuration(metaclass=Singleton):
         if not hasattr(self, "_config"):
             sys.exit("FATAL: No configuration file found.")
 
-        # Create an iterable `entries` consisting of the keys in the root
-        # configuration object.
-        self.entries = iter(self._config.get("entries"))
-
-    def load_configuration(self, path):
+    def _load_configuration(self, config_file):
         """
         A method handling configuration loading from a JSON file.
-        It will try to load any `config.json` present under `path`.
+        It will try to load the file passed to it.
         """
-
-        path = os.path.join(path, 'config.json')
-
         try:
-            with open(path) as file:
-                config = json.load(file)
+            config = json.load(config_file)
 
             # If the user does not want any warning to appear : 2> /dev/null
             if config.get('suppress_warnings', False):
@@ -68,7 +74,8 @@ class Configuration(metaclass=Singleton):
         # For backward compatibility with Python versions prior to 3.5.0
         #   we use `ValueError` instead of `json.JSONDecodeError`.
         except ValueError as error:
-            print('Warning: {0} ({1})'.format(error, path), file=sys.stderr)
+            print('Warning: {0}'.format(error), file=sys.stderr)
+            raise ValueError
 
         return config
 

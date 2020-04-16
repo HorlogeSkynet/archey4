@@ -24,7 +24,7 @@ class WanIp(Entry):
                         'dig', '+short', '-6', 'AAAA', 'myip.opendns.com',
                         '@resolver1.ipv6-sandbox.opendns.com'
                     ],
-                    timeout=self.configuration['ipv6_timeout_secs'],
+                    timeout=(self.configuration['ipv6_timeout_secs'] / 2),
                     stderr=DEVNULL, universal_newlines=True
                 ).rstrip()
 
@@ -32,7 +32,7 @@ class WanIp(Entry):
                 try:
                     ipv6_addr = urlopen(
                         'https://v6.ident.me/',
-                        timeout=self.configuration['ipv6_timeout_secs']
+                        timeout=(self.configuration['ipv6_timeout_secs'] / 2)
                     )
                     if ipv6_addr and ipv6_addr.getcode() == 200:
                         ipv6_addr = ipv6_addr.read().decode().strip()
@@ -52,7 +52,7 @@ class WanIp(Entry):
                     'dig', '+short', '-4', 'A', 'myip.opendns.com',
                     '@resolver1.opendns.com'
                 ],
-                timeout=self.configuration['ipv4_timeout_secs'],
+                timeout=(self.configuration['ipv4_timeout_secs'] / 2),
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
 
@@ -60,7 +60,7 @@ class WanIp(Entry):
             try:
                 ipv4_addr = urlopen(
                     'https://v4.ident.me/',
-                    timeout=self.configuration['ipv4_timeout_secs']
+                    timeout=(self.configuration['ipv4_timeout_secs'] / 2)
                 )
                 if ipv4_addr and ipv4_addr.getcode() == 200:
                     ipv4_addr = ipv4_addr.read().decode().strip()

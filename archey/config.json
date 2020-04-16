@@ -2,65 +2,51 @@
 	"suppress_warnings": false,
 	"entries": {
 		"User": {
-			"enabled": true,
 			"display_text": "User"
 		},
 		"Hostname": {
-			"enabled": true,
 			"display_text": "Hostname"
 		},
 		"Model": {
-			"enabled": true,
-			"display_text": "Model"
+			"display_text": "Model",
+			"virtual_environment_string": "Virtual Environment"
 		},
 		"Distro": {
-			"enabled": true,
 			"display_text": "Distro"
 		},
 		"Kernel": {
-			"enabled": true,
 			"display_text": "Kernel"
 		},
 		"Uptime": {
-			"enabled": true,
 			"display_text": "Uptime"
 		},
 		"WindowManager": {
-			"enabled": true,
 			"display_text": "Window Manager"
 		},
 		"DesktopEnvironment": {
-			"enabled": true,
 			"display_text": "Desktop Environment"
 		},
 		"Shell": {
-			"enabled": true,
 			"display_text": "Shell"
 		},
 		"Terminal": {
-			"enabled": true,
 			"display_text": "Terminal"
 		},
 		"Packages": {
-			"enabled": true,
 			"display_text": "Packages"
 		},
 		"Temperature": {
-			"enabled": true,
 			"display_text": "Temperature",
 			"char_before_unit": " ",
 			"use_fahrenheit": false
 		},
 		"CPU": {
-			"enabled": true,
 			"display_text": "CPU"
 		},
 		"GPU": {
-			"enabled": true,
 			"display_text": "GPU"
 		},
 		"RAM": {
-			"enabled": true,
 			"display_text": "RAM",
 			"usage_warnings": {
 				"warning": 33.3,
@@ -68,25 +54,22 @@
 			}
 		},
 		"Disk": {
-			"enabled": true,
 			"display_text": "Disk",
 			"usage_warnings": {
-				"warning": 33.3,
-				"danger": 66.7
+				"warning": 50,
+				"danger": 75
 			}
 		},
 		"LanIp": {
-			"enabled": true,
 			"display_text": "LAN IP",
 			"max_count": 2,
 			"ipv6_support": true
 		},
 		"WanIp": {
-			"enabled": true,
 			"display_text": "WAN IP",
 			"ipv6_support": true,
-			"ipv4_timeout_secs": 1,
-			"ipv6_timeout_secs": 1
+			"ipv4_timeout_secs": 1.0,
+			"ipv6_timeout_secs": 1.0
 		}
 	},
 	"colors_palette": {
