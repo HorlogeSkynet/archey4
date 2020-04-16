@@ -105,8 +105,7 @@ $ sudo pip3 uninstall archey4
 $ sudo python3 setup.py install
 # _______________________________________
 
-### Step 3: Configuration files
-### A configuration file is *required* to run Archey v4.7.1+.
+### Step 3 (optional): Configuration files
 
 # System-wide configuration:
 $ sudo mkdir /etc/archey4
@@ -152,7 +151,6 @@ $ python3 -m archey
 ## Configuration
 
 Since v4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.
-Since v4.7.1, Archey 4 **must** have a configuration file present in one of the possible locations listed below.
 
 Place a [config.json](archey/config.json) file in one of these locations:
 

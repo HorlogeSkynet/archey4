@@ -4,14 +4,16 @@ import os
 import sys
 import json
 
+from importlib import import_module
+
 from archey.singleton import Singleton
 
 
 class Configuration(metaclass=Singleton):
     """
-    The default needed configuration which will be used by Archey is present below.
-    Values present in the `self.config` dictionary below are needed.
-    New optional values may be added with `_update_recursive()` method.
+    Manages loading the configuration for Archey.
+    The root configuration object is stored as a dict, which is accessible in
+    the same fashion as stdlib dicts.
     """
     def __init__(self):
         # "Save" `STDERR` file descriptor for `suppress_warnings` option.
@@ -47,9 +49,9 @@ class Configuration(metaclass=Singleton):
             except FileNotFoundError:
                 continue
 
-        # Exit with an error if no configuration is found.
+        # Load the default configuration if no files were found.
         if not hasattr(self, "_config"):
-            sys.exit("FATAL: No configuration file found.")
+            self._config = import_module('archey.default_configuration').CONFIGURATION
 
     def _load_configuration(self, config_file):
         """

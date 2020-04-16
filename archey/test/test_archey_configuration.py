@@ -4,8 +4,15 @@ import sys
 import tempfile
 import unittest
 
+import archey.default_configuration as DefaultConfig
+
 from archey.configuration import Configuration
 
+
+def tearDownModule(): # pylint: disable=invalid-name
+    """Runs when testing in this module ends."""
+    # Load the default configuration to revert changes we made in this test module.
+    Configuration()._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
 
 class TestConfigurationUtil(unittest.TestCase):
     """
