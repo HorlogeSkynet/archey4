@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.entries.terminal import Terminal
+from archey.configuration import Configuration
 
 
 class TestTerminalEntry(unittest.TestCase):
@@ -15,14 +16,18 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.entries.terminal.os.getenv',
         return_value='TERMINAL'
     )
-    @patch(
-        'archey.entries.terminal.Configuration.get',
-        side_effect=[
-            {'not_detected': None},  # Needed key.
-            {'use_unicode': False}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'colors_palette': {
+                'use_unicode': False
+            },
+            'default_strings': {
+                'not_detected': None # Required KV pair
+            }
+        }
     )
-    def test_without_unicode(self, _, __):
+    def test_without_unicode(self, _):
         """Test simple output, without Unicode support (default)"""
         output = Terminal().value
         self.assertTrue(output.startswith('TERMINAL '))
@@ -32,14 +37,18 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.entries.terminal.os.getenv',
         return_value='TERMINAL'
     )
-    @patch(
-        'archey.entries.terminal.Configuration.get',
-        side_effect=[
-            {'not_detected': None},  # Needed key.
-            {'use_unicode': True}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'colors_palette': {
+                'use_unicode': True
+            },
+            'default_strings': {
+                'not_detected': None # Required KV pair
+            }
+        }
     )
-    def test_with_unicode(self, _, __):
+    def test_with_unicode(self, _):
         """Test simple output, with Unicode support !"""
         output = Terminal().value
         self.assertTrue(output.startswith('TERMINAL '))
@@ -49,14 +58,18 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.entries.terminal.os.getenv',
         return_value='Not detected'  # Set the "Not detected" string here, as we mock `os.getenv`.
     )
-    @patch(
-        'archey.entries.terminal.Configuration.get',
-        side_effect=[
-            {'not_detected': None},  # Needed key.
-            {'use_unicode': False}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'colors_palette': {
+                'use_unicode': False
+            },
+            'default_strings': {
+                'not_detected': None # Required KV pair
+            }
+        }
     )
-    def test_not_detected(self, _, __):
+    def test_not_detected(self, _):
         """Test simple output, with Unicode support !"""
         output = Terminal().value
         self.assertTrue(output.startswith('Not detected '))

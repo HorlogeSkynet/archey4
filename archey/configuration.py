@@ -28,10 +28,6 @@ class Configuration(metaclass=Singleton):
 
         self.populate_configuration(configuration_paths)
 
-        # Create an iterable `entries` consisting of the keys in the root
-        # configuration object.
-        self.entries = iter(self._config.get("entries"))
-
     def populate_configuration(self, configuration_paths):
         """
         A method that populates the configuration of the instance, trying
@@ -82,6 +78,7 @@ class Configuration(metaclass=Singleton):
         return config
 
     def __getitem__(self, key):
+        """Implement dict-like behaviour"""
         return self._config.get(key)
 
     def __del__(self):

@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 
 from archey.entries.temperature import Temperature
+from archey.configuration import Configuration
 
 
 class TestTemperatureEntry(unittest.TestCase):
@@ -48,14 +49,19 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.glob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': False},
-            {'char_before_unit': ' '}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Temperature': {
+                    'display_text': 'Temperature', # Required KV pair
+                    'char_before_unit': ' ',
+                    'use_fahrenheit': False
+                }
+            }
+        }
     )
-    def test_vcgencmd_only_no_max(self, _, __, ___):
+    def test_vcgencmd_only_no_max(self, _, __):
         """
         Test for `vcgencmd` output only (no sensor files).
         Only one value is retrieved, so no maximum is displayed (see #39).
@@ -70,14 +76,19 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.glob')
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': False},
-            {'char_before_unit': ' '}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Temperature': {
+                    'display_text': 'Temperature', # Required KV pair
+                    'char_before_unit': ' ',
+                    'use_fahrenheit': False
+                }
+            }
+        }
     )
-    def test_vcgencmd_and_files(self, _, glob_mock, __):
+    def test_vcgencmd_and_files(self, _, glob_mock):
         """Tests `vcgencmd` output AND sensor files"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertEqual(Temperature().value, '45.0 C (Max. 50.0 C)')
@@ -90,14 +101,19 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.glob')
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': True},
-            {'char_before_unit': '@'}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Temperature': {
+                    'display_text': 'Temperature', # Required KV pair
+                    'char_before_unit': '@',
+                    'use_fahrenheit': True
+                }
+            }
+        }
     )
-    def test_files_only_in_fahrenheit(self, _, glob_mock, __):
+    def test_files_only_in_fahrenheit(self, _, glob_mock):
         """Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertEqual(
@@ -116,11 +132,15 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.glob',
         return_value=[]  # No temperature from file will be retrieved.
     )
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'default_strings': {
+                'not_detected': 'Not detected'
+            }
+        }
     )
-    def test_no_output(self, _, __, ___):
+    def test_no_output(self, _, __):
         """Test when no value could be retrieved (anyhow)"""
         self.assertEqual(Temperature().value, 'Not detected')
 
@@ -180,14 +200,19 @@ class TestTemperatureEntry(unittest.TestCase):
             FileNotFoundError()  # No temperature from `vcgencmd` call.
         ]
     )
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': True},
-            {'char_before_unit': ' '}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Temperature': {
+                    'display_text': 'Temperature', # Required KV pair
+                    'char_before_unit': ' ',
+                    'use_fahrenheit': True
+                }
+            }
+        }
     )
-    def test_sensors_only_in_fahrenheit(self, _, __):
+    def test_sensors_only_in_fahrenheit(self, _):
         """Test computations around `sensors` output and Fahrenheit (naive) conversion"""
         self.assertEqual(
             Temperature().value,
@@ -202,14 +227,19 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.glob')
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': False},
-            {'char_before_unit': 'o'}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Temperature': {
+                    'display_text': 'Temperature', # Required KV pair
+                    'char_before_unit': 'o',
+                    'use_fahrenheit': False
+                }
+            }
+        }
     )
-    def test_sensors_error_1(self, _, glob_mock, ___):
+    def test_sensors_error_1(self, _, glob_mock):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertEqual(
@@ -231,14 +261,19 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.glob')
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'use_fahrenheit': False},
-            {'char_before_unit': 'o'}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Temperature': {
+                    'display_text': 'Temperature', # Required KV pair
+                    'char_before_unit': 'o',
+                    'use_fahrenheit': False
+                }
+            }
+        }
     )
-    def test_sensors_error_2(self, _, glob_mock, ___):
+    def test_sensors_error_2(self, _, glob_mock):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         glob_mock.return_value = [file.name for file in self.tempfiles]
         self.assertEqual(
@@ -257,13 +292,7 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.glob',
         return_value=[]  # No temperature from file will be retrieved.
     )
-    @patch(
-        'archey.entries.temperature.Configuration.get',
-        side_effect=[
-            {'not_detected': "Not detected"}  # Needed key.
-        ]
-    )
-    def test_celsius_to_fahrenheit_conversion(self, _, __, ___):
+    def test_celsius_to_fahrenheit_conversion(self, _, __):
         """Simple tests for the `_convert_to_fahrenheit` static method"""
         temperature = Temperature()
         # pylint: disable=protected-access

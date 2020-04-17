@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.entries.desktop_environment import DesktopEnvironment
+from archey.entries.desktopenvironment import DesktopEnvironment
 
 
 class TestDesktopEnvironmentEntry(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
     With the help of a fake running processes list, we test the DE matching.
     """
     @patch(
-        'archey.entries.desktop_environment.Processes.get',
+        'archey.entries.desktopenvironment.Processes.get',
         return_value=[  # Fake running processes list
             'do',
             'you',
@@ -25,7 +25,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         self.assertEqual(DesktopEnvironment().value, 'Cinnamon')
 
     @patch(
-        'archey.entries.desktop_environment.Processes.get',
+        'archey.entries.desktopenvironment.Processes.get',
         return_value=[  # Fake running processes list
             'do',
             'you',
@@ -35,7 +35,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.desktop_environment.os.getenv',
+        'archey.entries.desktopenvironment.os.getenv',
         return_value='DESKTOP ENVIRONMENT'
     )
     def test_mismatch(self, _, __):

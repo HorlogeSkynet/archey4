@@ -5,17 +5,18 @@ from unittest.mock import patch
 
 import netifaces
 
-from archey.entries.lan_ip import LanIp
+from archey.entries.lanip import LanIp
+from archey.configuration import Configuration
 
 
 class TestLanIpEntry(unittest.TestCase):
     """Here, we mock the `netifaces` usages (interfaces and addresses detection calls)"""
     @patch(
-        'archey.entries.lan_ip.netifaces.interfaces',
+        'archey.entries.lanip.netifaces.interfaces',
         return_value=['lo', 'en0', 'wlo1']
     )
     @patch(
-        'archey.entries.lan_ip.netifaces.ifaddresses',
+        'archey.entries.lanip.netifaces.ifaddresses',
         side_effect=[
             {
                 netifaces.AF_INET: [{
@@ -45,14 +46,19 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    @patch(
-        'archey.entries.lan_ip.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': False}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'LanIp': {
+                    'display_text': 'LAN IP', # Required KV pair
+                    'max_count': False,
+                    'ipv6_support': None
+                }
+            }
+        }
     )
-    def test_multiple_interfaces(self, _, __, ___):
+    def test_multiple_interfaces(self, _, __):
         """Test for multiple interfaces, multiple addresses (including a loopback one)"""
         self.assertEqual(
             LanIp().value,
@@ -60,11 +66,11 @@ class TestLanIpEntry(unittest.TestCase):
         )
 
     @patch(
-        'archey.entries.lan_ip.netifaces.interfaces',
+        'archey.entries.lanip.netifaces.interfaces',
         return_value=['lo', 'en0']
     )
     @patch(
-        'archey.entries.lan_ip.netifaces.ifaddresses',
+        'archey.entries.lanip.netifaces.ifaddresses',
         side_effect=[
             {
                 netifaces.AF_LINK: [{
@@ -108,14 +114,19 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    @patch(
-        'archey.entries.lan_ip.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': True},
-            {'lan_ip_max_count': 2}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'LanIp': {
+                    'display_text': 'LAN IP', # Required KV pair
+                    'max_count': 2,
+                    'ipv6_support': True
+                }
+            }
+        }
     )
-    def test_ipv6_and_limit_and_ether(self, _, __, ___):
+    def test_ipv6_and_limit_and_ether(self, _, __):
         """Test for IPv6 support, final set length limit and Ethernet interface filtering"""
         self.assertEqual(
             LanIp().value,
@@ -123,11 +134,11 @@ class TestLanIpEntry(unittest.TestCase):
         )
 
     @patch(
-        'archey.entries.lan_ip.netifaces.interfaces',
+        'archey.entries.lanip.netifaces.interfaces',
         return_value=['lo', 'en0']
     )
     @patch(
-        'archey.entries.lan_ip.netifaces.ifaddresses',
+        'archey.entries.lanip.netifaces.ifaddresses',
         side_effect=[
             {
                 netifaces.AF_INET: [{
@@ -163,14 +174,19 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    @patch(
-        'archey.entries.lan_ip.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': False},
-            {'lan_ip_max_count': None}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'LanIp': {
+                    'display_text': 'LAN IP', # Required KV pair
+                    'max_count': False,
+                    'ipv6_support': None
+                }
+            }
+        }
     )
-    def test_no_ipv6(self, _, __, ___):
+    def test_no_ipv6(self, _, __):
         """Test for IPv6 hiding"""
         self.assertEqual(
             LanIp().value,
@@ -178,27 +194,34 @@ class TestLanIpEntry(unittest.TestCase):
         )
 
     @patch(
-        'archey.entries.lan_ip.netifaces.interfaces',
+        'archey.entries.lanip.netifaces.interfaces',
         return_value=[]  # No interface returned by `netifaces`.
     )
-    @patch(
-        'archey.entries.lan_ip.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None},  # Needed key.
-            {'no_address': 'No Address'}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'LanIp': {
+                    'display_text': 'LAN IP', # Required KV pair
+                    'max_count': False,       # Required KV pair
+                    'ipv6_support': None      # Required KV pair
+                }
+            },
+            'default_strings': {
+                'no_address': 'No Address'
+            }
+        }
     )
-    def test_no_network_interface(self, _, __):
+    def test_no_network_interface(self, _):
         """Test when the device does not have any network interface"""
         self.assertEqual(LanIp().value, 'No Address')
 
     @patch(
-        'archey.entries.lan_ip.netifaces.interfaces',
+        'archey.entries.lanip.netifaces.interfaces',
         return_value=['lo', 'en0']
     )
     @patch(
-        'archey.entries.lan_ip.netifaces.ifaddresses',
+        'archey.entries.lanip.netifaces.ifaddresses',
         side_effect=[
             {
                 netifaces.AF_LINK: [{
@@ -220,15 +243,22 @@ class TestLanIpEntry(unittest.TestCase):
             }
         ]
     )
-    @patch(
-        'archey.entries.lan_ip.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None},  # Needed key.
-            {'no_address': 'No Address'}
-        ]
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'LanIp': {
+                    'display_text': 'LAN IP',
+                    'max_count': None,
+                    'ipv6_support': None
+                }
+            },
+            'default_strings': {
+                'no_address': 'No Address'
+            }
+        }
     )
-    def test_no_network_address(self, _, __, ___):
+    def test_no_network_address(self, _, __):
         """Test when the network interface(s) do not have any IP address"""
         self.assertEqual(LanIp().value, 'No Address')
 

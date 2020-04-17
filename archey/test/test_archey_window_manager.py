@@ -3,7 +3,8 @@
 import unittest
 from unittest.mock import patch
 
-from archey.entries.window_manager import WindowManager
+from archey.entries.windowmanager import WindowManager
+from archey.configuration import Configuration
 
 
 class TestWindowManagerEntry(unittest.TestCase):
@@ -13,7 +14,7 @@ class TestWindowManagerEntry(unittest.TestCase):
     We've to test the case where `wmctrl` is not installed too.
     """
     @patch(
-        'archey.entries.window_manager.check_output',
+        'archey.entries.windowmanager.check_output',
         return_value="""\
 Name: WINDOW MANAGER
 Class: N/A
@@ -25,11 +26,11 @@ Window manager's "showing the desktop" mode: OFF
         self.assertEqual(WindowManager().value, 'WINDOW MANAGER')
 
     @patch(
-        'archey.entries.window_manager.check_output',
+        'archey.entries.windowmanager.check_output',
         side_effect=FileNotFoundError()  # `wmctrl` call will fail
     )
     @patch(
-        'archey.entries.window_manager.Processes.get',
+        'archey.entries.windowmanager.Processes.get',
         return_value=[  # Fake running processes list
             'some',
             'awesome',  # Match !
@@ -43,11 +44,11 @@ Window manager's "showing the desktop" mode: OFF
         self.assertEqual(WindowManager().value, 'Awesome')
 
     @patch(
-        'archey.entries.window_manager.check_output',
+        'archey.entries.windowmanager.check_output',
         side_effect=FileNotFoundError()  # `wmctrl` call will fail
     )
     @patch(
-        'archey.entries.window_manager.Processes.get',
+        'archey.entries.windowmanager.Processes.get',
         return_value=[  # Fake running processes list
             'some',
             'weird',  # Mismatch !
@@ -56,13 +57,15 @@ Window manager's "showing the desktop" mode: OFF
             'here'
         ]
     )
-    @patch(
-        'archey.entries.window_manager.Configuration.get',
-        return_value={
-            'not_detected': 'Not detected'
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'default_strings': {
+                'not_detected': 'Not detected'
+            }
         }
     )
-    def test_no_wmctrl_mismatch(self, _, __, ___):
+    def test_no_wmctrl_mismatch(self, _, __):
         """Test (non-detection) when processes list do not contain any known value"""
         self.assertEqual(
             WindowManager().value,

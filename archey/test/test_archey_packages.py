@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.entries.packages import Packages
+from archey.configuration import Configuration
 
 
 class TestPackagesEntry(unittest.TestCase):
@@ -178,11 +179,15 @@ i  | at            | A Job Manager                       | package    \n\
             FileNotFoundError()
         ]
     )
-    @patch(
-        'archey.entries.packages.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'default_strings': {
+                'not_detected': 'Not detected'
+            }
+        }
     )
-    def test_no_packages_manager(self, _, __):
+    def test_no_packages_manager(self, _):
         """No packages manager is available at the moment..."""
         self.assertEqual(Packages().value, 'Not detected')
 

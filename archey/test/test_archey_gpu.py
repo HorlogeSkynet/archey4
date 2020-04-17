@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.entries.gpu import GPU
+from archey.configuration import Configuration
 
 
 class TestGPUEntry(unittest.TestCase):
@@ -74,11 +75,15 @@ XX:YY.H IDE interface: IIIIIIIIIIIIIIII
 XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 """)
-    @patch(
-        'archey.entries.gpu.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'default_strings': {
+                'not_detected': 'Not detected'
+            }
+        }
     )
-    def test_no_match(self, _, __):
+    def test_no_match(self, _):
         """Test (non-)detection when there is not any graphical candidate"""
         self.assertEqual(GPU().value, 'Not detected')
 

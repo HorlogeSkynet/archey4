@@ -26,7 +26,7 @@ def main():
 
     # Iterate over the keys of the entries configuration object
     # i.e. the names of the entries to load.
-    for entry_key in configuration.entries:
+    for entry_key in configuration['entries']:
         # Get an object for the entry and attach it to the output object.
         entry_module = import_module('archey.entries.' + entry_key.lower())
         entry_class = getattr(entry_module, entry_key)

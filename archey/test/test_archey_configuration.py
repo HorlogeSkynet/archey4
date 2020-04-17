@@ -3,28 +3,26 @@
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import archey.default_configuration as DefaultConfig
-
 from archey.configuration import Configuration
 
-
-def tearDownModule(): # pylint: disable=invalid-name
-    """Runs when testing in this module ends."""
-    # Load the default configuration to revert changes we made in this test module.
-    Configuration()._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
 
 class TestConfigurationUtil(unittest.TestCase):
     """
     Simple test cases to check the behavior of `Configuration` tools.
-    We can't use the `patch` method as the dictionary state after
-      the initializations is unknown due to user's configuration files.
-    Values will be manually set in the tests below.
     """
-    def test_get(self):
-        """Test the __get__ method with configuration elements"""
-        configuration = Configuration()
-        configuration._config = {  # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test ends."""
+        # Load the default configuration to revert any changes we make in each test,
+        # since not all tests use patch methods.
+        Configuration()._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
             'entries': {
                 'LanIp': {
                     'max_count': 2
@@ -34,6 +32,10 @@ class TestConfigurationUtil(unittest.TestCase):
                 }
             }
         }
+    )
+    def test_get(self):
+        """Test the dict-like __get__ method with configuration elements"""
+        configuration = Configuration()
 
         self.assertEqual(
             configuration['entries']['LanIp']['max_count'],
@@ -45,25 +47,11 @@ class TestConfigurationUtil(unittest.TestCase):
         self.assertIsNone(configuration['does_not_exist'])
 
     def test_load_configuration(self):
-        """Test for configuration loading from file"""
+        """
+        Test for configuration loading from file. We can't use a patch
+        method for this one!
+        """
         configuration = Configuration()
-        configuration._config = {  # pylint: disable=protected-access
-            'suppress_warnings': False,
-            'entries': {
-                'Temperature': {
-                    'enabled': True,
-                    'display_text': 'Temperature',
-                    'char_before_unit': ' ',
-                    'use_fahrenheit': False
-                },
-                'LanIp': {
-                    'enabled': True,
-                    'display_text': 'LAN IP',
-                    'max_count': 2,
-                    'ipv6_support': True
-                }
-            }
-        }
 
         with tempfile.TemporaryDirectory(suffix='/') as temp_dir:
             # We create a fake temporary configuration file

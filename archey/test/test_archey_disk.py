@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.entries.disk import Disk
-
+from archey.configuration import Configuration
 
 class TestDiskEntry(unittest.TestCase):
     """
@@ -25,16 +25,21 @@ total                  305809MB 47006MB  243149MB      17% -
             FileNotFoundError()  # `btrfs` call will fail.
         ]
     )
-    @patch(
-        'archey.entries.disk.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 75
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Disk': {
+                    'display_text': 'Disk', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 50,
+                        'danger': 75
+                    }
+                }
             }
         }
     )
-    def test_df_only(self, _, __):
+    def test_df_only(self, _):
         """Test computations around `df` output at disk regular level"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '45.9', '298.6']))
@@ -52,16 +57,21 @@ total                  305809MB 257598MB   46130MB      84% -
             FileNotFoundError()  # `btrfs` call will fail.
         ]
     )
-    @patch(
-        'archey.entries.disk.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 80,
-                'danger': 90
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Disk': {
+                    'display_text': 'Disk', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 80,
+                        'danger': 90
+                    }
+                }
             }
         }
     )
-    def test_df_only_warning(self, _, __):
+    def test_df_only_warning(self, _):
         """Test computations around `df` output at disk warning level"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;33m', '251.6', '298.6']))
@@ -96,16 +106,21 @@ Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
 """
         ]
     )
-    @patch(
-        'archey.entries.disk.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 75
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'Disk': {
+                    'display_text': 'Disk', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 50,
+                        'danger': 75
+                    }
+                }
             }
         }
     )
-    def test_df_and_btrfs(self, _, __):
+    def test_df_and_btrfs(self, _):
         """Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '67.4', '376.5']))
@@ -117,16 +132,21 @@ Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
             '\n'
         ]
     )
-    @patch(
-        'archey.entries.disk.Configuration.get',
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
         return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 75
+            'entries': {
+                'Disk': {
+                    'display_text': 'Disk', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 50,
+                        'danger': 75
+                    }
+                }
             }
         }
     )
-    def test_failing_df_and_empty_btrfs(self, _, __):
+    def test_failing_df_and_empty_btrfs(self, _):
         """Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0.0']))

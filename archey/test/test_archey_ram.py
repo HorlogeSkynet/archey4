@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import mock_open, patch
 
 from archey.entries.ram import RAM
+from archey.configuration import Configuration
 
 
 class TestRAMEntry(unittest.TestCase):
@@ -18,16 +19,21 @@ class TestRAMEntry(unittest.TestCase):
 Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
-    @patch(
-        'archey.entries.ram.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 25,
-                'danger': 45
-            },
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'RAM': {
+                    'display_text': 'RAM', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 25,
+                        'danger': 45
+                    }
+                }
+            }
         }
     )
-    def test_free_dash_m(self, _, __):
+    def test_free_dash_m(self, _):
         """Test `free -m` output parsing for low RAM use case and tweaked limits"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '3341', '7412']))
@@ -39,16 +45,21 @@ Swap:      7607        5    7602
 Mem:          15658        2043       10232          12        3382       13268
 Swap:          4095          39        4056
 """)
-    @patch(
-        'archey.entries.ram.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 33.3,
-                'danger': 66.7
-            },
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'RAM': {
+                    'display_text': 'RAM', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 33.3,
+                        'danger': 66.7
+                    }
+                }
+            }
         }
     )
-    def test_free_dash_m_warning(self, _, __):
+    def test_free_dash_m_warning(self, _):
         """Test `free -m` output parsing for warning RAM use case"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;32m', '2043', '15658']))
@@ -60,16 +71,21 @@ Swap:          4095          39        4056
 Mem:          15658       12341         624         203        2692        2807
 Swap:          4095         160        3935
 """)
-    @patch(
-        'archey.entries.ram.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 33.3,
-                'danger': 66.7
-            },
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'RAM': {
+                    'display_text': 'RAM', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 33.3,
+                        'danger': 66.7
+                    }
+                }
+            }
         }
     )
-    def test_free_dash_m_danger(self, _, __):
+    def test_free_dash_m_danger(self, _):
         """Test `free -m` output parsing for danger RAM use case"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '12341', '15658']))
@@ -78,13 +94,18 @@ Swap:          4095         160        3935
         'archey.entries.ram.check_output',
         side_effect=IndexError()  # `free` call will fail
     )
-    @patch(
-        'archey.entries.ram.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 33.3,
-                'danger': 66.7
-            },
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
+        {
+            'entries': {
+                'RAM': {
+                    'display_text': 'RAM', # Required KV pair
+                    'usage_warnings': {
+                        'warning': 33.3,
+                        'danger': 66.7
+                    }
+                }
+            }
         }
     )
     @patch(
@@ -118,7 +139,7 @@ SUnreclaim:       113308 kB
 """),  # Some lines have been ignored as they are useless for computations.
         create=True
     )
-    def test_proc_meminfo(self, _, __):
+    def test_proc_meminfo(self, _):
         """Test `/proc/meminfo` parsing (when `free` is not available)"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3739', '7403']))
