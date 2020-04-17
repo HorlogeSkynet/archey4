@@ -22,6 +22,7 @@
 # Known packages errors (FPM bugs ?) :
 # * Debian :
 #     * Lintian : file-in-etc-not-marked-as-conffile etc/archey4/config.json
+#                 This causes the config file to be REMOVED even when NOT PURGING
 # * Arch Linux :
 #     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
 #
@@ -113,8 +114,8 @@ fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type pacman \
 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
-	--depends 'procps' \
-	--depends 'python >= 3.4' \
+	--depends 'procps-ng' \
+	--depends 'python>=3.4' \
 	--depends 'python-distro' \
 	--depends 'python-netifaces' \
 	--conflicts 'archey-git' \

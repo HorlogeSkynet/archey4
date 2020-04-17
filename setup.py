@@ -5,15 +5,7 @@ This is the Archey 4's `setup.py` file, allowing us to distribute it as a packag
 ... with cool meta-data.
 """
 
-import os
-import sys
-
 from setuptools import find_packages, setup
-
-
-# Packaging workaround, waiting for [jordansissel/fpm#1690].
-if os.getenv('PYTHONDONTWRITEBYTECODE'):
-    sys.dont_write_bytecode = True
 
 
 setup(
