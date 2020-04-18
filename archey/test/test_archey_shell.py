@@ -15,7 +15,7 @@ class TestShellEntry(unittest.TestCase):
         return_value='SHELL'
     )
     def test(self, _):
-        """Simple mock, simple test"""
+        """[Entry] [Shell] Simple mock, simple test"""
         self.assertEqual(Shell().value, 'SHELL')
 
 

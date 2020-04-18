@@ -8,12 +8,29 @@ from urllib.error import URLError
 
 from archey.entries.wanip import WanIp
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestWanIpEntry(unittest.TestCase):
     """
     Here, we mock calls to `dig` or `urlopen`.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.wanip.check_output',
         side_effect=[
@@ -35,7 +52,7 @@ class TestWanIpEntry(unittest.TestCase):
         }
     )
     def test_ipv6_and_ipv4(self, _):
-        """Test the regular case : Both IPv4 and IPv6 are retrieved"""
+        """[Entry] [WanIp] Test the regular case : Both IPv4 and IPv6 are retrieved"""
         self.assertEqual(
             WanIp().value,
             'XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef'
@@ -58,7 +75,7 @@ class TestWanIpEntry(unittest.TestCase):
         }
     )
     def test_ipv4_only(self, _):
-        """Test only public IPv4 detection"""
+        """[Entry] [WanIp] Test only public IPv4 detection"""
         self.assertEqual(
             WanIp().value,
             'XXX.YY.ZZ.TTT'
@@ -92,7 +109,7 @@ class TestWanIpEntry(unittest.TestCase):
         }
     )
     def test_ipv6_timeout(self, _, __):
-        """Test when `dig` call timeout for the IPv6 detection"""
+        """[Entry] [WanIp] Test when `dig` call timeout for the IPv6 detection"""
         self.assertEqual(
             WanIp().value,
             'XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef'
@@ -123,7 +140,7 @@ class TestWanIpEntry(unittest.TestCase):
         }
     )
     def test_ipv4_timeout_twice(self, _, __):
-        """Test when both `dig` and `URLOpen` trigger timeouts..."""
+        """[Entry] [WanIp] Test when both `dig` and `URLOpen` trigger timeouts..."""
         self.assertEqual(WanIp().value, 'No Address')
 
     @patch(
@@ -150,7 +167,7 @@ class TestWanIpEntry(unittest.TestCase):
         }
     )
     def test_no_address(self, _, __):
-        """Test when no address could be retrieved"""
+        """[Entry] [WanIp] Test when no address could be retrieved"""
         self.assertEqual(WanIp().value, 'No Address')
 
 

@@ -5,6 +5,8 @@ from unittest.mock import patch
 
 from archey.entries.windowmanager import WindowManager
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestWindowManagerEntry(unittest.TestCase):
@@ -13,6 +15,21 @@ class TestWindowManagerEntry(unittest.TestCase):
       that the output is correct.
     We've to test the case where `wmctrl` is not installed too.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.windowmanager.check_output',
         return_value="""\
@@ -22,7 +39,7 @@ PID: N/A
 Window manager's "showing the desktop" mode: OFF
 """)
     def test_wmctrl(self, _):
-        """Test `wmctrl` output parsing"""
+        """[Entry] [WindowManager] Test `wmctrl` output parsing"""
         self.assertEqual(WindowManager().value, 'WINDOW MANAGER')
 
     @patch(
@@ -40,7 +57,7 @@ Window manager's "showing the desktop" mode: OFF
         ]
     )
     def test_no_wmctrl_match(self, _, __):
-        """Test basic detection based on a (fake) processes list"""
+        """[Entry] [WindowManager] Test basic detection based on a (fake) processes list"""
         self.assertEqual(WindowManager().value, 'Awesome')
 
     @patch(
@@ -66,7 +83,7 @@ Window manager's "showing the desktop" mode: OFF
         }
     )
     def test_no_wmctrl_mismatch(self, _, __):
-        """Test (non-detection) when processes list do not contain any known value"""
+        """[Entry] [WindowManager] Test (non-detection) when processes list do not contain any known value"""
         self.assertEqual(
             WindowManager().value,
             'Not detected'

@@ -23,7 +23,7 @@ model name\t: CPU-MODEL-NAME
         create=True
     )
     def test_model_name_match_cpuinfo(self):
-        """Test `/proc/cpuinfo` parsing"""
+        """[Entry] [CPU] Test `/proc/cpuinfo` parsing"""
         self.assertEqual(CPU().value, 'CPU-MODEL-NAME')
 
     @patch(
@@ -56,7 +56,7 @@ Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
 """)
     def test_model_name_match_lscpu(self, _):
         """
-        Test model name parsing from `lscpu` output.
+        [Entry] [CPU] Test model name parsing from `lscpu` output.
 
         See issue #29 (ARM architectures).
         `/proc/cpuinfo` will not contain `model name` info.
@@ -77,7 +77,7 @@ model name\t: CPU  MODEL\t  NAME
         create=True
     )
     def test_spaces_squeezing(self):
-        """Test name sanitizing, needed on some platformd"""
+        """[Entry] [CPU] Test name sanitizing, needed on some platforms"""
         self.assertEqual(CPU().value, 'CPU MODEL NAME')
 
 

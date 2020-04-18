@@ -17,7 +17,7 @@ class TestKernelEntry(unittest.TestCase):
 X.Y.Z-R-arch
 """)
     def test(self, _):
-        """A simple test, for a simple mock"""
+        """[Entry] [Kernel] A simple test, for a simple mock"""
         self.assertEqual(Kernel().value, 'X.Y.Z-R-arch')
 
 

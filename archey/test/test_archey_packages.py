@@ -5,6 +5,8 @@ from unittest.mock import patch
 
 from archey.entries.packages import Packages
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestPackagesEntry(unittest.TestCase):
@@ -13,6 +15,21 @@ class TestPackagesEntry(unittest.TestCase):
       that the outputs are correct.
     Sorry for the code style, mocking this class is pretty boring.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
@@ -25,7 +42,7 @@ albatross-gtk-theme/stable,now 1.7.4-1 all [installed,automatic]
 alsa-utils/stable,now 1.1.8-2 amd64 [installed,automatic]
 """)
     def test_match_with_apt(self, _):
-        """Simple test for the APT packages manager"""
+        """[Entry] [Packages] Simple test for the APT packages manager"""
         self.assertEqual(Packages().value, 7)
 
     @patch(
@@ -40,7 +57,7 @@ GeoIP-GeoLite-data.noarch      2017.07-1.fc26          @@commandline
 GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
 """])
     def test_match_with_dnf(self, _):
-        """Simple test for the DNF packages manager"""
+        """[Entry] [Packages] Simple test for the DNF packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
@@ -58,7 +75,7 @@ albatross-gtk-theme     deinstall
 alien                   install
 """])
     def test_match_with_dpkg(self, _):
-        """Simple test for the DPKG packages manager"""
+        """[Entry] [Packages] Simple test for the DPKG packages manager"""
         self.assertEqual(Packages().value, 6)
 
     @patch(
@@ -81,7 +98,7 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
 
 """])
     def test_match_with_emerge(self, _):
-        """Simple test for the Emerge packages manager"""
+        """[Entry] [Packages] Simple test for the Emerge packages manager"""
         self.assertEqual(Packages().value, 5)
 
     @patch(
@@ -98,7 +115,7 @@ archlinux-keyring 20180108-1
 argon2 20171227-3
 """])
     def test_match_with_pacman(self, _):
-        """Simple test for the Pacman packages manager"""
+        """[Entry] [Packages] Simple test for the Pacman packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
@@ -116,7 +133,7 @@ setarch-2.0-1.1
 MySQL-client-3.23.57-1
 """])
     def test_match_with_rpm(self, _):
-        """Simple test for the RPM packages manager"""
+        """[Entry] [Packages] Simple test for the RPM packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
@@ -137,7 +154,7 @@ ModemManager.x86_64             1.6.0-2.el7         @base            \n\
 ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
 """])
     def test_match_with_yum(self, _):
-        """Simple test for the Yum packages manager"""
+        """[Entry] [Packages] Simple test for the Yum packages manager"""
         self.assertEqual(Packages().value, 4)
 
     @patch(
@@ -163,7 +180,7 @@ i  | GNOME Nibbles | Guide a worm around a maze          | application
 i  | at            | A Job Manager                       | package    \n\
 """])
     def test_match_with_zypper(self, _):
-        """Simple test for the Zypper packages manager"""
+        """[Entry] [Packages] Simple test for the Zypper packages manager"""
         self.assertEqual(Packages().value, 5)
 
     @patch(
@@ -188,7 +205,7 @@ i  | at            | A Job Manager                       | package    \n\
         }
     )
     def test_no_packages_manager(self, _):
-        """No packages manager is available at the moment..."""
+        """[Entry] [Packages] No packages manager is available at the moment..."""
         self.assertEqual(Packages().value, 'Not detected')
 
 

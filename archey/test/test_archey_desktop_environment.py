@@ -21,7 +21,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         ]
     )
     def test_match(self, _):
-        """Simple list matching"""
+        """[Entry] [DesktopEnvironment] Simple list matching"""
         self.assertEqual(DesktopEnvironment().value, 'Cinnamon')
 
     @patch(
@@ -39,7 +39,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         return_value='DESKTOP ENVIRONMENT'
     )
     def test_mismatch(self, _, __):
-        """Simple list (mis-)-matching"""
+        """[Entry] [DesktopEnvironment] Simple list (mis-)-matching"""
         self.assertEqual(DesktopEnvironment().value, 'DESKTOP ENVIRONMENT')
 
 

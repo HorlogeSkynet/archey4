@@ -17,7 +17,7 @@ class TestHostnameEntry(unittest.TestCase):
 MY-COOL-LAPTOP\
 """)
     def test(self, _):
-        """A simple test, for a simple mock"""
+        """[Entry] [Hostname] A simple test, for a simple mock"""
         self.assertEqual(Hostname().value, 'MY-COOL-LAPTOP')
 
 

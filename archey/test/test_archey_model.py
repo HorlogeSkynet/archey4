@@ -5,6 +5,8 @@ from unittest.mock import mock_open, patch
 
 from archey.entries.model import Model
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestModelEntry(unittest.TestCase):
@@ -16,6 +18,17 @@ class TestModelEntry(unittest.TestCase):
     """
     def setUp(self):
         self.return_values = None
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
 
     @patch(
         'archey.entries.model.check_output',
@@ -27,7 +40,7 @@ class TestModelEntry(unittest.TestCase):
         create=True
     )
     def test_regular(self, _):
-        """Sometimes, it could be quite simple..."""
+        """[Entry] [Model] Sometimes, it could be quite simple..."""
         self.assertEqual(Model().value, 'MY-LAPTOP-MODEL')
 
     @patch(
@@ -35,7 +48,7 @@ class TestModelEntry(unittest.TestCase):
         return_value='none\n'
     )
     def test_raspberry(self, _):
-        """Test for a typical Raspberry context"""
+        """[Entry] [Model] Test for a typical Raspberry context"""
         self.return_values = [
             FileNotFoundError(),  # First `open` call will fail
             'Hardware\t: HARDWARE\nRevision\t: REVISION\n'
@@ -61,7 +74,7 @@ class TestModelEntry(unittest.TestCase):
         ]
     )
     def test_virtual_environment(self, _, __):
-        """Test for virtual machine"""
+        """[Entry] [Model] Test for virtual machine"""
         self.assertEqual(
             Model().value,
             'MY-LAPTOP-MODEL (xen, xen-domU)'
@@ -89,7 +102,7 @@ class TestModelEntry(unittest.TestCase):
         }
     )
     def test_virtual_environment_without_dmidecode(self, _, __):
-        """Test for virtual machine (with a failing `dmidecode` call)"""
+        """[Entry] [Model] Test for virtual machine (with a failing `dmidecode` call)"""
         self.assertEqual(
             Model().value,
             'Virtual Environment (xen, xen-domU)'
@@ -113,7 +126,7 @@ class TestModelEntry(unittest.TestCase):
         }
     )
     def test_virtual_environment_systemd_alone(self, _, __):
-        """Test for virtual environments, with systemd tools and `dmidecode`"""
+        """[Entry] [Model] Test for virtual environments, with systemd tools and `dmidecode`"""
         self.assertEqual(Model().value, 'Virtual Environment (systemd-nspawn)')
 
     @patch(
@@ -137,7 +150,7 @@ class TestModelEntry(unittest.TestCase):
         }
     )
     def test_virtual_environment_systemd_and_dmidecode(self, _, __):
-        """Test for virtual environments, with systemd tools and `dmidecode`"""
+        """[Entry] [Model] Test for virtual environments, with systemd tools and `dmidecode`"""
         self.assertEqual(Model().value, 'MY-LAPTOP-MODEL (systemd-nspawn)')
 
     @patch(
@@ -158,7 +171,7 @@ class TestModelEntry(unittest.TestCase):
         }
     )
     def test_no_match(self, _, __):
-        """Test when no information could be retrieved"""
+        """[Entry] [Model] Test when no information could be retrieved"""
         self.return_values = [
             FileNotFoundError(),      # First `open` call will fail
             'Hardware\t: HARDWARE\n'  # `Revision` entry is not present

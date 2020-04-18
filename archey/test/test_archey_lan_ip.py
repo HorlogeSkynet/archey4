@@ -7,10 +7,27 @@ import netifaces
 
 from archey.entries.lanip import LanIp
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestLanIpEntry(unittest.TestCase):
     """Here, we mock the `netifaces` usages (interfaces and addresses detection calls)"""
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.lanip.netifaces.interfaces',
         return_value=['lo', 'en0', 'wlo1']
@@ -59,7 +76,7 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_multiple_interfaces(self, _, __):
-        """Test for multiple interfaces, multiple addresses (including a loopback one)"""
+        """[Entry] [LanIp] Test for multiple interfaces, multiple addresses (including a loopback one)"""
         self.assertEqual(
             LanIp().value,
             '192.168.0.11, 192.168.1.11, 172.34.56.78'
@@ -127,7 +144,7 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_ipv6_and_limit_and_ether(self, _, __):
-        """Test for IPv6 support, final set length limit and Ethernet interface filtering"""
+        """[Entry] [LanIp] Test for IPv6 support, final set length limit and Ethernet interface filtering"""
         self.assertEqual(
             LanIp().value,
             '192.168.1.55, 2001::45:6789:abcd:6817'
@@ -187,7 +204,7 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_no_ipv6(self, _, __):
-        """Test for IPv6 hiding"""
+        """[Entry] [LanIp] Test for IPv6 hiding"""
         self.assertEqual(
             LanIp().value,
             '192.168.1.55'
@@ -213,7 +230,7 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_no_network_interface(self, _):
-        """Test when the device does not have any network interface"""
+        """[Entry] [LanIp] Test when the device does not have any network interface"""
         self.assertEqual(LanIp().value, 'No Address')
 
     @patch(
@@ -259,7 +276,7 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_no_network_address(self, _, __):
-        """Test when the network interface(s) do not have any IP address"""
+        """[Entry] [LanIp] Test when the network interface(s) do not have any IP address"""
         self.assertEqual(LanIp().value, 'No Address')
 
 

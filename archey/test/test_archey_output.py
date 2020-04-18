@@ -22,7 +22,7 @@ class TestOutputUtil(unittest.TestCase):
 debian\
 """)
     def test_init_known_distro(self, _, __):
-        """Test known distribution output"""
+        """[Output] Test known distribution output"""
         output = Output()
 
         self.assertEqual(
@@ -41,7 +41,7 @@ X.Y.Z-R-ARCH
 an-unknown-distro-id\
 """)
     def test_init_unknown_distro(self, _, __):
-        """Test unknown distribution output"""
+        """[Output] Test unknown distribution output"""
         output = Output()
 
         self.assertEqual(
@@ -60,7 +60,7 @@ X.Y.Z-R-Microsoft
 opensuse\
 """)
     def test_init_windows_subsystem(self, _, __):
-        """Test output for Windows Subsystem Linux"""
+        """[Output] Test output for Windows Subsystem Linux"""
         output = Output()
 
         self.assertEqual(
@@ -76,7 +76,7 @@ opensuse\
         }
     )
     def test_append(self):
-        """Test the `append` method, for new entries"""
+        """[Output] Test the `append` method, for new entries"""
         output = Output()
 
         # Let's manually set the distribution for the test case...
@@ -128,7 +128,7 @@ opensuse\
         create=True
     )
     def test_centered_output(self, _):
-        """Test how the `output` method handle centering operations"""
+        """[Output] Test how the `output` method handle centering operations"""
         output = Output()
 
         # Let's manually set the distribution for the test case...

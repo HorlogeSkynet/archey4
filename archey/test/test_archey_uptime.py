@@ -18,7 +18,7 @@ class TestUptimeEntry(unittest.TestCase):
         create=True
     )
     def test_warming_up(self):
-        """Test when the device has just been started..."""
+        """[Entry] [Uptime] Test when the device has just been started..."""
         self.assertEqual(Uptime().value, '< 1 minute')
 
     @patch(
@@ -29,7 +29,7 @@ class TestUptimeEntry(unittest.TestCase):
         create=True
     )
     def test_minutes_only(self):
-        """Test when only minutes should be displayed"""
+        """[Entry] [Uptime] Test when only minutes should be displayed"""
         self.assertEqual(Uptime().value, '2 minutes')
 
     @patch(
@@ -40,7 +40,7 @@ class TestUptimeEntry(unittest.TestCase):
         create=True
     )
     def test_hours_and_minute(self):
-        """Test when only hours AND minutes should be displayed"""
+        """[Entry] [Uptime] Test when only hours AND minutes should be displayed"""
         self.assertEqual(Uptime().value, '2 hours and 1 minute')
 
     @patch(
@@ -51,7 +51,7 @@ class TestUptimeEntry(unittest.TestCase):
         create=True
     )
     def test_day_and_hour_and_minutes(self):
-        """Test when only days, hours AND minutes should be displayed"""
+        """[Entry] [Uptime] Test when only days, hours AND minutes should be displayed"""
         self.assertEqual(Uptime().value, '1 day, 1 hour and 2 minutes')
 
     @patch(
@@ -62,7 +62,7 @@ class TestUptimeEntry(unittest.TestCase):
         create=True
     )
     def test_days_and_minutes(self):
-        """Test when only days ABD minutes should be displayed"""
+        """[Entry] [Uptime] Test when only days AND minutes should be displayed"""
         self.assertEqual(Uptime().value, '3 days and 3 minutes')
 
 

@@ -30,7 +30,7 @@ class TestSingletonUtil(unittest.TestCase):
         self.assertTrue(isinstance(_SimpleCounter, Singleton))
 
     def test_singleton_subclass_instances(self):
-        """Simple tests for `Singleton` sub-class instantiation results"""
+        """[Singleton] Simple tests for `Singleton` sub-class instantiation results"""
         counter_1 = _SimpleCounter()
         counter_2 = _SimpleCounter()
         self.assertIs(counter_1, counter_2)
@@ -45,7 +45,7 @@ class TestSingletonUtil(unittest.TestCase):
         self.assertIs(counter_1.an_object, counter_2.an_object)
 
     def test_singleton_instantiations(self):
-        """Simple test for `Singleton` (direct) instantiation"""
+        """[Singleton] Simple test for `Singleton` (direct) instantiation"""
         self.assertRaises(TypeError, Singleton)
 
 

@@ -4,10 +4,8 @@ import os
 import sys
 import json
 
-from importlib import import_module
-
 from archey.singleton import Singleton
-
+import archey.default_configuration as DefaultConfig
 
 class Configuration(metaclass=Singleton):
     """
@@ -34,20 +32,27 @@ class Configuration(metaclass=Singleton):
         `config.json` under each path passed to it, using the first existing
         file.
         """
+        # Load the default configuration first
+        self._config = DefaultConfig.CONFIGURATION
+
+        # Get the user configuration file with the most precedence
+        user_config = None
         for path in configuration_paths:
             file_path = os.path.join(path, 'config.json')
             try:
                 with open(file_path) as config_file:
-                    self._config = self._load_configuration(config_file)
+                    user_config = self._load_configuration(config_file)
                 break
             except ValueError:
                 print('\tin file: {0}'.format(file_path), file=sys.stderr)
             except FileNotFoundError:
                 continue
 
-        # Load the default configuration if no files were found.
-        if not hasattr(self, "_config"):
-            self._config = import_module('archey.default_configuration').CONFIGURATION
+        # If there was a user configuration file, recursively update the defaults
+        # with the new definitions (replacing 'entries' entirely with the new one,
+        # if it is a new entry)
+        if user_config is not None:
+            self._update_recursive(self._config, user_config)
 
     def _load_configuration(self, config_file):
         """
@@ -76,6 +81,24 @@ class Configuration(metaclass=Singleton):
             raise ValueError
 
         return config
+
+    def _update_recursive(self, old_dict, new_dict):
+        """
+        A customised method for recursively merging dictionaries as
+        `dict.update()` is not able to do this.
+        Original snippet taken from here :
+        https://gist.github.com/angstwad/bf22d1822c38a92ec0a9
+        """
+        for key, value in new_dict.items():
+            if key == 'entries':
+                # Remove all the old entries if a new set exist
+                old_dict['entries'] = {}
+            if key in old_dict and isinstance(old_dict[key], dict) \
+                    and isinstance(value, dict):
+                self._update_recursive(old_dict[key], value)
+
+            else:
+                old_dict[key] = value
 
     def __getitem__(self, key):
         """Implement dict-like behaviour"""

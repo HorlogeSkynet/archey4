@@ -5,6 +5,8 @@ from unittest.mock import mock_open, patch
 
 from archey.entries.ram import RAM
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestRAMEntry(unittest.TestCase):
@@ -12,6 +14,21 @@ class TestRAMEntry(unittest.TestCase):
     Here, we mock the `check_output` call to `free` using all three levels of available ram.
     In the last test, mock with `/proc/meminfo` file opening during the manual way.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.ram.check_output',
         return_value="""\
@@ -34,7 +51,7 @@ Swap:      7607        5    7602
         }
     )
     def test_free_dash_m(self, _):
-        """Test `free -m` output parsing for low RAM use case and tweaked limits"""
+        """[Entry] [RAM] Test `free -m` output parsing for low RAM use case and tweaked limits"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '3341', '7412']))
 
@@ -60,7 +77,7 @@ Swap:          4095          39        4056
         }
     )
     def test_free_dash_m_warning(self, _):
-        """Test `free -m` output parsing for warning RAM use case"""
+        """[Entry] [RAM] Test `free -m` output parsing for warning RAM use case"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;32m', '2043', '15658']))
 
@@ -86,7 +103,7 @@ Swap:          4095         160        3935
         }
     )
     def test_free_dash_m_danger(self, _):
-        """Test `free -m` output parsing for danger RAM use case"""
+        """[Entry] [RAM] Test `free -m` output parsing for danger RAM use case"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;31m', '12341', '15658']))
 
@@ -140,7 +157,7 @@ SUnreclaim:       113308 kB
         create=True
     )
     def test_proc_meminfo(self, _):
-        """Test `/proc/meminfo` parsing (when `free` is not available)"""
+        """[Entry] [RAM] Test `/proc/meminfo` parsing (when `free` is not available)"""
         ram = RAM().value
         self.assertTrue(all(i in ram for i in ['\x1b[0;33m', '3739', '7403']))
 

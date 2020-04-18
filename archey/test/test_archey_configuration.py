@@ -6,11 +6,28 @@ import unittest
 from unittest.mock import patch
 
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
+
 
 class TestConfigurationUtil(unittest.TestCase):
     """
     Simple test cases to check the behavior of `Configuration` tools.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
 
     @patch.object(
         Configuration(),
@@ -28,7 +45,7 @@ class TestConfigurationUtil(unittest.TestCase):
         create=True
     )
     def test_get(self):
-        """Test the dict-like __get__ method with configuration elements"""
+        """[Configuration] Test the dict-like __get__ method with configuration elements"""
         self.assertEqual(
             Configuration()['entries']['LanIp']['max_count'],
             3
@@ -38,19 +55,8 @@ class TestConfigurationUtil(unittest.TestCase):
         )
         self.assertIsNone(Configuration()['does_not_exist'])
 
-    # Without this patch, we appear to permanently modify the configuration instance.
-    # It can no longer be mocked or deleted, so we *must* patch it here so that we
-    # only modify a mock and not the global singleton.
-    @patch.object(
-        Configuration(),
-        '_config',
-        {},
-        create=True
-    )
     def test_load_configuration(self):
-        """
-        Test for configuration loading from file.
-        """
+        """[Configuration] Test for configuration loading from file."""
         with tempfile.TemporaryDirectory(suffix='/') as temp_dir:
             # We create a fake temporary configuration file
             with open(temp_dir + 'config.json', 'w') as file:
@@ -77,30 +83,103 @@ class TestConfigurationUtil(unittest.TestCase):
             # Let's load it into our `Configuration` instance
             Configuration().populate_configuration([temp_dir])
 
-            # Let's check the result :S
+            # Let's check the results :S
+            self.assertTrue(Configuration()['suppress_warnings'])
             self.assertDictEqual(
-                Configuration()._config,  # pylint: disable=protected-access
+                Configuration()['entries'],
                 {
-                    'suppress_warnings': True,
-                    'entries': {
-                        'Temperature': {
-                            'enabled': True,
-                            'display_text': 'Temperature',
-                            'char_before_unit': ' ',
-                            'use_fahrenheit': True
-                        },
-                        'LanIp': {
-                            'enabled': True,
-                            'display_text': 'LAN IP',
-                            'max_count': 3,
-                            'ipv6_support': True
-                        }
+                    'Temperature': {
+                        'enabled': True,
+                        'display_text': 'Temperature',
+                        'char_before_unit': ' ',
+                        'use_fahrenheit': True
+                    },
+                    'LanIp': {
+                        'enabled': True,
+                        'display_text': 'LAN IP',
+                        'max_count': 3,
+                        'ipv6_support': True
                     }
                 }
             )
             # The `stderr` file descriptor has changed due to
             #   the `suppress_warnings` option.
             self.assertNotEqual(Configuration()._stderr, sys.stderr)  # pylint: disable=protected-access
+
+    def test_update_recursive(self):
+        """[Entry] [Configuration] Test for the `_update_recursive` private method"""
+        configuration = Configuration()
+        configuration._config = {  # pylint: disable=protected-access
+            'allow_overriding': True,
+            'suppress_warnings': False,
+            'default_strings': {
+                'no_address': 'No Address',
+                'not_detected': 'Not detected'
+            },
+            'colors_palette': {
+                'use_unicode': False
+            },
+            'ip_settings': {
+                'lan_ip_max_count': 2
+            },
+            'temperature': {
+                'use_fahrenheit': False
+            }
+        }
+
+        # We change existing values, add new ones, and omit some others.
+        configuration._update_recursive(  # pylint: disable=protected-access
+            configuration._config,  # pylint: disable=protected-access
+            {
+                'suppress_warnings': True,
+                'colors_palette': {
+                    'use_unicode': False
+                },
+                'default_strings': {
+                    'no_address': '\xde\xad \xbe\xef',
+                    'not_detected': 'Not detected',
+                    'virtual_environment': 'Virtual Environment'
+                },
+                'temperature': {
+                    'a_weird_new_dict': [
+                        None,
+                        'l33t',
+                        {
+                            'really': 'one_more_?'
+                        }
+                    ]
+                }
+            }
+        )
+
+        self.assertDictEqual(
+            configuration._config,  # pylint: disable=protected-access
+            {
+                'allow_overriding': True,
+                'suppress_warnings': True,
+                'colors_palette': {
+                    'use_unicode': False
+                },
+                'default_strings': {
+                    'no_address': '\xde\xad \xbe\xef',
+                    'not_detected': 'Not detected',
+                    'virtual_environment': 'Virtual Environment'
+                },
+                'ip_settings': {
+                    'lan_ip_max_count': 2
+                },
+                'temperature': {
+                    'use_fahrenheit': False,
+                    'a_weird_new_dict': [
+                        None,
+                        'l33t',
+                        {
+                            'really': 'one_more_?'
+                        }
+                    ]
+                }
+            }
+        )
 
 if __name__ == '__main__':
     unittest.main()

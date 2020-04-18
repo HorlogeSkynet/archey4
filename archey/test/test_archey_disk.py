@@ -7,11 +7,29 @@ from unittest.mock import patch
 
 from archey.entries.disk import Disk
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
+
 
 class TestDiskEntry(unittest.TestCase):
     """
     Here, we mock `check_output` calls to disk utility tools.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.disk.check_output',
         side_effect=[
@@ -40,7 +58,7 @@ total                  305809MB 47006MB  243149MB      17% -
         }
     )
     def test_df_only(self, _):
-        """Test computations around `df` output at disk regular level"""
+        """[Entry] [Disk] Test computations around `df` output at disk regular level"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '45.9', '298.6']))
 
@@ -72,7 +90,7 @@ total                  305809MB 257598MB   46130MB      84% -
         }
     )
     def test_df_only_warning(self, _):
-        """Test computations around `df` output at disk warning level"""
+        """[Entry] [Disk] Test computations around `df` output at disk warning level"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;33m', '251.6', '298.6']))
 
@@ -121,7 +139,7 @@ Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
         }
     )
     def test_df_and_btrfs(self, _):
-        """Test computations around `df` and `btrfs` outputs"""
+        """[Entry] [Disk] Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '67.4', '376.5']))
 
@@ -147,7 +165,7 @@ Label: none  uuid: c168c2e4-6ea1-11ea-bc55-0242ac130003
         }
     )
     def test_failing_df_and_empty_btrfs(self, _):
-        """Test computations around `df` and `btrfs` outputs"""
+        """[Entry] [Disk] Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0.0']))
 

@@ -29,7 +29,7 @@ got
 there
 """)
     def test_ps_ok(self, check_output_mock):
-        """Simple test with a plausible `ps` output"""
+        """[Entry] [Processes] Simple test with a plausible `ps` output"""
         # We'll create two `Processes` instances.
         processes_1 = Processes()
         _ = Processes()
@@ -52,7 +52,7 @@ there
         side_effect=FileNotFoundError()
     )
     def test_ps_not_available(self, _):
-        """Verifies that the program stops when `ps` is not available"""
+        """[Entry] [Processes] Verifies that the program stops when `ps` is not available"""
         self.assertRaises(SystemExit, Processes)
 
 

@@ -19,7 +19,7 @@ NAME VERSION (CODENAME)\
 ARCHITECTURE
 """)
     def test(self, _, __):
-        """Test for `distro` and `uname` outputs concatenation"""
+        """[Entry] [Distro] Test for `distro` and `uname` outputs concatenation"""
         self.assertEqual(
             Distro().value,
             'NAME VERSION (CODENAME) [ARCHITECTURE]'

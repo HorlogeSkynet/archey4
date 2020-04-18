@@ -5,6 +5,8 @@ from unittest.mock import patch
 
 from archey.entries.terminal import Terminal
 from archey.configuration import Configuration
+from archey.singleton import Singleton
+import archey.default_configuration as DefaultConfig
 
 
 class TestTerminalEntry(unittest.TestCase):
@@ -12,6 +14,21 @@ class TestTerminalEntry(unittest.TestCase):
     For this entry, we'll verify that the output contains what the environment
       is supposed to give, plus the right number of "colorized" characters.
     """
+
+    def setUp(self):
+        """Runs when each test begins"""
+        # Set up a default configuration instance.
+        config = Configuration()
+        config._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
+
+    def tearDown(self):
+        """Runs when each test finishes testing"""
+        # Destroy the singleton configuration instance (if created)
+        try:
+            del Singleton._instances[Configuration] # pylint: disable=protected-access
+        except KeyError:
+            pass
+
     @patch(
         'archey.entries.terminal.os.getenv',
         return_value='TERMINAL'
@@ -28,7 +45,7 @@ class TestTerminalEntry(unittest.TestCase):
         }
     )
     def test_without_unicode(self, _):
-        """Test simple output, without Unicode support (default)"""
+        """[Entry] [Terminal] Test simple output, without Unicode support (default)"""
         output = Terminal().value
         self.assertTrue(output.startswith('TERMINAL '))
         self.assertEqual(output.count('#'), 7 * 2)
@@ -49,7 +66,7 @@ class TestTerminalEntry(unittest.TestCase):
         }
     )
     def test_with_unicode(self, _):
-        """Test simple output, with Unicode support !"""
+        """[Entry] [Terminal] Test simple output, with Unicode support !"""
         output = Terminal().value
         self.assertTrue(output.startswith('TERMINAL '))
         self.assertEqual(output.count('\u2588'), 7 * 2)
@@ -70,7 +87,7 @@ class TestTerminalEntry(unittest.TestCase):
         }
     )
     def test_not_detected(self, _):
-        """Test simple output, with Unicode support !"""
+        """[Entry] [Terminal] Test simple output, with Unicode support !"""
         output = Terminal().value
         self.assertTrue(output.startswith('Not detected '))
         self.assertEqual(output.count('#'), 7 * 2)

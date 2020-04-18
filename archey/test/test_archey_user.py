@@ -15,7 +15,7 @@ class TestUserEntry(unittest.TestCase):
         return_value='USERNAME'
     )
     def test(self, _):
-        """Simple mock, simple test"""
+        """[Entry] [User] Simple mock, simple test"""
         self.assertEqual(User().value, 'USERNAME')
 
 
