@@ -5,54 +5,52 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-import archey.default_configuration as DefaultConfig
 from archey.configuration import Configuration
-
 
 class TestConfigurationUtil(unittest.TestCase):
     """
     Simple test cases to check the behavior of `Configuration` tools.
     """
 
-    def tearDown(self):
-        """Runs when each test ends."""
-        # Load the default configuration to revert any changes we make in each test,
-        # since not all tests use patch methods.
-        Configuration()._config = DefaultConfig.CONFIGURATION # pylint: disable=protected-access
-
-    @patch.dict(
-        Configuration()._config, # pylint: disable=protected-access
+    @patch.object(
+        Configuration(),
+        '_config',
         {
             'entries': {
                 'LanIp': {
-                    'max_count': 2
+                    'max_count': 3
                 },
                 'Temperature': {
-                    'use_fahrenheit': False
+                    'use_fahrenheit': True
                 }
             }
-        }
+        },
+        create=True
     )
     def test_get(self):
         """Test the dict-like __get__ method with configuration elements"""
-        configuration = Configuration()
-
         self.assertEqual(
-            configuration['entries']['LanIp']['max_count'],
-            2
+            Configuration()['entries']['LanIp']['max_count'],
+            3
         )
-        self.assertFalse(
-            configuration['entries']['Temperature']['use_fahrenheit']
+        self.assertTrue(
+            Configuration()['entries']['Temperature']['use_fahrenheit']
         )
-        self.assertIsNone(configuration['does_not_exist'])
+        self.assertIsNone(Configuration()['does_not_exist'])
 
+    # Without this patch, we appear to permanently modify the configuration instance.
+    # It can no longer be mocked or deleted, so we *must* patch it here so that we
+    # only modify a mock and not the global singleton.
+    @patch.object(
+        Configuration(),
+        '_config',
+        {},
+        create=True
+    )
     def test_load_configuration(self):
         """
-        Test for configuration loading from file. We can't use a patch
-        method for this one!
+        Test for configuration loading from file.
         """
-        configuration = Configuration()
-
         with tempfile.TemporaryDirectory(suffix='/') as temp_dir:
             # We create a fake temporary configuration file
             with open(temp_dir + 'config.json', 'w') as file:
@@ -64,12 +62,12 @@ class TestConfigurationUtil(unittest.TestCase):
 			"enabled": true,
 			"display_text": "Temperature",
 			"char_before_unit": " ",
-			"use_fahrenheit": false
+			"use_fahrenheit": true
 		},
 		"LanIp": {
 			"enabled": true,
 			"display_text": "LAN IP",
-			"max_count": 2,
+			"max_count": 3,
 			"ipv6_support": true
 		}
 	}
@@ -77,11 +75,11 @@ class TestConfigurationUtil(unittest.TestCase):
 """)
 
             # Let's load it into our `Configuration` instance
-            configuration.populate_configuration([temp_dir])
+            Configuration().populate_configuration([temp_dir])
 
             # Let's check the result :S
             self.assertDictEqual(
-                configuration._config,  # pylint: disable=protected-access
+                Configuration()._config,  # pylint: disable=protected-access
                 {
                     'suppress_warnings': True,
                     'entries': {
@@ -89,12 +87,12 @@ class TestConfigurationUtil(unittest.TestCase):
                             'enabled': True,
                             'display_text': 'Temperature',
                             'char_before_unit': ' ',
-                            'use_fahrenheit': False
+                            'use_fahrenheit': True
                         },
                         'LanIp': {
                             'enabled': True,
                             'display_text': 'LAN IP',
-                            'max_count': 2,
+                            'max_count': 3,
                             'ipv6_support': True
                         }
                     }
@@ -102,7 +100,7 @@ class TestConfigurationUtil(unittest.TestCase):
             )
             # The `stderr` file descriptor has changed due to
             #   the `suppress_warnings` option.
-            self.assertNotEqual(configuration._stderr, sys.stderr)  # pylint: disable=protected-access
+            self.assertNotEqual(Configuration()._stderr, sys.stderr)  # pylint: disable=protected-access
 
 if __name__ == '__main__':
     unittest.main()

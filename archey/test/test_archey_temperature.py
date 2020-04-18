@@ -88,7 +88,7 @@ class TestTemperatureEntry(unittest.TestCase):
             }
         }
     )
-    def test_vcgencmd_and_files(self, _, iglob_mock):
+    def test_vcgencmd_and_files(self, iglob_mock, _):
         """Tests `vcgencmd` output AND sensor files"""
         iglob_mock.return_value = iter([file.name for file in self.temp_files])
         self.assertEqual(Temperature().value, '45.0 C (Max. 50.0 C)')
@@ -113,7 +113,7 @@ class TestTemperatureEntry(unittest.TestCase):
             }
         }
     )
-    def test_files_only_in_fahrenheit(self, _, iglob_mock):
+    def test_files_only_in_fahrenheit(self, iglob_mock, _):
         """Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
         iglob_mock.return_value = iter([file.name for file in self.temp_files])
         self.assertEqual(
@@ -244,7 +244,7 @@ class TestTemperatureEntry(unittest.TestCase):
             }
         }
     )
-    def test_sensors_error_1(self, _, iglob_mock):
+    def test_sensors_error_1(self, iglob_mock, _):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         iglob_mock.return_value = iter([file.name for file in self.temp_files])
         self.assertEqual(
@@ -278,7 +278,7 @@ class TestTemperatureEntry(unittest.TestCase):
             }
         }
     )
-    def test_sensors_error_2(self, _, iglob_mock):
+    def test_sensors_error_2(self, iglob_mock, _):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         iglob_mock.return_value = iter([file.name for file in self.temp_files])
         self.assertEqual(
