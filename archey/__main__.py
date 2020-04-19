@@ -28,7 +28,10 @@ def main():
     # i.e. the names of the entries to load.
     for entry_key in configuration['entries']:
         # Get an object for the entry and attach it to the output object.
-        entry_module = import_module('archey.entries.' + entry_key.lower())
+        entry_module = import_module(
+            '.' + entry_key.lower(),
+            'archey.entries'
+        )
         entry_class = getattr(entry_module, entry_key)
         entry_instance = entry_class()
         output.attach(entry_instance)

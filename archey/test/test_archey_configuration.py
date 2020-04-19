@@ -29,9 +29,8 @@ class TestConfigurationUtil(unittest.TestCase):
         except KeyError:
             pass
 
-    @patch.object(
-        Configuration(),
-        '_config',
+    @patch.dict(
+        Configuration()._config, # pylint: disable=protected-access
         {
             'entries': {
                 'LanIp': {
