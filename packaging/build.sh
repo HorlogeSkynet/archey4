@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 
 
-# ################################################################################
+# ##########################################################################################
 #                 Archey 4 distribution packages building script
 #
 # Dependencies :
 # * python3
 # * rpm
+# * bsdtar
 # * debsigs
 # * fpm >= 1.11.0
 # * twine >= 3.1.1
 #
 # Procedure to install them on Debian :
-# $ sudo apt install ruby rubygems build-essential python3-pip debsigs rpm
+# $ sudo apt install ruby rpm build-essential libarchive-tools debsigs rubygems python3-pip
 # $ sudo gem install --no-document fpm
 # $ sudo pip3 install setuptools twine
 #
@@ -22,11 +23,11 @@
 # Known packages errors (FPM bugs ?) :
 # * Debian :
 #     * Lintian : file-in-etc-not-marked-as-conffile etc/archey4/config.json
-#                 This causes the config file to be REMOVED even when NOT PURGING
+#                 This causes the config file to be REMOVED even when NOT PURGING.
 # * Arch Linux :
 #     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
 #
-# ################################################################################
+# ##########################################################################################
 
 
 # Abort on error, don't allow usages of undeclared variable.
