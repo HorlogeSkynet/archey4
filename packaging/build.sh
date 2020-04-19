@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 
 
-# ################################################################################
+# ##########################################################################################
 #                 Archey 4 distribution packages building script
 #
 # Dependencies :
 # * python3
 # * rpm
+# * bsdtar
 # * debsigs
 # * fpm >= 1.11.0
 # * twine >= 3.1.1
 #
 # Procedure to install them on Debian :
-# $ sudo apt install ruby rubygems build-essential python3-pip debsigs rpm
+# $ sudo apt install ruby rpm build-essential libarchive-tools debsigs rubygems python3-pip
 # $ sudo gem install --no-document fpm
 # $ sudo pip3 install setuptools twine
 #
@@ -22,11 +23,11 @@
 # Known packages errors (FPM bugs ?) :
 # * Debian :
 #     * Lintian : file-in-etc-not-marked-as-conffile etc/archey4/config.json
-#                 This causes the config file to be REMOVED even when NOT PURGING
+#                 This causes the config file to be REMOVED even when NOT PURGING.
 # * Arch Linux :
 #     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
 #
-# ################################################################################
+# ##########################################################################################
 
 
 # Abort on error, don't allow usages of undeclared variable.
@@ -38,6 +39,7 @@ NAME="$(python3 setup.py --name)"
 VERSION="$(python3 setup.py --version)"
 AUTHOR="$(python3 setup.py --author)"
 AUTHOR_EMAIL="$(python3 setup.py --author-email)"
+SUPPORTED_PYTHON_VERSIONS="$(python3 setup.py --classifiers | grep 'Programming Language' | grep -Po '\d\.\d')"
 
 
 # DRY.
@@ -60,8 +62,6 @@ FPM_COMMON_ARGS=(
 	--before-remove packaging/before_remove \
 	--python-bin python3 \
 	--no-python-fix-name \
-	--python-install-bin usr/bin \
-	--python-install-lib usr/lib/python3/dist-packages \
 	--no-python-dependencies \
 )
 
@@ -83,6 +83,8 @@ fpm \
 	--depends 'python3 >= 3.4' \
 	--depends 'python3-distro' \
 	--depends 'python3-netifaces' \
+	--python-install-bin usr/bin \
+	--python-install-lib usr/lib/python3/dist-packages \
 	--deb-priority 'optional' \
 	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what' \
 	--deb-no-default-config-files \
@@ -97,16 +99,24 @@ if [ -n "$GPG_IDENTITY" ]; then
 fi
 
 
-# Build a Red Hat/Fedora (.RPM) package.
-fpm \
-	"${FPM_COMMON_ARGS[@]}" \
-	--output-type rpm \
-	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.noarch.rpm" \
-	--depends 'procps' \
-	--depends 'python3 >= 3.4' \
-	--depends 'python3-distro' \
-	--depends 'python3-netifaces' \
-	setup.py
+# Re-enable byte-code generation as we will now build packages for _specific_ Python versions.
+unset PYTHONDONTWRITEBYTECODE
+
+
+# Build Red Hat / CentOS / Fedora (.RPM) packages.
+for python_version in $SUPPORTED_PYTHON_VERSIONS; do
+	fpm \
+		"${FPM_COMMON_ARGS[@]}" \
+		--output-type rpm \
+		--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.py${python_version}.noarch.rpm" \
+		--depends 'procps' \
+		--depends 'python3 >= 3.4' \
+		--depends 'python3-distro' \
+		--depends 'python3-netifaces' \
+		--python-install-bin usr/bin \
+		--python-install-lib "usr/lib/python${python_version}/site-packages" \
+		setup.py
+done
 
 
 # Build an Arch Linux (.TAR.XZ) package.
@@ -122,6 +132,8 @@ fpm \
 	--conflicts 'archey2' \
 	--conflicts 'archey3-git' \
 	--conflicts 'pyarchey' \
+	--python-install-bin usr/bin \
+	--python-install-lib usr/lib/python3.8/site-packages \
 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
@@ -133,9 +145,6 @@ fpm \
 # Remove the fake `etc/` directory.
 rm -rf etc/
 
-
-# Silence some Setuptools warnings by re-enabling byte-code generation.
-unset PYTHONDONTWRITEBYTECODE
 
 # Build Python source TAR and WHEEL distribution packages.
 python3 setup.py -q sdist bdist_wheel
