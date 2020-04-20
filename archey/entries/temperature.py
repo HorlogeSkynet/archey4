@@ -85,7 +85,7 @@ class Temperature:
                     #  temperature, as :
                     # * It might be an input fan speed (from a control chip) ;
                     # * Some chips/adapters might return null temperatures.
-                    if value != 0.0 and re.match(r"temp.*_input", name):
+                    if value != 0.0 and re.match(r"temp\d_input", name):
                         self.temps.append(value)
                         # There is only one `temp*_input` field, let's stop the current iteration.
                         break
