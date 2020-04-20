@@ -104,7 +104,7 @@ for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 	fpm \
 		"${FPM_COMMON_ARGS[@]}" \
 		--output-type rpm \
-		--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.py${python_version}.noarch.rpm" \
+		--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.py${python_version//.}.noarch.rpm" \
 		--depends 'procps' \
 		--depends "python3 >= ${python_version}" \
 		--depends 'python3-distro' \
