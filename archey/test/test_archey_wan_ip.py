@@ -3,6 +3,7 @@
 import unittest
 from unittest.mock import patch
 
+import socket
 from subprocess import TimeoutExpired
 from urllib.error import URLError
 
@@ -102,6 +103,27 @@ class TestWanIpEntry(unittest.TestCase):
     )
     def test_ipv4_timeout_twice(self, _, __, ___):
         """Test when both `dig` and `URLOpen` trigger timeouts..."""
+        self.assertEqual(WanIp().value, 'No Address')
+
+    @patch(
+        'archey.entries.wan_ip.check_output',
+        side_effect=TimeoutExpired('dig', 1)  # `check_output` call will fail
+    )
+    @patch(
+        'archey.entries.wan_ip.urlopen',
+        side_effect=socket.timeout('The read operation timed out')  # `urlopen` call will fail
+    )
+    @patch(
+        'archey.entries.wan_ip.Configuration.get',
+        side_effect=[
+            {'wan_ip_v6_support': False},
+            {'ipv4_detection': None},  # Needed key.
+            {'ipv4_detection': None},  # Needed key.
+            {'no_address': 'No Address'}
+        ]
+    )
+    def test_ipv4_timeout_twice_socket_error(self, _, __, ___):
+        """Test when both `dig` timeouts and `URLOpen` raises `socket.timeout`..."""
         self.assertEqual(WanIp().value, 'No Address')
 
     @patch(

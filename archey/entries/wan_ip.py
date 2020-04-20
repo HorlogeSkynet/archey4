@@ -1,5 +1,7 @@
 """Public IP address detection class"""
 
+import socket
+
 from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
 from urllib.error import URLError
 from urllib.request import urlopen
@@ -34,7 +36,7 @@ class WanIp:
                     if ipv6_addr and ipv6_addr.getcode() == 200:
                         ipv6_addr = ipv6_addr.read().decode().strip()
 
-                except URLError:
+                except (URLError, socket.timeout):
                     # It looks like this user doesn't have any IPv6 address...
                     # ... or is not connected to Internet.
                     ipv6_addr = None
@@ -62,7 +64,7 @@ class WanIp:
                 if ipv4_addr and ipv4_addr.getcode() == 200:
                     ipv4_addr = ipv4_addr.read().decode().strip()
 
-            except URLError:
+            except (URLError, socket.timeout):
                 # The user does not look connected to Internet...
                 ipv4_addr = None
 
