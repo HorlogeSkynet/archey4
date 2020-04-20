@@ -110,7 +110,7 @@ for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 		--output-type rpm \
 		--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.py${python_version}.noarch.rpm" \
 		--depends 'procps' \
-		--depends 'python3 >= 3.4' \
+		--depends "python3 >= ${python_version}" \
 		--depends 'python3-distro' \
 		--depends 'python3-netifaces' \
 		--python-install-bin usr/bin \
@@ -120,12 +120,13 @@ done
 
 
 # Build an Arch Linux (.TAR.XZ) package.
+ARCH_LINUX_PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type pacman \
 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
 	--depends 'procps-ng' \
-	--depends 'python>=3.4' \
+	--depends "python>=${ARCH_LINUX_PYTHON_VERSION}" \
 	--depends 'python-distro' \
 	--depends 'python-netifaces' \
 	--conflicts 'archey-git' \
@@ -133,7 +134,7 @@ fpm \
 	--conflicts 'archey3-git' \
 	--conflicts 'pyarchey' \
 	--python-install-bin usr/bin \
-	--python-install-lib usr/lib/python3.8/site-packages \
+	--python-install-lib "usr/lib/python${ARCH_LINUX_PYTHON_VERSION}/site-packages" \
 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
