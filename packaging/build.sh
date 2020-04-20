@@ -99,10 +99,6 @@ if [ -n "$GPG_IDENTITY" ]; then
 fi
 
 
-# Re-enable byte-code generation as we will now build packages for _specific_ Python versions.
-unset PYTHONDONTWRITEBYTECODE
-
-
 # Build Red Hat / CentOS / Fedora (.RPM) packages.
 for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 	fpm \
@@ -145,6 +141,10 @@ fpm \
 
 # Remove the fake `etc/` directory.
 rm -rf etc/
+
+
+# Silence some Setuptools warnings by re-enabling byte-code generation.
+unset PYTHONDONTWRITEBYTECODE
 
 
 # Build Python source TAR and WHEEL distribution packages.
