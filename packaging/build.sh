@@ -56,7 +56,7 @@ FPM_COMMON_ARGS=(
 	--provides 'archey4' \
 	--config-files "$FAKE_CONFIG_FILE" \
 	--architecture all \
-	--maintainer "$(printf '%s <%s>' "$AUTHOR" "$AUTHOR_EMAIL")" \
+	--maintainer "${AUTHOR} <${AUTHOR_EMAIL}>" \
 	--after-install packaging/after_install \
 	--after-upgrade packaging/after_install \
 	--before-remove packaging/before_remove \
