@@ -17,33 +17,25 @@ class TestUserEntry(unittest.TestCase):
         'archey.entries.user.os.getenv',
         return_value='USERNAME'
     )
-    @patch(
-        'archey.entries.user.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_getenv(self, _, __):
+    def test_getenv(self, _):
         """Simple mock, simple test"""
         self.assertEqual(User().value, 'USERNAME')
 
     @patch(
         'archey.entries.user.os.getenv',
-        return_value=''
+        return_value=None
     )
     @patch(
         'archey.entries.user.check_output',
         return_value='USERNAME\n'
     )
-    @patch(
-        'archey.entries.user.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_id_call(self, _, __, ___):
-        """Mock `id` return value and check the correct assignment"""
+    def test_id_call(self, _, __):
+        """Mock `id` returned value and check the correct assignment"""
         self.assertEqual(User().value, 'USERNAME')
 
     @patch(
         'archey.entries.user.os.getenv',
-        return_value=''
+        return_value=None
     )
     @patch(
         'archey.entries.user.check_output',
