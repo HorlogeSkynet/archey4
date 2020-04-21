@@ -18,13 +18,32 @@ NAME VERSION (CODENAME)\
         return_value="""\
 ARCHITECTURE
 """)
-    def test(self, _, __):
+    def test_ok(self, _, __):
         """Test for `distro` and `uname` outputs concatenation"""
         self.assertEqual(
             Distro().value,
             'NAME VERSION (CODENAME) [ARCHITECTURE]'
         )
 
+    @patch(
+        'archey.entries.distro.distro.name',  # `distro.name` output
+        return_value=""  # `distro` is soft-failing, returning an empty string...
+    )
+    @patch(
+        'archey.entries.distro.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
+    )
+    @patch(
+        'archey.entries.distro.check_output',  # `uname` output
+        return_value="""\
+ARCHITECTURE
+""")
+    def test_unknown_distro(self, _, __, ___):
+        """Test for `distro` and `uname` outputs concatenation"""
+        self.assertEqual(
+            Distro().value,
+            'Not detected [ARCHITECTURE]'
+        )
 
 if __name__ == '__main__':
     unittest.main()
