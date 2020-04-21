@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import patch
 
-import socket
+from socket import timeout as SocketTimeoutError
 from subprocess import TimeoutExpired
 from urllib.error import URLError
 
@@ -111,7 +111,7 @@ class TestWanIpEntry(unittest.TestCase):
     )
     @patch(
         'archey.entries.wan_ip.urlopen',
-        side_effect=socket.timeout('The read operation timed out')  # `urlopen` call will fail
+        side_effect=SocketTimeoutError('The read operation timed out')  # `urlopen` call will fail
     )
     @patch(
         'archey.entries.wan_ip.Configuration.get',
