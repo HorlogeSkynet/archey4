@@ -53,7 +53,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | Graphical (desktop)   | `pciutils`                          | **GPU** wouldn't be detected without it              | Would provide `lspci`        |
 | Graphical (desktop)   | `wmctrl`                            | **WindowManager** would be more accurate             | N/A                          |
 | Virtual w/o `systemd` | `virt-what` and `dmidecode`         | **Model** would contain details about the hypervisor | **root** privileges required |
-| BTRFS file-systems    | `btrfs-progs` (maybe `btrfs-tools`) | **Disk** would support BTRFS usage computations      | N/A                          |
+| BTRFS file-systems    | `btrfs-progs` (maybe `btrfs-tools`) | **Disk** would support BTRFS in usage computations   | N/A                          |
 
 ### :warning: Various notes to read before going down :warning:
 
