@@ -121,8 +121,11 @@ $ cp archey/config.json ~/.config/archey4/config.json
 # This can be achieved with StickyTape or PyInstaller.
 
 # StickyTape:
-$ sudo pip3 install stickytape
-$ stickytape --add-python-path . --output-file dist/archey archey/__main__.py
+# We need the git version of stickytape:
+$ git clone https://github.com/mwilliamson/stickytape.git ../stickytape
+$ sudo pip3 install ../stickytape/
+# Run the stickytape install script:
+$ python3 stickytape/gen-script.py
 $ python3 dist/archey
 # ________________________________________
 

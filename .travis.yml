@@ -12,8 +12,12 @@ install:
   # Archey package installation (and dependencies).
   - pip3 install .
 
-  # Pylint, Stickytape and PyInstaller external dependencies (see below).
-  - pip3 install pylint stickytape pyinstaller
+  # Pylint and PyInstaller external dependencies (see below).
+  - pip3 install pylint pyinstaller
+
+  # Install stickytape from GitHub master (external dependency, see below).
+  - git clone https://github.com/mwilliamson/stickytape.git ../stickytape
+  - pip3 install ../stickytape/
 
 script:
   # Simple execution.
@@ -28,7 +32,7 @@ script:
   - pylint archey/
 
   # Build a standalone script from sources (Stickytape).
-  - stickytape --add-python-path . --output-file dist/archey archey/__main__.py
+  - python3 stickytape/gen-script.py
   - python3 dist/archey
 
   # Build a standalone script from sources (PyInstaller).
