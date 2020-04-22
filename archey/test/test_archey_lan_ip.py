@@ -76,7 +76,9 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_multiple_interfaces(self, _, __):
-        """[Entry] [LanIp] Test for multiple interfaces, multiple addresses (including a loopback one)"""
+        """
+        [Entry] [LanIp] Test for multiple interfaces, multiple addresses (including a loopback one)
+        """
         self.assertEqual(
             LanIp().value,
             '192.168.0.11, 192.168.1.11, 172.34.56.78'
@@ -144,7 +146,10 @@ class TestLanIpEntry(unittest.TestCase):
         }
     )
     def test_ipv6_and_limit_and_ether(self, _, __):
-        """[Entry] [LanIp] Test for IPv6 support, final set length limit and Ethernet interface filtering"""
+        """
+        [Entry] [LanIp] Test for IPv6 support, final set length limit...
+        ...and Ethernet interface filtering
+        """
         self.assertEqual(
             LanIp().value,
             '192.168.1.55, 2001::45:6789:abcd:6817'

@@ -83,7 +83,10 @@ Window manager's "showing the desktop" mode: OFF
         }
     )
     def test_no_wmctrl_mismatch(self, _, __):
-        """[Entry] [WindowManager] Test (non-detection) when processes list do not contain any known value"""
+        """
+        [Entry] [WindowManager] Test (non-detection) when processes list...
+        ...do not contain any known value
+        """
         self.assertEqual(
             WindowManager().value,
             'Not detected'

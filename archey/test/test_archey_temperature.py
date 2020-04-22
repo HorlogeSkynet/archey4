@@ -126,7 +126,10 @@ class TestTemperatureEntry(unittest.TestCase):
         }
     )
     def test_files_only_in_fahrenheit(self, iglob_mock, _):
-        """[Entry] [Temperature] Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
+        """
+        [Entry] [Temperature] Test sensor files only, Fahrenheit (naive) conversion
+        and special degree character
+        """
         iglob_mock.return_value = iter([file.name for file in self.temp_files])
         self.assertEqual(
             Temperature().value,
@@ -230,7 +233,10 @@ class TestTemperatureEntry(unittest.TestCase):
         }
     )
     def test_sensors_only_in_fahrenheit(self, _):
-        """[Entry] [Temperature] Test computations around `sensors` output and Fahrenheit (naive) conversion"""
+        """
+        [Entry] [Temperature] Test computations around `sensors` output
+        and Fahrenheit (naive) conversion
+        """
         self.assertEqual(
             Temperature().value,
             '126.6 F (Max. 237.2 F)'  # 52.6 and 114.0 converted into Fahrenheit.
@@ -257,7 +263,10 @@ class TestTemperatureEntry(unittest.TestCase):
         }
     )
     def test_sensors_error_1(self, iglob_mock, _):
-        """[Entry] [Temperature] Test `sensors` (hard) failure handling and polling from files in Celsius"""
+        """
+        [Entry] [Temperature] Test `sensors` (hard) failure handling...
+        ...and polling from files in Celsius
+        """
         iglob_mock.return_value = iter([file.name for file in self.temp_files])
         self.assertEqual(
             Temperature().value,
