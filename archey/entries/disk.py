@@ -2,6 +2,8 @@
 
 from bisect import bisect
 
+import re
+
 from subprocess import check_output, CalledProcessError, DEVNULL
 
 from archey.constants import COLOR_DICT
@@ -101,21 +103,28 @@ class Disk:
 
         # JSON output support landed very "late" in `btrfs-progs` user-space binaries.
         # We are parsing it the hard way to increase compatibility...
-        physical_device_used = []
-        physical_device_size = []
-        data_ratios = []
-        for line in btrfs_usage_output.splitlines():
-            line = line.strip()
-            if line.startswith("Used"):
-                physical_device_used.append(float(line.split()[1].rstrip("GiB")))
-            elif line.startswith("Device size"):
-                physical_device_size.append(float(line.split()[2].rstrip("GiB")))
-            elif line.startswith("Data ratio"):
-                data_ratios.append(float(line.split()[2]))
+        physical_device_used = re.findall(
+            r"Used:\s+(\d+\.\d+)GiB", btrfs_usage_output,
+            flags=re.MULTILINE
+        )
+        physical_device_size = re.findall(
+            r"Device size:\s+(\d+\.\d+)GiB", btrfs_usage_output,
+            flags=re.MULTILINE
+        )
+        data_ratios = re.findall(
+            r"Data ratio:\s+(\d+\.\d+)", btrfs_usage_output,
+            flags=re.MULTILINE
+        )
 
         # Divide physical space by the corresponding data ratio to get space used for that group.
-        logical_device_used = [x / y for x, y in zip(physical_device_used, data_ratios)]
-        logical_device_size = [x / y for x, y in zip(physical_device_size, data_ratios)]
+        logical_device_used = [
+            float(x) / float(y)
+            for x, y in zip(physical_device_used, data_ratios)
+        ]
+        logical_device_size = [
+            float(x) / float(y)
+            for x, y in zip(physical_device_size, data_ratios)
+        ]
 
         self._usage['total'] += sum(logical_device_size)
         self._usage['used'] += sum(logical_device_used)
