@@ -77,9 +77,9 @@ Filesystem       1000000-blocks    Used Available Capacity Mounted on
 total                  305809MB 47006MB  243149MB      17% -
 """,
             """\
-Filesystem     1024-blocks      Used  Available Capacity Mounted on
-/dev/nvme0n1p1   499581952 369693476  128527692      75% /
-/dev/sda1       3907016704 620513456 3286302304      16% /vol
+Mounted on
+/
+/vol
 """,
             """\
 /dev/nvme0n1p1, ID: 1
@@ -153,9 +153,9 @@ System,single: Size:0.01GiB, Used:0.00GiB (1.03%)
         side_effect=[
             CalledProcessError(1, "df: no file systems processed"),
             """\
-Filesystem     1024-blocks      Used  Available Capacity Mounted on
-/dev/nvme0n1p1   499581952 369693476  128527692      75% /
-/dev/sda1       3907016704 620513456 3286302304      16% /vol
+Mounted on
+/
+/vol
 """,
             """\
 /dev/nvme0n1p1, ID: 1
@@ -249,6 +249,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
         """Test df failing to detect any valid filesystems"""
         disk = Disk().value
         self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0.0']))
+
 
 if __name__ == '__main__':
     unittest.main()
