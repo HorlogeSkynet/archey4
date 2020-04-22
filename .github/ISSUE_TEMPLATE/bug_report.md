@@ -19,7 +19,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment**
 Please complete the following information.
  - Version used (4.Y.Z) : 
- - Method of installation (distribution package, PIP, sources) : 
+ - Method of installation (distribution package, PyPI, sources) : 
  - Hardware type (laptop, server, Raspberry, hyper-visor) : 
  - Python version (3.Y.Z) : 
  - Operating system and version : 

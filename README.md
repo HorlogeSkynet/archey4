@@ -56,7 +56,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ### :warning: Various notes to read before going down :warning:
 
-* **Note to Debian Jessie users : As `python3-distro` module is not available in your repositories, you should opt for an [installation from PIP](#install-with-pip).**
+* **Note to Debian Jessie (8) users : As [`python3-distro`](https://tracker.debian.org/pkg/python-distro) is not available in your repositories, you should opt for an [installation from PyPI](#install-from-pypi).**
 
 * **`virt-what` call will be skipped if `systemd` tools are available on your system.**
 
@@ -71,7 +71,7 @@ Now, it's time to use your favorite package manager. Some examples :
 * Debian-based distributions : `apt install ./archey4_v4.Y.Z-R-all.deb`
 * RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.noarch.rpm`
 
-### Install with PIP
+### Install from PyPI
 
 ```shell
 $ sudo pip3 install archey4
