@@ -1,8 +1,8 @@
 """Bunsenlabs logo"""
 
 BUNSENLABS = """\
-{c[0]}           .{c[1]}..{c[0]}+hhy+-`         \0
-{c[0]}        `+hd{c[1]}-{c[0]}+dddd{c[2]}hyso{c[0]}+//:    \0
+{c[0]}           .{c[1]}..{c[0]}+hhy+-`         \n\
+{c[0]}        `+hd{c[1]}-{c[0]}+dddd{c[2]}hyso{c[0]}+//:    \n\
 {c[0]}      `+dddd{c[1]}:-{c[0]}sdh/.           {r[0]}
 {c[0]}     -hdddddh{c[1]}-.{c[2]}/:{c[0]}             {r[1]}
 {c[0]}    /ddddddddd{c[1]}:```{c[0]}            {r[2]}
@@ -21,6 +21,6 @@ BUNSENLABS = """\
 {c[0]}     yd/    yd+               {r[15]}
 {c[0]}   `sddy   :h-                {r[16]}
 {c[0]}  `sddys`  :`                 {r[17]}
-{c[0]} -hdy+`y+yo./+/:-             \0
+{c[0]} -hdy+`y+yo./+/:-             \n\
 {c[0]} ...  .o++oso+/               \
 """
