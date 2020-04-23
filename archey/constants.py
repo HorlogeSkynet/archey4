@@ -20,6 +20,7 @@ COLOR_DICT = {
     Distributions.LINUX: [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT],
     Distributions.LINUX_MINT: [Colors.GREEN_BRIGHT, Colors.WHITE_BRIGHT],
     Distributions.OPENSUSE: [Colors.GREEN_NORMAL, Colors.WHITE_BRIGHT],
+    Distributions.RASPBIAN: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
     Distributions.RED_HAT: [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT, Colors.RED_NORMAL],
     Distributions.SLACKWARE: [Colors.BLUE_NORMAL, Colors.BLUE_BRIGHT, Colors.CLEAR],
     Distributions.UBUNTU: [Colors.RED_BRIGHT, Colors.RED_NORMAL, Colors.YELLOW_NORMAL],
@@ -42,6 +43,7 @@ LOGOS_DICT = {
     Distributions.LINUX: logos.LINUX,
     Distributions.LINUX_MINT: logos.LINUX_MINT,
     Distributions.OPENSUSE: logos.OPENSUSE,
+    Distributions.RASPBIAN: logos.DEBIAN,  # Force the Debian logo for Raspbian.
     Distributions.RED_HAT: logos.RED_HAT,
     Distributions.SLACKWARE: logos.SLACKWARE,
     Distributions.UBUNTU: logos.UBUNTU,

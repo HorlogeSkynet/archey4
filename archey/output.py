@@ -3,7 +3,6 @@ Output class file.
 It supports entries lazy-insertion, logo detection, and final printing.
 """
 
-import re
 import sys
 from subprocess import check_output
 
@@ -21,22 +20,14 @@ class Output:
     """
     def __init__(self):
         # First we check whether the Kernel has been compiled as a WSL.
-        if re.search(
-                'Microsoft',
-                check_output(['uname', '-r'], universal_newlines=True)):
+        if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
             self.distribution = Distributions.WINDOWS
-
         else:
             distribution_id = distro.id()
-
             for distribution in Distributions:
-                if re.fullmatch(
-                        distribution.value,
-                        distribution_id,
-                        re.IGNORECASE):
+                if distribution_id == distribution.value:
                     self.distribution = distribution
                     break
-
             else:
                 self.distribution = Distributions.LINUX
 

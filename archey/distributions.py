@@ -6,20 +6,22 @@ from enum import Enum
 class Distributions(Enum):
     """
     This enumeration lists supported operating systems (keys).
-    Values contain their not-yet-compiled REGEXP format string.
+    Values contain their respective `distro` identifier.
+    See <https://distro.readthedocs.io/en/latest/#distro.id>.
     """
-    ARCH_LINUX = 'Arch.*'
-    BUNSENLABS = 'BunsenLabs'
-    CRUNCHBANG = 'CrunchBang'
-    DEBIAN = '(Rasp|De)bian'
-    FEDORA = 'Fedora'
-    GENTOO = 'Gentoo'
-    KALI_LINUX = 'Kali'
-    MANJARO_LINUX = 'Manjaro ?Linux'
-    LINUX = 'Linux'
-    LINUX_MINT = 'Linux ?Mint'
-    OPENSUSE = 'openSUSE'
-    RED_HAT = '(Red ?Hat|RHEL)'
-    SLACKWARE = 'Slackware'
-    UBUNTU = 'Ubuntu'
-    WINDOWS = 'Windows'
+    ARCH_LINUX = 'arch'
+    BUNSENLABS = 'bunsenlabs'
+    CRUNCHBANG = 'crunchbang'
+    DEBIAN = 'debian'
+    FEDORA = 'fedora'
+    GENTOO = 'gentoo'
+    KALI_LINUX = 'kali'
+    MANJARO_LINUX = 'manjaro'
+    LINUX = 'linux'
+    LINUX_MINT = 'linuxmint'
+    OPENSUSE = 'opensuse'
+    RASPBIAN = 'raspbian'
+    RED_HAT = 'rhel'
+    SLACKWARE = 'slackware'
+    UBUNTU = 'ubuntu'
+    WINDOWS = 'windows'

@@ -15,9 +15,8 @@ class TestOutputUtil(unittest.TestCase):
     """
     @patch(
         'archey.output.check_output',
-        return_value="""\
-'X.Y.Z-R-ARCH'
-""")
+        return_value='X.Y.Z-R-ARCH\n'
+    )
     @patch(
         'archey.output.distro.id',
         return_value='debian'
@@ -30,9 +29,8 @@ class TestOutputUtil(unittest.TestCase):
 
     @patch(
         'archey.output.check_output',
-        return_value="""\
-X.Y.Z-R-ARCH
-""")
+        return_value='X.Y.Z-R-ARCH\n'
+    )
     @patch(
         'archey.output.distro.id',
         return_value='an-unknown-distro-id'
@@ -45,22 +43,17 @@ X.Y.Z-R-ARCH
 
     @patch(
         'archey.output.check_output',
-        return_value="""\
-X.Y.Z-R-Microsoft
-""")
-    @patch(
-        'archey.output.distro.id',
-        return_value='opensuse'
+        return_value='X.Y.Z-R-Microsoft\n'
     )
-    def test_init_windows_subsystem(self, _, __):
+    def test_init_windows_subsystem(self, _):
         """Test output for Windows Subsystem Linux"""
         output = Output()
 
         self.assertEqual(output.distribution, Distributions.WINDOWS)
 
     @patch(
-        'archey.output.re.search',
-        return_value=None  # Make WSL detection fail.
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
     )
     @patch(
         'archey.output.distro.id',
@@ -85,8 +78,8 @@ X.Y.Z-R-Microsoft
         )
 
     @patch(
-        'archey.output.re.search',
-        return_value=None  # Make WSL detection fail.
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
     )
     @patch(
         'archey.output.distro.id',
@@ -109,8 +102,8 @@ X.Y.Z-R-Microsoft
         self.assertEqual(len(output.colors_palette), len(COLOR_DICT[Distributions.SLACKWARE]))
 
     @patch(
-        'archey.output.re.search',
-        return_value=True  # Make WSL detection pass.
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-Microsoft\n'  # Make WSL detection pass.
     )
     @patch(
         'archey.output.distro.os_release_attr',
@@ -129,8 +122,8 @@ X.Y.Z-R-Microsoft
         self.assertListEqual(output.colors_palette, COLOR_DICT[Distributions.WINDOWS])
 
     @patch(
-        'archey.output.re.search',
-        return_value=None  # Make WSL detection failed.
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
     )
     @patch(
         'archey.output.distro.id',
