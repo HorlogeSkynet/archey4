@@ -2,7 +2,7 @@
 
 
 # ##########################################################################################
-#                 Archey 4 distribution packages building script
+#                       Archey 4 distribution packages building script                     #
 #
 # Dependencies :
 # * python3
@@ -27,6 +27,9 @@
 # * Arch Linux :
 #     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
 #
+# If you happen to tweak packaging scripts, please lint them before submitting changes :
+# $ shellcheck packaging/*
+#
 # ##########################################################################################
 
 
@@ -50,6 +53,7 @@ FAKE_CONFIG_FILE='etc/archey4/config.json'
 FPM_COMMON_ARGS=(
 	--input-type python \
 	--force \
+	--log error \
 	--iteration "$REVISION" \
 	--category 'utils' \
 	--provides 'archey' \
@@ -66,6 +70,9 @@ FPM_COMMON_ARGS=(
 )
 
 
+echo ">>> Packages generation for ${NAME}_v${VERSION}-${REVISION} <<<"
+
+
 # Prepare the configuration file under a regular `etc/` directory.
 mkdir -p etc/archey4 && cp archey/config.json "$FAKE_CONFIG_FILE"
 
@@ -75,6 +82,7 @@ export PYTHONDONTWRITEBYTECODE=1
 
 
 # Build a Debian (.DEB) package.
+echo 'Now generating Debian package...'
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type deb \
@@ -92,6 +100,7 @@ fpm \
 
 # Sign the resulting Debian package if a GPG identity has been provided.
 if [ -n "$GPG_IDENTITY" ]; then
+	echo "Now signing Debian package with ${GPG_IDENTITY}..."
 	debsigs \
 		--sign=origin \
 		-k "$GPG_IDENTITY" \
@@ -101,6 +110,7 @@ fi
 
 # Build Red Hat / CentOS / Fedora (.RPM) packages.
 for python_version in $SUPPORTED_PYTHON_VERSIONS; do
+	echo "Now generating RPM package (Python ${python_version})..."
 	fpm \
 		"${FPM_COMMON_ARGS[@]}" \
 		--output-type rpm \
@@ -117,6 +127,7 @@ done
 
 # Build an Arch Linux (.TAR.XZ) package.
 ARCH_LINUX_PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
+echo "Now generating Arch Linux package (Python ${python_version})..."
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type pacman \
@@ -149,15 +160,18 @@ unset PYTHONDONTWRITEBYTECODE
 
 
 # Build Python source TAR and WHEEL distribution packages.
+echo 'Now building source TAR and WHEEL distribution packages...'
 python3 setup.py -q sdist bdist_wheel
 
 # Check whether packages description will render correctly on PyPI.
+echo 'Now checking PyPI description rendering...'
 if twine check dist/*.{tar.gz,whl}; then
-	echo 'Upload source and wheel distribution packages to PyPI ? [y/N]'
+	echo -n 'Upload source and wheel distribution packages to PyPI ? [y/N] '
 	read -r -n 1 -p '' && echo
 	if [[ "$REPLY" =~ ^[yY]$ ]]; then
+		echo 'Now signing & uploading source TAR and WHEEL to PyPI...'
 		twine upload \
-			--sign --identity "${GPG_IDENTITY}" \
+			--sign --identity "$GPG_IDENTITY" \
 			dist/*.{tar.gz,whl}
 	fi
 fi
