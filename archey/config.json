@@ -22,7 +22,8 @@
 		"WAN_IP": true
 	},
 	"colors_palette": {
-		"use_unicode": false
+		"use_unicode": false,
+		"honor_ansi_color": true
 	},
 	"default_strings": {
 		"no_address": "No Address",

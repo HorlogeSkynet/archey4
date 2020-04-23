@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.colors import Colors
+from archey.constants import COLOR_DICT
 from archey.output import Output
 from archey.distributions import Distributions
 
@@ -25,10 +26,7 @@ class TestOutputUtil(unittest.TestCase):
         """Test known distribution output"""
         output = Output()
 
-        self.assertEqual(
-            output.distribution,
-            Distributions.DEBIAN
-        )
+        self.assertEqual(output.distribution, Distributions.DEBIAN)
 
     @patch(
         'archey.output.check_output',
@@ -43,10 +41,7 @@ X.Y.Z-R-ARCH
         """Test unknown distribution output"""
         output = Output()
 
-        self.assertEqual(
-            output.distribution,
-            Distributions.LINUX
-        )
+        self.assertEqual(output.distribution, Distributions.LINUX)
 
     @patch(
         'archey.output.check_output',
@@ -61,31 +56,86 @@ X.Y.Z-R-Microsoft
         """Test output for Windows Subsystem Linux"""
         output = Output()
 
-        self.assertEqual(
-            output.distribution,
-            Distributions.WINDOWS
-        )
+        self.assertEqual(output.distribution, Distributions.WINDOWS)
 
+    @patch(
+        'archey.output.re.search',
+        return_value=None  # Make WSL detection fail.
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value='debian'  # Make Debian being selected.
+    )
     @patch.dict(
         'archey.output.COLOR_DICT',
-        {
-            Distributions.DEBIAN: ['COLOR_0', 'COLOR_1']
-        }
+        {Distributions.DEBIAN: ['COLOR_0']}
     )
-    def test_append(self):
+    @patch(
+        'archey.entries.model.Configuration.get',
+        return_value={'honor_ansi_color': False}
+    )
+    def test_append_regular(self, _, __, ___):
         """Test the `append` method, for new entries"""
         output = Output()
-
-        # Let's manually set the distribution for the test case...
-        output.distribution = Distributions.DEBIAN
-
         output.append('KEY', 'VALUE')
 
-        self.assertEqual(
+        self.assertListEqual(
             output.results,
             ['COLOR_0KEY:{clear} VALUE'.format(clear=Colors.CLEAR)]
         )
 
+    @patch(
+        'archey.output.re.search',
+        return_value=None  # Make WSL detection fail.
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value='slackware'  # Make Slackware being selected.
+    )
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value='ANSI_COLOR'
+    )
+    @patch(
+        'archey.entries.model.Configuration.get',
+        return_value={'honor_ansi_color': True}
+    )
+    def test_append_ansi_color(self, _, __, ___, ____):
+        """Check that `Output` honor `ANSI_COLOR` as required"""
+        output = Output()
+
+        # Slackware logo got three colors, so let's check they have been correctly replaced.
+        self.assertTrue(all('ANSI_COLOR' in str(color) for color in output.colors_palette))
+        self.assertEqual(len(output.colors_palette), len(COLOR_DICT[Distributions.SLACKWARE]))
+
+    @patch(
+        'archey.output.re.search',
+        return_value=True  # Make WSL detection pass.
+    )
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value='ANSI_COLOR'
+    )
+    @patch(
+        'archey.entries.model.Configuration.get',
+        return_value={'honor_ansi_color': False}
+    )
+    def test_append_no_ansi_color(self, _, __, ___):
+        """Check that `Output` DOES NOT honor `ANSI_COLOR` when specified"""
+        output = Output()
+
+        # Check that NO colors have been replaced (actually, that the list is the same as before).
+        self.assertFalse(any('ANSI_COLOR' in str(color) for color in output.colors_palette))
+        self.assertListEqual(output.colors_palette, COLOR_DICT[Distributions.WINDOWS])
+
+    @patch(
+        'archey.output.re.search',
+        return_value=None  # Make WSL detection failed.
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value='debian'  # Make Debian being selected.
+    )
     @patch.dict(
         'archey.output.LOGOS_DICT',
         {
@@ -116,12 +166,9 @@ X.Y.Z-R-Microsoft
         return_value=None,  # Let's badly mute the class outputs
         create=True
     )
-    def test_centered_output(self, _):
-        """Test how the `output` method handle centering operations"""
+    def test_centered_output(self, _, __, ___):
+        """Test how the `output` method handles centering operations"""
         output = Output()
-
-        # Let's manually set the distribution for the test case...
-        output.distribution = Distributions.DEBIAN
 
         # # ODD ENTRIES NUMBER # #
         output.results = [

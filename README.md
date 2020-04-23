@@ -179,7 +179,10 @@ Below, some further explanations of each option available :
 	"colors_palette": {
 		// Set this option to `true` to display a beautiful colors palette.
 		// `false` by default for backward compatibility with non-Unicode locales.
-		"use_unicode": false
+		"use_unicode": false,
+		// Set this option to `false` to force Archey to use its own colors palettes.
+		// `true` by default to honor `os-release`'s `ANSI_COLOR` option.
+		"honor_ansi_color": true
 	},
 	"default_strings": {
 		// Use this section to override default strings.

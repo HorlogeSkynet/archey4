@@ -9,8 +9,9 @@ from subprocess import check_output
 
 import distro
 
-from archey.distributions import Distributions
 from archey.constants import COLOR_DICT, LOGOS_DICT, Colors
+from archey.configuration import Configuration
+from archey.distributions import Distributions
 
 
 class Output:
@@ -41,6 +42,14 @@ class Output:
 
         # Fetch the colors palette related to this distribution.
         self.colors_palette = COLOR_DICT[self.distribution]
+
+        # If `os-release`'s `ANSI_COLOR` option is set, honor it.
+        # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ANSI_COLOR=>.
+        ansi_color = distro.os_release_attr('ansi_color')
+        if ansi_color and Configuration().get('colors_palette')['honor_ansi_color']:
+            # Replace each Archey integrated colors by `ANSI_COLOR`.
+            self.colors_palette = len(self.colors_palette) * \
+                [Colors.escape_code_from_attrs(ansi_color)]
 
         # Each class output will be added in the list below afterwards
         self.results = []
