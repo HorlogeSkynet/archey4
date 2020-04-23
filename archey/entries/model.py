@@ -16,7 +16,7 @@ class Model:
         # The configuration object is needed to retrieve some default strings.
         self._default_strings = Configuration().get('default_strings')
 
-        # Is this machine virtualized ?
+        # Is this a virtual machine ?
         self._check_virtualization()
 
         # Does the OS know something about the hardware ?
@@ -43,12 +43,11 @@ class Model:
                 ['systemd-detect-virt'],
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
-        except (FileNotFoundError, CalledProcessError):
-            pass
-
-        # Not a virtualized environment.
-        if environment == 'none':
+        except CalledProcessError:
+            # Not a virtual environment.
             return
+        except FileNotFoundError:
+            pass
 
         # When run as root, let's ask `virt-what` and/or `dmidecode`.
         if os.getuid() == 0:
@@ -73,7 +72,7 @@ class Model:
             except (FileNotFoundError, CalledProcessError):
                 pass
 
-        # Definitely not a virtualized environment.
+        # Definitely not a virtual environment.
         if not environment:
             return
 

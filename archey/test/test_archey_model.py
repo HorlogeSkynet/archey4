@@ -1,5 +1,7 @@
 """Test module for Archey's device's model detection module"""
 
+from subprocess import CalledProcessError
+
 import unittest
 from unittest.mock import mock_open, patch
 
@@ -18,7 +20,7 @@ class TestModelEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.model.check_output',
-        return_value='none\n'
+        side_effect=CalledProcessError(1, 'systemd-detect-virt', "none\n")
     )
     @patch(
         'archey.entries.model.open',
@@ -31,7 +33,7 @@ class TestModelEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.model.check_output',
-        return_value='none\n'
+        side_effect=CalledProcessError(1, 'systemd-detect-virt', "none\n")
     )
     def test_raspberry(self, _):
         """Test for a typical Raspberry context"""
