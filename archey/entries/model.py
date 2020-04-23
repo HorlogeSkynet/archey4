@@ -14,7 +14,7 @@ class Model:
         self.value = None
 
         # The configuration object is needed to retrieve some default strings.
-        self.default_strings = Configuration().get('default_strings')
+        self._default_strings = Configuration().get('default_strings')
 
         # Is this machine virtualized ?
         self._check_virtualization()
@@ -28,7 +28,7 @@ class Model:
             self._check_rasperry_pi()
 
         if not self.value:
-            self.value = self.default_strings['not_detected']
+            self.value = self._default_strings['not_detected']
 
     def _check_virtualization(self):
         """
@@ -79,7 +79,7 @@ class Model:
 
         # If we reach there, this _should_ be a virtual environment.
         self.value = "{0} ({1})".format(
-            product_name or self.default_strings['virtual_environment'],
+            product_name or self._default_strings['virtual_environment'],
             environment
         )
 
