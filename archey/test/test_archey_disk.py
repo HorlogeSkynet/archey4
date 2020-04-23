@@ -23,7 +23,8 @@ Filesystem       1000000-blocks    Used Available Capacity Mounted on
 /dev/mapper/home       265741MB 32700MB  219471MB      13% /home
 total                  305809MB 47006MB  243149MB      17% -
 """,
-            CalledProcessError(1, "df: no file systems processed")  # second `df` call will fail.
+            # Second `df` call will fail.
+            CalledProcessError(1, 'df', "df: no file systems processed\n")
         ]
     )
     @patch(
@@ -50,7 +51,8 @@ Filesystem       1000000-blocks     Used Available Capacity Mounted on
 /dev/mapper/home       265741MB 243291MB   22450MB      92% /home
 total                  305809MB 257598MB   46130MB      84% -
 """,
-            CalledProcessError(1, "df: no file systems processed")  # second `df` call will fail.
+            # Second `df` call will fail.
+            CalledProcessError(1, 'df', "df: no file systems processed\n")
         ]
     )
     @patch(
@@ -152,7 +154,7 @@ System,single: Size:0.01GiB, Used:0.00GiB (1.03%)
     @patch(
         'archey.entries.disk.check_output',
         side_effect=[
-            CalledProcessError(1, "df: no file systems processed"),
+            CalledProcessError(1, 'df', "df: no file systems processed\n"),
             """\
 Mounted on
 /
@@ -233,8 +235,8 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
     @patch(
         'archey.entries.disk.check_output',
         side_effect=[
-            CalledProcessError(1, "df: no file systems processed"),
-            CalledProcessError(1, "df: no file systems processed")
+            CalledProcessError(1, 'df', "df: no file systems processed\n"),
+            CalledProcessError(1, 'df', "df: no file systems processed\n")
         ]
     )
     @patch(

@@ -39,7 +39,7 @@ class TestUserEntry(unittest.TestCase):
     )
     @patch(
         'archey.entries.user.check_output',
-        side_effect=CalledProcessError(1, 'id: ’1000’: no such user')
+        side_effect=CalledProcessError(1, 'id', "id: ’1000’: no such user\n")
     )
     @patch(
         'archey.entries.user.Configuration.get',
