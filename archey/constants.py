@@ -1,30 +1,35 @@
 """Logos colors and distributions / logos matching"""
 
 import archey.logos as logos
+
+from archey.colors import Colors
 from archey.distributions import Distributions
 
 
+# This dictionary contains which colors should be used for each supported distribution.
+# The first element (`[0]`) of each list will be used to display text entries.
 COLOR_DICT = {
-    Distributions.ARCH_LINUX: ['\x1b[0;34m', '\x1b[1;34m'],
-    Distributions.BUNSENLABS: ['\x1b[1;37m', '\x1b[1;33m', '\x1b[0;33m'],
-    Distributions.CRUNCHBANG: ['\x1b[1;37m', '\x1b[1;37m'],
-    Distributions.DEBIAN: ['\x1b[0;31m', '\x1b[1;31m'],
-    Distributions.FEDORA: ['\x1b[1;37m', '\x1b[0;34m'],
-    Distributions.GENTOO: ['\x1b[1;37m', '\x1b[1;35m'],
-    Distributions.KALI_LINUX: ['\x1b[1;37m', '\x1b[1;34m'],
-    Distributions.MANJARO_LINUX: ['\x1b[0;32m', '\x1b[1;32m'],
-    Distributions.LINUX: ['\x1b[1;33m', '\x1b[1;37m'],
-    Distributions.LINUX_MINT: ['\x1b[1;37m', '\x1b[1;32m'],
-    Distributions.OPENSUSE: ['\x1b[1;37m', '\x1b[1;32m'],
-    Distributions.RED_HAT: ['\x1b[1;37m', '\x1b[1;31m', '\x1b[0;31m'],
-    Distributions.SLACKWARE: ['\x1b[0;34m', '\x1b[1;34m', '\x1b[1;0m'],
-    Distributions.UBUNTU: ['\x1b[0;31m', '\x1b[1;31m', '\x1b[0;33m'],
-    Distributions.WINDOWS: ['\x1b[1;31m', '\x1b[1;34m',
-                            '\x1b[1;32m', '\x1b[0;33m'],
-    'sensors': ['\x1b[0;32m', '\x1b[0;33m', '\x1b[0;31m'],
-    'clear': '\x1b[0m'
+    Distributions.ARCH_LINUX: [Colors.CYAN_BRIGHT, Colors.CYAN_NORMAL],
+    Distributions.BUNSENLABS: [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT, Colors.YELLOW_NORMAL],
+    Distributions.CRUNCHBANG: [Colors.WHITE_BRIGHT],
+    Distributions.DEBIAN: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
+    Distributions.FEDORA: [Colors.BLUE_NORMAL, Colors.WHITE_BRIGHT],
+    Distributions.GENTOO: [Colors.MAGENTA_BRIGHT, Colors.WHITE_BRIGHT],
+    Distributions.KALI_LINUX: [Colors.BLUE_BRIGHT, Colors.WHITE_BRIGHT],
+    Distributions.MANJARO_LINUX: [Colors.GREEN_BRIGHT],
+    Distributions.LINUX: [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT],
+    Distributions.LINUX_MINT: [Colors.GREEN_BRIGHT, Colors.WHITE_BRIGHT],
+    Distributions.OPENSUSE: [Colors.GREEN_NORMAL, Colors.WHITE_BRIGHT],
+    Distributions.RED_HAT: [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT, Colors.RED_NORMAL],
+    Distributions.SLACKWARE: [Colors.BLUE_NORMAL, Colors.BLUE_BRIGHT, Colors.CLEAR],
+    Distributions.UBUNTU: [Colors.RED_BRIGHT, Colors.RED_NORMAL, Colors.YELLOW_NORMAL],
+    Distributions.WINDOWS: [
+        Colors.BLUE_BRIGHT, Colors.RED_BRIGHT, Colors.GREEN_BRIGHT, Colors.YELLOW_NORMAL
+    ]
 }
 
+
+# This dictionary contains which logo should be used for each supported distribution.
 LOGOS_DICT = {
     Distributions.ARCH_LINUX: logos.ARCH_LINUX,
     Distributions.BUNSENLABS: logos.BUNSENLABS,

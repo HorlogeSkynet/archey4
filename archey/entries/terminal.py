@@ -2,7 +2,7 @@
 
 import os
 
-from archey.constants import COLOR_DICT
+from archey.colors import Colors
 from archey.configuration import Configuration
 
 
@@ -25,10 +25,11 @@ class Terminal:
         # This is the default option for backward compatibility.
         use_unicode = configuration.get('colors_palette')['use_unicode']
         colors = ' '.join([
-            '\x1b[0;3{0}m{1}\x1b[1;3{0}m{1}{2}'.format(
-                i,
-                '\u2588' if use_unicode else '#',
-                COLOR_DICT['clear']
+            '{normal}{character}{bright}{character}{clear}'.format(
+                normal=Colors.escape_code_from_attrs('0;' + str(30 + i)),
+                bright=Colors.escape_code_from_attrs('1;' + str(30 + i)),
+                character=('\u2588' if use_unicode else '#'),
+                clear=Colors.CLEAR
             ) for i in range(7, 0, -1)
         ])
 

@@ -5,6 +5,7 @@ from subprocess import CalledProcessError
 import unittest
 from unittest.mock import patch
 
+from archey.colors import Colors
 from archey.entries.disk import Disk
 
 
@@ -37,7 +38,7 @@ total                  305809MB 47006MB  243149MB      17% -
     def test_df_only(self, _, __):
         """Test computations around `df` output at disk regular level"""
         disk = Disk().value
-        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '45.9', '298.6']))
+        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '45.9', '298.6']))
 
     @patch(
         'archey.entries.disk.check_output',
@@ -64,7 +65,7 @@ total                  305809MB 257598MB   46130MB      84% -
     def test_df_only_warning(self, _, __):
         """Test computations around `df` output at disk warning level"""
         disk = Disk().value
-        self.assertTrue(all(i in disk for i in ['\x1b[0;33m', '251.6', '298.6']))
+        self.assertTrue(all(i in disk for i in [str(Colors.YELLOW_NORMAL), '251.6', '298.6']))
 
     @patch(
         'archey.entries.disk.check_output',
@@ -146,7 +147,7 @@ System,single: Size:0.01GiB, Used:0.00GiB (1.03%)
     def test_df_and_btrfs(self, _, __):
         """Test computations around `df` and `btrfs` outputs"""
         disk = Disk().value
-        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '989.3', '4501.1']))
+        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '989.3', '4501.1']))
 
     @patch(
         'archey.entries.disk.check_output',
@@ -227,7 +228,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
     def test_btrfs_only_with_raid_configuration(self, _, __):
         """Test computations around `btrfs` outputs with a RAID-1 setup"""
         disk = Disk().value
-        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '943.4', '4202.5']))
+        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '943.4', '4202.5']))
 
     @patch(
         'archey.entries.disk.check_output',
@@ -248,7 +249,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
     def test_no_recognised_disks(self, _, __):
         """Test df failing to detect any valid filesystems"""
         disk = Disk().value
-        self.assertTrue(all(i in disk for i in ['\x1b[0;32m', '0.0']))
+        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '0.0']))
 
 
 if __name__ == '__main__':

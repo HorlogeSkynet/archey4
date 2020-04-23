@@ -10,7 +10,7 @@ from subprocess import check_output
 import distro
 
 from archey.distributions import Distributions
-from archey.constants import COLOR_DICT, LOGOS_DICT
+from archey.constants import COLOR_DICT, LOGOS_DICT, Colors
 
 
 class Output:
@@ -39,17 +39,20 @@ class Output:
             else:
                 self.distribution = Distributions.LINUX
 
+        # Fetch the colors palette related to this distribution.
+        self.colors_palette = COLOR_DICT[self.distribution]
+
         # Each class output will be added in the list below afterwards
         self.results = []
 
     def append(self, key, value):
         """Append a pre-formatted entry to the final output content"""
         self.results.append(
-            '{0}{1}:{2} {3}'.format(
-                COLOR_DICT[self.distribution][1],
-                key,
-                COLOR_DICT['clear'],
-                value
+            '{color}{key}:{clear} {value}'.format(
+                color=self.colors_palette[0],
+                key=key,
+                clear=Colors.CLEAR,
+                value=value
             )
         )
 
@@ -65,14 +68,13 @@ class Output:
         try:
             print(
                 LOGOS_DICT[self.distribution].format(
-                    c=COLOR_DICT[self.distribution],
+                    c=self.colors_palette,
                     r=self.results
-                ) + COLOR_DICT['clear']
+                ) + str(Colors.CLEAR)
             )
-
         except UnicodeError:
             print(
-                'Your locale or TTY seems not supporting UTF8 encoding.\n'
+                'Your locale or TTY does not seem to support UTF8 encoding.\n'
                 'Please disable Unicode within your configuration file.',
                 file=sys.stderr
             )

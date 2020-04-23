@@ -1,12 +1,10 @@
 """Disk usage detection class"""
 
-from bisect import bisect
-
 import re
 
 from subprocess import check_output, CalledProcessError, DEVNULL
 
-from archey.constants import COLOR_DICT
+from archey.colors import Colors
 from archey.configuration import Configuration
 
 
@@ -25,16 +23,16 @@ class Disk:
         self._run_df_usage()
         self._run_btrfs_usage()
 
-        # Based on the disk percentage usage, select the corresponding threshold color.
-        color_selector = bisect(
-            [disk_limits['warning'], disk_limits['danger']],
-            (self._usage['used'] / (self._usage['total'] or 1)) * 100
+        # Based on the disk percentage usage, select the corresponding level color.
+        level_color = Colors.get_level_color(
+            (self._usage['used'] / (self._usage['total'] or 1)) * 100,
+            disk_limits['warning'], disk_limits['danger']
         )
 
         self.value = '{0}{1} GiB{2} / {3} GiB'.format(
-            COLOR_DICT['sensors'][color_selector],
+            level_color,
             round(self._usage['used'], 1),
-            COLOR_DICT['clear'],
+            Colors.CLEAR,
             round(self._usage['total'], 1)
         )
 

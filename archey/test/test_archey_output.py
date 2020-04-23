@@ -3,6 +3,7 @@
 import unittest
 from unittest.mock import patch
 
+from archey.colors import Colors
 from archey.output import Output
 from archey.distributions import Distributions
 
@@ -18,9 +19,8 @@ class TestOutputUtil(unittest.TestCase):
 """)
     @patch(
         'archey.output.distro.id',
-        return_value="""\
-debian\
-""")
+        return_value='debian'
+    )
     def test_init_known_distro(self, _, __):
         """Test known distribution output"""
         output = Output()
@@ -37,9 +37,8 @@ X.Y.Z-R-ARCH
 """)
     @patch(
         'archey.output.distro.id',
-        return_value="""\
-an-unknown-distro-id\
-""")
+        return_value='an-unknown-distro-id'
+    )
     def test_init_unknown_distro(self, _, __):
         """Test unknown distribution output"""
         output = Output()
@@ -56,9 +55,8 @@ X.Y.Z-R-Microsoft
 """)
     @patch(
         'archey.output.distro.id',
-        return_value="""\
-opensuse\
-""")
+        return_value='opensuse'
+    )
     def test_init_windows_subsystem(self, _, __):
         """Test output for Windows Subsystem Linux"""
         output = Output()
@@ -71,8 +69,7 @@ opensuse\
     @patch.dict(
         'archey.output.COLOR_DICT',
         {
-            Distributions.DEBIAN: ['COLOR_0', 'COLOR_1'],
-            'clear': 'CLEAR'
+            Distributions.DEBIAN: ['COLOR_0', 'COLOR_1']
         }
     )
     def test_append(self):
@@ -86,16 +83,9 @@ opensuse\
 
         self.assertEqual(
             output.results,
-            ['COLOR_1KEY:CLEAR VALUE']
+            ['COLOR_0KEY:{clear} VALUE'.format(clear=Colors.CLEAR)]
         )
 
-    @patch.dict(
-        'archey.output.COLOR_DICT',
-        {
-            Distributions.DEBIAN: ['COLOR_0', 'COLOR_1'],
-            'clear': 'CLEAR'
-        }
-    )
     @patch.dict(
         'archey.output.LOGOS_DICT',
         {
@@ -118,8 +108,7 @@ opensuse\
 {c[0]} {r[15]} {c[1]}
 {c[0]} {r[16]} {c[1]}
 {c[0]} {r[17]} {c[1]}\
-""",
-            'clear': 'CLEAR'
+"""
         }
     )
     @patch(
