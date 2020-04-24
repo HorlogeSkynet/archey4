@@ -140,7 +140,7 @@ class TestOutputUtil(unittest.TestCase):
         {Distributions.DEBIAN: ['COLOR_0']}
     )
     @patch(
-        'archey.entries.model.Configuration.get',
+        'archey.output.Configuration.get',
         return_value={'honor_ansi_color': False}
     )
     def test_append_regular(self, _, __, ___):
@@ -166,7 +166,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value='ANSI_COLOR'
     )
     @patch(
-        'archey.entries.model.Configuration.get',
+        'archey.output.Configuration.get',
         return_value={'honor_ansi_color': True}
     )
     def test_append_ansi_color(self, _, __, ___, ____):
@@ -191,7 +191,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value='ANSI_COLOR'
     )
     @patch(
-        'archey.entries.model.Configuration.get',
+        'archey.output.Configuration.get',
         return_value={'honor_ansi_color': False}
     )
     def test_append_no_ansi_color(self, _, __, ___):
