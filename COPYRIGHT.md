@@ -23,5 +23,6 @@ See <https://www.gnu.org/licenses/gpl-3.0.txt> for the full license text.
 * `lsb-release` dropping support guidance by Eli Schwartz <eschwartz93@gmail.com>
 * Major software architecture rework by @lannuttia <lannuttia@gmail.com>
 * Configurable thresholds for disk and RAM colors by Chris Roth (@czr137)
+* BTRFS disk support proper implementation (and much more) by Michael Bromilow (@ingrinder).
 
 Currently maintained (and packaged) by Samuel Forestier <dev+archey@samuel.domains>
