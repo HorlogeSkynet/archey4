@@ -238,7 +238,7 @@ class TestOutputUtil(unittest.TestCase):
     )
     @patch(
         'archey.output.print',
-        return_value=None,  # Let's badly mute the class outputs
+        return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
     def test_centered_output(self, _, __, ___):
