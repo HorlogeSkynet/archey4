@@ -16,7 +16,7 @@ class TestModelEntry(unittest.TestCase):
     * Virtual environment (as a VM or a container)
     """
     def setUp(self):
-        self.return_values = None
+        self._return_values = None
 
     @patch(
         'archey.entries.model.check_output',
@@ -37,7 +37,7 @@ class TestModelEntry(unittest.TestCase):
     )
     def test_raspberry(self, _):
         """Test for a typical Raspberry context"""
-        self.return_values = [
+        self._return_values = [
             FileNotFoundError(),  # First `open` call will fail
             'Hardware\t: HARDWARE\nRevision\t: REVISION\n'
         ]
@@ -152,7 +152,7 @@ class TestModelEntry(unittest.TestCase):
     )
     def test_no_match(self, _, __, ___):
         """Test when no information could be retrieved"""
-        self.return_values = [
+        self._return_values = [
             FileNotFoundError(),      # First `open` call will fail
             'Hardware\t: HARDWARE\n'  # `Revision` entry is not present
         ]
@@ -165,11 +165,11 @@ class TestModelEntry(unittest.TestCase):
         """
         This method does not belong to the test cases.
         It's a special method which allows mocking multiple `io.open` calls.
-        You just have to set the values within a list `self.return_values`.
+        You just have to set the values within a list `self._return_values`.
         And then :
         `mock.return_value.read.side_effect = self._special_func_for_mock_open`
         """
-        return_value = self.return_values.pop(0)
+        return_value = self._return_values.pop(0)
 
         # Either return value or raise any specified exception
         if issubclass(return_value.__class__, OSError().__class__):

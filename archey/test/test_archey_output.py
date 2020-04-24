@@ -25,7 +25,10 @@ class TestOutputUtil(unittest.TestCase):
         """Test known distribution output"""
         output = Output()
 
-        self.assertEqual(output.distribution, Distributions.DEBIAN)
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.DEBIAN
+        )
 
     @patch(
         'archey.output.check_output',
@@ -39,7 +42,10 @@ class TestOutputUtil(unittest.TestCase):
         """Test unknown distribution output"""
         output = Output()
 
-        self.assertEqual(output.distribution, Distributions.LINUX)
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.LINUX
+        )
 
     @patch(
         'archey.output.check_output',
@@ -57,7 +63,10 @@ class TestOutputUtil(unittest.TestCase):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option"""
         output = Output()
 
-        self.assertEqual(output.distribution, Distributions.UBUNTU)
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.UBUNTU
+        )
 
     @patch(
         'archey.output.check_output',
@@ -75,7 +84,10 @@ class TestOutputUtil(unittest.TestCase):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (multiple entries)"""
         output = Output()
 
-        self.assertEqual(output.distribution, Distributions.LINUX_MINT)
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.LINUX_MINT
+        )
 
     @patch(
         'archey.output.check_output',
@@ -93,7 +105,10 @@ class TestOutputUtil(unittest.TestCase):
         """Test distribution fall-back when `distro` soft-fail two times"""
         output = Output()
 
-        self.assertEqual(output.distribution, Distributions.LINUX)
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.LINUX
+        )
 
     @patch(
         'archey.output.check_output',
@@ -103,7 +118,10 @@ class TestOutputUtil(unittest.TestCase):
         """Test output for Windows Subsystem Linux"""
         output = Output()
 
-        self.assertEqual(output.distribution, Distributions.WINDOWS)
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.WINDOWS
+        )
 
     @patch(
         'archey.output.check_output',
@@ -127,7 +145,7 @@ class TestOutputUtil(unittest.TestCase):
         output.append('KEY', 'VALUE')
 
         self.assertListEqual(
-            output.results,
+            output._results,  # pylint: disable=protected-access
             ['COLOR_0KEY:{clear} VALUE'.format(clear=Colors.CLEAR)]
         )
 
@@ -152,8 +170,13 @@ class TestOutputUtil(unittest.TestCase):
         output = Output()
 
         # Slackware logo got three colors, so let's check they have been correctly replaced.
-        self.assertTrue(all('ANSI_COLOR' in str(color) for color in output.colors_palette))
-        self.assertEqual(len(output.colors_palette), len(COLOR_DICT[Distributions.SLACKWARE]))
+        self.assertTrue(
+            all('ANSI_COLOR' in str(color) for color in output._colors_palette)  # pylint: disable=protected-access
+        )
+        self.assertEqual(
+            len(output._colors_palette),  # pylint: disable=protected-access
+            len(COLOR_DICT[Distributions.SLACKWARE])
+        )
 
     @patch(
         'archey.output.check_output',
@@ -172,8 +195,13 @@ class TestOutputUtil(unittest.TestCase):
         output = Output()
 
         # Check that NO colors have been replaced (actually, that the list is the same as before).
-        self.assertFalse(any('ANSI_COLOR' in str(color) for color in output.colors_palette))
-        self.assertListEqual(output.colors_palette, COLOR_DICT[Distributions.WINDOWS])
+        self.assertFalse(
+            any('ANSI_COLOR' in str(color) for color in output._colors_palette)  # pylint: disable=protected-access
+        )
+        self.assertListEqual(
+            output._colors_palette,  # pylint: disable=protected-access
+            COLOR_DICT[Distributions.WINDOWS]
+        )
 
     @patch(
         'archey.output.check_output',
@@ -218,7 +246,7 @@ class TestOutputUtil(unittest.TestCase):
         output = Output()
 
         # # ODD ENTRIES NUMBER # #
-        output.results = [
+        output._results = [  # pylint: disable=protected-access
             '1',
             '2',
             '3'
@@ -226,7 +254,7 @@ class TestOutputUtil(unittest.TestCase):
         # Let's run the algorithm !
         output.output()
         self.assertListEqual(
-            output.results,
+            output._results,  # pylint: disable=protected-access
             [
                 '', '', '', '', '', '', '',
                 '1', '2', '3',
@@ -235,7 +263,7 @@ class TestOutputUtil(unittest.TestCase):
         )
 
         # # EVEN ENTRIES NUMBER # #
-        output.results = [
+        output._results = [  # pylint: disable=protected-access
             '1',
             '2',
             '3',
@@ -243,7 +271,7 @@ class TestOutputUtil(unittest.TestCase):
         ]
         output.output()
         self.assertListEqual(
-            output.results,
+            output._results,  # pylint: disable=protected-access
             [
                 '', '', '', '', '', '', '',
                 '1', '2', '3', '4',
@@ -252,14 +280,14 @@ class TestOutputUtil(unittest.TestCase):
         )
 
         # # FULL ENTRIES # #
-        output.results = [
+        output._results = [  # pylint: disable=protected-access
             '1', '2', '3', '4', '5', '6',
             '7', '8', '9', '10', '11', '12',
             '13', '14', '15', '16', '17', '18'
         ]
         output.output()
         self.assertListEqual(
-            output.results,
+            output._results,  # pylint: disable=protected-access
             [
                 '1', '2', '3', '4', '5', '6',
                 '7', '8', '9', '10', '11', '12',
@@ -268,10 +296,10 @@ class TestOutputUtil(unittest.TestCase):
         )
 
         # # NO ENTRY # #
-        output.results = []
+        output._results = []  # pylint: disable=protected-access
         output.output()
         self.assertListEqual(
-            output.results,
+            output._results,  # pylint: disable=protected-access
             [
                 '', '', '', '', '', '',
                 '', '', '', '', '', '',
