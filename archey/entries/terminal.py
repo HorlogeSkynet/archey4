@@ -26,11 +26,11 @@ class Terminal:
         use_unicode = configuration.get('colors_palette')['use_unicode']
         colors = ' '.join([
             '{normal}{character}{bright}{character}{clear}'.format(
-                normal=Colors.escape_code_from_attrs('0;' + str(30 + i)),
-                bright=Colors.escape_code_from_attrs('1;' + str(30 + i)),
+                normal=Colors.escape_code_from_attrs('0;' + str(i)),
+                bright=Colors.escape_code_from_attrs('1;' + str(i)),
                 character=('\u2588' if use_unicode else '#'),
                 clear=Colors.CLEAR
-            ) for i in range(7, 0, -1)
+            ) for i in range(37, 30, -1)
         ])
 
         self.value = '{0} {1}'.format(terminal, colors)
