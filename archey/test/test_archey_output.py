@@ -21,7 +21,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.id',
         return_value='debian'
     )
-    def test_init_known_distro(self, _, __):
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_known_distro(self, _, __, ___):
         """Test known distribution output"""
         output = Output()
 
@@ -42,7 +46,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.like',
         return_value=''  # No `ID_LIKE` specified.
     )
-    def test_init_unknown_distro(self, _, __, ___):
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_unknown_distro(self, _, __, ___, ____):
         """Test unknown distribution output"""
         output = Output()
 
@@ -63,7 +71,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.like',
         return_value='ubuntu'  # Oh, it's actually an Ubuntu-based one !
     )
-    def test_init_distro_like(self, _, __, ___):
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_distro_like(self, _, __, ___, ____):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option"""
         output = Output()
 
@@ -84,7 +96,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.like',
         return_value='linuxmint debian'  # Oh, what do we got there ?!
     )
-    def test_init_distro_like_multiple(self, _, __, ___):
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_distro_like_multiple(self, _, __, ___, ____):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (multiple entries)"""
         output = Output()
 
@@ -105,7 +121,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.like',
         return_value=''  # No `ID_LIKE` either...
     )
-    def test_init_both_distro_calls_fail(self, _, __, ___):
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_both_distro_calls_fail(self, _, __, ___, ____):
         """Test distribution fall-back when `distro` soft-fail two times"""
         output = Output()
 
@@ -118,7 +138,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.check_output',
         return_value='X.Y.Z-R-Microsoft\n'
     )
-    def test_init_windows_subsystem(self, _):
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_windows_subsystem(self, _, __):
         """Test output for Windows Subsystem Linux"""
         output = Output()
 
@@ -215,6 +239,10 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.id',
         return_value='debian'  # Make Debian being selected.
     )
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
     @patch.dict(
         'archey.output.LOGOS_DICT',
         {
@@ -245,7 +273,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
-    def test_centered_output(self, _, __, ___):
+    def test_centered_output(self, _, __, ___, ____):
         """Test how the `output` method handles centering operations"""
         output = Output()
 
