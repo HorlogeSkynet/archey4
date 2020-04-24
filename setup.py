@@ -7,10 +7,12 @@ This is the Archey 4's `setup.py` file, allowing us to distribute it as a packag
 
 from setuptools import find_packages, setup
 
+from archey._version import __version__
+
 
 setup(
     name='archey4',
-    version='4.7.0',
+    version=__version__.lstrip('v'),
     description='Archey is a simple system information tool written in Python',
     keywords='archey python3 linux system-information monitoring',
     url='https://github.com/HorlogeSkynet/archey4',

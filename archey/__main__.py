@@ -6,8 +6,11 @@ It loads each entry as a different class coming from the `entries` module.
 Logos are stored under the `logos` module.
 """
 
+import argparse
+
 from enum import Enum
 
+from archey._version import __version__
 from archey.output import Output
 from archey.configuration import Configuration
 from archey.processes import Processes
@@ -59,6 +62,12 @@ class Entries(Enum):
 
 def main():
     """Simple entry point"""
+    parser = argparse.ArgumentParser(prog='archey')
+    parser.add_argument(
+        '-v', '--version',
+        action='version', version=__version__
+    )
+    parser.parse_args()
 
     # `Processes` is a singleton, let's populate the internal list here.
     Processes()
