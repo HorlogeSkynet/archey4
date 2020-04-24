@@ -25,7 +25,9 @@
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/wheel/archey4.svg?style=for-the-badge"></a>
 </p>
 
-![archey4](https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.7.0)
+<p align="center">
+	<img alt="Archey4" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.7.0">
+</p>
 
 ## Why (again) a f\*cking new Archey fork ?
 
