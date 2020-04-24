@@ -86,9 +86,10 @@ $ sudo pip3 install archey4
 ### Step 1 : Fetch the source ###
 
 # If you want the latest release :
-$ wget https://github.com/HorlogeSkynet/archey4/archive/v4.7.0.tar.gz
-$ tar xvzf v4.7.0.tar.gz
-$ cd archey4-4.7.0/
+$ LATEST_VERSION="v4.7.1"
+$ wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
+$ tar xvzf "${LATEST_VERSION}.tar.gz"
+$ cd "archey4-${LATEST_VERSION}/"
 # _______________________________
 
 # If you want the latest changes :
