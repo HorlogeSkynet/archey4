@@ -20,10 +20,7 @@
 # Run it as :
 # $ bash packaging/build.sh [REVISION] [0xGPG_IDENTITY]
 #
-# Known packages errors (FPM bugs ?) :
-# * Debian :
-#     * Lintian : file-in-etc-not-marked-as-conffile etc/archey4/config.json
-#                 This causes the config file to be REMOVED even when NOT PURGING.
+# Known packages error (FPM bug ?) :
 # * Arch Linux :
 #     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
 #
@@ -49,7 +46,6 @@ SUPPORTED_PYTHON_VERSIONS="$(python3 setup.py --classifiers | grep 'Programming 
 REVISION="${1:-1}"
 GPG_IDENTITY="${2:-}"
 DIST_OUTPUT='./dist'
-FAKE_CONFIG_FILE='etc/archey4/config.json'
 FPM_COMMON_ARGS=(
 	--input-type python \
 	--force \
@@ -58,7 +54,8 @@ FPM_COMMON_ARGS=(
 	--category 'utils' \
 	--provides 'archey' \
 	--provides 'archey4' \
-	--config-files "$FAKE_CONFIG_FILE" \
+	--config-files "etc/archey4" \
+	--config-files "etc/archey4/config.json" \
 	--architecture all \
 	--maintainer "${AUTHOR} <${AUTHOR_EMAIL}>" \
 	--after-install packaging/after_install \
@@ -74,7 +71,7 @@ echo ">>> Packages generation for ${NAME}_v${VERSION}-${REVISION} <<<"
 
 
 # Prepare the configuration file under a regular `etc/` directory.
-mkdir -p etc/archey4 && cp archey/config.json "$FAKE_CONFIG_FILE"
+mkdir -p etc/archey4 && cp archey/config.json etc/archey4/config.json
 
 
 # Prevent Setuptools from generating byte-code files.
