@@ -43,6 +43,60 @@ class TestOutputUtil(unittest.TestCase):
 
     @patch(
         'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value=''  # Unknown distribution.
+    )
+    @patch(
+        'archey.output.distro.like',
+        return_value='ubuntu'  # Oh, it's actually an Ubuntu-based one !
+    )
+    def test_init_distro_like(self, _, __, ___):
+        """Test distribution matching from the `os-release`'s `ID_LIKE` option"""
+        output = Output()
+
+        self.assertEqual(output.distribution, Distributions.UBUNTU)
+
+    @patch(
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value=''  # Unknown distribution.
+    )
+    @patch(
+        'archey.output.distro.like',
+        return_value='linuxmint debian'  # Oh, what do we got there ?!
+    )
+    def test_init_distro_like_multiple(self, _, __, ___):
+        """Test distribution matching from the `os-release`'s `ID_LIKE` option (multiple entries)"""
+        output = Output()
+
+        self.assertEqual(output.distribution, Distributions.LINUX_MINT)
+
+    @patch(
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value=''  # Unknown distribution.
+    )
+    @patch(
+        'archey.output.distro.like',
+        return_value=''  # No `ID_LIKE` either...
+    )
+    def test_init_both_distro_calls_fail(self, _, __, ___):
+        """Test distribution fall-back when `distro` soft-fail two times"""
+        output = Output()
+
+        self.assertEqual(output.distribution, Distributions.LINUX)
+
+    @patch(
+        'archey.output.check_output',
         return_value='X.Y.Z-R-Microsoft\n'
     )
     def test_init_windows_subsystem(self, _):

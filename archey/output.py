@@ -23,13 +23,19 @@ class Output:
         if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
             self.distribution = Distributions.WINDOWS
         else:
-            distribution_id = distro.id()
-            for distribution in Distributions:
-                if distribution_id == distribution.value:
-                    self.distribution = distribution
+            try:
+                self.distribution = Distributions(distro.id())
+            except ValueError:
+                # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ID_LIKE=>.
+                for distro_like in distro.like().split(' '):
+                    try:
+                        self.distribution = Distributions(distro_like)
+                    except ValueError:
+                        continue
                     break
-            else:
-                self.distribution = Distributions.LINUX
+                else:
+                    # Well, we didn't match anything so let's fall-back to default `Linux`.
+                    self.distribution = Distributions.LINUX
 
         # Fetch the colors palette related to this distribution.
         self.colors_palette = COLOR_DICT[self.distribution]
