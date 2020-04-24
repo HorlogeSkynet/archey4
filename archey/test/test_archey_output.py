@@ -38,7 +38,11 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.id',
         return_value='an-unknown-distro-id'
     )
-    def test_init_unknown_distro(self, _, __):
+    @patch(
+        'archey.output.distro.like',
+        return_value=''  # No `ID_LIKE` specified.
+    )
+    def test_init_unknown_distro(self, _, __, ___):
         """Test unknown distribution output"""
         output = Output()
 
