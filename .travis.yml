@@ -19,7 +19,7 @@ script:
   - python3 -m archey
 
   # Tests suite.
-  - python3 setup.py test
+  - python3 setup.py -q test
   - python3 -m unittest
 
   # Lint all the things !
