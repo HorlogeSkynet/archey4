@@ -70,9 +70,9 @@ The answer is [here](https://blog.samuel.domains/archey4).
 First, grab a package for your distribution from the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest).  
 Now, it's time to use your favorite package manager. Some examples :
 
-* Arch-based distributions : `pacman -U ./archey4-v4.Y.Z-R-any.pkg.tar.xz`
-* Debian-based distributions : `apt install ./archey4_v4.Y.Z-R-all.deb`
-* RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.noarch.rpm`
+* Arch-based distributions : `pacman -U ./archey4-4.Y.Z-R-any.pkg.tar.xz`
+* Debian-based distributions : `apt install ./archey4_4.Y.Z-R_all.deb`
+* RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.py??.noarch.rpm`
 
 ### Install from PyPI
 
