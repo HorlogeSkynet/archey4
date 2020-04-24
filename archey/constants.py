@@ -23,7 +23,7 @@ COLOR_DICT = {
     Distributions.RASPBIAN: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
     Distributions.RED_HAT: [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT, Colors.RED_NORMAL],
     Distributions.SLACKWARE: [Colors.BLUE_NORMAL, Colors.BLUE_BRIGHT, Colors.CLEAR],
-    Distributions.UBUNTU: [Colors.RED_BRIGHT, Colors.RED_NORMAL, Colors.YELLOW_NORMAL],
+    Distributions.UBUNTU: [Colors.RED_BRIGHT, Colors.RED_NORMAL, Colors.YELLOW_BRIGHT],
     Distributions.WINDOWS: [
         Colors.BLUE_BRIGHT, Colors.RED_BRIGHT, Colors.GREEN_BRIGHT, Colors.YELLOW_NORMAL
     ]
