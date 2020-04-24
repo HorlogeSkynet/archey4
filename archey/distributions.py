@@ -12,6 +12,7 @@ class Distributions(Enum):
     ALPINE_LINUX = 'alpine'
     ARCH_LINUX = 'arch'
     BUNSENLABS = 'bunsenlabs'
+    CENTOS = 'centos'
     CRUNCHBANG = 'crunchbang'
     DEBIAN = 'debian'
     FEDORA = 'fedora'

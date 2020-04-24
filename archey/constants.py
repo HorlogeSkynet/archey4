@@ -12,6 +12,10 @@ COLOR_DICT = {
     Distributions.ARCH_LINUX: [Colors.CYAN_BRIGHT, Colors.CYAN_NORMAL],
     Distributions.ALPINE_LINUX: [Colors.BLUE_BRIGHT],
     Distributions.BUNSENLABS: [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT, Colors.YELLOW_NORMAL],
+    Distributions.CENTOS: [
+        Colors.WHITE_BRIGHT,
+        Colors.YELLOW_NORMAL, Colors.GREEN_BRIGHT, Colors.BLUE_NORMAL, Colors.MAGENTA_BRIGHT
+    ],
     Distributions.CRUNCHBANG: [Colors.WHITE_BRIGHT],
     Distributions.DEBIAN: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
     Distributions.FEDORA: [Colors.BLUE_NORMAL, Colors.WHITE_BRIGHT],
@@ -36,6 +40,7 @@ LOGOS_DICT = {
     Distributions.ALPINE_LINUX: logos.ALPINE_LINUX,
     Distributions.ARCH_LINUX: logos.ARCH_LINUX,
     Distributions.BUNSENLABS: logos.BUNSENLABS,
+    Distributions.CENTOS: logos.CENTOS,
     Distributions.CRUNCHBANG: logos.CRUNCHBANG,
     Distributions.DEBIAN: logos.DEBIAN,
     Distributions.FEDORA: logos.FEDORA,
