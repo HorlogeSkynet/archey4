@@ -51,6 +51,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},
             {'use_fahrenheit': False},
             {'char_before_unit': ' '}
         ]
@@ -73,6 +74,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},
             {'use_fahrenheit': False},
             {'char_before_unit': ' '}
         ]
@@ -93,6 +95,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},
             {'use_fahrenheit': True},
             {'char_before_unit': '@'}
         ]
@@ -118,7 +121,10 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     @patch(
         'archey.entries.temperature.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
+        side_effect=[
+            {'sensors_chipsets': []},
+            {'not_detected': 'Not detected'}
+        ]
     )
     def test_no_output(self, _, __, ___):
         """Test when no value could be retrieved (anyhow)"""
@@ -188,6 +194,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},
             {'use_fahrenheit': True},
             {'char_before_unit': ' '}
         ]
@@ -210,6 +217,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},
             {'use_fahrenheit': False},
             {'char_before_unit': 'o'}
         ]
@@ -239,6 +247,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},
             {'use_fahrenheit': False},
             {'char_before_unit': 'o'}
         ]
@@ -265,6 +274,7 @@ class TestTemperatureEntry(unittest.TestCase):
     @patch(
         'archey.entries.temperature.Configuration.get',
         side_effect=[
+            {'sensors_chipsets': []},         # Needed key.
             {'not_detected': "Not detected"}  # Needed key.
         ]
     )

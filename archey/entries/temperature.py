@@ -22,7 +22,7 @@ class Temperature:
         self._temps = []
 
         # Tries `sensors` at first.
-        self._run_sensors()
+        self._run_sensors(configuration.get('temperature')['sensors_chipsets'])
 
         # On error (list still empty), checks for system thermal zones files.
         if not self._temps:
@@ -60,12 +60,12 @@ class Temperature:
                 'F' if use_fahrenheit else 'C'
             )
 
-    def _run_sensors(self):
+    def _run_sensors(self, whitelisted_chips):
         # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.
         try:
             sensors_output = check_output(
-                ['sensors', '-A', '-j'],
-                stderr=DEVNULL, universal_newlines=True
+                ['sensors', '-A', '-j'] + whitelisted_chips,
+                universal_newlines=True
             )
         except (FileNotFoundError, CalledProcessError):
             return

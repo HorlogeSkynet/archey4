@@ -211,6 +211,12 @@ Below, some further explanations of each option available :
 		// The character to display between the temperature value and the unit (as '°' in 53.2°C).
 		// Set to ' ' (space) by default for backward compatibility with non-Unicode locales.
 		"char_before_unit": " ",
+		"sensors_chipsets": [
+			// White-list of chipset identifiers (strings) passed to LM-SENSORS when computing the average temperature.
+			// Uses `sensors -A` to list the available chipsets on your system (e.g. `coretemp-isa-0000`, `acpitz-acpi-0`, ...).
+			// Leaving empty (default) would make Archey process input data from each existing chipset.
+			// Use this option if a sensor happens to return irrelevant values, or if you want to exclude it.
+		],
 		// Display temperature values in Fahrenheit instead of Celsius.
 		"use_fahrenheit": false
 	},

@@ -41,6 +41,7 @@ class Configuration(metaclass=Singleton):
             },
             'temperature': {
                 'char_before_unit': ' ',
+                'sensors_chipsets': [],
                 'use_fahrenheit': False
             },
             'timeout': {
