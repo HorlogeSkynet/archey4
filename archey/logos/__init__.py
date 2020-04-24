@@ -1,5 +1,6 @@
 """Simple `__init__` file for the `logos` module, to load each distribution logo"""
 
+from archey.logos.alpine_linux import ALPINE_LINUX
 from archey.logos.arch_linux import ARCH_LINUX
 from archey.logos.bunsenlabs import BUNSENLABS
 from archey.logos.crunchbang import CRUNCHBANG

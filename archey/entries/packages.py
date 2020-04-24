@@ -1,11 +1,14 @@
 """Number of installed packages detection class"""
 
+import os
+
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.configuration import Configuration
 
 
 PACKAGES_TOOLS = (
+    {'cmd': ['apk', 'list', '--installed']},
     {'cmd': ['apt', 'list', '-qq', '--installed']},
     {'cmd': ['dnf', 'list', 'installed'], 'skew': 1},
     {'cmd': ['dpkg', '--get-selections']},
@@ -25,7 +28,12 @@ class Packages:
                 results = check_output(
                     packages_tool['cmd'],
                     stderr=DEVNULL,
-                    env={'LANG': 'C'},
+                    env={
+                        'LANG': 'C',
+                        # Alpine Linux: We have to manually propagate `PATH`.
+                        #               `apk` wouldn't be found otherwise.
+                        'PATH': os.getenv('PATH')
+                    },
                     universal_newlines=True
                 )
             except (FileNotFoundError, CalledProcessError):
@@ -33,7 +41,7 @@ class Packages:
 
             packages = results.count('\n')
 
-            # If any, deduct any skew present due to the packages tool output.
+            # If any, deduct output skew present due to the packages tool.
             if 'skew' in packages_tool:
                 packages -= packages_tool['skew']
 

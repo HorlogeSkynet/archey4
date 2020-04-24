@@ -235,23 +235,32 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
     @patch(
         'archey.entries.disk.check_output',
         side_effect=[
+            CalledProcessError(1, 'df', "df: unrecognized option: l\n"),
+            CalledProcessError(1, 'df', "df: unrecognized option: l\n")
+        ]
+    )
+    @patch(
+        'archey.entries.disk.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
+    )
+    def test_df_failing(self, _, __):
+        """Test df call failing against the BusyBox implementation"""
+        self.assertEqual(Disk().value, 'Not detected')
+
+    @patch(
+        'archey.entries.disk.check_output',
+        side_effect=[
             CalledProcessError(1, 'df', "df: no file systems processed\n"),
             CalledProcessError(1, 'df', "df: no file systems processed\n")
         ]
     )
     @patch(
         'archey.entries.disk.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 75
-            }
-        }
+        return_value={'not_detected': 'Not detected'}
     )
     def test_no_recognised_disks(self, _, __):
-        """Test df failing to detect any valid filesystems"""
-        disk = Disk().value
-        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '0.0']))
+        """Test df failing to detect any valid file-systems"""
+        self.assertEqual(Disk().value, 'Not detected')
 
 
 if __name__ == '__main__':

@@ -11,17 +11,25 @@ from archey.configuration import Configuration
 class Disk:
     """Uses `df` and `btrfs` commands to compute the total disk usage across devices"""
     def __init__(self):
+        # The configuration object is needed to retrieve some settings below.
+        configuration = Configuration()
+
         # This dictionary will store values obtained from sub-processes calls.
         self._usage = {
             'used': 0.0,
             'total': 0.0
         }
 
-        # Fetch the user-defined disk limits from configuration.
-        disk_limits = Configuration().get('limits')['disk']
-
         self._run_df_usage()
         self._run_btrfs_usage()
+
+        # Check whether at least one media could be found.
+        if not self._usage['total']:
+            self.value = configuration.get('default_strings')['not_detected']
+            return
+
+        # Fetch the user-defined disk limits from configuration.
+        disk_limits = configuration.get('limits')['disk']
 
         # Based on the disk percentage usage, select the corresponding level color.
         level_color = Colors.get_level_color(
@@ -56,6 +64,7 @@ class Disk:
             ).splitlines()[-1].split()
         except CalledProcessError:
             # It looks like there is not any file system matching our types.
+            # Known bug : `df` available in BusyBox does not support our flags.
             return
 
         self._usage['used'] += float(df_output[2].rstrip('MB')) / 1024

@@ -9,6 +9,7 @@ class Distributions(Enum):
     Values contain their respective `distro` identifier.
     See <https://distro.readthedocs.io/en/latest/#distro.id>.
     """
+    ALPINE_LINUX = 'alpine'
     ARCH_LINUX = 'arch'
     BUNSENLABS = 'bunsenlabs'
     CRUNCHBANG = 'crunchbang'

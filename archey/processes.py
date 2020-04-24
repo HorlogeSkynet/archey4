@@ -3,7 +3,7 @@
 import os
 import sys
 
-from subprocess import check_output
+from subprocess import CalledProcessError, DEVNULL, check_output
 
 from archey.singleton import Singleton
 
@@ -19,9 +19,15 @@ class Processes(metaclass=Singleton):
                     '-o', 'comm',
                     '--no-headers'
                 ],
-                universal_newlines=True
+                universal_newlines=True, stderr=DEVNULL
             ).splitlines()
-
+        except CalledProcessError:
+            # The available `ps` implementation may not support passed parameters (hello BusyBox).
+            # Let's fall-back on a much simpler approach.
+            self._processes = check_output(
+                ['ps', '-o', 'comm'],
+                universal_newlines=True
+            ).splitlines()[1:]
         except FileNotFoundError:
             print(
                 "Please, install first `procps` on your distribution.",
