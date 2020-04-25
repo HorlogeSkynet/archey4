@@ -28,28 +28,28 @@ readline-8.0.1-r0 x86_64 {{readline}} (GPL-2.0-or-later) [installed]
         """Simple test for the APK packages manager"""
         self.assertEqual(Packages().value, 8)
 
-    @patch(
-        'archey.entries.packages.check_output',
-        side_effect=[
-            FileNotFoundError(),
-            """\
-accountsservice/stable,now 0.6.45-2 amd64 [installed,automatic]
-acl/stable,now 2.2.53-4 amd64 [installed,automatic]
-adb/stable,now 1:8.1.0+r23-5 amd64 [installed]
-adduser/stable,now 3.118 all [installed]
-adwaita-icon-theme/stable,now 3.30.1-1 all [installed,automatic]
-albatross-gtk-theme/stable,now 1.7.4-1 all [installed,automatic]
-alsa-utils/stable,now 1.1.8-2 amd64 [installed,automatic]
-"""])
-    def test_match_with_apt(self, _):
-        """Simple test for the APT packages manager"""
-        self.assertEqual(Packages().value, 7)
+#     @patch(
+#         'archey.entries.packages.check_output',
+#         side_effect=[
+#             FileNotFoundError(),
+#             """\
+# accountsservice/stable,now 0.6.45-2 amd64 [installed,automatic]
+# acl/stable,now 2.2.53-4 amd64 [installed,automatic]
+# adb/stable,now 1:8.1.0+r23-5 amd64 [installed]
+# adduser/stable,now 3.118 all [installed]
+# adwaita-icon-theme/stable,now 3.30.1-1 all [installed,automatic]
+# albatross-gtk-theme/stable,now 1.7.4-1 all [installed,automatic]
+# alsa-utils/stable,now 1.1.8-2 amd64 [installed,automatic]
+# """])
+#     def test_match_with_apt(self, _):
+#         """Simple test for the APT packages manager"""
+#         self.assertEqual(Packages().value, 7)
 
     @patch(
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             """\
 Installed Packages
 GConf2.x86_64                  3.2.6-17.fc26           @@commandline
@@ -65,7 +65,7 @@ GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             """\
 accountsservice         install
@@ -84,7 +84,7 @@ alien                   install
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             FileNotFoundError(),
             """\
@@ -108,7 +108,7 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
@@ -126,7 +126,7 @@ argon2 20171227-3
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
@@ -145,7 +145,7 @@ MySQL-client-3.23.57-1
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
@@ -167,7 +167,7 @@ ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
         'archey.entries.packages.check_output',
         side_effect=[
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),
@@ -194,7 +194,7 @@ i  | at            | A Job Manager                       | package    \n\
         'archey.entries.packages.check_output',
         side_effect=[  # No packages manager will be found
             FileNotFoundError(),
-            FileNotFoundError(),
+            #FileNotFoundError(),  # `apt` is disabled for now.
             FileNotFoundError(),
             FileNotFoundError(),
             FileNotFoundError(),

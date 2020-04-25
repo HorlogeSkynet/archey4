@@ -9,7 +9,9 @@ from archey.configuration import Configuration
 
 PACKAGES_TOOLS = (
     {'cmd': ['apk', 'list', '--installed']},
-    {'cmd': ['apt', 'list', '-qq', '--installed']},
+    # As of 2020, `apt` is _very_ slow compared to `dpkg` on Debian-based distributions.
+    # Additional note : `apt`'s CLI is currently not "stable" in Debian terms.
+    #{'cmd': ['apt', 'list', '-qq', '--installed']},
     {'cmd': ['dnf', 'list', 'installed'], 'skew': 1},
     {'cmd': ['dpkg', '--get-selections']},
     {'cmd': ['emerge', '-ep', 'world'], 'skew': 5},
