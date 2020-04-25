@@ -37,22 +37,76 @@ COLOR_DICT = {
 
 # This dictionary contains which logo should be used for each supported distribution.
 LOGOS_DICT = {
-    Distributions.ALPINE_LINUX: logos.ALPINE_LINUX,
-    Distributions.ARCH_LINUX: logos.ARCH_LINUX,
-    Distributions.BUNSENLABS: logos.BUNSENLABS,
-    Distributions.CENTOS: logos.CENTOS,
-    Distributions.CRUNCHBANG: logos.CRUNCHBANG,
-    Distributions.DEBIAN: logos.DEBIAN,
-    Distributions.FEDORA: logos.FEDORA,
-    Distributions.GENTOO: logos.GENTOO,
-    Distributions.KALI_LINUX: logos.KALI_LINUX,
-    Distributions.MANJARO_LINUX: logos.MANJARO,
-    Distributions.LINUX: logos.LINUX,
-    Distributions.LINUX_MINT: logos.LINUX_MINT,
-    Distributions.OPENSUSE: logos.OPENSUSE,
-    Distributions.RASPBIAN: logos.DEBIAN,  # Force the Debian logo for Raspbian.
-    Distributions.RED_HAT: logos.RED_HAT,
-    Distributions.SLACKWARE: logos.SLACKWARE,
-    Distributions.UBUNTU: logos.UBUNTU,
-    Distributions.WINDOWS: logos.WINDOWS
+    Distributions.ALPINE_LINUX: {
+        'logo': logos.ALPINE_LINUX,
+        'width': 44
+    },
+    Distributions.ARCH_LINUX: {
+        'logo': logos.ARCH_LINUX,
+        'width': 33
+    },
+    Distributions.BUNSENLABS: {
+        'logo': logos.BUNSENLABS,
+        'width': 30
+    },
+    Distributions.CENTOS: {
+        'logo': logos.CENTOS,
+        'width': 40
+    },
+    Distributions.CRUNCHBANG: {
+        'logo': logos.CRUNCHBANG,
+        'width': 41
+    },
+    Distributions.DEBIAN: {
+        'logo': logos.DEBIAN,
+        'width': 34
+    },
+    Distributions.FEDORA: {
+        'logo': logos.FEDORA,
+        'width': 38
+    },
+    Distributions.GENTOO: {
+        'logo': logos.GENTOO,
+        'width': 39
+    },
+    Distributions.KALI_LINUX: {
+        'logo': logos.KALI_LINUX,
+        'width': 52
+    },
+    Distributions.LINUX_MINT: {
+        'logo': logos.LINUX_MINT,
+        'width': 39
+    },
+    Distributions.LINUX: {
+        'logo': logos.LINUX,
+        'width': 27
+    },
+    Distributions.MANJARO_LINUX: {
+        'logo': logos.MANJARO,
+        'width': 29
+    },
+    Distributions.OPENSUSE: {
+        'logo': logos.OPENSUSE,
+        'width': 42
+    },
+    Distributions.RASPBIAN: {
+        'logo': logos.DEBIAN, # Force the Debian logo for Raspbian.
+        'width': 34
+    },
+    Distributions.RED_HAT: {
+        'logo': logos.RED_HAT,
+        'width': 45
+    },
+    Distributions.SLACKWARE: {
+        'logo': logos.SLACKWARE,
+        'width': 48
+    },
+    Distributions.UBUNTU: {
+        'logo': logos.UBUNTU,
+        'width': 39
+    },
+    Distributions.WINDOWS: {
+        'logo': logos.WINDOWS,
+        'width': 40
+    }
 }

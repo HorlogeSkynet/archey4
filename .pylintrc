@@ -6,6 +6,10 @@ init-hook='import sys; sys.path.append("archey/")'
 # Let's ignore it during linting please.
 extension-pkg-whitelist=netifaces
 
+# The ASCII art of the logos may have long line lengths:
+# So ignore the directory containing them during linting.
+ignore=logos
+
 # Automatically detects the number of CPU available to use.
 jobs=0
 

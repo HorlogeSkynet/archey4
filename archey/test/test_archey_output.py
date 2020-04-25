@@ -271,26 +271,29 @@ class TestOutputUtil(unittest.TestCase):
     @patch.dict(
         'archey.output.LOGOS_DICT',
         {
-            Distributions.DEBIAN: """\
-{c[0]} {r[0]} {c[1]}
-{c[0]} {r[1]} {c[1]}
-{c[0]} {r[2]} {c[1]}
-{c[0]} {r[3]} {c[1]}
-{c[0]} {r[4]} {c[1]}
-{c[0]} {r[5]} {c[1]}
-{c[0]} {r[6]} {c[1]}
-{c[0]} {r[7]} {c[1]}
-{c[0]} {r[8]} {c[1]}
-{c[0]} {r[9]} {c[1]}
-{c[0]} {r[10]} {c[1]}
-{c[0]} {r[11]} {c[1]}
-{c[0]} {r[12]} {c[1]}
-{c[0]} {r[13]} {c[1]}
-{c[0]} {r[14]} {c[1]}
-{c[0]} {r[15]} {c[1]}
-{c[0]} {r[16]} {c[1]}
-{c[0]} {r[17]} {c[1]}\
-"""
+            Distributions.DEBIAN: {
+                'logo': [
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' ',
+                    ' '
+                ],
+                'width': 2 # Will be used to detect additional padding
+            }
         }
     )
     @patch(
@@ -298,11 +301,12 @@ class TestOutputUtil(unittest.TestCase):
         return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
-    def test_centered_output(self, _, __, ___, ____):
+    def test_centered_output(self, print_mock, __, ___, ____):
         """Test how the `output` method handles centering operations"""
         output = Output()
 
         # # ODD ENTRIES NUMBER # #
+        # Entries smaller than logo
         output._results = [  # pylint: disable=protected-access
             '1',
             '2',
@@ -319,7 +323,38 @@ class TestOutputUtil(unittest.TestCase):
             ]
         )
 
+        # Entries bigger than logo
+        output._results = [ # pylint: disable=protected-access
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
+            '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'
+        ]
+        output.output()
+        print_mock.assert_called_with("""\
+  1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+  20
+  21\x1b[0m\
+""")
+
         # # EVEN ENTRIES NUMBER # #
+        # Entries smaller than logo
         output._results = [  # pylint: disable=protected-access
             '1',
             '2',
@@ -336,6 +371,36 @@ class TestOutputUtil(unittest.TestCase):
             ]
         )
 
+        # Entries bigger than logo
+        output._results = [ # pylint: disable=protected-access
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
+            '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'
+        ]
+        output.output()
+        print_mock.assert_called_with("""\
+  1
+  2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+  21
+  22\x1b[0m\
+""")
         # # FULL ENTRIES # #
         output._results = [  # pylint: disable=protected-access
             '1', '2', '3', '4', '5', '6',

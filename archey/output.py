@@ -78,15 +78,29 @@ class Output:
         for entry in self._entries:
             entry.output(self)
 
-        # Let's center the entries according to the logo (handles odd numbers)
-        self._results[0:0] = [''] * ((18 - len(self._results)) // 2)
-        self._results.extend([''] * (18 - len(self._results)))
+        # Let's copy the logo (so we don't modify the constant!)
+        logo = LOGOS_DICT[self._distribution]['logo'].copy()
+        logo_width = LOGOS_DICT[self._distribution]['width']
+
+        # Let's center the entries and the logo (handles odd numbers)
+        if len(logo) > len(self._results):
+            self._results[0:0] = [''] * ((len(logo) - len(self._results)) // 2)
+            self._results.extend([''] * (len(logo) - len(self._results)))
+        elif len(logo) < len(self._results):
+            logo[0:0] = [' ' * logo_width] * ((len(self._results) - len(logo)) // 2)
+            logo.extend([' ' * logo_width] * (len(self._results) - len(logo)))
+
+        # Append entry results to our logo
+        logo_with_entries = '\n'.join([
+            logo_part + entry_part
+            for logo_part, entry_part
+            in zip(logo, self._results)
+        ])
 
         try:
             print(
-                LOGOS_DICT[self._distribution].format(
-                    c=self._colors_palette,
-                    r=self._results
+                logo_with_entries.format(
+                    c=self._colors_palette
                 ) + str(Colors.CLEAR)
             )
         except UnicodeError:
