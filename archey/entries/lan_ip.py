@@ -3,11 +3,14 @@
 import netifaces
 
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class LanIp:
+class LanIp(Entry):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
     def __init__(self):
+        super().__init__()
+
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
 

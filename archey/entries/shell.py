@@ -5,14 +5,16 @@ import os
 from subprocess import CalledProcessError, check_output
 
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class Shell:
+class Shell(Entry):
     """
     Simple shell path detection based either on the `SHELL` environment variable or
     the local administrative database.
     """
     def __init__(self):
+        super().__init__()
         shell = os.getenv('SHELL')
         if not shell:
             try:

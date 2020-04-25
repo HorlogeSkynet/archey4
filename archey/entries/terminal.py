@@ -4,14 +4,17 @@ import os
 
 from archey.colors import Colors
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class Terminal:
+class Terminal(Entry):
     """
     Simple terminal detection based on the `TERM` environment variable.
     It also displays the colors palette afterwards.
     """
     def __init__(self):
+        super().__init__()
+
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
 

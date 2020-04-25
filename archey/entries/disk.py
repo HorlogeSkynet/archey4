@@ -6,11 +6,14 @@ from subprocess import check_output, CalledProcessError, DEVNULL
 
 from archey.colors import Colors
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class Disk:
+class Disk(Entry):
     """Uses `df` and `btrfs` commands to compute the total disk usage across devices"""
     def __init__(self):
+        super().__init__()
+
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
 

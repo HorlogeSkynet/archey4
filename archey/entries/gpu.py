@@ -5,11 +5,14 @@ import re
 from subprocess import check_output, CalledProcessError
 
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class GPU:
+class GPU(Entry):
     """Relies on `lspci` to retrieve graphics device(s) information"""
     def __init__(self):
+        super().__init__()
+
         # Retrieve a default string from configuration.
         not_detected = Configuration().get('default_strings')['not_detected']
 

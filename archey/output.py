@@ -48,8 +48,14 @@ class Output:
             self._colors_palette = len(self._colors_palette) * \
                 [Colors.escape_code_from_attrs(ansi_color)]
 
+        # Each entry will be added to this list
+        self._entries = []
         # Each class output will be added in the list below afterwards
         self._results = []
+
+    def add_entry(self, module):
+        """Append an entry to the list of entries to output"""
+        self._entries.append(module)
 
     def append(self, key, value):
         """Append a pre-formatted entry to the final output content"""
@@ -65,8 +71,13 @@ class Output:
     def output(self):
         """
         Finally render the output entries.
-        It handles text centering additionally to value and colors replacing.
+        First we get entries to add their outputs to the results.
+        It then handles text centering additionally to value and colors replacing.
         """
+        # Iterate through the entries and run their output method to add their content.
+        for entry in self._entries:
+            entry.output(self)
+
         # Let's center the entries according to the logo (handles odd numbers)
         self._results[0:0] = [''] * ((18 - len(self._results)) // 2)
         self._results.extend([''] * (18 - len(self._results)))

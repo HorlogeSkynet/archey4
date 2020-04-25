@@ -6,11 +6,14 @@ from urllib.error import URLError
 from urllib.request import urlopen
 
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class WanIp:
+class WanIp(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
     def __init__(self):
+        super().__init__()
+
         # The configuration object is needed to retrieve some settings below.
         configuration = Configuration()
 

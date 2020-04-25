@@ -5,11 +5,13 @@ import os
 from subprocess import CalledProcessError, check_output
 
 from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class User:
+class User(Entry):
     """Retrieves the session name of the current logged in user"""
     def __init__(self):
+        super().__init__()
         user = os.getenv('USER')
         if not user:
             try:
