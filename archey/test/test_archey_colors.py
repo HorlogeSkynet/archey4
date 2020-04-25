@@ -7,6 +7,10 @@ from archey.colors import Colors
 
 class TestColorsUtil(unittest.TestCase):
     """Test cases for the `Colors` (enumeration / utility) class."""
+    def test_constant_values(self):
+        """Test enumeration member instantiation from value"""
+        self.assertEqual(Colors((1, 31)), Colors.RED_BRIGHT)
+        self.assertRaises(ValueError, Colors, (-1,))
 
     def test_string_representation(self):
         """Simple test case for `__str__` implementation"""
