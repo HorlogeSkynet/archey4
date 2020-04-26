@@ -2,6 +2,7 @@
 
 import unittest
 from unittest.mock import patch
+from collections import namedtuple
 
 from archey.colors import Colors
 from archey.constants import COLOR_DICT
@@ -301,7 +302,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
-    def test_centered_output(self, print_mock, __, ___, ____):
+    def test_centered_output(self, print_mock, _, __, ___):
         """Test how the `output` method handles centering operations"""
         output = Output()
 
@@ -428,6 +429,67 @@ class TestOutputUtil(unittest.TestCase):
                 '', '', '', '', '', '',
             ]
         )
+
+    @patch(
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value='debian'  # Select Debian
+    )
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    @patch.dict(
+        'archey.output.LOGOS_DICT',
+        {
+            Distributions.DEBIAN: {
+                'logo': [
+                    'W ',
+                    'O ',
+                    'O ',
+                    'O ',
+                    'O '
+                ],
+                'width': 2
+            }
+        }
+    )
+    @patch(
+        'archey.output.get_terminal_size'
+    )
+    @patch(
+        'archey.output.print',
+        return_value=None,  # Let's nastily mute class' outputs.
+        create=True
+    )
+    def test_line_wrapping(self, print_mock, termsize_mock, _, __, ___):
+        """Test how the `output` method handles wrapping lines that are too long"""
+        output = Output()
+
+        # We only need a column value for the terminal size
+        termsize_tuple = namedtuple('termsize_tuple', 'columns')
+        termsize_mock.return_value = termsize_tuple(10)
+
+        output._results = [ # pylint: disable=protected-access
+            'short',                       # no truncation - too short
+            'looooooong',                  # truncation - too long
+            'tenchars',                    # no truncation - exactly the right width
+            '\x1b[0;31mshort\x1b[0m',      # no truncation - too short
+            '\x1b[0;31mlooooooong\x1b[0m', # truncation - too long, colour reset truncated
+        ]
+
+        output.output()
+
+        print_mock.assert_called_with("""\
+W short
+O loooo\x1b[0m...
+O tenchars
+O \x1b[0;31mshort\x1b[0m
+O \x1b[0;31mloooo\x1b[0m...\x1b[0m\
+""")
 
 
 if __name__ == '__main__':
