@@ -100,13 +100,38 @@ class TestOutputUtil(unittest.TestCase):
         'archey.output.distro.os_release_attr',
         return_value=''
     )
-    def test_init_distro_like_multiple(self, _, __, ___, ____):
+    def test_init_distro_like_first(self, _, __, ___, ____):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (multiple entries)"""
         output = Output()
 
         self.assertEqual(
             output._distribution,  # pylint: disable=protected-access
             Distributions.LINUX_MINT
+        )
+
+    @patch(
+        'archey.output.check_output',
+        return_value='X.Y.Z-R-ARCH\n'
+    )
+    @patch(
+        'archey.output.distro.id',
+        return_value=''  # Unknown distribution.
+    )
+    @patch(
+        'archey.output.distro.like',
+        return_value='an-unknown-distro-id arch'  # Hmmm, an unknown Arch-based...
+    )
+    @patch(
+        'archey.output.distro.os_release_attr',
+        return_value=''
+    )
+    def test_init_distro_like_second(self, _, __, ___, ____):
+        """Test distribution matching from the `os-release`'s `ID_LIKE` option (second candidate)"""
+        output = Output()
+
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.ARCH_LINUX
         )
 
     @patch(
