@@ -4,7 +4,9 @@ It supports entries lazy-insertion, logo detection, and final printing.
 """
 
 import sys
+import re
 from subprocess import check_output
+from shutil import get_terminal_size
 
 import distro
 
@@ -90,11 +92,44 @@ class Output:
             logo[0:0] = [' ' * logo_width] * ((len(self._results) - len(logo)) // 2)
             logo.extend([' ' * logo_width] * (len(self._results) - len(logo)))
 
+        entry_max_width = get_terminal_size().columns - logo_width
+
+        wrapped_entries = []
+        ansi_color_re = re.compile(r'\x1b\[\d+?;?\d*?m')
+        for entry in self._results:
+            # Remove the entries' color control codes, so we can wrap them
+            entry_no_color = ansi_color_re.sub('', entry)
+
+            if len(entry_no_color) > entry_max_width:
+                extra_width = len(entry_no_color) - entry_max_width
+                wrapped_entry = entry_no_color[:-(extra_width + 3)] + '...'
+                # Naively add all of the colour control codes back into position
+                for color_code_match in ansi_color_re.finditer(entry):
+                    match_idx = color_code_match.start()
+                    # Subtracting the '...'
+                    if match_idx < (len(wrapped_entry) - 3):
+                        wrapped_entry = (
+                            wrapped_entry[:match_idx]
+                            + color_code_match.group()
+                            + wrapped_entry[match_idx:]
+                        )
+
+                # Add a colour reset before the '...' in case we still have a colour applied
+                wrapped_entry = (
+                    wrapped_entry[:-3]
+                    + str(Colors.CLEAR)
+                    + wrapped_entry[-3:]
+                )
+                wrapped_entries.append(wrapped_entry)
+
+            else:
+                wrapped_entries.append(entry)
+
         # Append entry results to our logo
         logo_with_entries = '\n'.join([
             logo_part + entry_part
             for logo_part, entry_part
-            in zip(logo, self._results)
+            in zip(logo, wrapped_entries)
         ])
 
         try:
