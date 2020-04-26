@@ -457,7 +457,7 @@ class TestOutputUtil(unittest.TestCase):
             }
         }
     )
-    @patch(
+    @patch( # pylint: disable=no-self-use
         'archey.output.get_terminal_size'
     )
     @patch(
