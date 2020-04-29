@@ -1,7 +1,5 @@
 """GPU information detection class"""
 
-import re
-
 from subprocess import check_output, CalledProcessError
 
 from archey.configuration import Configuration
@@ -34,14 +32,6 @@ class GPU(Entry):
 
             if lspci_output:
                 gpuinfo = lspci_output[0]
-
-                # If the line got too long, let's truncate it and add some dots
-                if len(gpuinfo) > 48:
-                    # This call truncates `gpuinfo` with words preservation
-                    gpuinfo = re.search(
-                        r'.{1,45}(?:\s|$)', gpuinfo
-                    ).group(0).strip() + '...'
-
             else:
                 gpuinfo = not_detected
 
