@@ -1,9 +1,13 @@
 """Entry base class"""
 
-class Entry():
+from abc import ABC as AbstractBaseClass
+
+
+class Entry(AbstractBaseClass):
     """Module base class"""
     def __init__(self):
-        # Initialise with None values as a starting point
+        # Each entry will have `name` (key) and `value` attributes.
+        # `None` by default.
         self.name = None
         self.value = None
 
