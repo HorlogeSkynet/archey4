@@ -1,5 +1,6 @@
 """openSUSE logo"""
 
+# pylint: disable=line-too-long
 OPENSUSE = [
     """{c[0]}            {c[1]}.;ldkO0000Okdl;.{c[0]}              """,
     """{c[0]}        {c[1]}.;d00xl:^''''''^:ok00d;.{c[0]}          """,

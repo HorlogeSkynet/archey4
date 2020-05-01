@@ -1,5 +1,6 @@
 """Linux Mint logo"""
 
+# pylint: disable=line-too-long
 LINUX_MINT = [
     """{c[0]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        """,
     """{c[0]} MMm----::-://////////////oymNMd+`     """,

@@ -1,5 +1,6 @@
 """Slackware logo"""
 
+# pylint: disable=line-too-long
 SLACKWARE = [
     """{c[0]}                  {c[1]}:::::::{c[0]}                       """,
     """{c[0]}             {c[1]}:::::::::::::::::::{c[0]}                """,

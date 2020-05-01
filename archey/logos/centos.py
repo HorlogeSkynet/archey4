@@ -1,5 +1,6 @@
 """CentOS logo"""
 
+# pylint: disable=line-too-long
 CENTOS = [
     """{c[0]}                  {c[1]}..{c[0]}                    """,
     """{c[0]}                {c[1]}.PLTJ.{c[0]}                  """,
