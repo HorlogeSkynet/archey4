@@ -3,10 +3,13 @@ Output class file.
 It supports entries lazy-insertion, logo detection, and final printing.
 """
 
-import sys
+import os
 import re
+
 from subprocess import check_output
 from shutil import get_terminal_size
+
+import sys
 
 import distro
 
@@ -126,7 +129,7 @@ class Output:
                 wrapped_entries.append(entry)
 
         # Append entry results to our logo
-        logo_with_entries = '\n'.join([
+        logo_with_entries = os.linesep.join([
             logo_part + entry_part
             for logo_part, entry_part
             in zip(logo, wrapped_entries)
