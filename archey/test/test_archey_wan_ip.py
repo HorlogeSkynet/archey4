@@ -17,16 +17,16 @@ class TestWanIpEntry(unittest.TestCase):
     @patch(
         'archey.entries.wan_ip.check_output',
         side_effect=[
-            '0123::4567:89a:dead:beef\n',
-            'XXX.YY.ZZ.TTT\n'
+            'XXX.YY.ZZ.TTT\n',
+            '0123::4567:89a:dead:beef\n'
         ]
     )
     @patch(
-        'archey.entries.wan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
+            {'ipv4_detection': None},  # Needed key.
             {'wan_ip_v6_support': True},
-            {'ipv6_detection': None},  # Needed key.
-            {'ipv4_detection': None}   # Needed key.
+            {'ipv6_detection': None}  # Needed key.
         ]
     )
     def test_ipv6_and_ipv4(self, _, __):
@@ -41,10 +41,10 @@ class TestWanIpEntry(unittest.TestCase):
         return_value='XXX.YY.ZZ.TTT'
     )
     @patch(
-        'archey.entries.wan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
-            {'wan_ip_v6_support': False},
-            {'ipv4_detection': None}  # Needed key.
+            {'ipv4_detection': None},  # Needed key.
+            {'wan_ip_v6_support': False}
         ]
     )
     def test_ipv4_only(self, _, __):
@@ -57,28 +57,24 @@ class TestWanIpEntry(unittest.TestCase):
     @patch(
         'archey.entries.wan_ip.check_output',
         side_effect=[
-            TimeoutExpired('dig', 1),  # `check_output` call will fail
-            'XXX.YY.ZZ.TTT'            # The IPv4 address is detected
+            'XXX.YY.ZZ.TTT',            # The IPv4 address is detected
+            TimeoutExpired('dig', 1)  # `check_output` call will fail
         ]
     )
+    @patch('archey.entries.wan_ip.urlopen')
     @patch(
-        'archey.entries.wan_ip.urlopen',  # `urlopen`'s `getcode` & `read` special mocking.
-        **{
-            'return_value.getcode.return_value': 200,
-            'return_value.read.return_value': b'0123::4567:89a:dead:beef\n'
-        }
-    )
-    @patch(
-        'archey.entries.wan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
+            {'ipv4_detection': None},   # Needed key.
             {'wan_ip_v6_support': True},
             {'ipv6_detection': None},  # Needed key.
-            {'ipv6_detection': None},  # Needed key.
-            {'ipv4_detection': None}   # Needed key.
+            {'ipv6_detection': None}   # Needed key.
         ]
     )
-    def test_ipv6_timeout(self, _, __, ___):
+    def test_ipv6_timeout(self, _, urlopen_mock, ___):
         """Test when `dig` call timeout for the IPv6 detection"""
+        urlopen_mock.return_value.read.return_value = b'0123::4567:89a:dead:beef\n'
+
         self.assertEqual(
             WanIp().value,
             'XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef'
@@ -93,11 +89,11 @@ class TestWanIpEntry(unittest.TestCase):
         side_effect=URLError('<urlopen error timed out>')  # `urlopen` call will fail
     )
     @patch(
-        'archey.entries.wan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
+            {'ipv4_detection': None},  # Needed key.
+            {'ipv4_detection': None},  # Needed key.
             {'wan_ip_v6_support': False},
-            {'ipv4_detection': None},  # Needed key.
-            {'ipv4_detection': None},  # Needed key.
             {'no_address': 'No Address'}
         ]
     )
@@ -114,11 +110,11 @@ class TestWanIpEntry(unittest.TestCase):
         side_effect=SocketTimeoutError('The read operation timed out')  # `urlopen` call will fail
     )
     @patch(
-        'archey.entries.wan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
+            {'ipv4_detection': None},  # Needed key.
+            {'ipv4_detection': None},  # Needed key.
             {'wan_ip_v6_support': False},
-            {'ipv4_detection': None},  # Needed key.
-            {'ipv4_detection': None},  # Needed key.
             {'no_address': 'No Address'}
         ]
     )
@@ -135,10 +131,10 @@ class TestWanIpEntry(unittest.TestCase):
         return_value=None  # No object will be returned
     )
     @patch(
-        'archey.entries.wan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
-            {'wan_ip_v6_support': False},
             {'ipv4_detection': None},  # Needed key.
+            {'wan_ip_v6_support': False},
             {'no_address': 'No Address'}
         ]
     )

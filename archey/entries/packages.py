@@ -4,7 +4,6 @@ import os
 
 from subprocess import check_output, DEVNULL, CalledProcessError
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -57,6 +56,6 @@ class Packages(Entry):
             break
 
         else:
-            packages = Configuration().get('default_strings')['not_detected']
+            packages = self._configuration.get('default_strings')['not_detected']
 
         self.value = packages

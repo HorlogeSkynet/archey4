@@ -3,7 +3,6 @@
 import os
 
 from archey.colors import Colors
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -15,18 +14,15 @@ class Terminal(Entry):
     def __init__(self):
         super().__init__()
 
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
-
         terminal = os.getenv(
             'TERM',
-            configuration.get('default_strings')['not_detected']
+            self._configuration.get('default_strings')['not_detected']
         )
 
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
         # This is the default option for backward compatibility.
-        use_unicode = configuration.get('colors_palette')['use_unicode']
+        use_unicode = self._configuration.get('colors_palette')['use_unicode']
         colors = ' '.join([
             '{normal}{character}{bright}{character}{clear}'.format(
                 normal=Colors((0, i)),

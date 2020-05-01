@@ -2,6 +2,8 @@
 
 from abc import ABC as AbstractBaseClass
 
+from archey.configuration import Configuration
+
 
 class Entry(AbstractBaseClass):
     """Module base class"""
@@ -10,6 +12,9 @@ class Entry(AbstractBaseClass):
         # `None` by default.
         self.name = None
         self.value = None
+
+        # Propagates a reference to `Configuration` singleton to each inheriting class.
+        self._configuration = Configuration()
 
     def output(self, output):
         """Output the results to output. Can be overridden by subclasses."""

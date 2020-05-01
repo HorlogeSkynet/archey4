@@ -42,7 +42,7 @@ class TestUserEntry(unittest.TestCase):
         side_effect=CalledProcessError(1, 'id', "id: ’1000’: no such user\n")
     )
     @patch(
-        'archey.entries.user.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     def test_config_fall_back(self, _, __, ___):

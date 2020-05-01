@@ -2,7 +2,6 @@
 
 from subprocess import check_output, CalledProcessError
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -11,15 +10,12 @@ class GPU(Entry):
     def __init__(self):
         super().__init__()
 
-        # Retrieve a default string from configuration.
-        not_detected = Configuration().get('default_strings')['not_detected']
+        gpuinfo = None
 
-        """
-        Some explanations are needed here :
-        * We call `lspci` program to retrieve hardware devices
-        * We keep only the entries with "3D", "VGA" or "Display"
-        * We sort them in the same order as above (for relevancy)
-        """
+        # Some explanations are needed here :
+        # * We call `lspci` program to retrieve hardware devices
+        # * We keep only the entries with "3D", "VGA" or "Display"
+        # * We sort them in the same order as above (for relevancy)
         try:
             lspci_output = sorted(
                 [
@@ -32,10 +28,11 @@ class GPU(Entry):
 
             if lspci_output:
                 gpuinfo = lspci_output[0]
-            else:
-                gpuinfo = not_detected
 
         except (FileNotFoundError, CalledProcessError):
-            gpuinfo = not_detected
+            pass
+
+        if not gpuinfo:
+            gpuinfo = self._configuration.get('default_strings')['not_detected']
 
         self.value = gpuinfo

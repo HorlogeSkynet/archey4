@@ -6,7 +6,6 @@ import re
 from glob import iglob
 from subprocess import check_output, DEVNULL, CalledProcessError
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -19,13 +18,10 @@ class Temperature(Entry):
     def __init__(self):
         super().__init__()
 
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
-
         self._temps = []
 
         # Tries `sensors` at first.
-        self._run_sensors(configuration.get('temperature')['sensors_chipsets'])
+        self._run_sensors(self._configuration.get('temperature')['sensors_chipsets'])
 
         # On error (list still empty), checks for system thermal zones files.
         if not self._temps:
@@ -36,12 +32,12 @@ class Temperature(Entry):
 
         # No value could be fetched...
         if not self._temps:
-            self.value = configuration.get('default_strings')['not_detected']
+            self.value = self._configuration.get('default_strings')['not_detected']
             return
 
         # Let's DRY some constants once.
-        use_fahrenheit = configuration.get('temperature')['use_fahrenheit']
-        char_before_unit = configuration.get('temperature')['char_before_unit']
+        use_fahrenheit = self._configuration.get('temperature')['use_fahrenheit']
+        char_before_unit = self._configuration.get('temperature')['char_before_unit']
 
         # Conversion to Fahrenheit if needed.
         if use_fahrenheit:

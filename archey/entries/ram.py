@@ -5,7 +5,6 @@ import re
 from subprocess import check_output
 
 from archey.colors import Colors
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -16,9 +15,6 @@ class RAM(Entry):
     """
     def __init__(self):
         super().__init__()
-
-        # Fetch the user-defined RAM limits from configuration.
-        ram_limits = Configuration().get('limits')['ram']
 
         try:
             ram = ''.join(
@@ -32,7 +28,6 @@ class RAM(Entry):
             ).split()
             used = float(ram[2])
             total = float(ram[1])
-
         except (IndexError, FileNotFoundError):
             # An in-digest one-liner to retrieve memory info into a dictionary
             with open('/proc/meminfo') as file:
@@ -50,6 +45,9 @@ class RAM(Entry):
             # See <https://gitlab.com/procps-ng/procps/blob/master/proc/sysinfo.c#L790>.
             if used < 0:
                 used = total - ram['MemFree']
+
+        # Fetch the user-defined RAM limits from configuration.
+        ram_limits = self._configuration.get('limits')['ram']
 
         # Based on the RAM percentage usage, select the corresponding level color.
         level_color = Colors.get_level_color(

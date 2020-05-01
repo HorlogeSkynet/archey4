@@ -45,7 +45,7 @@ XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 """)
     @patch(
-        'archey.entries.gpu.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     def test_no_match(self, _, __):

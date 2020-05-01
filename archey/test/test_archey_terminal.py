@@ -16,7 +16,7 @@ class TestTerminalEntry(unittest.TestCase):
         return_value='TERMINAL'
     )
     @patch(
-        'archey.entries.terminal.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'not_detected': None},  # Needed key.
             {'use_unicode': False}
@@ -33,7 +33,7 @@ class TestTerminalEntry(unittest.TestCase):
         return_value='TERMINAL'
     )
     @patch(
-        'archey.entries.terminal.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'not_detected': None},  # Needed key.
             {'use_unicode': True}
@@ -50,7 +50,7 @@ class TestTerminalEntry(unittest.TestCase):
         return_value='Not detected'  # Set the "Not detected" string here, as we mock `os.getenv`.
     )
     @patch(
-        'archey.entries.terminal.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'not_detected': None},  # Needed key.
             {'use_unicode': False}

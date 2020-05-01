@@ -81,11 +81,8 @@ class TestModelEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.model.Configuration.get',
-        return_value={
-            'not_detected': 'Not detected',
-            'virtual_environment': 'Virtual Environment'
-        }
+        'archey.configuration.Configuration.get',
+        return_value={'virtual_environment': 'Virtual Environment'}
     )
     def test_virtual_environment_without_dmidecode(self, _, __, ___):
         """Test for virtual machine (with a failing `dmidecode` call)"""
@@ -103,11 +100,8 @@ class TestModelEntry(unittest.TestCase):
         return_value='systemd-nspawn\n'  # `systemd-detect-virt` example output
     )
     @patch(
-        'archey.entries.model.Configuration.get',
-        return_value={
-            'not_detected': 'Not detected',
-            'virtual_environment': 'Virtual Environment'
-        }
+        'archey.configuration.Configuration.get',
+        return_value={'virtual_environment': 'Virtual Environment'}
     )
     def test_virtual_environment_systemd_alone(self, _, __, ___):
         """Test for virtual environments, with systemd tools and `dmidecode`"""
@@ -124,14 +118,7 @@ class TestModelEntry(unittest.TestCase):
             'MY-LAPTOP-MODEL\n'  # `dmidecode` example output
         ]
     )
-    @patch(
-        'archey.entries.model.Configuration.get',
-        return_value={
-            'not_detected': 'Not detected',
-            'virtual_environment': 'Virtual Environment'
-        }
-    )
-    def test_virtual_environment_systemd_and_dmidecode(self, _, __, ___):
+    def test_virtual_environment_systemd_and_dmidecode(self, _, __):
         """Test for virtual environments, with systemd tools and `dmidecode`"""
         self.assertEqual(Model().value, 'MY-LAPTOP-MODEL (systemd-nspawn)')
 
@@ -144,11 +131,8 @@ class TestModelEntry(unittest.TestCase):
         side_effect=FileNotFoundError()
     )
     @patch(
-        'archey.entries.model.Configuration.get',
-        return_value={
-            'not_detected': 'Not detected',
-            'virtual_environment': 'Virtual Environment'
-        }
+        'archey.configuration.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
     )
     def test_no_match(self, _, __, ___):
         """Test when no information could be retrieved"""

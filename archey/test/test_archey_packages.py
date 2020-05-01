@@ -205,7 +205,7 @@ i  | at            | A Job Manager                       | package    \n\
         ]
     )
     @patch(
-        'archey.entries.packages.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     def test_no_packages_manager(self, _, __):

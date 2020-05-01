@@ -5,7 +5,6 @@ import re
 
 from subprocess import CalledProcessError, DEVNULL, check_output
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -13,9 +12,6 @@ class Model(Entry):
     """Uses multiple methods to retrieve some information about the host hardware"""
     def __init__(self):
         super().__init__()
-
-        # The configuration object is needed to retrieve some default strings.
-        self._default_strings = Configuration().get('default_strings')
 
         # Is this a virtual machine ?
         self._check_virtualization()
@@ -29,7 +25,7 @@ class Model(Entry):
             self._check_rasperry_pi()
 
         if not self.value:
-            self.value = self._default_strings['not_detected']
+            self.value = self._configuration.get('default_strings')['not_detected']
 
     def _check_virtualization(self):
         """
@@ -77,9 +73,9 @@ class Model(Entry):
         if not environment:
             return
 
-        # If we reach there, this _should_ be a virtual environment.
-        self.value = "{0} ({1})".format(
-            product_name or self._default_strings['virtual_environment'],
+        # If we got there, this _should_ be a virtual environment.
+        self.value = '{0} ({1})'.format(
+            product_name or self._configuration.get('default_strings')['virtual_environment'],
             environment
         )
 

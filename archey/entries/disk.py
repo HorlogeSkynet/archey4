@@ -5,7 +5,6 @@ import re
 from subprocess import check_output, CalledProcessError, DEVNULL
 
 from archey.colors import Colors
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
@@ -13,9 +12,6 @@ class Disk(Entry):
     """Uses `df` and `btrfs` commands to compute the total disk usage across devices"""
     def __init__(self):
         super().__init__()
-
-        # The configuration object is needed to retrieve some settings below.
-        configuration = Configuration()
 
         # This dictionary will store values obtained from sub-processes calls.
         self._usage = {
@@ -28,11 +24,11 @@ class Disk(Entry):
 
         # Check whether at least one media could be found.
         if not self._usage['total']:
-            self.value = configuration.get('default_strings')['not_detected']
+            self.value = self._configuration.get('default_strings')['not_detected']
             return
 
         # Fetch the user-defined disk limits from configuration.
-        disk_limits = configuration.get('limits')['disk']
+        disk_limits = self._configuration.get('limits')['disk']
 
         # Based on the disk percentage usage, select the corresponding level color.
         level_color = Colors.get_level_color(

@@ -49,7 +49,7 @@ class TestTemperatureEntry(unittest.TestCase):
         return_value=[]  # No temperature from file will be retrieved
     )
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'use_fahrenheit': False},
@@ -72,7 +72,7 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     @patch('archey.entries.temperature.iglob')
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'use_fahrenheit': False},
@@ -93,7 +93,7 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     @patch('archey.entries.temperature.iglob')
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'use_fahrenheit': True},
@@ -120,7 +120,7 @@ class TestTemperatureEntry(unittest.TestCase):
         return_value=[]  # No temperature from file will be retrieved.
     )
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'not_detected': 'Not detected'}
@@ -192,7 +192,7 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'use_fahrenheit': True},
@@ -215,7 +215,7 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     @patch('archey.entries.temperature.iglob')
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'use_fahrenheit': False},
@@ -245,7 +245,7 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     @patch('archey.entries.temperature.iglob')
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},
             {'use_fahrenheit': False},
@@ -272,10 +272,10 @@ class TestTemperatureEntry(unittest.TestCase):
         return_value=[]  # No temperature from file will be retrieved.
     )
     @patch(
-        'archey.entries.temperature.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'sensors_chipsets': []},         # Needed key.
-            {'not_detected': "Not detected"}  # Needed key.
+            {'not_detected': 'Not detected'}  # Needed key.
         ]
     )
     def test_celsius_to_fahrenheit_conversion(self, _, __, ___):

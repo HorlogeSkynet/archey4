@@ -4,9 +4,8 @@ import re
 
 from subprocess import check_output, DEVNULL, CalledProcessError
 
-from archey.configuration import Configuration
-from archey.processes import Processes
 from archey.entry import Entry
+from archey.processes import Processes
 
 
 WM_DICT = {
@@ -60,15 +59,13 @@ class WindowManager(Entry):
                     stderr=DEVNULL, universal_newlines=True
                 )
             ).group(0)
-
         except (FileNotFoundError, CalledProcessError):
             processes = Processes().get()
             for key, value in WM_DICT.items():
                 if key in processes:
                     window_manager = value
                     break
-
             else:
-                window_manager = Configuration().get('default_strings')['not_detected']
+                window_manager = self._configuration.get('default_strings')['not_detected']
 
         self.value = window_manager
