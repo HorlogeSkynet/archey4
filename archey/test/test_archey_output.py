@@ -457,9 +457,7 @@ class TestOutputUtil(unittest.TestCase):
             }
         }
     )
-    @patch( # pylint: disable=no-self-use
-        'archey.output.get_terminal_size'
-    )
+    @patch('archey.output.get_terminal_size')
     @patch(
         'archey.output.print',
         return_value=None,  # Let's nastily mute class' outputs.
@@ -490,6 +488,9 @@ O tenchars
 O \x1b[0;31mshort\x1b[0m
 O \x1b[0;31mloooo\x1b[0m...\x1b[0m\
 """)
+        # Check that `print` has been called only once.
+        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
+        self.assertEqual(print_mock.call_count, 1)
 
 
 if __name__ == '__main__':
