@@ -89,12 +89,14 @@ class Output:
         logo_width = get_logo_width(logo, len(self._colors_palette))
 
         # Let's center the entries and the logo (handles odd numbers)
-        if len(logo) > len(self._results):
-            self._results[0:0] = [''] * ((len(logo) - len(self._results)) // 2)
+        height_diff = len(logo) - len(self._results)
+        if height_diff >= 0:
+            self._results[0:0] = [''] * (height_diff // 2)
             self._results.extend([''] * (len(logo) - len(self._results)))
-        elif len(logo) < len(self._results):
-            logo[0:0] = [' ' * logo_width] * ((len(self._results) - len(logo)) // 2)
-            logo.extend([' ' * logo_width] * (len(self._results) - len(logo)))
+        else:
+            colored_empty_line = [str(self._colors_palette[0]) + ' ' * logo_width]
+            logo[0:0] = colored_empty_line * (-height_diff // 2)
+            logo.extend(colored_empty_line * (len(self._results) - len(logo)))
 
         entry_max_width = get_terminal_size().columns - logo_width
 

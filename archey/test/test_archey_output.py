@@ -294,6 +294,12 @@ class TestOutputUtil(unittest.TestCase):
             ]
         }
     )
+    @patch.dict(
+        'archey.constants.COLOR_DICT',
+        {
+            Distributions.DEBIAN: ['FAKE_COLOR']
+        }
+    )
     @patch(
         'archey.output.print',
         return_value=None,  # Let's nastily mute class' outputs.
@@ -328,7 +334,7 @@ class TestOutputUtil(unittest.TestCase):
         ]
         output.output()
         print_mock.assert_called_with("""\
- 1
+FAKE_COLOR 1
  2
  3
  4
@@ -347,8 +353,8 @@ class TestOutputUtil(unittest.TestCase):
  17
  18
  19
- 20
- 21\x1b[0m\
+FAKE_COLOR 20
+FAKE_COLOR 21\x1b[0m\
 """)
 
         # # EVEN ENTRIES NUMBER # #
@@ -376,8 +382,8 @@ class TestOutputUtil(unittest.TestCase):
         ]
         output.output()
         print_mock.assert_called_with("""\
- 1
- 2
+FAKE_COLOR 1
+FAKE_COLOR 2
  3
  4
  5
@@ -396,8 +402,8 @@ class TestOutputUtil(unittest.TestCase):
  18
  19
  20
- 21
- 22\x1b[0m\
+FAKE_COLOR 21
+FAKE_COLOR 22\x1b[0m\
 """)
 
         # # FULL ENTRIES # #
