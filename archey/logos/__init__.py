@@ -17,3 +17,19 @@ from archey.logos.red_hat import RED_HAT
 from archey.logos.slackware import SLACKWARE
 from archey.logos.ubuntu import UBUNTU
 from archey.logos.windows import WINDOWS
+
+
+def get_logo_width(logo, nb_colors=8):
+    """
+    Utility function computing the real width of a distribution logo.
+    Rationale : We use placeholders to dynamically set ASCII colors.
+                Although, they **DO NOT** take width space once the text as been printed.
+
+    For performance purposes we compute the logo length based on its first line.
+    See `archey.test.test_archey_logos` unit tests for further logos consistency verifications.
+
+    `logo` is supposed to be one of the constants declared above.
+    `nb_colors` must be greater than the number of colors used by the logo.
+    """
+    # We replace each placeholder by a 0-character string.
+    return len(logo[0].format(c=[''] * nb_colors))

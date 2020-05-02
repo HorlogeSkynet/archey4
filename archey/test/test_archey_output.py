@@ -272,29 +272,26 @@ class TestOutputUtil(unittest.TestCase):
     @patch.dict(
         'archey.output.LOGOS_DICT',
         {
-            Distributions.DEBIAN: {
-                'logo': [
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' ',
-                    ' '
-                ],
-                'width': 2 # Will be used to detect additional padding
-            }
+            Distributions.DEBIAN: [
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' '
+            ]
         }
     )
     @patch(
@@ -331,7 +328,7 @@ class TestOutputUtil(unittest.TestCase):
         ]
         output.output()
         print_mock.assert_called_with("""\
-  1
+ 1
  2
  3
  4
@@ -350,8 +347,8 @@ class TestOutputUtil(unittest.TestCase):
  17
  18
  19
-  20
-  21\x1b[0m\
+ 20
+ 21\x1b[0m\
 """)
 
         # # EVEN ENTRIES NUMBER # #
@@ -379,8 +376,8 @@ class TestOutputUtil(unittest.TestCase):
         ]
         output.output()
         print_mock.assert_called_with("""\
-  1
-  2
+ 1
+ 2
  3
  4
  5
@@ -399,9 +396,10 @@ class TestOutputUtil(unittest.TestCase):
  18
  19
  20
-  21
-  22\x1b[0m\
+ 21
+ 22\x1b[0m\
 """)
+
         # # FULL ENTRIES # #
         output._results = [  # pylint: disable=protected-access
             '1', '2', '3', '4', '5', '6',
@@ -445,16 +443,13 @@ class TestOutputUtil(unittest.TestCase):
     @patch.dict(
         'archey.output.LOGOS_DICT',
         {
-            Distributions.DEBIAN: {
-                'logo': [
-                    'W ',
-                    'O ',
-                    'O ',
-                    'O ',
-                    'O '
-                ],
-                'width': 2
-            }
+            Distributions.DEBIAN: [
+                'W ',
+                'O ',
+                'O ',
+                'O ',
+                'O '
+            ]
         }
     )
     @patch('archey.output.get_terminal_size')

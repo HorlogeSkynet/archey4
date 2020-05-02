@@ -16,6 +16,7 @@ import distro
 from archey.constants import COLOR_DICT, LOGOS_DICT, Colors
 from archey.configuration import Configuration
 from archey.distributions import Distributions
+from archey.logos import get_logo_width
 
 
 class Output:
@@ -84,8 +85,8 @@ class Output:
             entry.output(self)
 
         # Let's copy the logo (so we don't modify the constant!)
-        logo = LOGOS_DICT[self._distribution]['logo'].copy()
-        logo_width = LOGOS_DICT[self._distribution]['width']
+        logo = LOGOS_DICT[self._distribution].copy()
+        logo_width = get_logo_width(logo, len(self._colors_palette))
 
         # Let's center the entries and the logo (handles odd numbers)
         if len(logo) > len(self._results):
