@@ -1,12 +1,13 @@
 """Entry base class"""
 
-from abc import ABC as AbstractBaseClass
+from abc import ABC as AbstractBaseClass, abstractmethod
 
 from archey.configuration import Configuration
 
 
 class Entry(AbstractBaseClass):
     """Module base class"""
+    @abstractmethod
     def __init__(self, name=None, value=None):
         # Each entry will have `name` (key) and `value` attributes.
         # `None` by default.
