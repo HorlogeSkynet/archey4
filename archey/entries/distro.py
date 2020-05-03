@@ -9,8 +9,8 @@ from archey.entry import Entry
 
 class Distro(Entry):
     """Uses `distro` module and `uname` system program to format `${DISTRO} [${ARCH}]` string"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         distro_name = distro.name(pretty=True)
         if not distro_name:
             distro_name = self._configuration.get('default_strings')['not_detected']

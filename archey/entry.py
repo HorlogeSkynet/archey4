@@ -7,11 +7,11 @@ from archey.configuration import Configuration
 
 class Entry(AbstractBaseClass):
     """Module base class"""
-    def __init__(self):
+    def __init__(self, name=None, value=None):
         # Each entry will have `name` (key) and `value` attributes.
         # `None` by default.
-        self.name = None
-        self.value = None
+        self.name = name
+        self.value = value
 
         # Propagates a reference to `Configuration` singleton to each inheriting class.
         self._configuration = Configuration()

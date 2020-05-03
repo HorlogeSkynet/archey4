@@ -48,8 +48,8 @@ class WindowManager(Entry):
     Uses `wmctrl` to retrieve some information about the window manager.
     If not available, fall back on a simple iteration over the processes.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         try:
             window_manager = re.search(

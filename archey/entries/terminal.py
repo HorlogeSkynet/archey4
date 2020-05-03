@@ -11,8 +11,8 @@ class Terminal(Entry):
     Simple terminal detection based on the `TERM` environment variable.
     It also displays the colors palette afterwards.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         terminal = os.getenv(
             'TERM',

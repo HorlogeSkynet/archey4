@@ -7,8 +7,8 @@ from archey.entry import Entry
 
 class GPU(Entry):
     """Relies on `lspci` to retrieve graphics device(s) information"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         gpuinfo = None
 

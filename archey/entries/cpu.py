@@ -12,8 +12,8 @@ class CPU(Entry):
     Parse `/proc/cpuinfo` file to retrieve the model name.
     If no information could be retrieved, calls `lscpu`.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         model_name_regex = re.compile(
             r'^model name\s*:\s*(.*)$',

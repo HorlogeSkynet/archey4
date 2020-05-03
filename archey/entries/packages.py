@@ -24,8 +24,8 @@ PACKAGES_TOOLS = (
 
 class Packages(Entry):
     """Relies on the first found packages manager to list the installed packages"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         for packages_tool in PACKAGES_TOOLS:
             try:
                 results = check_output(

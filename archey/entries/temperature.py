@@ -15,8 +15,8 @@ class Temperature(Entry):
     If not available, falls back on system thermal zones files.
     On Raspberry devices, retrieves temperature from the `vcgencmd` binary.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self._temps = []
 

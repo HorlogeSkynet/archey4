@@ -9,8 +9,8 @@ from archey.entry import Entry
 
 class User(Entry):
     """Retrieves the session name of the current logged in user"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         user = os.getenv('USER')
         if not user:

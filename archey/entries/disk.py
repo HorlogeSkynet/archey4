@@ -10,8 +10,8 @@ from archey.entry import Entry
 
 class Disk(Entry):
     """Uses `df` and `btrfs` commands to compute the total disk usage across devices"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # This dictionary will store values obtained from sub-processes calls.
         self._usage = {

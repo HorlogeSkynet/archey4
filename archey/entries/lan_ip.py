@@ -7,8 +7,8 @@ from archey.entry import Entry
 
 class LanIp(Entry):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         address_types = [netifaces.AF_INET]
         if self._configuration.get('ip_settings')['lan_ip_v6_support']:

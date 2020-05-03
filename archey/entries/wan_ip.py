@@ -10,8 +10,8 @@ from archey.entry import Entry
 
 class WanIp(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         ipv4_addr = self._retrieve_ipv4_address()
 

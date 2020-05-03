@@ -7,8 +7,8 @@ from archey.entry import Entry
 
 class Hostname(Entry):
     """Simple call to `uname` to retrieve the host name"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.value = check_output(
             ['uname', '-n'],

@@ -13,8 +13,8 @@ class RAM(Entry):
     First tries to use the `free` command to retrieve RAM usage.
     If not available, falls back on the parsing of `/proc/meminfo` file.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         try:
             ram = ''.join(

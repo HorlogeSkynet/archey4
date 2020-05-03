@@ -78,10 +78,7 @@ def main():
     output = Output()
     for entry in Entries:
         if configuration.get('entries', {}).get(entry.name, True):
-            # Set the name
-            entry_instance = entry.value()
-            entry_instance.name = entry.name
-            output.add_entry(entry_instance)
+            output.add_entry(entry.value(name=entry.name))
 
     output.output()
 

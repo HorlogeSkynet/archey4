@@ -10,8 +10,8 @@ from archey.entry import Entry
 
 class Model(Entry):
     """Uses multiple methods to retrieve some information about the host hardware"""
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # Is this a virtual machine ?
         self._check_virtualization()

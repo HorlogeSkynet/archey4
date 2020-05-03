@@ -12,8 +12,8 @@ class Shell(Entry):
     Simple shell path detection based either on the `SHELL` environment variable or
     the local administrative database.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         shell = os.getenv('SHELL')
         if not shell:
