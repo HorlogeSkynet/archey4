@@ -477,17 +477,17 @@ FAKE_COLOR 22\x1b[0m\
             'looooooong',                  # truncation - too long
             'tenchars',                    # no truncation - exactly the right width
             '\x1b[0;31mshort\x1b[0m',      # no truncation - too short
-            '\x1b[0;31mlooooooong\x1b[0m', # truncation - too long, colour reset truncated
+            '\x1b[0;31mlooooooong\x1b[0m', # truncation - too long, long word truncated
         ]
 
         output.output()
 
         print_mock.assert_called_with("""\
 W short
-O loooo\x1b[0m...
+O \x1b[0m...
 O tenchars
 O \x1b[0;31mshort\x1b[0m
-O \x1b[0;31mloooo\x1b[0m...\x1b[0m\
+O \x1b[0;31m\x1b[0m...\x1b[0m\
 """)
         # Check that `print` has been called only once.
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.

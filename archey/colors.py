@@ -3,6 +3,12 @@
 from bisect import bisect
 from enum import Enum
 
+import re
+
+
+# REGEXP compiled pattern matching ANSI/ECMA-48 escape codes.
+ANSI_ECMA_REGEXP = re.compile(r'\x1b\[\d+(?:(?:;\d+)+)?m')
+
 
 class Colors(Enum):
     """

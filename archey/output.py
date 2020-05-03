@@ -4,16 +4,18 @@ It supports entries lazy-insertion, logo detection, and final printing.
 """
 
 import os
-import re
 
 from subprocess import check_output
 from shutil import get_terminal_size
 
 import sys
 
+from textwrap import TextWrapper
+
 import distro
 
-from archey.constants import COLOR_DICT, LOGOS_DICT, Colors
+from archey.colors import ANSI_ECMA_REGEXP, Colors
+from archey.constants import COLOR_DICT, LOGOS_DICT
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.logos import get_logo_width
@@ -98,44 +100,48 @@ class Output:
             logo[0:0] = colored_empty_line * (-height_diff // 2)
             logo.extend(colored_empty_line * (len(self._results) - len(logo)))
 
-        entry_max_width = get_terminal_size().columns - logo_width
+        text_wrapper = TextWrapper(
+            width=(get_terminal_size().columns - logo_width),
+            expand_tabs=False,
+            replace_whitespace=False,
+            drop_whitespace=False,
+            break_on_hyphens=False,
+            max_lines=1,
+            placeholder='...'
+        )
+        placeholder_length = len(text_wrapper.placeholder)
 
-        wrapped_entries = []
-        ansi_color_re = re.compile(r'\x1b\[\d+?;?\d*?m')
-        for entry in self._results:
-            # Remove the entries' color control codes, so we can wrap them
-            entry_no_color = ansi_color_re.sub('', entry)
+        # Using `TextWrapper`, shortens each entry to remove any line overlapping
+        for i, entry in enumerate(self._results):
+            # Shortens the entry according to the terminal width.
+            # We have to remove any ASCII color, or the result would be skewed.
+            wrapped_entry = text_wrapper.fill(ANSI_ECMA_REGEXP.sub('', entry))
+            placeholder_offset = (
+                placeholder_length if wrapped_entry.endswith(text_wrapper.placeholder) else 0
+            )
 
-            if len(entry_no_color) > entry_max_width:
-                extra_width = len(entry_no_color) - entry_max_width
-                wrapped_entry = entry_no_color[:-(extra_width + 3)] + '...'
-                # Naively add all of the colour control codes back into position
-                for color_code_match in ansi_color_re.finditer(entry):
-                    match_idx = color_code_match.start()
-                    # Subtracting the '...'
-                    if match_idx < (len(wrapped_entry) - 3):
-                        wrapped_entry = (
-                            wrapped_entry[:match_idx]
-                            + color_code_match.group()
-                            + wrapped_entry[match_idx:]
-                        )
+            # By using previous positions, re-inserts ASCII colors back in the wrapped string.
+            for color_match in ANSI_ECMA_REGEXP.finditer(entry):
+                match_index = color_match.start()
+                if match_index <= len(wrapped_entry) - placeholder_offset:
+                    wrapped_entry = wrapped_entry[:match_index] + \
+                        color_match.group() + \
+                        wrapped_entry[match_index:]
 
-                # Add a colour reset before the '...' in case we still have a colour applied
-                wrapped_entry = (
-                    wrapped_entry[:-3]
-                    + str(Colors.CLEAR)
-                    + wrapped_entry[-3:]
-                )
-                wrapped_entries.append(wrapped_entry)
+            # Add a color reset character before the placeholder (if any).
+            # Rationale :
+            # We cannot set `Colors.CLEAR` in the placeholder as it would skew its internals.
+            if placeholder_offset:
+                wrapped_entry = wrapped_entry[:-placeholder_length] + \
+                    str(Colors.CLEAR) + \
+                    wrapped_entry[-placeholder_length:]
 
-            else:
-                wrapped_entries.append(entry)
+            self._results[i] = wrapped_entry
 
-        # Append entry results to our logo
+        # Merge entry results to the distribution logo.
         logo_with_entries = os.linesep.join([
             logo_part + entry_part
-            for logo_part, entry_part
-            in zip(logo, wrapped_entries)
+            for logo_part, entry_part in zip(logo, self._results)
         ])
 
         try:
