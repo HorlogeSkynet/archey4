@@ -114,13 +114,13 @@ class Output:
         # Using `TextWrapper`, shortens each entry to remove any line overlapping
         for i, entry in enumerate(self._results):
             # Shortens the entry according to the terminal width.
-            # We have to remove any ASCII color, or the result would be skewed.
+            # We have to remove any ANSI color, or the result would be skewed.
             wrapped_entry = text_wrapper.fill(ANSI_ECMA_REGEXP.sub('', entry))
             placeholder_offset = (
                 placeholder_length if wrapped_entry.endswith(text_wrapper.placeholder) else 0
             )
 
-            # By using previous positions, re-inserts ASCII colors back in the wrapped string.
+            # By using previous positions, re-inserts ANSI colors back in the wrapped string.
             for color_match in ANSI_ECMA_REGEXP.finditer(entry):
                 match_index = color_match.start()
                 if match_index <= len(wrapped_entry) - placeholder_offset:
