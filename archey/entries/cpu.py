@@ -4,13 +4,17 @@ import re
 
 from subprocess import check_output
 
+from archey.entry import Entry
 
-class CPU:
+
+class CPU(Entry):
     """
     Parse `/proc/cpuinfo` file to retrieve the model name.
     If no information could be retrieved, calls `lscpu`.
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         model_name_regex = re.compile(
             r'^model name\s*:\s*(.*)$',
             flags=re.IGNORECASE | re.MULTILINE

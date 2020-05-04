@@ -28,7 +28,7 @@ total                  305809MB 47006MB  243149MB      17% -
         ]
     )
     @patch(
-        'archey.entries.disk.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'disk': {
                 'warning': 50,
@@ -56,7 +56,7 @@ total                  305809MB 257598MB   46130MB      84% -
         ]
     )
     @patch(
-        'archey.entries.disk.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'disk': {
                 'warning': 80,
@@ -138,7 +138,7 @@ System,single: Size:0.01GiB, Used:0.00GiB (1.03%)
         ]
     )
     @patch(
-        'archey.entries.disk.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'disk': {
                 'warning': 50,
@@ -219,7 +219,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
         ]
     )
     @patch(
-        'archey.entries.disk.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'disk': {
                 'warning': 50,
@@ -240,7 +240,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
         ]
     )
     @patch(
-        'archey.entries.disk.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     def test_df_failing(self, _, __):
@@ -255,7 +255,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
         ]
     )
     @patch(
-        'archey.entries.disk.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     def test_no_recognised_disks(self, _, __):

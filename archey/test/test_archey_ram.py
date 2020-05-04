@@ -20,7 +20,7 @@ Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
     @patch(
-        'archey.entries.ram.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'ram': {
                 'warning': 25,
@@ -41,7 +41,7 @@ Mem:          15658        2043       10232          12        3382       13268
 Swap:          4095          39        4056
 """)
     @patch(
-        'archey.entries.ram.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'ram': {
                 'warning': 33.3,
@@ -62,7 +62,7 @@ Mem:          15658       12341         624         203        2692        2807
 Swap:          4095         160        3935
 """)
     @patch(
-        'archey.entries.ram.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'ram': {
                 'warning': 33.3,
@@ -80,7 +80,7 @@ Swap:          4095         160        3935
         side_effect=IndexError()  # `free` call will fail
     )
     @patch(
-        'archey.entries.ram.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={
             'ram': {
                 'warning': 33.3,

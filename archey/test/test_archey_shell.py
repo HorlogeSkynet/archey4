@@ -45,7 +45,7 @@ class TestShellEntry(unittest.TestCase):
         side_effect=CalledProcessError(2, 'getent')
     )
     @patch(
-        'archey.entries.shell.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     def test_config_fall_back(self, _, __, ___):

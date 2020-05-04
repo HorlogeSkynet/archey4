@@ -78,7 +78,7 @@ def main():
     output = Output()
     for entry in Entries:
         if configuration.get('entries', {}).get(entry.name, True):
-            output.append(entry.name, entry.value().value)
+            output.add_entry(entry.value(name=entry.name))
 
     output.output()
 

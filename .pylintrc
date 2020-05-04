@@ -11,5 +11,5 @@ jobs=0
 
 
 [DESIGN]
-# For entries classes, we only use the `__init__` magic method.
+# For entries classes, we (often) only use the `__init__` magic method.
 min-public-methods=0

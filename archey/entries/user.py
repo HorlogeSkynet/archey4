@@ -4,12 +4,14 @@ import os
 
 from subprocess import CalledProcessError, check_output
 
-from archey.configuration import Configuration
+from archey.entry import Entry
 
 
-class User:
+class User(Entry):
     """Retrieves the session name of the current logged in user"""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         user = os.getenv('USER')
         if not user:
             try:
@@ -19,6 +21,6 @@ class User:
                 ).rstrip()
             except CalledProcessError:
                 # Should not occur, but who knows ?
-                user = Configuration().get('default_strings')['not_detected']
+                user = self._configuration.get('default_strings')['not_detected']
 
         self.value = user

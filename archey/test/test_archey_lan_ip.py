@@ -46,7 +46,7 @@ class TestLanIpEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.lan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': None},  # Needed key.
             {'lan_ip_max_count': False}
@@ -109,7 +109,7 @@ class TestLanIpEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.lan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': True},
             {'lan_ip_max_count': 2}
@@ -164,7 +164,7 @@ class TestLanIpEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.lan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': False},
             {'lan_ip_max_count': None}
@@ -182,7 +182,7 @@ class TestLanIpEntry(unittest.TestCase):
         return_value=[]  # No interface returned by `netifaces`.
     )
     @patch(
-        'archey.entries.lan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': None},  # Needed key.
             {'lan_ip_max_count': None},  # Needed key.
@@ -221,7 +221,7 @@ class TestLanIpEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.lan_ip.Configuration.get',
+        'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': None},  # Needed key.
             {'lan_ip_max_count': None},  # Needed key.

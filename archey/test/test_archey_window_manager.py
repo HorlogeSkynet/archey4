@@ -57,10 +57,8 @@ Window manager's "showing the desktop" mode: OFF
         ]
     )
     @patch(
-        'archey.entries.window_manager.Configuration.get',
-        return_value={
-            'not_detected': 'Not detected'
-        }
+        'archey.configuration.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
     )
     def test_no_wmctrl_mismatch(self, _, __, ___):
         """Test (non-detection) when processes list do not contain any known value"""

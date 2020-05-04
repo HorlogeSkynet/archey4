@@ -4,7 +4,7 @@ import os
 
 from subprocess import check_output, DEVNULL, CalledProcessError
 
-from archey.configuration import Configuration
+from archey.entry import Entry
 
 
 PACKAGES_TOOLS = (
@@ -22,9 +22,10 @@ PACKAGES_TOOLS = (
 )
 
 
-class Packages:
+class Packages(Entry):
     """Relies on the first found packages manager to list the installed packages"""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         for packages_tool in PACKAGES_TOOLS:
             try:
                 results = check_output(
@@ -55,6 +56,6 @@ class Packages:
             break
 
         else:
-            packages = Configuration().get('default_strings')['not_detected']
+            packages = self._configuration.get('default_strings')['not_detected']
 
         self.value = packages

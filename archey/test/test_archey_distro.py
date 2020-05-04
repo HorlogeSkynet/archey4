@@ -30,7 +30,7 @@ ARCHITECTURE
         return_value=""  # `distro` is soft-failing, returning an empty string...
     )
     @patch(
-        'archey.entries.distro.Configuration.get',
+        'archey.configuration.Configuration.get',
         return_value={'not_detected': 'Not detected'}
     )
     @patch(
