@@ -124,17 +124,17 @@ class Output:
             for color_match in ANSI_ECMA_REGEXP.finditer(entry):
                 match_index = color_match.start()
                 if match_index <= len(wrapped_entry) - placeholder_offset:
-                    wrapped_entry = wrapped_entry[:match_index] + \
-                        color_match.group() + \
-                        wrapped_entry[match_index:]
+                    wrapped_entry = (wrapped_entry[:match_index]
+                                     + color_match.group()
+                                     + wrapped_entry[match_index:])
 
             # Add a color reset character before the placeholder (if any).
             # Rationale :
             # We cannot set `Colors.CLEAR` in the placeholder as it would skew its internals.
             if placeholder_offset:
-                wrapped_entry = wrapped_entry[:-placeholder_length] + \
-                    str(Colors.CLEAR) + \
-                    wrapped_entry[-placeholder_length:]
+                wrapped_entry = (wrapped_entry[:-placeholder_length]
+                                 + str(Colors.CLEAR)
+                                 + wrapped_entry[-placeholder_length:])
 
             self._results[i] = wrapped_entry
 
