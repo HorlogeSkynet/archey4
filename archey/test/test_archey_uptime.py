@@ -89,17 +89,15 @@ class TestUptimeEntry(unittest.TestCase):
         """
         self.assertEqual(Uptime().value, '16 minutes')
 
-    @patch(
-        'archey.entries.uptime.check_output'
-    )
-    def test_linux_clock_fallback(self, check_output_mock):
+    @patch('archey.entries.uptime.check_output')
+    def test_uptime_fallback(self, check_output_mock):
         """Test `uptime` command parsing"""
         # Create an uptime instance to perform testing
         # It doesn't matter that this will run its __init__
         uptime_inst = Uptime()
 
         # Keys: `uptime` outputs; values: expected time deltas.
-        # These outputs have been gathered from various *NIX sytems.
+        # These outputs have been gathered from various *NIX sytems (with various locales).
         # pragma pylint: disable=line-too-long
         test_cases = {
             '19:52  up 14 mins, 2 users, load averages: 2.95 4.19 4.31': timedelta(minutes=14),
@@ -131,6 +129,26 @@ class TestUptimeEntry(unittest.TestCase):
                 expected_delta,
                 msg='`uptime` output: {0}'.format(uptime_output)
             )
+
+    @patch(
+        'archey.entries.uptime.open',
+        side_effect=PermissionError(),
+        create=True
+    )
+    @patch(
+        'archey.entries.uptime.check_output',
+        side_effect=FileNotFoundError(),
+        create=True
+    )
+    @patch.object(
+        Uptime,
+        '_clock_uptime',
+        side_effect=RuntimeError()
+    )
+    def test_procps_missing(self, _, __, ___):
+        """Test `uptime` failure when no uptime sources are available"""
+        with self.assertRaises(SystemExit):
+            Uptime()
 
 
 if __name__ == '__main__':
