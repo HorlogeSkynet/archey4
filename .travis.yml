@@ -15,8 +15,8 @@ install:
 
 script:
   # Simple execution.
-  - ${VIRTUAL_ENV}/bin/archey
-  - python3 -m archey
+  - time "${VIRTUAL_ENV}/bin/archey"
+  - time python3 -m archey
 
   # Tests suite.
   - python3 setup.py -q test
@@ -27,9 +27,9 @@ script:
 
   # Build a standalone script from sources (Stickytape).
   - stickytape --add-python-path . --output-file dist/archey archey/__main__.py
-  - python3 dist/archey
+  - time python3 dist/archey
 
   # Build a standalone script from sources (PyInstaller).
   # Currently disabled for Python 3.8, see <pyinstaller/pyinstaller#4311>.
   - if [[ "$TRAVIS_PYTHON_VERSION" != "3.8" ]]; then pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py; fi
-  - if [[ "$TRAVIS_PYTHON_VERSION" != "3.8" ]]; then ./dist/archey; fi
+  - if [[ "$TRAVIS_PYTHON_VERSION" != "3.8" ]]; then time ./dist/archey; fi
