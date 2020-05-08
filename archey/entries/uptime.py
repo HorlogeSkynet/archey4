@@ -108,7 +108,6 @@ class Uptime(Entry):
         except FileNotFoundError:
             # No `uptime` command.
             # Since `procps` is a dependency (which provides `uptime`) we can just exit here.
-            # Note: We _should_ not got there as `Processes` first check `procps` availability.
             sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
 
         # Unfortunately the output is not designed to be machine-readable...
@@ -131,7 +130,7 @@ class Uptime(Entry):
                   (?:          # non-capture group for hours:minutes colon or 'hrs' text
                      :         # i.e. hours followed by either a single colon
                      |         # OR
-                     \s+?hrs   # one or more whitespace chars non-greedily, followed by 'hrs'
+                     \s+?hrs?  # one or more whitespace chars non-greedily followed by 'hr' or 'hrs'
                   )
                )?              # match the hours non-capture group 0 or 1 times
                (?:             # non-capture group for minutes
@@ -140,7 +139,7 @@ class Uptime(Entry):
                   )
                   (?:          # non-capture group for 'min' or 'mins' text
                      \s+?      # match whitespace,
-                     mins?     # followed by 'min' or 'mins
+                     mins?     # followed by 'min' or 'mins'
                   )?           # match the 'mins' text non-capture group 0 or 1 times,
                )?              # the minutes non-capture group 0 or 1 times
             )?                 # and the entire hours & minutes non-capture group 0 or 1 times
