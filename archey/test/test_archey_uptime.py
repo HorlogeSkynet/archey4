@@ -71,10 +71,8 @@ class TestUptimeEntry(unittest.TestCase):
         side_effect=PermissionError(),
         create=True
     )
-    # We patch in Linux's CLOCK_BOOTTIME to ensure that
-    # the `getattr` call before `clock_gettime` succeeds
     @patch(
-        'archey.entries.uptime.time.CLOCK_BOOTTIME',
+        'archey.entries.uptime.time.CLOCK_BOOTTIME',  # Ensure first `getattr` call succeeds anyhow.
         create=True
     )
     @patch(
@@ -84,7 +82,7 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_clock_fallback(self, _, __, ___):
         """
-        Test when we can't access /proc/uptime on Linux/macOS/BSD
+        Test when we can't access /proc/uptime on Linux/macOS/BSD.
         We only test one clock as all clocks rely on the same builtin `time.clock_gettime` method.
         """
         self.assertEqual(Uptime().value, '16 minutes')
@@ -92,13 +90,13 @@ class TestUptimeEntry(unittest.TestCase):
     @patch('archey.entries.uptime.check_output')
     def test_uptime_fallback(self, check_output_mock):
         """Test `uptime` command parsing"""
-        # Create an uptime instance to perform testing
-        # It doesn't matter that this will run its __init__
+        # Create an uptime instance to perform testing.
+        # It doesn't matter that its `__init__` will be called.
         uptime_inst = Uptime()
 
-        # Keys: `uptime` outputs; values: expected time deltas.
+        # Keys: `uptime` outputs; values: expected `timedelta` instances.
         # These outputs have been gathered from various *NIX sytems (with various locales).
-        # pragma pylint: disable=line-too-long
+        # pylint: disable=line-too-long
         test_cases = {
             '19:52  up 14 mins, 2 users, load averages: 2.95 4.19 4.31': timedelta(minutes=14),
             '8:03 up 52 days, 20:47, 3 users, load averages: 1.36 1.42 1.40': timedelta(days=52, hours=20, minutes=47),
@@ -118,16 +116,14 @@ class TestUptimeEntry(unittest.TestCase):
             '04:13:19 up 1 day,  1:00,  8 users,  load average: 0.02, 0.05, 0.21': timedelta(days=1, hours=1),
             '12:49:10 up 25 days, 21:30, 28 users,  load average: 0.50, 0.66, 0.52': timedelta(days=25, hours=21, minutes=30)
         }
-        # pragma pylint: enable=line-too-long
+        # pylint: enable=line-too-long
 
         for uptime_output, expected_delta in test_cases.items():
             check_output_mock.return_value = uptime_output
-            uptime_inst._uptime_cmd() # pylint: disable=protected-access
-
             self.assertEqual(
-                uptime_inst._uptime, # pylint: disable=protected-access
+                uptime_inst._parse_uptime_cmd(), # pylint: disable=protected-access
                 expected_delta,
-                msg='`uptime` output: {0}'.format(uptime_output)
+                msg='`uptime` output: {}'.format(uptime_output)
             )
 
     @patch(

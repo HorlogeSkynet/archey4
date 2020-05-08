@@ -1,11 +1,13 @@
 """Uptime detection class"""
 
-
 import re
-import time
+
+from subprocess import check_output
+
 import sys
+import time
+
 from datetime import timedelta
-from subprocess import check_output, CalledProcessError
 
 from archey.entry import Entry
 
@@ -15,101 +17,99 @@ class Uptime(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._uptime = None
-        self._get_uptime()
+        uptime_seconds = int(self._get_uptime_delta().total_seconds())
 
-        self._fuptime = int(self._uptime.total_seconds())
-
-        day, self._fuptime = divmod(self._fuptime, 86400)
-        hour, self._fuptime = divmod(self._fuptime, 3600)
-        minute = self._fuptime // 60
+        days, uptime_seconds = divmod(uptime_seconds, 86400)
+        hours, uptime_seconds = divmod(uptime_seconds, 3600)
+        minutes = uptime_seconds // 60
 
         uptime = ''
-        if day:
-            uptime += str(day) + ' day'
-            if day > 1:
+        if days:
+            uptime += str(days) + ' day'
+            if days > 1:
                 uptime += 's'
 
-            if hour or minute:
-                if bool(hour) != bool(minute):
+            if hours or minutes:
+                if bool(hours) != bool(minutes):
                     uptime += ' and '
-
                 else:
                     uptime += ', '
 
-        if hour:
-            uptime += str(hour) + ' hour'
-            if hour > 1:
+        if hours:
+            uptime += str(hours) + ' hour'
+            if hours > 1:
                 uptime += 's'
 
-            if minute:
+            if minutes:
                 uptime += ' and '
 
-        if minute:
-            uptime += str(minute) + ' minute'
-            if minute > 1:
+        if minutes:
+            uptime += str(minutes) + ' minute'
+            if minutes > 1:
                 uptime += 's'
-
-        else:
-            if not day and not hour:
-                uptime = '< 1 minute'
+        elif not days and not hours:
+            uptime = '< 1 minute'
 
         self.value = uptime
 
-    def _get_uptime(self):
-        """Sets `self._uptime` trying a variety of methods"""
+    def _get_uptime_delta(self):
+        """
+        Returns a `datetime.timedelta` instance containing the machine uptime.
+        Tries a variety of methods, increasing compatibility for a wide range of systems.
+        """
         # Try the /proc/uptime file
         try:
-            self._proc_file_uptime()
-            return
+            return self._proc_file_uptime()
         except (PermissionError, FileNotFoundError):
-            # Can't read /proc/uptime, so not Linux or limited permissions.
+            # Can't read /proc/uptime.
+            # Not GNU/Linux ? Limited permissions ?
             pass
 
         # Try the python `time` module clocks
         try:
-            self._clock_uptime()
-            return
+            return self._clock_uptime()
         except RuntimeError:
             # Probably Python <3.7, or not *NIX
             pass
 
         # FUTURE: Windows support could be added here with the `wmi` or `pywin32` module.
 
-        # Fall back to the `uptime` command
-        self._uptime_cmd()
+        # Fall back to the `uptime` command.
+        return self._parse_uptime_cmd()
 
-
-    def _proc_file_uptime(self):
+    @staticmethod
+    def _proc_file_uptime():
         """Tries to get uptime using the `/proc/uptime` file"""
-        with open('/proc/uptime') as file:
-            self._uptime = timedelta(
-                seconds=int(file.read().split('.')[0])
+        with open('/proc/uptime') as f_uptime:
+            return timedelta(
+                seconds=int(f_uptime.read().split('.')[0])
             )
 
-    def _clock_uptime(self):
+    @staticmethod
+    def _clock_uptime():
         """Tries to get uptime using the clocks from the Python `time` module"""
         # Try: Linux uptime clock, macOS uptime clock, BSD uptime clock.
-        for clock in ['CLOCK_BOOTTIME', 'CLOCK_UPTIME_RAW', 'CLOCK_UPTIME']:
+        for clock in ('CLOCK_BOOTTIME', 'CLOCK_UPTIME_RAW', 'CLOCK_UPTIME'):
             try:
-                self._uptime = timedelta(
+                return timedelta(
                     seconds=time.clock_gettime(getattr(time, clock))
                 )
-                return
             except AttributeError:
                 pass
 
         # Probably Python <3.7, or just not one of the above OSes
         raise RuntimeError
 
-    def _uptime_cmd(self):
+    @staticmethod
+    def _parse_uptime_cmd():
         """Tries to get uptime by parsing the `uptime` command"""
         try:
             uptime_output = check_output('uptime')
-        except (CalledProcessError, FileNotFoundError):
-            # No `uptime` command. Since `procps` is a dependency (which provides `uptime`)
-            # we can just exit here.
-            sys.exit('Required dependency `procps` (or `procps-ng`) missing. Please install.')
+        except FileNotFoundError:
+            # No `uptime` command.
+            # Since `procps` is a dependency (which provides `uptime`) we can just exit here.
+            # Note: We _should_ not got there as `Processes` first check `procps` availability.
+            sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
 
         # Unfortunately the output is not designed to be machine-readable...
         uptime_match = re.search(
@@ -120,7 +120,7 @@ class Uptime(Entry):
                   \d+?
                )
                \s+?            # match whitespace,
-               day[s]?         # 'day' or 'days',
+               days?           # 'day' or 'days',
                [,\s]+?         # then a comma (if present) followed by more whitespace
             )?                 # match the days non-capture group 0 or 1 times
             (?:                # non-capture group for hours & minutes
@@ -140,7 +140,7 @@ class Uptime(Entry):
                   )
                   (?:          # non-capture group for 'min' or 'mins' text
                      \s+?      # match whitespace,
-                     min[s]?   # followed by 'min' or 'mins
+                     mins?     # followed by 'min' or 'mins
                   )?           # match the 'mins' text non-capture group 0 or 1 times,
                )?              # the minutes non-capture group 0 or 1 times
             )?                 # and the entire hours & minutes non-capture group 0 or 1 times
@@ -153,14 +153,11 @@ class Uptime(Entry):
             re.VERBOSE
         )
 
-        times_dict = uptime_match.groupdict()
-        timedelta_args = {
-            'days': 0,
-            'minutes': 0,
-            'hours': 0
-        }
-        for time_unit, value in times_dict.items():
-            if value is not None:
-                timedelta_args[time_unit] = int(value)
-
-        self._uptime = timedelta(**timedelta_args)
+        # Only `days`, `hours` or `minutes` could have been captured.
+        # `timedelta` directly accepts them as arguments.
+        uptime_args = uptime_match.groupdict()
+        return timedelta(
+            days=int(uptime_args.get('days') or 0),
+            hours=int(uptime_args.get('hours') or 0),
+            minutes=int(uptime_args.get('minutes') or 0)
+        )
