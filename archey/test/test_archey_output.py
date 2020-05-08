@@ -510,8 +510,15 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         output.output()
 
         # Check that `print` output is properly formatted as JSON.
-        # Note: Python < 3.6, the keys order is not guaranteed.
-        self.assertTrue(json.loads(print_mock.call_args[0][0]))
+        # Note: Python < 3.6, the keys order is not guaranteed, so we use `assertDictEqual`.
+        self.assertDictEqual(
+            json.loads(print_mock.call_args[0][0]),
+            {
+                'what': 'are',
+                'those': 'fake',
+                'results': '???'
+            }
+        )
 
 if __name__ == '__main__':
     unittest.main()
