@@ -1,5 +1,6 @@
 """Test module for `archey.output`"""
 
+import json
 import unittest
 from unittest.mock import patch
 from collections import namedtuple
@@ -508,17 +509,9 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         ]
         output.output()
 
-        print_mock.assert_called_with("""\
-{
-    "what": "are",
-    "those": "fake",
-    "results": "???"
-}\
-""")
-        # Check that `print` has been called only once.
-        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
-        self.assertEqual(print_mock.call_count, 1)
-
+        # Check that `print` output is properly formatted as JSON.
+        # Note: Python < 3.6, the keys order is not guaranteed.
+        self.assertTrue(json.loads(print_mock.call_args[0][0]))
 
 if __name__ == '__main__':
     unittest.main()
