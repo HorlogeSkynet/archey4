@@ -3,14 +3,16 @@ Output class file.
 It supports entries lazy-insertion, logo detection, and final printing.
 """
 
-import os
+from textwrap import TextWrapper
 
 from subprocess import check_output
+
+import json
+
 from shutil import get_terminal_size
 
+import os
 import sys
-
-from textwrap import TextWrapper
 
 import distro
 
@@ -26,7 +28,10 @@ class Output:
     This is the object handling output entries populating.
     It also handles the logo choice based on some system detections.
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
+        # Fetches passed arguments.
+        self.format_to_json = kwargs.get('format_to_json')
+
         # First we check whether the Kernel has been compiled as a WSL.
         if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
             self._distribution = Distributions.WINDOWS
@@ -67,25 +72,50 @@ class Output:
 
     def append(self, key, value):
         """Append a pre-formatted entry to the final output content"""
-        self._results.append(
-            '{color}{key}:{clear} {value}'.format(
-                color=self._colors_palette[0],
-                key=key,
-                clear=Colors.CLEAR,
-                value=value
+        if self.format_to_json:
+            self._results.append((key, value))
+        else:
+            self._results.append(
+                '{color}{key}:{clear} {value}'.format(
+                    color=self._colors_palette[0],
+                    key=key,
+                    clear=Colors.CLEAR,
+                    value=value
+                )
             )
-        )
 
     def output(self):
         """
-        Finally render the output entries.
-        First we get entries to add their outputs to the results.
-        It then handles text centering additionally to value and colors replacing.
+        Main `Output`'s `output` method.
+        First we get entries to add their outputs to the results and then
+        calls specific `output` methods based (for instance) on preferred format.
         """
         # Iterate through the entries and run their output method to add their content.
         for entry in self._entries:
             entry.output(self)
 
+        if self.format_to_json:
+            self._output_json()
+        else:
+            self._output_text()
+
+    def _output_json(self):
+        """
+        Finally outputs entries data to JSON format.
+        Converts the `list` of 2-`tuple` to a proper `dict` to facilitate data retrieval in API.
+        """
+        print(
+            json.dumps(
+                dict(self._results),
+                indent=4,
+            )
+        )
+
+    def _output_text(self):
+        """
+        Finally render the output entries.
+        It handles text centering additionally to value and colors replacing.
+        """
         # Let's copy the logo (so we don't modify the constant!)
         logo = LOGOS_DICT[self._distribution].copy()
         logo_width = get_logo_width(logo, len(self._colors_palette))

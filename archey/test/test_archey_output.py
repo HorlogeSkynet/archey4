@@ -493,6 +493,32 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
         self.assertEqual(print_mock.call_count, 1)
 
+    @patch(
+        'archey.output.print',
+        return_value=None,  # Let's nastily mute class' outputs.
+        create=True
+    )
+    def test_json_output_format(self, print_mock):
+        """Test how the `output` method handles JSON preferred formatting of entries"""
+        output = Output(format_to_json=True)
+        output._results = [ # pylint: disable=protected-access
+            ('what', 'are'),
+            ('those', 'fake'),
+            ('results', '???')
+        ]
+        output.output()
+
+        print_mock.assert_called_with("""\
+{
+    "what": "are",
+    "those": "fake",
+    "results": "???"
+}\
+""")
+        # Check that `print` has been called only once.
+        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
+        self.assertEqual(print_mock.call_count, 1)
+
 
 if __name__ == '__main__':
     unittest.main()
