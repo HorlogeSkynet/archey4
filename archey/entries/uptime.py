@@ -82,7 +82,7 @@ class Uptime(Entry):
         """Tries to get uptime using the `/proc/uptime` file"""
         with open('/proc/uptime') as f_uptime:
             return timedelta(
-                seconds=int(f_uptime.read().split('.')[0])
+                seconds=float(f_uptime.read().split()[0])
             )
 
     @staticmethod
