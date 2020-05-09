@@ -108,6 +108,7 @@ class Uptime(Entry):
         except FileNotFoundError:
             # No `uptime` command.
             # Since `procps` is a dependency (which provides `uptime`) we can just exit here.
+            # Note: We shouldn't get there as `Processes` depends on `procps` beforehand.
             sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
 
         # Unfortunately the output is not designed to be machine-readable...
