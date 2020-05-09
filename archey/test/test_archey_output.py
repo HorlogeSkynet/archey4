@@ -495,11 +495,15 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         self.assertEqual(print_mock.call_count, 1)
 
     @patch(
+        'archey.output.Configuration.get',
+        return_value={'honor_ansi_color': False}
+    )
+    @patch(
         'archey.output.print',
         return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
-    def test_json_output_format(self, print_mock):
+    def test_json_output_format(self, print_mock, _):
         """Test how the `output` method handles JSON preferred formatting of entries"""
         output = Output(format_to_json=True)
         output._results = [ # pylint: disable=protected-access
