@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import patch
 
+from subprocess import CalledProcessError
+
 from archey.entries.gpu import GPU
 
 
@@ -26,7 +28,7 @@ XX:YY.H Audio device: DDDDDDDDDDDDDDDD
         return_value="""\
 XX:YY.H IDE interface: IIIIIIIIIIIIIIII
 XX:YY.H SMBus: BBBBBBBBBBBBBBBB
-XX:YY.H Display controller: ANOTHER MATCHING VIDEO CONTROLLER IGNORED
+XX:YY.H Display controller: ANOTHER MATCHING VIDEO CONTROLLER
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
 """)
@@ -34,7 +36,7 @@ XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
         """Test detection when there are multiple graphical candidates"""
         self.assertEqual(
             GPU().value,
-            '3D GPU-MODEL-NAME TAKES ADVANTAGE'
+            '3D GPU-MODEL-NAME TAKES ADVANTAGE, ANOTHER MATCHING VIDEO CONTROLLER'
         )
 
     @patch(
@@ -50,6 +52,18 @@ XX:YY.H Audio device: DDDDDDDDDDDDDDDD
     )
     def test_no_match(self, _, __):
         """Test (non-)detection when there is not any graphical candidate"""
+        self.assertEqual(GPU().value, 'Not detected')
+
+    @patch(
+        'archey.entries.gpu.check_output',
+        side_effect=CalledProcessError(1, 'lspci')
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
+    )
+    def test_lspsci_crash(self, _, __):
+        """Test (non-)detection due to a crashing `lspci` program"""
         self.assertEqual(GPU().value, 'Not detected')
 
 

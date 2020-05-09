@@ -10,29 +10,28 @@ class GPU(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        gpuinfo = None
+        # This list will contain GPU devices detected on this system.
+        self.gpu_devices = []
 
-        # Some explanations are needed here :
-        # * We call `lspci` program to retrieve hardware devices
-        # * We keep only the entries with "3D", "VGA" or "Display"
-        # * We sort them in the same order as above (for relevancy)
+        # Let's try `lspci` here.
+        self._run_lspci()
+
+        self.value = ', '.join(self.gpu_devices) or \
+            self._configuration.get('default_strings')['not_detected']
+
+    def _run_lspci(self):
+        """Based on `lspci` output, retrieve a list of GPU devices"""
+        # Let's ask `lspci` for a list of current PCI devices on this system.
         try:
-            lspci_output = sorted(
-                [
-                    i.split(': ')[1] for i in check_output(
-                        ['lspci'], universal_newlines=True
-                    ).splitlines()
-                    if '3D' in i or 'VGA' in i or 'Display' in i
-                ], key=len
-            )
-
-            if lspci_output:
-                gpuinfo = lspci_output[0]
-
+            lspci_output = check_output(
+                ['lspci'],
+                universal_newlines=True
+            ).splitlines()
         except (FileNotFoundError, CalledProcessError):
-            pass
+            return
 
-        if not gpuinfo:
-            gpuinfo = self._configuration.get('default_strings')['not_detected']
-
-        self.value = gpuinfo
+        # Prepares a list of video-only controllers (weighted by the below keys).
+        for video_key in ('3D', 'VGA', 'Display'):
+            for pci_device in lspci_output:
+                if video_key in pci_device:
+                    self.gpu_devices.append(pci_device.partition(': ')[2])
