@@ -19,17 +19,21 @@ class Terminal(Entry):
             self._configuration.get('default_strings')['not_detected']
         )
 
-        # On systems with non-Unicode locales, we imitate '\u2588' character
-        # ... with '#' to display the terminal colors palette.
-        # This is the default option for backward compatibility.
-        use_unicode = self._configuration.get('colors_palette')['use_unicode']
-        colors = ' '.join([
-            '{normal}{character}{bright}{character}{clear}'.format(
-                normal=Colors((0, i)),
-                bright=Colors((1, i)),
-                character=('\u2588' if use_unicode else '#'),
-                clear=Colors.CLEAR
-            ) for i in range(37, 30, -1)
-        ])
+        if self._format_to_json:
+            self.value = terminal
 
-        self.value = '{0} {1}'.format(terminal, colors)
+        else:
+            # On systems with non-Unicode locales, we imitate '\u2588' character
+            # ... with '#' to display the terminal colors palette.
+            # This is the default option for backward compatibility.
+            use_unicode = self._configuration.get('colors_palette')['use_unicode']
+            colors = ' '.join([
+                '{normal}{character}{bright}{character}{clear}'.format(
+                    normal=Colors((0, i)),
+                    bright=Colors((1, i)),
+                    character=('\u2588' if use_unicode else '#'),
+                    clear=Colors.CLEAR
+                ) for i in range(37, 30, -1)
+            ])
+
+            self.value = '{0} {1}'.format(terminal, colors)

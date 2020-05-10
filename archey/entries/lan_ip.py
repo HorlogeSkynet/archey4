@@ -38,5 +38,9 @@ class LanIp(Entry):
         if lan_ip_max_count is not False:
             ip_addresses = ip_addresses[:lan_ip_max_count]
 
-        self.value = ', '.join(ip_addresses) or \
-            self._configuration.get('default_strings')['no_address']
+        if self._format_to_json:
+            self.value = ip_addresses or self._configuration.get('default_strings')['no_address']
+
+        else:
+            self.value = ', '.join(ip_addresses) or \
+                self._configuration.get('default_strings')['no_address']

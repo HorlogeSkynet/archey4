@@ -8,11 +8,14 @@ from archey.configuration import Configuration
 class Entry(AbstractBaseClass):
     """Module base class"""
     @abstractmethod
-    def __init__(self, name=None, value=None):
-        # Each entry will have `name` (key) and `value` attributes.
-        # `None` by default.
+    def __init__(self, name=None, value=None, format_to_json=None):
+        # Each entry will have always have the following attributes:
+        # `name` (key); `value`; `_format_to_json`
+        # (all `None` by default)
         self.name = name
         self.value = value
+        # Non-entries won't need this attribute, so let's make it "internal":
+        self._format_to_json = format_to_json
 
         # Propagates a reference to `Configuration` singleton to each inheriting class.
         self._configuration = Configuration()

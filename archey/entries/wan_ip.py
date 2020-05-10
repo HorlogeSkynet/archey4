@@ -21,9 +21,14 @@ class WanIp(Entry):
         else:
             ipv6_addr = None
 
-        self.value = ', '.join(
-            filter(None, (ipv4_addr, ipv6_addr))
-        ) or self._configuration.get('default_strings')['no_address']
+        if self._format_to_json:
+            self.value = list(filter(None, (ipv4_addr, ipv6_addr))) \
+                or self._configuration.get('default_strings')['no_address']
+
+        else:
+            self.value = ', '.join(
+                filter(None, (ipv4_addr, ipv6_addr))
+            ) or self._configuration.get('default_strings')['no_address']
 
     def _retrieve_ipv4_address(self):
         try:

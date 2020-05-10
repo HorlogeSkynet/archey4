@@ -87,7 +87,12 @@ def main():
 
     for entry in Entries:
         if configuration.get('entries', {}).get(entry.name, True):
-            output.add_entry(entry.value(name=entry.name))
+            output.add_entry(
+                entry.value(
+                    name=entry.name,
+                    format_to_json=args.json
+                )
+            )
 
     output.output()
 

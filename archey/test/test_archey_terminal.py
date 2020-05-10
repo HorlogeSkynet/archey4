@@ -62,6 +62,18 @@ class TestTerminalEntry(unittest.TestCase):
         self.assertTrue(output.startswith('Not detected '))
         self.assertEqual(output.count('#'), 7 * 2)
 
+    @patch(
+        'archey.entries.terminal.os.getenv',
+        return_value='TERMINAL'
+    )
+    def test_terminal_json_output(self, _):
+        """Test JSON output from `Terminal`"""
+        self.assertEqual(
+            Terminal(format_to_json=True).value,
+            'TERMINAL'
+        )
+
+
 
 if __name__ == '__main__':
     unittest.main()

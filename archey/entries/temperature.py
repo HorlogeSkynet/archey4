@@ -45,19 +45,36 @@ class Temperature(Entry):
                 self._temps[i] = self._convert_to_fahrenheit(self._temps[i])
 
         # Final average computation.
-        self.value = '{0}{1}{2}'.format(
-            str(round(sum(self._temps) / len(self._temps), 1)),
-            char_before_unit,
-            'F' if use_fahrenheit else 'C'
+        final_temperature = str(round(sum(self._temps) / len(self._temps), 1))
+        # Set ourselves a max_temperature (the hottest of multiple values), if there is one.
+        max_temperature = (
+            str(round(max(self._temps), 1))
+            if len(self._temps) > 1 else ''
         )
 
-        # Multiple values ? Show the hottest.
-        if len(self._temps) > 1:
-            self.value += ' (Max. {0}{1}{2})'.format(
-                str(round(max(self._temps), 1)),
+        if self._format_to_json:
+            self.value = {
+                'temperature': float(final_temperature),
+                'max_temperature': float(max_temperature) \
+                    if max_temperature != '' \
+                    else self._configuration.get('default_strings')['not_detected'],
+                'char_before_unit': char_before_unit,
+                'units': 'F' if use_fahrenheit else 'C'
+            }
+
+        else:
+            self.value = '{0}{1}{2}'.format(
+                final_temperature,
                 char_before_unit,
                 'F' if use_fahrenheit else 'C'
             )
+
+            if max_temperature:
+                self.value += ' (Max. {0}{1}{2})'.format(
+                    max_temperature,
+                    char_before_unit,
+                    'F' if use_fahrenheit else 'C'
+                )
 
     def _run_sensors(self, whitelisted_chips):
         # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.

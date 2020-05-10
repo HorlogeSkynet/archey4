@@ -289,6 +289,74 @@ class TestTemperatureEntry(unittest.TestCase):
         self.assertAlmostEqual(temperature._convert_to_fahrenheit(100.0), 212.0)
         # pylint: enable=protected-access
 
+    @patch('archey.entries.temperature.check_output')
+    @patch('archey.entries.temperature.iglob')
+    @patch('archey.configuration.Configuration.get')
+    def test_temperature_json_output(self, config_mock, iglob_mock, check_output_mock):
+        """Test JSON output of `Temperature`"""
+        # Test a temperature + a max
+        # (using sensor files only)
+        check_output_mock.side_effect = [
+            FileNotFoundError(),  # No temperature from `sensors` call.
+            FileNotFoundError()   # No temperature from `vcgencmd` call.
+        ]
+        iglob_mock.return_value = iter([file.name for file in self._temp_files])
+        config_mock.side_effect = [
+            {'sensors_chipsets': []},
+            {'use_fahrenheit': False},
+            {'char_before_unit': ' '}
+        ]
+        self.assertDictEqual(
+            Temperature(format_to_json=True).value,
+            {
+                'temperature': 46.7,
+                'max_temperature': 50.0,
+                'char_before_unit': ' ',
+                'units': 'C'
+            },
+            msg='Testing temperature + max'
+        )
+
+        # Test one temperature (no max)
+        # (using vcgencmd only)
+        check_output_mock.side_effect = [
+            FileNotFoundError(),  # No temperature from `sensors` call.
+            'temp=42.8\'C\n'      # Only one temperature from `vcgencmd` call.
+        ]
+        iglob_mock.return_value = [] # No temperature from file will be retrieved.
+        config_mock.side_effect = [
+            {'sensors_chipsets': []},
+            {'use_fahrenheit': False},
+            {'char_before_unit': ' '},
+            {'not_detected': 'Not detected'}
+        ]
+        self.assertDictEqual(
+            Temperature(format_to_json=True).value,
+            {
+                'temperature': 42.8,
+                'max_temperature': 'Not detected',
+                'char_before_unit': ' ',
+                'units': 'C'
+            },
+            msg='Testing one temperature'
+        )
+
+        # Test no temperatures
+        check_output_mock.side_effect = [
+            FileNotFoundError(),  # No temperature from `sensors` call.
+            FileNotFoundError()   # No temperature from `vcgencmd` call.
+        ]
+        iglob_mock.return_value = [] # No temperature from file will be retrieved.
+        config_mock.side_effect = [
+            {'sensors_chipsets': []},
+            {'not_detected': 'Not detected'}
+        ]
+        self.assertEqual(
+            Temperature(format_to_json=True).value,
+            'Not detected',
+            msg='Testing no temperatures'
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -50,7 +50,15 @@ class Uptime(Entry):
         elif not days and not hours:
             uptime = '< 1 minute'
 
-        self.value = uptime
+        if self._format_to_json:
+            self.value = {
+                'days': days,
+                'hours': hours,
+                'minutes': minutes,
+            }
+
+        else:
+            self.value = uptime
 
     def _get_uptime_delta(self):
         """

@@ -124,6 +124,24 @@ SUnreclaim:       113308 kB
         ram = RAM().value
         self.assertTrue(all(i in ram for i in [str(Colors.YELLOW_NORMAL), '3739', '7403']))
 
+    @patch(
+        'archey.entries.ram.check_output',
+        return_value="""\
+          total     used    free    shared  buff/cache   available
+Mem:       7412     3341    1503       761        2567        3011
+Swap:      7607        5    7602
+""")
+    def test_ram_json_output(self, _):
+        """Test JSON output from `RAM`"""
+        self.assertDictEqual(
+            RAM(format_to_json=True).value,
+            {
+                'used': 3341,
+                'total': 7412,
+                'units': 'MiB'
+            }
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

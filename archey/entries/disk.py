@@ -27,21 +27,29 @@ class Disk(Entry):
             self.value = self._configuration.get('default_strings')['not_detected']
             return
 
-        # Fetch the user-defined disk limits from configuration.
-        disk_limits = self._configuration.get('limits')['disk']
+        if self._format_to_json:
+            self.value = {
+                'used': self._usage['used'],
+                'total': self._usage['total'],
+                'units': 'GiB' # for now
+            }
 
-        # Based on the disk percentage usage, select the corresponding level color.
-        level_color = Colors.get_level_color(
-            (self._usage['used'] / (self._usage['total'] or 1)) * 100,
-            disk_limits['warning'], disk_limits['danger']
-        )
+        else:
+            # Fetch the user-defined disk limits from configuration.
+            disk_limits = self._configuration.get('limits')['disk']
 
-        self.value = '{0}{1} GiB{2} / {3} GiB'.format(
-            level_color,
-            round(self._usage['used'], 1),
-            Colors.CLEAR,
-            round(self._usage['total'], 1)
-        )
+            # Based on the disk percentage usage, select the corresponding level color.
+            level_color = Colors.get_level_color(
+                (self._usage['used'] / (self._usage['total'] or 1)) * 100,
+                disk_limits['warning'], disk_limits['danger']
+            )
+
+            self.value = '{0}{1} GiB{2} / {3} GiB'.format(
+                level_color,
+                round(self._usage['used'], 1),
+                Colors.CLEAR,
+                round(self._usage['total'], 1)
+            )
 
     def _run_df_usage(self):
         try:

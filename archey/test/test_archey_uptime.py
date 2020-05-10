@@ -220,6 +220,18 @@ class TestUptimeEntry(unittest.TestCase):
         """Test `uptime` failure when no uptime sources are available"""
         self.assertRaises(SystemExit, Uptime)
 
+    def test_uptime_json_output(self):
+        """Test JSON output of uptime"""
+        # Since we always output all figures in JSON, we only really need one test.
+        self.assertDictEqual(
+            Uptime(format_to_json=True).value,
+            {
+                'days': 1,
+                'hours': 1,
+                'minutes': 2
+            }
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

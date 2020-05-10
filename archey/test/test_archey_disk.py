@@ -262,6 +262,32 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
         """Test df failing to detect any valid file-systems"""
         self.assertEqual(Disk().value, 'Not detected')
 
+    @patch(
+        'archey.entries.disk.check_output',
+        side_effect=[
+            """\
+Filesystem       1000000-blocks    Used Available Capacity Mounted on
+/dev/mapper/root        39101MB 14216MB   22870MB      39% /
+/dev/sda1                 967MB    91MB     810MB      11% /boot
+/dev/mapper/home       265741MB 32700MB  219471MB      13% /home
+total                  305809MB 47006MB  243149MB      17% -
+""",
+            # Second `df` call will fail.
+            CalledProcessError(1, 'df', "df: no file systems processed\n")
+        ]
+    )
+    def test_disk_json_output(self, _):
+        """Test JSON output from `Disk`"""
+        self.assertDictEqual(
+            Disk(format_to_json=True).value,
+            {
+                'used': 45.904296875,
+                'total': 298.6416015625,
+                'units': 'GiB'
+            }
+        )
+
+
 
 if __name__ == '__main__':
     unittest.main()

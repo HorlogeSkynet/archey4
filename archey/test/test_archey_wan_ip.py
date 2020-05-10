@@ -143,5 +143,58 @@ class TestWanIpEntry(unittest.TestCase):
         self.assertEqual(WanIp().value, 'No Address')
 
 
+    @patch(
+        'archey.entries.wan_ip.urlopen',
+        side_effect=URLError('<urlopen error timed out>')  # all `urlopen` calls will fail
+    )
+    @patch('archey.configuration.Configuration.get')
+    @patch('archey.entries.wan_ip.check_output')
+    def test_wan_ip_json_output(self, ip_cmd_mock, config_mock, __):
+        """Test the JSON output of `WanIp`"""
+        # Test with two addresses
+        config_mock.side_effect = [
+            {'ipv4_detection': None},  # Needed key.
+            {'wan_ip_v6_support': True},
+            {'ipv6_detection': None}  # Needed key.
+        ]
+        ip_cmd_mock.side_effect = [
+            'XXX.YY.ZZ.TTT\n',
+            '0123::4567:89a:dead:beef\n'
+        ]
+        self.assertListEqual(
+            WanIp(format_to_json=True).value,
+            ['XXX.YY.ZZ.TTT', '0123::4567:89a:dead:beef'],
+            msg='Testing two addresses'
+        )
+
+        # Test with one address
+        config_mock.side_effect = [
+            {'ipv4_detection': None},  # Needed key.
+            {'wan_ip_v6_support': False}
+        ]
+        ip_cmd_mock.side_effect = [
+            'XXX.YY.ZZ.TTT\n'
+        ]
+        self.assertListEqual(
+            WanIp(format_to_json=True).value,
+            ['XXX.YY.ZZ.TTT'],
+            msg='Testing one address'
+        )
+
+        # Test with no addresses
+        config_mock.side_effect = [
+            {'ipv4_detection': None},  # Needed key.
+            {'ipv4_detection': None},  # Needed key.
+            {'wan_ip_v6_support': False},
+            {'no_address': 'No Address'}
+        ]
+        ip_cmd_mock.side_effect = TimeoutExpired('dig', 1)
+        self.assertEqual(
+            WanIp(format_to_json=True).value,
+            'No Address',
+            msg='Testing no addresses (timeout)'
+        )
+
+
 if __name__ == '__main__':
     unittest.main()
