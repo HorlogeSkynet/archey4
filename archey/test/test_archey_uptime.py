@@ -3,6 +3,7 @@
 import unittest
 from unittest.mock import mock_open, patch
 from datetime import timedelta
+from itertools import product
 
 from archey.entries.uptime import Uptime
 
@@ -95,36 +96,110 @@ class TestUptimeEntry(unittest.TestCase):
         uptime_inst = Uptime()
 
         # Keys: `uptime` outputs; values: expected `timedelta` instances.
-        # These outputs have been gathered from various *NIX sytems (with various locales).
+        # We will test these with various time formats (and various numbers of users).
         # pylint: disable=line-too-long
-        test_cases = {
-            '19:52  up 14 mins, 2 users, load averages: 2.95 4.19 4.31': timedelta(minutes=14),
-            '8:03 up 52 days, 20:47, 3 users, load averages: 1.36 1.42 1.40': timedelta(days=52, hours=20, minutes=47),
-            '22:19 up 54 days, 1 min, 4 users, load averages: 2.08 2.06 2.27': timedelta(days=54, minutes=1),
-            '11:53  up  3:02, 2 users, load averages: 0,32 0,34 0,43': timedelta(hours=3, minutes=2),
-            '12:55pm  up 105 days, 21 hrs,  2 users,  load average: 0.26, 0.26, 0.26': timedelta(days=105, hours=21),
-            '1:41pm  up 105 days, 21:46,  2 users,  load average: 0.28, 0.28, 0.27': timedelta(days=105, hours=21, minutes=46),
-            '8:27  up 1 day, 17:06, 1 user, load averages: 1,01 0,87 0,79': timedelta(days=1, hours=17, minutes=6),
-            '06:27:33 up 4 days,  2:36,  2 users,  load average: 0.16, 0.26, 0.27': timedelta(days=4, hours=2, minutes=36),
-            '06:28:26 up 54 min,  127 users,  load average: 6.34, 6.28, 6.27': timedelta(minutes=54),
-            '17:35pm  up 5 days  9:24,  9 users,  load average: 0.30, 0.28, 0.28': timedelta(days=5, hours=9, minutes=24),
-            '17:36:15 up  8:44,  2 users,  load average: 0.09, 0.30, 0.41': timedelta(hours=8, minutes=44),
-            '03:14:20 up 1 min,  2 users,  load average: 2.28, 1.29, 0.50': timedelta(minutes=1),
-            '04:12:29 up 59 min,  5 users,  load average: 0.06, 0.08, 0.48': timedelta(minutes=59),
-            '05:14:09 up  2:01,  5 users,  load average: 0.13, 0.10, 0.45': timedelta(hours=2, minutes=1),
-            '03:13:19 up 1 day, 0 min,  8 users,  load average: 0.01, 0.04, 0.05': timedelta(days=1),
-            '04:13:19 up 1 day,  1:00,  8 users,  load average: 0.02, 0.05, 0.21': timedelta(days=1, hours=1),
-            '12:49:10 up 25 days, 21:30, 28 users,  load average: 0.50, 0.66, 0.52': timedelta(days=25, hours=21, minutes=30)
+        test_uptime_cases = {
+            # Recently booted:
+            '{time} up 0 sec, {user_loadavg}': timedelta(seconds=0), # BSD, just booted
+            '{time} up 1 sec, {user_loadavg}': timedelta(seconds=1), # BSD, < 1 min uptime
+            '{time} up 12 secs, {user_loadavg}': timedelta(seconds=12), # BSD, < 1 min uptime
+            '{time} up 0 min, {user_loadavg}': timedelta(minutes=0), # Linux, < 1 min uptime
+            '{time} up 1 min, {user_loadavg}': timedelta(minutes=1),
+            # 1 min to 1 day
+            '{time} up 12 mins, {user_loadavg}': timedelta(minutes=12),
+            '{time} up 12 min, {user_loadavg}': timedelta(minutes=12), # Variation without plural minutes
+            '{time} up 1:00, {user_loadavg}': timedelta(hours=1),
+            '{time} up 1:01, {user_loadavg}': timedelta(hours=1, minutes=1),
+            '{time} up 1:23, {user_loadavg}': timedelta(hours=1, minutes=23),
+            '{time} up 12:34, {user_loadavg}': timedelta(hours=12, minutes=34),
+            # 1 day to 2 days
+            '{time} up 1 day, 0 sec, {user_loadavg}': timedelta(days=1), # BSD
+            '{time} up 1 day, 1 sec, {user_loadavg}': timedelta(days=1, seconds=1), # BSD
+            '{time} up 1 day, 12 secs, {user_loadavg}': timedelta(days=1, seconds=12), # BSD
+            '{time} up 1 day, 0 min, {user_loadavg}': timedelta(days=1), # Linux
+            '{time} up 1 day, 1 min, {user_loadavg}': timedelta(days=1, minutes=1),
+            '{time} up 1 day, 12 mins, {user_loadavg}': timedelta(days=1, minutes=12),
+            '{time} up 1 day, 12 min, {user_loadavg}': timedelta(days=1, minutes=12), # Variation without plural minutes
+            '{time} up 1 day, 1:00, {user_loadavg}': timedelta(days=1, hours=1),
+            '{time} up 1 day, 1:01, {user_loadavg}': timedelta(days=1, hours=1, minutes=1),
+            '{time} up 1 day, 1:23, {user_loadavg}': timedelta(days=1, hours=1, minutes=23),
+            '{time} up 1 day, 12:34, {user_loadavg}': timedelta(days=1, hours=12, minutes=34),
+            # 2 days onwards
+            '{time} up 12 days, 0 sec, {user_loadavg}': timedelta(days=12), # BSD
+            '{time} up 12 days, 1 sec, {user_loadavg}': timedelta(days=12, seconds=1), # BSD
+            '{time} up 12 days, 12 secs, {user_loadavg}': timedelta(days=12, seconds=12), # BSD
+            '{time} up 12 days, 0 min, {user_loadavg}': timedelta(days=12), # Linux
+            '{time} up 12 days, 1 min, {user_loadavg}': timedelta(days=12, minutes=1),
+            '{time} up 12 days, 12 mins, {user_loadavg}': timedelta(days=12, minutes=12),
+            '{time} up 12 day, 12 min, {user_loadavg}': timedelta(days=12, minutes=12), # Variation without plural minutes
+            '{time} up 12 days, 1:00, {user_loadavg}': timedelta(days=12, hours=1),
+            '{time} up 12 days, 1:01, {user_loadavg}': timedelta(days=12, hours=1, minutes=1),
+            '{time} up 12 days, 1:23, {user_loadavg}': timedelta(days=12, hours=1, minutes=23),
+            '{time} up 12 days, 12:34, {user_loadavg}': timedelta(days=12, hours=12, minutes=34),
+            # Very long uptimes - sanity check :)
+            '{time} up 500 days, 0 sec, {user_loadavg}': timedelta(days=500), # BSD
+            '{time} up 500 days, 1 sec, {user_loadavg}': timedelta(days=500, seconds=1), # BSD
+            '{time} up 500 days, 12 secs, {user_loadavg}': timedelta(days=500, seconds=12), # BSD
+            '{time} up 500 days, 0 min, {user_loadavg}': timedelta(days=500), # Linux
+            '{time} up 500 days, 1 min, {user_loadavg}': timedelta(days=500, minutes=1),
+            '{time} up 500 days, 12 mins, {user_loadavg}': timedelta(days=500, minutes=12),
+            '{time} up 500 day, 12 min, {user_loadavg}': timedelta(days=500, minutes=12), # Variation without plural minutes
+            '{time} up 500 days, 1:00, {user_loadavg}': timedelta(days=500, hours=1),
+            '{time} up 500 days, 1:01, {user_loadavg}': timedelta(days=500, hours=1, minutes=1),
+            '{time} up 500 days, 1:23, {user_loadavg}': timedelta(days=500, hours=1, minutes=23),
+            '{time} up 500 days, 12:34, {user_loadavg}': timedelta(days=500, hours=12, minutes=34),
         }
         # pylint: enable=line-too-long
 
-        for uptime_output, expected_delta in test_cases.items():
-            check_output_mock.return_value = uptime_output
-            self.assertEqual(
-                uptime_inst._parse_uptime_cmd(), # pylint: disable=protected-access
-                expected_delta,
-                msg='`uptime` output: {}'.format(uptime_output)
-            )
+        # Variations of the time in the `{time}` section.
+        # These _should_ be avoided when we set the locale in `check_output`,
+        # however let's check we can handle them anyway, just in case.
+        time_variations = [
+            '0:00', '9:43 ', '11:37  ', '19:21', '23:59',
+            '12:00am', '1:10am', '1:10pm ', '6:43pm ', '8:26am ',
+            '03:14:15', '09:26:12 ', '23:19:20  ',
+            'nonsense_time  ', 'hopefully_works_anyway ',
+            '  even with strange spacing!'
+        ]
+
+        # Variations of the user count and load average section.
+        # For this, we'll just combine user variations with a few load average variations.
+        user_variations = [
+            '1 user ', '1 user  ', ' 1 user, ', ' 1 user,  ',
+            '2 users ', '2 users  ', '  2 users, ', '  2 users,  ',
+            '15 users ', '15 users  ', ' 15 users, ', ' 15 users,  ',
+            '150 users ', '150 users  ', '150 users, ', '150 users,  ',
+        ]
+        loadavg_variations = [
+            'load averages: 1.95 1.28 2.10',
+            'load average: 0.13, 0.17, 0.13',
+            'we never match this part so the content here',
+            '  should not affect our parsing'
+        ]
+        user_loadavg_variations = [
+            user + loadavg
+            for user in user_variations
+            for loadavg in loadavg_variations
+        ]
+
+        for uptime_output, expected_delta in test_uptime_cases.items():
+            # We use `itertools.product` to get the permutations of our variations
+            # since there are a lot of them! (a list comprehension would be slower)
+            for variations in product(time_variations, user_loadavg_variations):
+                check_output_mock.return_value = uptime_output.format(
+                    time=variations[0],
+                    user_loadavg=variations[1]
+                )
+                self.assertEqual(
+                    uptime_inst._parse_uptime_cmd(), # pylint: disable=protected-access
+                    expected_delta,
+                    msg='`uptime` output: "{0}"'.format(
+                        uptime_output.format(
+                            time=variations[0],
+                            user_loadavg=variations[1]
+                        )
+                    )
+                )
 
     @patch(
         'archey.entries.uptime.open',

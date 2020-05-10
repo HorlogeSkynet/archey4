@@ -104,7 +104,7 @@ class Uptime(Entry):
     def _parse_uptime_cmd():
         """Tries to get uptime by parsing the `uptime` command"""
         try:
-            uptime_output = check_output('uptime')
+            uptime_output = check_output('uptime', env={'LANG': 'C'})
         except FileNotFoundError:
             # No `uptime` command.
             # Since `procps` is a dependency (which provides `uptime`) we can just exit here.
@@ -114,40 +114,53 @@ class Uptime(Entry):
         # Unfortunately the output is not designed to be machine-readable...
         uptime_match = re.search(
             r"""
-            up\s+?             # match the `up` preceding the uptime, anchors the start of the regex
-            (?:                # non-capture group for days
-               (?P<days>       # 'days' named capture group, captures the days digits
+            up\s+?             # match the `up` preceding the uptime (anchor the start of the regex)
+            (?:                # non-capture group for days section.
+               (?P<days>       # 'days' named capture group, captures the days digits.
                   \d+?
                )
                \s+?            # match whitespace,
-               days?           # 'day' or 'days',
-               [,\s]+?         # then a comma (if present) followed by more whitespace
-            )?                 # match the days non-capture group 0 or 1 times
-            (?:                # non-capture group for hours & minutes
-               (?:             # non-capture group for just hours
-                  (?P<hours>   # 'hours' named capture group, captures the hours digits
+               days?           #   'day' or 'days',
+               [,\s]+?         #   then a comma (if present) followed by more whitespace.
+            )?                 # match the days non-capture group 0 or 1 times.
+            (?:                # non-capture group for hours & minutes section.
+               (?:             # non-capture group for just hours section.
+                  (?P<hours>   # 'hours' named capture group, captures the hours digits.
                      \d+?
                   )
-                  (?:          # non-capture group for hours:minutes colon or 'hrs' text
-                     :         # i.e. hours followed by either a single colon
-                     |         # OR
-                     \s+?hrs?  # one or more whitespace chars non-greedily followed by 'hr' or 'hrs'
+                  (?:          # non-capture group for hours:minutes colon or 'hrs' text...
+                     :         #   i.e. hours followed by either a single colon
+                     |         #   OR
+                     \s+?      #   1 or more whitespace chars non-greedily,
+                     hrs?      #   followed by 'hr' or 'hrs'.
                   )
-               )?              # match the hours non-capture group 0 or 1 times
-               (?:             # non-capture group for minutes
-                  (?P<minutes> # 'minutes' named capture group, captures the minutes digits
+               )?              # match the hours non-capture group 0 or 1 times.
+               (?:             # non-capture group for minutes section.
+                  (?P<minutes> # 'minutes' named capture group, captures the minutes digits.
                      \d+?
                   )
-                  (?:          # non-capture group for 'min' or 'mins' text
+                  (?:          # non-capture group for 'min' or 'mins' text.
                      \s+?      # match whitespace,
-                     mins?     # followed by 'min' or 'mins'
-                  )?           # match the 'mins' text non-capture group 0 or 1 times,
-               )?              # the minutes non-capture group 0 or 1 times
-            )?                 # and the entire hours & minutes non-capture group 0 or 1 times
-            [,\s]*?            # followed by a comma and/or whitespace,
-            \d+?               # some digits for the user count,
-            \s+?               # whitespace between the user count and the text 'user',
-            user               # and the text 'user' - this is to anchor the end of the expression.
+                     mins?     #   followed by 'min' or 'mins'.
+                  )?           # match the text 0 or 1 times (0 times is for the hh:mm format case).
+                  (?!          # negative lookahead group
+                     \d+       #   this prevents matching seconds digits as minutes...
+                     \s+?      #   since we only non-greedily match minutes digits earlier.
+                     secs?     #   here's the part that matches the 'sec' or 'secs' text.
+                  )            # the minutes group is discarded if this lookahead matches!
+               )?              # match the minutes non-capture group 0 or 1 times.
+            )?                 # match the entire hours & minutes non-capture group 0 or 1 times.
+            (?:                # non-capture group for seconds.
+               (?P<seconds>    # 'seconds' named capture group, captures the seconds digits.
+                  \d+?
+               )
+               \s+?            # match whitespace,
+               secs?           #  then 'sec' or 'secs'.
+            )?                 # match the seconds non-capture group 0 or 1 times.
+            [,\s]*?            # after the groups, match a comma and/or whitespace 0 or more times,
+            \d+?               #   one or more digits for the user count,
+            \s+?               #   whitespace between the user count and the text 'user',
+            user               #   and the text 'user' (to anchor the end of the expression).
             """,
             uptime_output,
             re.VERBOSE
@@ -159,5 +172,6 @@ class Uptime(Entry):
         return timedelta(
             days=int(uptime_args.get('days') or 0),
             hours=int(uptime_args.get('hours') or 0),
-            minutes=int(uptime_args.get('minutes') or 0)
+            minutes=int(uptime_args.get('minutes') or 0),
+            seconds=int(uptime_args.get('seconds') or 0)
         )
