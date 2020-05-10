@@ -6,21 +6,16 @@ from archey.colors import Colors
 from archey.entry import Entry
 
 
-# This dictionary contains environment variables used to detect terminal emulators.
-# Such an identification is _still_ not standardized.
-# See <https://github.com/Maximus5/ConEmu/issues/1837#issuecomment-469199525>.
+# This dictionary contains environment variables used to detect terminal emulators...
+#   which do not propagate `TERM_PROGRAM`.
+# When a key is found in environment, a normalization is performed with its corresponding value.
 TERM_DICT = {
-    # On its way for normalization ?
-    'TERM_PROGRAM': None,
-    # Manual name overriding per-emulator.
     'ALACRITTY_LOG_ENV': 'Alacritty',
     'GNOME_TERMINAL_SCREEN': 'GNOME Terminal',
     'GUAKE_TAB_UUID': 'Guake',
     'KONSOLE_VERSION': 'Konsole',
     'MLTERM': 'MLTERM',
-    'TERMINATOR_UUID': 'Terminator',
-    # Regular fallback.
-    'TERM': None
+    'TERMINATOR_UUID': 'Terminator'
 }
 
 
@@ -39,6 +34,7 @@ class Terminal(Entry):
         self.value = '{0} {1}'.format(terminal_emulator, colors_palette)
 
     def _get_colors_palette(self):
+        """Build and return a 8-color palette, with Unicode characters if allowed"""
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
         # This is the default option for backward compatibility.
@@ -55,11 +51,17 @@ class Terminal(Entry):
 
     @staticmethod
     def _detect_terminal_emulator():
-        for env_var, override_value in TERM_DICT.items():
+        """Try to detect current terminal emulator based on various environment variables"""
+        # At first, try to honor `TERM_PROGRAM` environment variable.
+        # See <https://github.com/Maximus5/ConEmu/issues/1837#issuecomment-469199525>.
+        if 'TERM_PROGRAM' in os.environ:
+            return os.getenv('TERM_PROGRAM')
+
+        # If not, try to find a "known identifier" and perform name normalization...
+        for env_var, normalized_name in TERM_DICT.items():
             if env_var in os.environ:
-                if override_value:
-                    return override_value
+                return normalized_name
 
-                return os.getenv(env_var)
-
-        return None
+        # When nothing of the above matched, falls-back on the regular `TERM` environment variable.
+        # Note : It _might_ be empty too in very specific environments.
+        return os.getenv('TERM')

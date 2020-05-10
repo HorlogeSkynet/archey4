@@ -13,18 +13,37 @@ class TestTerminalEntry(unittest.TestCase):
     """
     @patch.dict(
         'archey.entries.terminal.os.environ',
-        {'TERM_PROGRAM': 'A-COOL-TERMINAL-EMULATOR'},
+        {
+            'TERM': 'xterm-256color',
+            'TERM_PROGRAM': 'A-COOL-TERMINAL-EMULATOR'
+        },
         clear=True
     )
     @patch(
         'archey.configuration.Configuration.get',
         return_value={'use_unicode': False}
     )
-    def test_term_program_without_unicode(self, _):
-        """Test simple output, without Unicode support (default)"""
+    def test_terminal_emulator_term_program(self, _):
+        """Check that `TERM_PROGRAM` is honored even when `TERM` is defined"""
         output = Terminal().value
         self.assertTrue(output.startswith('A-COOL-TERMINAL-EMULATOR'))
-        self.assertEqual(output.count('#'), 7 * 2)
+
+    @patch.dict(
+        'archey.entries.terminal.os.environ',
+        {
+            'TERM': 'xterm-256color',
+            'KONSOLE_VERSION': 'X.Y.Z'
+        },
+        clear=True
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={'use_unicode': False}
+    )
+    def test_terminal_emulator_name_normalization(self, _):
+        """Check that our manual terminal detection as long as name normalization are working"""
+        output = Terminal().value
+        self.assertTrue(output.startswith('Konsole'))
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -35,24 +54,11 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.configuration.Configuration.get',
         return_value={'use_unicode': True}
     )
-    def test_term_fallback_with_unicode(self, _):
-        """Test simple output, with Unicode support !"""
+    def test_terminal_emulator_term_fallback_and_unicode(self, _):
+        """Chek that `TERM` is honored if present, and Unicode support for the colors palette"""
         output = Terminal().value
         self.assertTrue(output.startswith('xterm-256color'))
         self.assertEqual(output.count('\u2588'), 7 * 2)
-
-    @patch.dict(
-        'archey.entries.terminal.os.environ',
-        {'KONSOLE_VERSION': 'vX.Y.Z'},
-        clear=True
-    )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'use_unicode': False}
-    )
-    def test_terminal_name_normalization(self, _):
-        """Test our manual name normalization for emulators not propagating `TERM_PROGRAM`"""
-        self.assertTrue(Terminal().value.startswith('Konsole'))
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -67,9 +73,10 @@ class TestTerminalEntry(unittest.TestCase):
         ]
     )
     def test_not_detected(self, _):
-        """Test simple output, without Unicode support"""
+        """Test terminal emulator (non-)detection, without Unicode support"""
         output = Terminal().value
         self.assertTrue(output.startswith('Not detected'))
+        self.assertFalse(output.count('\u2588'))
 
 
 if __name__ == '__main__':
