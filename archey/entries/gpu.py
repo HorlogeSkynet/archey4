@@ -1,5 +1,6 @@
 """GPU information detection class"""
 
+from itertools import islice
 from subprocess import check_output, CalledProcessError
 
 from archey.entry import Entry
@@ -10,17 +11,18 @@ class GPU(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # This list will contain GPU devices detected on this system.
-        self.gpu_devices = []
+        self._max_count = self._configuration.get('gpu').get('max_count', None)
+        # Consistency with other entries' configuration: Infinite count if false.
+        if self._max_count is False:
+            self._max_count = None
 
-        # Let's try to run `lspci` and parse here.
-        self._run_lspci()
+        # Populate our list of devices with the `lspci`-based generator.
+        self.gpu_devices = list(islice(self._gpu_generator(), self._max_count))
 
-        self.value = ', '.join(self.gpu_devices) or \
-            self._configuration.get('default_strings')['not_detected']
 
-    def _run_lspci(self):
-        """Based on `lspci` output, retrieve a list of video controllers names"""
+    @staticmethod
+    def _gpu_generator():
+        """Based on `lspci` output, return a generator for video controllers names"""
         try:
             lspci_output = check_output(
                 ['lspci'],
@@ -34,5 +36,17 @@ class GPU(Entry):
             for pci_device in lspci_output:
                 # If a controller type match...
                 if video_key in pci_device:
-                    # ... adds its name to our final list.
-                    self.gpu_devices.append(pci_device.partition(': ')[2])
+                    # ... return its name on the next iteration.
+                    yield pci_device.partition(': ')[2]
+
+
+    def output(self, output):
+        """Writes GPUs to `output` based on preferences."""
+        if self.gpu_devices:
+            if self._configuration.get('gpu').get('one_line', False):
+                output.append(self.name, ', '.join(self.gpu_devices))
+            else:
+                for gpu in self.gpu_devices:
+                    output.append(self.name, gpu)
+        else:
+            output.append(self.name, self._configuration.get('default_strings')['not_detected'])

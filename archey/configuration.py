@@ -24,6 +24,7 @@ class Configuration(metaclass=Singleton):
                 'not_detected': 'Not detected',
                 'virtual_environment': 'Virtual Environment'
             },
+            'gpu': {},
             'ip_settings': {
                 'lan_ip_max_count': 2,
                 'lan_ip_v6_support': True,
