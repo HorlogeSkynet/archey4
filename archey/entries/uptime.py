@@ -166,7 +166,7 @@ class Uptime(Entry):
             re.VERBOSE
         )
 
-        # Only `days`, `hours` or `minutes` could have been captured.
+        # Only `days`, `hours`, `minutes` or `seconds` could have been captured.
         # `timedelta` directly accepts them as arguments.
         uptime_args = uptime_match.groupdict()
         return timedelta(
