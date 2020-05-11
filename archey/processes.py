@@ -29,11 +29,7 @@ class Processes(metaclass=Singleton):
                 universal_newlines=True
             ).splitlines()[1:]
         except FileNotFoundError:
-            print(
-                "Please, install first `procps` on your distribution.",
-                file=sys.stderr
-            )
-            sys.exit(1)
+            sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
 
     def get(self):
         """Simple getter to retrieve the processes list"""
