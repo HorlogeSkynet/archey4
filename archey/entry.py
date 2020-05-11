@@ -19,4 +19,4 @@ class Entry(AbstractBaseClass):
 
     def output(self, output):
         """Output the results to output. Can be overridden by subclasses."""
-        output.append(self.name, self.value)
+        output.append((self.name, self.value))

@@ -196,7 +196,7 @@ class TestOutputUtil(unittest.TestCase):
     def test_append_regular(self, _, __, ___):
         """Test the `append` method, for new entries"""
         output = Output()
-        output.append('KEY', 'VALUE')
+        output.append(('KEY', 'VALUE'))
 
         self.assertListEqual(
             output._results,  # pylint: disable=protected-access
