@@ -11,14 +11,13 @@ class GPU(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._max_count = self._configuration.get('gpu').get('max_count', None)
+        max_count = self._configuration.get('gpu').get('max_count')
         # Consistency with other entries' configuration: Infinite count if false.
-        if self._max_count is False:
-            self._max_count = None
+        if max_count is False:
+            max_count = None
 
         # Populate our list of devices with the `lspci`-based generator.
-        self.gpu_devices = list(islice(self._gpu_generator(), self._max_count))
-
+        self.gpu_devices = list(islice(self._gpu_generator(), max_count))
 
     @staticmethod
     def _gpu_generator():
@@ -39,14 +38,11 @@ class GPU(Entry):
                     # ... return its name on the next iteration.
                     yield pci_device.partition(': ')[2]
 
-
     def output(self, output):
-        """Writes GPUs to `output` based on preferences."""
-        if self.gpu_devices:
-            if self._configuration.get('gpu').get('one_line', False):
-                output.append(self.name, ', '.join(self.gpu_devices))
-            else:
-                for gpu in self.gpu_devices:
-                    output.append(self.name, gpu)
+        """Writes GPUs to `output` based on preferences"""
+        # Even when no GPU device could be detected, be sure to add an "empty" entry to `output`.
+        if self._configuration.get('gpu').get('one_line') or not self.gpu_devices:
+            output.append((self.name, ', '.join(self.gpu_devices)))
         else:
-            output.append(self.name, self._configuration.get('default_strings')['not_detected'])
+            for gpu_device in self.gpu_devices:
+                output.append((self.name, gpu_device))
