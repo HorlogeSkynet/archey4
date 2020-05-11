@@ -104,12 +104,17 @@ class Output:
         Finally outputs entries data to JSON format.
         Converts the `list` of 2-`tuple` to a proper `dict` to facilitate data retrieval in API.
         """
-        print(
-            json.dumps(
-                dict(self._results),
-                indent=4,
+        data = {}
+        for result in self._results:
+            data.setdefault(
+                result[0], []
+            ).append(
+                Colors.remove_colors(result[1])
+                if isinstance(result[1], str)
+                else result[1]
             )
-        )
+
+        print(json.dumps(data, indent=4))
 
     def _output_text(self):
         """
@@ -145,7 +150,7 @@ class Output:
         for i, entry in enumerate(self._results):
             # Shortens the entry according to the terminal width.
             # We have to remove any ANSI color, or the result would be skewed.
-            wrapped_entry = text_wrapper.fill(ANSI_ECMA_REGEXP.sub('', entry))
+            wrapped_entry = text_wrapper.fill(Colors.remove_colors(entry))
             placeholder_offset = (
                 placeholder_length if wrapped_entry.endswith(text_wrapper.placeholder) else 0
             )

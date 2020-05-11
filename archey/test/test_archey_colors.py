@@ -51,6 +51,14 @@ class TestColorsUtil(unittest.TestCase):
             len(str(Colors.GREEN_NORMAL) + str(Colors.CLEAR))
         )
 
+    def test_remove_colors(self):
+        """Test our ANSI/ECMA REGEXP colors removal method"""
+        self.assertFalse(Colors.remove_colors(str(Colors.CLEAR)))
+        self.assertEqual(
+            Colors.remove_colors('\x1b[0;31mTEST\x1b[0;0m'),
+            'TEST'
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

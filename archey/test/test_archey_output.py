@@ -509,7 +509,8 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         output._results = [ # pylint: disable=protected-access
             ('what', 'are'),
             ('those', 'fake'),
-            ('results', '???')
+            ('results', 42),
+            ('what', '\x1b[31m???\x1b[0m')
         ]
         output.output()
 
@@ -518,9 +519,9 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         self.assertDictEqual(
             json.loads(print_mock.call_args[0][0]),
             {
-                'what': 'are',
-                'those': 'fake',
-                'results': '???'
+                'what': ['are', '???'],
+                'those': ['fake'],
+                'results': [42]
             }
         )
 

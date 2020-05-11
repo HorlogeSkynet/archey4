@@ -51,3 +51,8 @@ class Colors(Enum):
         level_colors = (Colors.GREEN_NORMAL, Colors.YELLOW_NORMAL, Colors.RED_NORMAL)
 
         return level_colors[bisect((yellow_bpt, red_bpt), value)]
+
+    @staticmethod
+    def remove_colors(string):
+        """Simple DRY method to remove any ANSI/ECMA-48 escape code from passed `string`"""
+        return ANSI_ECMA_REGEXP.sub('', string)
