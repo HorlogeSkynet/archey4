@@ -200,11 +200,11 @@ Below, some further explanations of each option available :
 		"wan_ip_v6_support": true
 	},
 	"gpu": {
-		// Display all GPUs on one line if true, multiple lines if false.
-		"one_line": false,
+		// Display GPUs on multiple lines if set to `false`.
+		"one_line": true,
 		// The maximum number of GPUs you want to display.
 		// `false` --> Unlimited.
-		"max_count": 4
+		"max_count": 2
 	},
 	"limits": {
 		// Some threshold values you can adjust affecting disk/ram warning/danger color (percent).
