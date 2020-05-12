@@ -10,7 +10,7 @@ from archey.entry import Entry
 #   which do not propagate `TERM_PROGRAM`.
 # When a key is found in environment, a normalization is performed with its corresponding value.
 TERM_DICT = {
-    'ALACRITTY_LOG_ENV': 'Alacritty',
+    'ALACRITTY_LOG': 'Alacritty',
     'GNOME_TERMINAL_SCREEN': 'GNOME Terminal',
     'GUAKE_TAB_UUID': 'Guake',
     'KONSOLE_VERSION': 'Konsole',
