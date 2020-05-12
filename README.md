@@ -78,81 +78,81 @@ Now, it's time to use your favorite package manager. Some examples :
 
 ### Install from PyPI
 
-```shell
-$ sudo pip3 install archey4
+```bash
+sudo pip3 install archey4
 ```
 
 ### Install from source
 
-```shell
+```bash
 ### Step 1 : Fetch the source ###
 
 # If you want the latest release :
-$ LATEST_VERSION="v4.7.1"
-$ wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
-$ tar xvzf "${LATEST_VERSION}.tar.gz"
-$ cd "archey4-${LATEST_VERSION}/"
+LATEST_VERSION="v4.7.1"
+wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
+tar xvzf "${LATEST_VERSION}.tar.gz"
+cd "archey4-${LATEST_VERSION}/"
 # _______________________________
 
 # If you want the latest changes :
-$ git clone https://github.com/HorlogeSkynet/archey4.git
-$ cd archey4/
+git clone https://github.com/HorlogeSkynet/archey4.git
+cd archey4/
 # _______________________________
 
 
 ### Step 2 : Installation ###
 
 # If you have PIP installed on your system :
-$ sudo pip3 install .
+sudo pip3 install .
 # So if one day you wanna uninstall Archey
-$ sudo pip3 uninstall archey4
+sudo pip3 uninstall archey4
 # _________________________________________
 
 # But if you don't have PIP, no worries :
-$ sudo python3 setup.py install
+sudo python3 setup.py install
 # _______________________________________
 
 ### Step 3 (Optional) : Configuration files
 
 # System-wide configuration :
-$ sudo mkdir /etc/archey4
-$ sudo cp archey/config.json /etc/archey4/config.json
+sudo mkdir /etc/archey4
+sudo cp archey/config.json /etc/archey4/config.json
 # ___________________________
 # User-specific configuration :
-$ mkdir ~/.config/archey4
-$ cp archey/config.json ~/.config/archey4/config.json
+mkdir ~/.config/archey4
+cp archey/config.json ~/.config/archey4/config.json
 # _____________________________
 
 ### Step 4 (Optional) : I want a standalone script, as before !
 
 # You can go through StickyTape for this :
-$ sudo pip3 install stickytape
-$ stickytape --add-python-path . --output-file dist/archey archey/__main__.py
-$ python3 dist/archey
+sudo pip3 install stickytape
+stickytape --add-python-path . --output-file dist/archey archey/__main__.py
+python3 dist/archey
 # ________________________________________
 
 # You can either use PyInstaller :
-$ sudo pip3 install pyinstaller
-$ pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py
-$ ./dist/archey
+sudo pip3 install pyinstaller
+pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py
+./dist/archey
 # ________________________________
 
 # You can now move this script anywhere, as before :
-$ chmod +x dist/archey
-$ sudo mv dist/archey /usr/local/bin/
+chmod +x dist/archey
+sudo mv dist/archey /usr/local/bin/
 # __________________________________________________
 ```
 
 ## Usage
 
-```shell
-$ archey
+```bash
+archey
 ```
 
 or if you only want to try this out (for instance, from source) :
 
-```shell
-$ python3 -m archey
+```bash
+python3 -m archey
 ```
 
 ## Configuration (optional)
@@ -235,13 +235,13 @@ Below, some further explanations of each option available :
 
 Tests are now available. Here is a short procedure to run them (you'll only need `python3`) :
 
-```shell
-$ git clone https://github.com/HorlogeSkynet/archey4.git
-$ cd archey4/
+```bash
+git clone https://github.com/HorlogeSkynet/archey4.git
+cd archey4/
 # If you got `setuptools` installed
-$ python3 setup.py test
+python3 setup.py test
 # But if you still don't, no worries !
-$ python3 -m unittest
+python3 -m unittest
 ```
 
 Any improvement would be appreciated.
