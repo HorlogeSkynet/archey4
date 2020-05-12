@@ -31,6 +31,15 @@ script:
   - time python3 dist/archey
 
   # Build a standalone script from sources (PyInstaller).
-  # Currently disabled for Python 3.8, see <pyinstaller/pyinstaller#4311>.
-  - if [[ "$TRAVIS_PYTHON_VERSION" != "3.8" ]]; then pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py; fi
-  - if [[ "$TRAVIS_PYTHON_VERSION" != "3.8" ]]; then time ./dist/archey; fi
+  # (currently) disabled for Python 3.8 and PyPy.
+  # See <pyinstaller/pyinstaller#4311> & <https://stackoverflow.com/a/22245203>.
+  - >
+      if ! [[ "$TRAVIS_PYTHON_VERSION" =~ ^(3\.8|pypy3)$ ]]; then
+        pyinstaller \
+          --distpath dist \
+          --specpath dist \
+          --name archey \
+          --onefile archey/__main__.py \
+          --log-level WARN
+        time ./dist/archey
+      fi
