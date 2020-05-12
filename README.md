@@ -46,6 +46,8 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
 * `procps` (`procps-ng` on Arch Linux)
 
+> PyPy is supported and may replace CPython.
+
 ### Highly recommended packages
 
 |     Environments      |              Packages               |                       Reasons                        |            Notes             |
