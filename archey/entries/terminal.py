@@ -54,8 +54,14 @@ class Terminal(Entry):
         """Try to detect current terminal emulator based on various environment variables"""
         # At first, try to honor `TERM_PROGRAM` environment variable.
         # See <https://github.com/Maximus5/ConEmu/issues/1837#issuecomment-469199525>.
-        if 'TERM_PROGRAM' in os.environ:
-            return os.getenv('TERM_PROGRAM')
+        env_term_program = os.getenv('TERM_PROGRAM')
+        if env_term_program:
+            return env_term_program
+
+        # Secondly, if `TERM` is set to "something special", honor it.
+        env_term = os.getenv('TERM')
+        if env_term and not env_term.startswith('xterm'):
+            return env_term
 
         # If not, try to find a "known identifier" and perform name normalization...
         for env_var, normalized_name in TERM_DICT.items():
@@ -63,5 +69,5 @@ class Terminal(Entry):
                 return normalized_name
 
         # When nothing of the above matched, falls-back on the regular `TERM` environment variable.
-        # Note : It _might_ be empty too in very specific environments.
-        return os.getenv('TERM')
+        # Note : It _might_ be `None` in very specific environments.
+        return env_term

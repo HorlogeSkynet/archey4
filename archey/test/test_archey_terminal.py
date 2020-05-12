@@ -24,9 +24,26 @@ class TestTerminalEntry(unittest.TestCase):
         return_value={'use_unicode': False}
     )
     def test_terminal_emulator_term_program(self, _):
-        """Check that `TERM_PROGRAM` is honored even when `TERM` is defined"""
+        """Check that `TERM_PROGRAM` is honored even if `TERM` is defined"""
         output = Terminal().value
         self.assertTrue(output.startswith('A-COOL-TERMINAL-EMULATOR'))
+
+    @patch.dict(
+        'archey.entries.terminal.os.environ',
+        {
+            'TERM': 'OH-A-SPECIAL-CASE',
+            'TERMINATOR_UUID': 'urn:uuid:xxxxxxxx-yyyy-zzzz-tttt-uuuuuuuuuuuu'  # Ignored.
+        },
+        clear=True
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={'use_unicode': False}
+    )
+    def test_terminal_emulator_special_term(self, _):
+        """Check that `TERM` is honored even if a "known identifier" could be found"""
+        output = Terminal().value
+        self.assertTrue(output.startswith('OH-A-SPECIAL-CASE'))
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
