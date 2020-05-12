@@ -507,23 +507,22 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         """Test how the `output` method handles JSON preferred formatting of entries"""
         output = Output(format_to_json=True)
         output._results = [ # pylint: disable=protected-access
-            ('what', 'are'),
-            ('those', 'fake'),
-            ('results', 42),
-            ('what', '\x1b[31m???\x1b[0m')
+            ('test', 'test'),
+            ('name', 0xDEAD)
         ]
         output.output()
 
-        # Check that `print` output is properly formatted as JSON.
-        # Note: Python < 3.6, the keys order is not guaranteed, so we use `assertDictEqual`.
-        self.assertDictEqual(
-            json.loads(print_mock.call_args[0][0]),
-            {
-                'what': ['are', '???'],
-                'those': ['fake'],
-                'results': [42]
-            }
+        # Check that `print` output is properly formatted as JSON, with expected results.
+        output_json_data = json.loads(print_mock.call_args[0][0])['data']
+        self.assertListEqual(
+            output_json_data['test'],
+            ['test']
         )
+        self.assertListEqual(
+            output_json_data['name'],
+            [0xDEAD]
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

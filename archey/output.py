@@ -7,8 +7,6 @@ from textwrap import TextWrapper
 
 from subprocess import check_output
 
-import json
-
 from shutil import get_terminal_size
 
 import os
@@ -16,6 +14,7 @@ import sys
 
 import distro
 
+from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
 from archey.constants import COLOR_DICT, LOGOS_DICT
 from archey.configuration import Configuration
@@ -102,19 +101,11 @@ class Output:
     def _output_json(self):
         """
         Finally outputs entries data to JSON format.
-        Converts the `list` of 2-`tuple` to a proper `dict` to facilitate data retrieval in API.
+        See `archey.api.JSONAPI` for further documentation.
         """
-        data = {}
-        for result in self._results:
-            data.setdefault(
-                result[0], []
-            ).append(
-                Colors.remove_colors(result[1])
-                if isinstance(result[1], str)
-                else result[1]
-            )
-
-        print(json.dumps(data, indent=4))
+        print(
+            API(self._results).json_serialization(pretty_print=True)
+        )
 
     def _output_text(self):
         """
