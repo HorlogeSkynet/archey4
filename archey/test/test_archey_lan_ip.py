@@ -117,7 +117,7 @@ class TestLanIpEntry(unittest.TestCase):
     )
     def test_ipv6_and_limit_and_ether(self, _, __, ___):
         """Test for IPv6 support, final set length limit and Ethernet interface filtering"""
-        self.assertEqual(
+        self.assertListEqual(
             LanIp().value,
             ['192.168.1.55', '2001::45:6789:abcd:6817']
         )

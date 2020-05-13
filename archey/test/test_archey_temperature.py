@@ -149,7 +149,7 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     def test_no_output(self, _, __, ___):
         """Test when no value could be retrieved (anyhow)"""
-        self.assertEqual(Temperature().value, None)
+        self.assertIsNone(Temperature().value)
 
     @patch(
         'archey.entries.temperature.check_output',  # Mock the `sensors` call.

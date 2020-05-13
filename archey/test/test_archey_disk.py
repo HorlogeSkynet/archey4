@@ -249,7 +249,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
     )
     def test_df_failing(self, _):
         """Test df call failing against the BusyBox implementation"""
-        self.assertEqual(Disk().value, None)
+        self.assertIsNone(Disk().value)
 
     @patch(
         'archey.entries.disk.check_output',
@@ -260,7 +260,7 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
     )
     def test_no_recognised_disks(self, _):
         """Test df failing to detect any valid file-systems"""
-        self.assertEqual(Disk().value, None)
+        self.assertIsNone(Disk().value)
 
 
 if __name__ == '__main__':

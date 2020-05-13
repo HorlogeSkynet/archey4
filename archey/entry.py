@@ -12,7 +12,7 @@ class Entry(AbstractBaseClass):
         # Each entry will have always have the following attributes...
         # `name` (key);
         # `value` (value of entry as an appropriate object)
-        # ...which are `None` by default.
+        # ... which are `None` by default.
         self.name = name
         self.value = value
 
