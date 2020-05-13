@@ -187,7 +187,4 @@ class Uptime(Entry):
         elif not days and not hours:
             uptime = '< 1 minute'
 
-        output.append(
-            self.name,
-            uptime
-        )
+        output.append(self.name, uptime)

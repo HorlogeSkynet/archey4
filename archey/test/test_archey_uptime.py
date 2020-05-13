@@ -24,7 +24,7 @@ class TestUptimeEntry(unittest.TestCase):
         output_mock = MagicMock()
         Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '< 1 minute'
         )
 
@@ -40,7 +40,7 @@ class TestUptimeEntry(unittest.TestCase):
         output_mock = MagicMock()
         Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '2 minutes'
         )
 
@@ -56,7 +56,7 @@ class TestUptimeEntry(unittest.TestCase):
         output_mock = MagicMock()
         Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '2 hours and 1 minute'
         )
 
@@ -72,7 +72,7 @@ class TestUptimeEntry(unittest.TestCase):
         output_mock = MagicMock()
         Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '1 day, 1 hour and 2 minutes'
         )
 
@@ -88,7 +88,7 @@ class TestUptimeEntry(unittest.TestCase):
         output_mock = MagicMock()
         Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '3 days and 3 minutes'
         )
 
@@ -114,7 +114,7 @@ class TestUptimeEntry(unittest.TestCase):
         output_mock = MagicMock()
         Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '16 minutes'
         )
 
@@ -247,7 +247,7 @@ class TestUptimeEntry(unittest.TestCase):
         side_effect=RuntimeError()
     )
     def test_procps_missing(self, _, __, ___):
-        """Test `uptime` failure when no uptime sources are available"""
+        """Test `uptime` failure (program exit) when no uptime sources are available"""
         self.assertRaises(SystemExit, Uptime)
 
 
