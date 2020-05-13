@@ -66,6 +66,11 @@ class TestApiUtil(unittest.TestCase):
             #datetime.fromisoformat(output_json_document['meta']['date'])
             datetime.strptime(output_json_document['meta']['date'], "%Y-%m-%dT%H:%M:%S.%f")
         )
+        # Check the `count` meta-data attribute.
+        self.assertEqual(
+            output_json_document['meta']['count'],
+            4
+        )
 
     def test_version_to_semver_segments(self):
         """Check `_version_to_semver_segments` implementation behavior"""

@@ -27,7 +27,8 @@ class API:
             'data': {},
             'meta': {
                 'version': self._version_to_semver_segments(__version__),
-                'date': datetime.now().isoformat()
+                'date': datetime.now().isoformat(),
+                'count': len(self.entries)
             }
         }
         for entry in self.entries:
