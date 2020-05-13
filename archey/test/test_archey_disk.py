@@ -41,7 +41,7 @@ total                  305809MB 47006MB  243149MB      17% -
         output_mock = MagicMock()
         Disk().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '{0}45.9 GiB{1} / 298.6 GiB'.format(
                 Colors.GREEN_NORMAL,
                 Colors.CLEAR
@@ -76,7 +76,7 @@ total                  305809MB 257598MB   46130MB      84% -
         output_mock = MagicMock()
         Disk().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '{0}251.6 GiB{1} / 298.6 GiB'.format(
                 Colors.YELLOW_NORMAL,
                 Colors.CLEAR

@@ -13,8 +13,7 @@ class Disk(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # This dictionary will store values obtained from sub-processes calls.
-        self._usage = {
+        self.value = {
             'used': 0.0,
             'total': 0.0
         }
@@ -23,16 +22,11 @@ class Disk(Entry):
         self._run_btrfs_usage()
 
         # Check whether at least one media could be found.
-        if not self._usage['total']:
+        if not self.value['total']:
             self.value = None
             return
 
-        self.value = {
-            'used': self._usage['used'],
-            'total': self._usage['total'],
-            'unit': 'GiB' # for now
-        }
-
+        self.value['unit'] = 'GiB'  # For now.
 
     def _run_df_usage(self):
         try:
@@ -57,8 +51,8 @@ class Disk(Entry):
             # Known bug : `df` available in BusyBox does not support our flags.
             return
 
-        self._usage['used'] += float(df_output[2].rstrip('MB')) / 1024
-        self._usage['total'] += float(df_output[1].rstrip('MB')) / 1024
+        self.value['used'] += float(df_output[2].rstrip('MB')) / 1024
+        self.value['total'] += float(df_output[1].rstrip('MB')) / 1024
 
     def _run_btrfs_usage(self):
         """
@@ -123,12 +117,17 @@ class Disk(Entry):
             for x, y in zip(physical_device_size, data_ratios)
         ]
 
-        self._usage['total'] += sum(logical_device_size)
-        self._usage['used'] += sum(logical_device_used)
+        self.value['total'] += sum(logical_device_size)
+        self.value['used'] += sum(logical_device_used)
 
 
     def output(self, output):
-        """Adds the entry to `output` after formatting with colour and units."""
+        """Adds the entry to `output` after formatting with color and units."""
+        if not self.value:
+            # We didn't find any disks, fall back to the default entry behavior.
+            super().output(output)
+            return
+
         # Fetch the user-defined disk limits from configuration.
         disk_limits = self._configuration.get('limits')['disk']
 
@@ -138,17 +137,13 @@ class Disk(Entry):
             disk_limits['warning'], disk_limits['danger']
         )
 
-        try:
-            output.append(
-                self.name,
-                '{0}{1} {unit}{2} / {3} {unit}'.format(
-                    level_color,
-                    round(self.value['used'], 1),
-                    Colors.CLEAR,
-                    round(self.value['total'], 1),
-                    unit=self.value['unit']
-                )
+        output.append(
+            self.name,
+            '{0}{1} {unit}{2} / {3} {unit}'.format(
+                level_color,
+                round(self.value['used'], 1),
+                Colors.CLEAR,
+                round(self.value['total'], 1),
+                unit=self.value['unit']
             )
-        except TypeError:
-            # We didn't find any disks, fall back to the default entry behaviour.
-            super().output(output)
+        )
