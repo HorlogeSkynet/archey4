@@ -1,5 +1,7 @@
 """Test module for `archey.api`"""
 
+from datetime import datetime
+
 import json
 import unittest
 from unittest.mock import Mock
@@ -34,8 +36,10 @@ class TestApiUtil(unittest.TestCase):
             mocked_entries[idx].name = name
 
         api_instance = API(mocked_entries)
-
         output_json_document = json.loads(api_instance.json_serialization())
+
+        # Output data verifications.
+        self.assertIn('data', output_json_document)
         self.assertDictEqual(
             output_json_document['data'],
             {
@@ -49,9 +53,17 @@ class TestApiUtil(unittest.TestCase):
                 }
             }
         )
+
+        # Meta-data verifications.
         self.assertIn('meta', output_json_document)
+        # Check the SemVer segments types (should be integers).
         for semver_segment in output_json_document['meta']['version']:
             self.assertTrue(isinstance(semver_segment, int))
+        # Check that generated `date` meta-data is correct and not in the future.
+        self.assertGreater(
+            datetime.now(),
+            datetime.fromisoformat(output_json_document['meta']['date'])
+        )
 
     def test_version_to_semver_segments(self):
         """Check `_version_to_semver_segments` implementation behavior"""
