@@ -29,7 +29,7 @@ class Output:
     """
     def __init__(self, **kwargs):
         # Fetches passed arguments.
-        self.format_to_json = kwargs.get('format_to_json')
+        self._format_to_json = kwargs.get('format_to_json')
 
         # First we check whether the Kernel has been compiled as a WSL.
         if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
@@ -86,7 +86,7 @@ class Output:
         First we get entries to add their outputs to the results and then
         calls specific `output` methods based (for instance) on preferred format.
         """
-        if self.format_to_json:
+        if self._format_to_json:
             self._output_json()
         else:
             # Iterate through the entries and run their output method to add their content.
