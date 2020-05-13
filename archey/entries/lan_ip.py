@@ -14,7 +14,7 @@ class LanIp(Entry):
         if self._configuration.get('ip_settings')['lan_ip_v6_support']:
             address_types.append(netifaces.AF_INET6)
 
-        ip_addresses = []
+        self.value = []
 
         # Loop through all available network interfaces.
         for if_name in netifaces.interfaces():
@@ -32,23 +32,18 @@ class LanIp(Entry):
                         or if_addr['addr'] == '::1':
                         continue
 
-                    ip_addresses.append(if_addr['addr'].split('%')[0])
+                    self.value.append(if_addr['addr'].split('%')[0])
 
         lan_ip_max_count = self._configuration.get('ip_settings')['lan_ip_max_count']
         if lan_ip_max_count is not False:
-            ip_addresses = ip_addresses[:lan_ip_max_count]
-
-        self.value = ip_addresses or self._configuration.get('default_strings')['no_address']
+            self.value = self.value[:lan_ip_max_count]
 
 
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting the IP address list."""
-        if isinstance(self.value, list):
-            # If we found IP addresses, join them together nicely.
-            output.append(
-                self.name,
-                ', '.join(self.value)
-            )
-        else:
-            # Otherwise go with the default behaviour for the "no address" string.
-            super().output(output)
+        # If we found IP addresses, join them together nicely.
+        # If not, fall-back on the "No address" string.
+        output.append(
+            self.name,
+            ', '.join(self.value) or self._configuration.get('default_strings')['no_address']
+        )

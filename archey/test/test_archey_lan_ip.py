@@ -1,9 +1,9 @@
 """Test module for Archey's LAN IP addresses detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
-import netifaces
+from netifaces import AF_INET, AF_INET6, AF_LINK
 
 from archey.entries.lan_ip import LanIp
 
@@ -18,13 +18,13 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.entries.lan_ip.netifaces.ifaddresses',
         side_effect=[
             {
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '127.0.0.1',
                     'netmask': '255.0.0.0'
                 }]
             },
             {
-                netifaces.AF_INET: [
+                AF_INET: [
                     {
                         'addr': '192.168.0.11',
                         'netmask': '255.255.255.0',
@@ -38,7 +38,7 @@ class TestLanIpEntry(unittest.TestCase):
                 ]
             },
             {
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '172.34.56.78',
                     'broadcast': '172.34.255.255'
                 }]
@@ -67,31 +67,31 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.entries.lan_ip.netifaces.ifaddresses',
         side_effect=[
             {
-                netifaces.AF_LINK: [{
+                AF_LINK: [{
                     'addr': '00:00:00:00:00:00',
                     'peer': '00:00:00:00:00:00'
                 }],
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '127.0.0.1',
                     'netmask': '255.0.0.0',
                     'peer': '127.0.0.1'
                 }],
-                netifaces.AF_INET6: [{
+                AF_INET6: [{
                     'addr': '::1',
                     'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
                 }]
             },
             {
-                netifaces.AF_LINK: [{
+                AF_LINK: [{
                     'addr': 'de:ad:be:ef:de:ad',
                     'broadcast': 'ff:ff:ff:ff:ff:ff'
                 }],
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '192.168.1.55',
                     'netmask': '255.255.255.0',
                     'broadcast': '192.168.1.255'
                 }],
-                netifaces.AF_INET6: [
+                AF_INET6: [
                     {
                         'addr': '2001::45:6789:abcd:6817',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
@@ -116,10 +116,23 @@ class TestLanIpEntry(unittest.TestCase):
         ]
     )
     def test_ipv6_and_limit_and_ether(self, _, __, ___):
-        """Test for IPv6 support, final set length limit and Ethernet interface filtering"""
+        """
+        Test for IPv6 support, final set length limit and Ethernet interface filtering.
+        Additionally check the `output` method behavior.
+        """
+        lan_ip = LanIp()
+
+        output_mock = MagicMock()
+        lan_ip.output(output_mock)
+        output = output_mock.append.call_args[0][1]
+
         self.assertListEqual(
-            LanIp().value,
+            lan_ip.value,
             ['192.168.1.55', '2001::45:6789:abcd:6817']
+        )
+        self.assertEqual(
+            output,
+            '192.168.1.55, 2001::45:6789:abcd:6817'
         )
 
     @patch(
@@ -130,23 +143,23 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.entries.lan_ip.netifaces.ifaddresses',
         side_effect=[
             {
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '127.0.0.1',
                     'netmask': '255.0.0.0',
                     'peer': '127.0.0.1'
                 }],
-                netifaces.AF_INET6: [{
+                AF_INET6: [{
                     'addr': '::1',
                     'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
                 }]
             },
             {
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '192.168.1.55',
                     'netmask': '255.255.255.0',
                     'broadcast': '192.168.1.255'
                 }],
-                netifaces.AF_INET6: [
+                AF_INET6: [
                     {
                         'addr': '2001::45:6789:abcd:6817',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
@@ -185,13 +198,12 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None},  # Needed key.
-            {'no_address': 'No Address'}
+            {'lan_ip_max_count': None}    # Needed key.
         ]
     )
     def test_no_network_interface(self, _, __):
         """Test when the device does not have any network interface"""
-        self.assertEqual(LanIp().value, 'No Address')
+        self.assertFalse(LanIp().value)
 
     @patch(
         'archey.entries.lan_ip.netifaces.interfaces',
@@ -201,16 +213,16 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.entries.lan_ip.netifaces.ifaddresses',
         side_effect=[
             {
-                netifaces.AF_LINK: [{
+                AF_LINK: [{
                     'addr': '00:00:00:00:00:00',
                     'peer': '00:00:00:00:00:00'
                 }],
-                netifaces.AF_INET: [{
+                AF_INET: [{
                     'addr': '127.0.0.1',
                     'netmask': '255.0.0.0',
                     'peer': '127.0.0.1'
                 }],
-                netifaces.AF_INET6: [{
+                AF_INET6: [{
                     'addr': '::1',
                     'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
                 }]
@@ -224,13 +236,23 @@ class TestLanIpEntry(unittest.TestCase):
         'archey.configuration.Configuration.get',
         side_effect=[
             {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None},  # Needed key.
-            {'no_address': 'No Address'}
+            {'lan_ip_max_count': None},   # Needed key.
+            {'no_address': 'No address'}
         ]
     )
-    def test_no_network_address(self, _, __, ___):
-        """Test when the network interface(s) do not have any IP address"""
-        self.assertEqual(LanIp().value, 'No Address')
+    def test_no_network_address_output(self, _, __, ___):
+        """
+        Test when the network interface(s) do not have any IP address.
+        Additionally check the `output` method behavior.
+        """
+        lan_ip = LanIp()
+
+        output_mock = MagicMock()
+        lan_ip.output(output_mock)
+        output = output_mock.append.call_args[0][1]
+
+        self.assertFalse(lan_ip.value)
+        self.assertEqual(output, 'No address')
 
 
 if __name__ == '__main__':
