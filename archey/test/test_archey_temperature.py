@@ -6,7 +6,7 @@ import tempfile
 from subprocess import CalledProcessError
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 
 from archey.entries.temperature import Temperature
@@ -59,16 +59,25 @@ class TestTemperatureEntry(unittest.TestCase):
     def test_vcgencmd_only_no_max(self, _, __, ___):
         """
         Test for `vcgencmd` output only (no sensor files).
-        Only one value is retrieved, so no maximum is displayed (see #39).
+        Only one value is retrieved, so no maximum should be displayed (see #39).
         """
+        temperature = Temperature()
+
+        output_mock = MagicMock()
+        temperature.output(output_mock)
+
         self.assertDictEqual(
-            Temperature().value,
+            temperature.value,
             {
                 'temperature': 42.8,
-                'max_temperature': None,
+                'max_temperature': 42.8,
                 'char_before_unit': ' ',
                 'unit': 'C'
             }
+        )
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '42.8 C'
         )
 
     @patch(
@@ -122,8 +131,8 @@ class TestTemperatureEntry(unittest.TestCase):
         self.assertDictEqual(
             Temperature().value,
             {
-                'temperature': 116.0, # 46.7 degrees C in Fahrenheit.
-                'max_temperature': 122.0, # 50 degrees C in Fahrenheit
+                'temperature': 116.0,      # 46.7 degrees C in Fahrenheit.
+                'max_temperature': 122.0,  # 50 degrees C in Fahrenheit
                 'char_before_unit': '@',
                 'unit': 'F'
             }
@@ -225,8 +234,8 @@ class TestTemperatureEntry(unittest.TestCase):
         self.assertDictEqual(
             Temperature().value,
             {
-                'temperature': 126.6, # (52.6 C in F)
-                'max_temperature': 237.2, # (114.0 C in F)
+                'temperature': 126.6,      # (52.6 C in F)
+                'max_temperature': 237.2,  # (114.0 C in F)
                 'char_before_unit': ' ',
                 'unit': 'F'
             }
@@ -251,14 +260,24 @@ class TestTemperatureEntry(unittest.TestCase):
     def test_sensors_error_1(self, _, iglob_mock, ___):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         iglob_mock.return_value = iter([file.name for file in self._temp_files])
+
+        temperature = Temperature()
+
+        output_mock = MagicMock()
+        temperature.output(output_mock)
+
         self.assertDictEqual(
-            Temperature().value,
+            temperature.value,
             {
                 'temperature': 46.7,
                 'max_temperature': 50.0,
                 'char_before_unit': 'o',
                 'unit': 'C'
             }
+        )
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '46.7oC (Max. 50.0oC)'
         )
 
     @patch(

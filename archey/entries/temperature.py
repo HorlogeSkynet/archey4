@@ -41,22 +41,14 @@ class Temperature(Entry):
 
         # Conversion to Fahrenheit if needed.
         if use_fahrenheit:
-            for i in range(len(self._temps)):
-                self._temps[i] = self._convert_to_fahrenheit(self._temps[i])
+            self._temps = list(map(self._convert_to_fahrenheit, self._temps))
 
-        # Final average computation.
-        final_temperature = float(round(sum(self._temps) / len(self._temps), 1))
-        # Set ourselves a max_temperature (the hottest of multiple values), if there is one.
-        max_temperature = (
-            float(round(max(self._temps), 1))
-            if len(self._temps) > 1 else None
-        )
-
+        # Final average and maximum computations.
         self.value = {
-            'temperature': final_temperature,
-            'max_temperature': max_temperature,
+            'temperature': float(round(sum(self._temps) / len(self._temps), 1)),
+            'max_temperature': float(round(max(self._temps), 1)),
             'char_before_unit': char_before_unit,
-            'unit': 'F' if use_fahrenheit else 'C'
+            'unit': ('F' if use_fahrenheit else 'C')
         }
 
 
@@ -123,16 +115,14 @@ class Temperature(Entry):
 
     @staticmethod
     def _convert_to_fahrenheit(temp):
-        """
-        Simple Celsius to Fahrenheit conversion method
-        """
+        """Simple Celsius to Fahrenheit conversion method"""
         return temp * (9 / 5) + 32
 
 
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting with units."""
         if not self.value:
-            # Fall back to the default behaviour if no temperatures were detected.
+            # Fall back on the default behavior if no temperatures were detected.
             super().output(output)
             return
 
@@ -140,18 +130,18 @@ class Temperature(Entry):
         char_before_unit = self.value['char_before_unit']
         unit = self.value['unit']
 
-        max_temperature_string = " (Max. {0}{1}{2}".format(
-            self.value['max_temperature'],
+        entry_text = '{0}{1}{2}'.format(
+            self.value['temperature'],
             char_before_unit,
             unit
-        ) if self.value['max_temperature'] else ''
-
-        output.append(
-            self.name,
-            '{0}{1}{2}{3}'.format(
-                self.value['temperature'],
-                char_before_unit,
-                unit,
-                max_temperature_string
-            )
         )
+        # When there are multiple input sources, show the hottest value.
+        if len(self._temps) > 1:
+            entry_text = '{0} (Max. {1}{2}{3})'.format(
+                entry_text,
+                self.value['max_temperature'],
+                char_before_unit,
+                unit
+            )
+
+        output.append(self.name, entry_text)
