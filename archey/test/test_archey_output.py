@@ -2,7 +2,7 @@
 
 import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from collections import namedtuple
 
 from archey.colors import Colors
@@ -506,21 +506,27 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
     def test_json_output_format(self, print_mock, _):
         """Test how the `output` method handles JSON preferred formatting of entries"""
         output = Output(format_to_json=True)
-        output._results = [ # pylint: disable=protected-access
-            ('test', 'test'),
-            ('name', 0xDEAD)
+        # We can't set the `name` attribute of a mock on its creation,
+        # so this is a little bit messy...
+        mocked_entries = [
+            Mock(value='test'),
+            Mock(value=0xDEAD)
         ]
+        mocked_entries[0].name = 'test'
+        mocked_entries[1].name = 'name'
+
+        output._entries = mocked_entries # pylint: disable=protected-access
         output.output()
 
         # Check that `print` output is properly formatted as JSON, with expected results.
         output_json_data = json.loads(print_mock.call_args[0][0])['data']
-        self.assertListEqual(
+        self.assertEqual(
             output_json_data['test'],
-            ['test']
+            'test'
         )
-        self.assertListEqual(
+        self.assertEqual(
             output_json_data['name'],
-            [0xDEAD]
+            0xDEAD
         )
 
 

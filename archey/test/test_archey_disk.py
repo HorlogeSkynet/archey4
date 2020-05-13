@@ -3,10 +3,10 @@
 from subprocess import CalledProcessError
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
-from archey.colors import Colors
 from archey.entries.disk import Disk
+from archey.colors import Colors
 
 
 class TestDiskEntry(unittest.TestCase):
@@ -38,8 +38,15 @@ total                  305809MB 47006MB  243149MB      17% -
     )
     def test_df_only(self, _, __):
         """Test computations around `df` output at disk regular level"""
-        disk = Disk().value
-        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '45.9', '298.6']))
+        output_mock = MagicMock()
+        Disk().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '{0}45.9 GiB{1} / 298.6 GiB'.format(
+                Colors.GREEN_NORMAL,
+                Colors.CLEAR
+            )
+        )
 
     @patch(
         'archey.entries.disk.check_output',
@@ -66,8 +73,15 @@ total                  305809MB 257598MB   46130MB      84% -
     )
     def test_df_only_warning(self, _, __):
         """Test computations around `df` output at disk warning level"""
-        disk = Disk().value
-        self.assertTrue(all(i in disk for i in [str(Colors.YELLOW_NORMAL), '251.6', '298.6']))
+        output_mock = MagicMock()
+        Disk().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '{0}251.6 GiB{1} / 298.6 GiB'.format(
+                Colors.YELLOW_NORMAL,
+                Colors.CLEAR
+            )
+        )
 
     @patch(
         'archey.entries.disk.check_output',
@@ -137,19 +151,16 @@ System,single: Size:0.01GiB, Used:0.00GiB (1.03%)
 """
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 75
-            }
-        }
-    )
-    def test_df_and_btrfs(self, _, __):
+    def test_df_and_btrfs(self, _):
         """Test computations around `df` and `btrfs` outputs"""
-        disk = Disk().value
-        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '989.3', '4501.1']))
+        self.assertDictEqual(
+            Disk().value,
+            {
+                'used': 989.304296875,
+                'total': 4501.1016015625,
+                'unit': 'GiB'
+            }
+        )
 
     @patch(
         'archey.entries.disk.check_output',
@@ -218,19 +229,16 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
 """
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 75
-            }
-        }
-    )
-    def test_btrfs_only_with_raid_configuration(self, _, __):
+    def test_btrfs_only_with_raid_configuration(self, _):
         """Test computations around `btrfs` outputs with a RAID-1 setup"""
-        disk = Disk().value
-        self.assertTrue(all(i in disk for i in [str(Colors.GREEN_NORMAL), '943.4', '4202.5']))
+        self.assertDictEqual(
+            Disk().value,
+            {
+                'used': 943.4,
+                'total': 4202.46,
+                'unit': 'GiB'
+            }
+        )
 
     @patch(
         'archey.entries.disk.check_output',
@@ -239,13 +247,9 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
             CalledProcessError(1, 'df', "df: unrecognized option: l\n")
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_df_failing(self, _, __):
+    def test_df_failing(self, _):
         """Test df call failing against the BusyBox implementation"""
-        self.assertEqual(Disk().value, 'Not detected')
+        self.assertEqual(Disk().value, None)
 
     @patch(
         'archey.entries.disk.check_output',
@@ -254,39 +258,9 @@ System,RAID1: Size:0.01GiB, Used:0.00GiB
             CalledProcessError(1, 'df', "df: no file systems processed\n")
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_no_recognised_disks(self, _, __):
+    def test_no_recognised_disks(self, _):
         """Test df failing to detect any valid file-systems"""
-        self.assertEqual(Disk().value, 'Not detected')
-
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            """\
-Filesystem       1000000-blocks    Used Available Capacity Mounted on
-/dev/mapper/root        39101MB 14216MB   22870MB      39% /
-/dev/sda1                 967MB    91MB     810MB      11% /boot
-/dev/mapper/home       265741MB 32700MB  219471MB      13% /home
-total                  305809MB 47006MB  243149MB      17% -
-""",
-            # Second `df` call will fail.
-            CalledProcessError(1, 'df', "df: no file systems processed\n")
-        ]
-    )
-    def test_disk_json_output(self, _):
-        """Test JSON output from `Disk`"""
-        self.assertDictEqual(
-            Disk(format_to_json=True).value,
-            {
-                'used': 45.904296875,
-                'total': 298.6416015625,
-                'units': 'GiB'
-            }
-        )
-
+        self.assertEqual(Disk().value, None)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,5 @@
 """Test module for Archey's LAN IP addresses detection module"""
 
-import itertools
 import unittest
 from unittest.mock import patch
 
@@ -55,9 +54,9 @@ class TestLanIpEntry(unittest.TestCase):
     )
     def test_multiple_interfaces(self, _, __, ___):
         """Test for multiple interfaces, multiple addresses (including a loopback one)"""
-        self.assertEqual(
+        self.assertListEqual(
             LanIp().value,
-            '192.168.0.11, 192.168.1.11, 172.34.56.78'
+            ['192.168.0.11', '192.168.1.11', '172.34.56.78']
         )
 
     @patch(
@@ -120,7 +119,7 @@ class TestLanIpEntry(unittest.TestCase):
         """Test for IPv6 support, final set length limit and Ethernet interface filtering"""
         self.assertEqual(
             LanIp().value,
-            '192.168.1.55, 2001::45:6789:abcd:6817'
+            ['192.168.1.55', '2001::45:6789:abcd:6817']
         )
 
     @patch(
@@ -173,9 +172,9 @@ class TestLanIpEntry(unittest.TestCase):
     )
     def test_no_ipv6(self, _, __, ___):
         """Test for IPv6 hiding"""
-        self.assertEqual(
+        self.assertListEqual(
             LanIp().value,
-            '192.168.1.55'
+            ['192.168.1.55']
         )
 
     @patch(
@@ -232,102 +231,6 @@ class TestLanIpEntry(unittest.TestCase):
     def test_no_network_address(self, _, __, ___):
         """Test when the network interface(s) do not have any IP address"""
         self.assertEqual(LanIp().value, 'No Address')
-
-    @patch(
-        'archey.entries.lan_ip.netifaces.interfaces',
-        return_value=['lo', 'en0']
-    )
-    @patch(
-        'archey.entries.lan_ip.netifaces.ifaddresses',
-        side_effect=itertools.cycle([ # Cycle this side_effect infinitely.
-            {
-                netifaces.AF_INET: [{
-                    'addr': '127.0.0.1',
-                    'netmask': '255.0.0.0',
-                    'peer': '127.0.0.1'
-                }],
-                netifaces.AF_INET6: [{
-                    'addr': '::1',
-                    'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
-                }]
-            },
-            {
-                netifaces.AF_INET: [{
-                    'addr': '192.168.1.55',
-                    'netmask': '255.255.255.0',
-                    'broadcast': '192.168.1.255'
-                }],
-                netifaces.AF_INET6: [
-                    {
-                        'addr': '2001::45:6789:abcd:6817',
-                        'netmask': 'ffff:ffff:ffff:ffff::/64'
-                    },
-                    {
-                        'addr': '2a02::45:6789:abcd:0123/64',
-                        'netmask': 'ffff:ffff:ffff:ffff::/64'
-                    },
-                    {
-                        'addr': r'fe80::abcd:ef0:abef:dead\%en0',
-                        'netmask': 'ffff:ffff:ffff:ffff::/64'
-                    }
-                ]
-            }
-        ])
-    )
-    @patch('archey.configuration.Configuration.get')
-    def test_lan_ip_json_output(self, config_mock, ifaddress_mock, __):
-        """Test the JSON output of `LanIp`"""
-        # Test two addresses (IPv4 + IPv6)
-        config_mock.side_effect = [
-            {'lan_ip_v6_support': True},
-            {'lan_ip_max_count': 2}
-        ]
-        self.assertListEqual(
-            LanIp(format_to_json=True).value,
-            ['192.168.1.55', '2001::45:6789:abcd:6817'],
-            msg='Test two addresses'
-        )
-
-        # Test one address (IPv4)
-        config_mock.side_effect = [
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None}  # Needed key.
-        ]
-        self.assertListEqual(
-            LanIp(format_to_json=True).value,
-            ['192.168.1.55']
-        )
-
-        # Test no addresses
-        config_mock.side_effect = [
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None},  # Needed key.
-            {'no_address': 'No Address'}
-        ]
-        ifaddress_mock.side_effect = [
-            {
-                netifaces.AF_LINK: [{
-                    'addr': '00:00:00:00:00:00',
-                    'peer': '00:00:00:00:00:00'
-                }],
-                netifaces.AF_INET: [{
-                    'addr': '127.0.0.1',
-                    'netmask': '255.0.0.0',
-                    'peer': '127.0.0.1'
-                }],
-                netifaces.AF_INET6: [{
-                    'addr': '::1',
-                    'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
-                }]
-            },
-            {
-                # No address for this one.
-            }
-        ]
-        self.assertEqual(
-            LanIp(format_to_json=True).value,
-            'No Address'
-        )
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 
 import json
 import unittest
+from unittest.mock import Mock
 
 from archey.api import API
 
@@ -14,23 +15,38 @@ class TestApiUtil(unittest.TestCase):
         """
         Check that our JSON serialization is working as expected.
         """
-        api_instance = API([
-            ('simple', 'test'),
-            ('some', 'more'),
-            ('simple', 42),
-            ('simple', '\x1b[31m???\x1b[0m')
-        ])
+        mocked_entries = [
+            Mock(value='test'),
+            Mock(value='more'),
+            Mock(value=42),
+            Mock(
+                value={
+                    'complex': {
+                        'dictionary': True
+                    }
+                }
+            ),
+        ]
+
+        # Since we can't assign a Mock's `name` attribute on creation, we'll do it here.
+        # Note: Since each entry is only present once, all `name` attributes are always unique.
+        for idx, name in enumerate(('simple1', 'some', 'simple2', 'simple3')):
+            mocked_entries[idx].name = name
+
+        api_instance = API(mocked_entries)
 
         output_json_document = json.loads(api_instance.json_serialization())
         self.assertDictEqual(
             output_json_document['data'],
             {
-                'simple': [
-                    'test',
-                    42,
-                    '???'
-                ],
-                'some': ['more']
+                'simple1': 'test',
+                'some': 'more',
+                'simple2': 42,
+                'simple3': {
+                    'complex': {
+                        'dictionary': True
+                    }
+                }
             }
         )
         self.assertIn('meta', output_json_document)

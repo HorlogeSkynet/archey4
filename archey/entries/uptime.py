@@ -23,42 +23,11 @@ class Uptime(Entry):
         hours, uptime_seconds = divmod(uptime_seconds, 3600)
         minutes = uptime_seconds // 60
 
-        uptime = ''
-        if days:
-            uptime += str(days) + ' day'
-            if days > 1:
-                uptime += 's'
-
-            if hours or minutes:
-                if bool(hours) != bool(minutes):
-                    uptime += ' and '
-                else:
-                    uptime += ', '
-
-        if hours:
-            uptime += str(hours) + ' hour'
-            if hours > 1:
-                uptime += 's'
-
-            if minutes:
-                uptime += ' and '
-
-        if minutes:
-            uptime += str(minutes) + ' minute'
-            if minutes > 1:
-                uptime += 's'
-        elif not days and not hours:
-            uptime = '< 1 minute'
-
-        if self._format_to_json:
-            self.value = {
-                'days': days,
-                'hours': hours,
-                'minutes': minutes,
-            }
-
-        else:
-            self.value = uptime
+        self.value = {
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+        }
 
     def _get_uptime_delta(self):
         """
@@ -182,4 +151,43 @@ class Uptime(Entry):
             hours=int(uptime_args.get('hours') or 0),
             minutes=int(uptime_args.get('minutes') or 0),
             seconds=int(uptime_args.get('seconds') or 0)
+        )
+
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting the uptime to a string."""
+        days = self.value['days']
+        hours = self.value['hours']
+        minutes = self.value['minutes']
+
+        uptime = ''
+        if days:
+            uptime += str(days) + ' day'
+            if days > 1:
+                uptime += 's'
+
+            if hours or minutes:
+                if bool(hours) != bool(minutes):
+                    uptime += ' and '
+                else:
+                    uptime += ', '
+
+        if hours:
+            uptime += str(hours) + ' hour'
+            if hours > 1:
+                uptime += 's'
+
+            if minutes:
+                uptime += ' and '
+
+        if minutes:
+            uptime += str(minutes) + ' minute'
+            if minutes > 1:
+                uptime += 's'
+        elif not days and not hours:
+            uptime = '< 1 minute'
+
+        output.append(
+            self.name,
+            uptime
         )

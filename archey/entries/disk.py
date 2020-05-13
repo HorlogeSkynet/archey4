@@ -24,32 +24,15 @@ class Disk(Entry):
 
         # Check whether at least one media could be found.
         if not self._usage['total']:
-            self.value = self._configuration.get('default_strings')['not_detected']
+            self.value = None
             return
 
-        if self._format_to_json:
-            self.value = {
-                'used': self._usage['used'],
-                'total': self._usage['total'],
-                'units': 'GiB' # for now
-            }
+        self.value = {
+            'used': self._usage['used'],
+            'total': self._usage['total'],
+            'unit': 'GiB' # for now
+        }
 
-        else:
-            # Fetch the user-defined disk limits from configuration.
-            disk_limits = self._configuration.get('limits')['disk']
-
-            # Based on the disk percentage usage, select the corresponding level color.
-            level_color = Colors.get_level_color(
-                (self._usage['used'] / (self._usage['total'] or 1)) * 100,
-                disk_limits['warning'], disk_limits['danger']
-            )
-
-            self.value = '{0}{1} GiB{2} / {3} GiB'.format(
-                level_color,
-                round(self._usage['used'], 1),
-                Colors.CLEAR,
-                round(self._usage['total'], 1)
-            )
 
     def _run_df_usage(self):
         try:
@@ -142,3 +125,30 @@ class Disk(Entry):
 
         self._usage['total'] += sum(logical_device_size)
         self._usage['used'] += sum(logical_device_used)
+
+
+    def output(self, output):
+        """Adds the entry to `output` after formatting with colour and units."""
+        # Fetch the user-defined disk limits from configuration.
+        disk_limits = self._configuration.get('limits')['disk']
+
+        # Based on the disk percentage usage, select the corresponding level color.
+        level_color = Colors.get_level_color(
+            (self.value['used'] / (self.value['total'] or 1)) * 100,
+            disk_limits['warning'], disk_limits['danger']
+        )
+
+        try:
+            output.append(
+                self.name,
+                '{0}{1} {unit}{2} / {3} {unit}'.format(
+                    level_color,
+                    round(self.value['used'], 1),
+                    Colors.CLEAR,
+                    round(self.value['total'], 1),
+                    unit=self.value['unit']
+                )
+            )
+        except TypeError:
+            # We didn't find any disks, fall back to the default entry behaviour.
+            super().output(output)

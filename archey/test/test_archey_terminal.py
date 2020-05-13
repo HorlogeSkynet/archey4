@@ -1,7 +1,7 @@
 """Test module for Archey's terminal detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from archey.entries.terminal import Terminal
 
@@ -24,7 +24,9 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_without_unicode(self, _, __):
         """Test simple output, without Unicode support (default)"""
-        output = Terminal().value
+        output_mock = MagicMock()
+        Terminal().output(output_mock)
+        output = output_mock.append.call_args.args[1]
         self.assertTrue(output.startswith('TERMINAL '))
         self.assertEqual(output.count('#'), 7 * 2)
 
@@ -41,7 +43,9 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_with_unicode(self, _, __):
         """Test simple output, with Unicode support !"""
-        output = Terminal().value
+        output_mock = MagicMock()
+        Terminal().output(output_mock)
+        output = output_mock.append.call_args.args[1]
         self.assertTrue(output.startswith('TERMINAL '))
         self.assertEqual(output.count('\u2588'), 7 * 2)
 
@@ -58,20 +62,11 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_not_detected(self, _, __):
         """Test simple output, with Unicode support !"""
-        output = Terminal().value
+        output_mock = MagicMock()
+        Terminal().output(output_mock)
+        output = output_mock.append.call_args.args[1]
         self.assertTrue(output.startswith('Not detected '))
         self.assertEqual(output.count('#'), 7 * 2)
-
-    @patch(
-        'archey.entries.terminal.os.getenv',
-        return_value='TERMINAL'
-    )
-    def test_terminal_json_output(self, _):
-        """Test JSON output from `Terminal`"""
-        self.assertEqual(
-            Terminal(format_to_json=True).value,
-            'TERMINAL'
-        )
 
 
 

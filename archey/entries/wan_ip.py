@@ -21,14 +21,11 @@ class WanIp(Entry):
         else:
             ipv6_addr = None
 
-        if self._format_to_json:
-            self.value = list(filter(None, (ipv4_addr, ipv6_addr))) \
-                or self._configuration.get('default_strings')['no_address']
+        self.value = (
+            list(filter(None, (ipv4_addr, ipv6_addr)))
+            or self._configuration.get('default_strings')['no_address']
+        )
 
-        else:
-            self.value = ', '.join(
-                filter(None, (ipv4_addr, ipv6_addr))
-            ) or self._configuration.get('default_strings')['no_address']
 
     def _retrieve_ipv4_address(self):
         try:
@@ -78,3 +75,16 @@ class WanIp(Entry):
             ipv6_addr = response.read().decode().strip()
 
         return ipv6_addr
+
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting our list of IP addresses."""
+        if isinstance(self.value, list):
+            # If we found IP addresses, join them together nicely.
+            output.append(
+                self.name,
+                ', '.join(self.value)
+            )
+        else:
+            # Otherwise go with the default behaviour for the "no address" string.
+            super().output(output)

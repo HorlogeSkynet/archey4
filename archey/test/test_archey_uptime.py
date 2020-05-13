@@ -1,7 +1,7 @@
 """Test module for Archey's uptime detection module"""
 
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, MagicMock
 from datetime import timedelta
 from itertools import product
 
@@ -21,7 +21,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_warming_up(self):
         """Test when the device has just been started..."""
-        self.assertEqual(Uptime().value, '< 1 minute')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '< 1 minute'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -32,7 +37,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_minutes_only(self):
         """Test when only minutes should be displayed"""
-        self.assertEqual(Uptime().value, '2 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '2 minutes'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -43,7 +53,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_hours_and_minute(self):
         """Test when only hours AND minutes should be displayed"""
-        self.assertEqual(Uptime().value, '2 hours and 1 minute')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '2 hours and 1 minute'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -54,7 +69,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_day_and_hour_and_minutes(self):
         """Test when only days, hours AND minutes should be displayed"""
-        self.assertEqual(Uptime().value, '1 day, 1 hour and 2 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '1 day, 1 hour and 2 minutes'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -65,7 +85,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_days_and_minutes(self):
         """Test when only days AND minutes should be displayed"""
-        self.assertEqual(Uptime().value, '3 days and 3 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '3 days and 3 minutes'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -86,7 +111,12 @@ class TestUptimeEntry(unittest.TestCase):
         Test when we can't access /proc/uptime on Linux/macOS/BSD.
         We only test one clock as all clocks rely on the same built-in `time.clock_gettime` method.
         """
-        self.assertEqual(Uptime().value, '16 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args.args[1],
+            '16 minutes'
+        )
 
     @patch('archey.entries.uptime.check_output')
     def test_uptime_fallback(self, check_output_mock):
@@ -219,18 +249,6 @@ class TestUptimeEntry(unittest.TestCase):
     def test_procps_missing(self, _, __, ___):
         """Test `uptime` failure when no uptime sources are available"""
         self.assertRaises(SystemExit, Uptime)
-
-    def test_uptime_json_output(self):
-        """Test JSON output of uptime"""
-        # Since we always output all figures in JSON, we only really need one test.
-        self.assertDictEqual(
-            Uptime(format_to_json=True).value,
-            {
-                'days': 1,
-                'hours': 1,
-                'minutes': 2
-            }
-        )
 
 
 if __name__ == '__main__':

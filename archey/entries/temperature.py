@@ -32,7 +32,7 @@ class Temperature(Entry):
 
         # No value could be fetched...
         if not self._temps:
-            self.value = self._configuration.get('default_strings')['not_detected']
+            self.value = None
             return
 
         # Let's DRY some constants once.
@@ -45,36 +45,20 @@ class Temperature(Entry):
                 self._temps[i] = self._convert_to_fahrenheit(self._temps[i])
 
         # Final average computation.
-        final_temperature = str(round(sum(self._temps) / len(self._temps), 1))
+        final_temperature = float(round(sum(self._temps) / len(self._temps), 1))
         # Set ourselves a max_temperature (the hottest of multiple values), if there is one.
         max_temperature = (
-            str(round(max(self._temps), 1))
-            if len(self._temps) > 1 else ''
+            float(round(max(self._temps), 1))
+            if len(self._temps) > 1 else None
         )
 
-        if self._format_to_json:
-            self.value = {
-                'temperature': float(final_temperature),
-                'max_temperature': float(max_temperature) \
-                    if max_temperature != '' \
-                    else self._configuration.get('default_strings')['not_detected'],
-                'char_before_unit': char_before_unit,
-                'units': 'F' if use_fahrenheit else 'C'
-            }
+        self.value = {
+            'temperature': final_temperature,
+            'max_temperature': max_temperature,
+            'char_before_unit': char_before_unit,
+            'unit': 'F' if use_fahrenheit else 'C'
+        }
 
-        else:
-            self.value = '{0}{1}{2}'.format(
-                final_temperature,
-                char_before_unit,
-                'F' if use_fahrenheit else 'C'
-            )
-
-            if max_temperature:
-                self.value += ' (Max. {0}{1}{2})'.format(
-                    max_temperature,
-                    char_before_unit,
-                    'F' if use_fahrenheit else 'C'
-                )
 
     def _run_sensors(self, whitelisted_chips):
         # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.
@@ -143,3 +127,26 @@ class Temperature(Entry):
         Simple Celsius to Fahrenheit conversion method
         """
         return temp * (9 / 5) + 32
+
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting with units."""
+        # DRY some constants
+        char_before_unit = self.value['char_before_unit']
+        unit = self.value['unit']
+
+        max_temperature_string = " (Max. {0}{1}{2}".format(
+            self.value['max_temperature'],
+            char_before_unit,
+            unit
+        ) if self.value['max_temperature'] else ''
+
+        output.append(
+            self.name,
+            '{0}{1}{2}{3}'.format(
+                self.value['temperature'],
+                char_before_unit,
+                unit,
+                max_temperature_string
+            )
+        )

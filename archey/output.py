@@ -71,17 +71,14 @@ class Output:
 
     def append(self, key, value):
         """Append a pre-formatted entry to the final output content"""
-        if self.format_to_json:
-            self._results.append((key, value))
-        else:
-            self._results.append(
-                '{color}{key}:{clear} {value}'.format(
-                    color=self._colors_palette[0],
-                    key=key,
-                    clear=Colors.CLEAR,
-                    value=value
-                )
+        self._results.append(
+            '{color}{key}:{clear} {value}'.format(
+                color=self._colors_palette[0],
+                key=key,
+                clear=Colors.CLEAR,
+                value=value
             )
+        )
 
     def output(self):
         """
@@ -89,13 +86,12 @@ class Output:
         First we get entries to add their outputs to the results and then
         calls specific `output` methods based (for instance) on preferred format.
         """
-        # Iterate through the entries and run their output method to add their content.
-        for entry in self._entries:
-            entry.output(self)
-
         if self.format_to_json:
             self._output_json()
         else:
+            # Iterate through the entries and run their output method to add their content.
+            for entry in self._entries:
+                entry.output(self)
             self._output_text()
 
     def _output_json(self):
@@ -104,7 +100,7 @@ class Output:
         See `archey.api.JSONAPI` for further documentation.
         """
         print(
-            API(self._results).json_serialization(pretty_print=True)
+            API(self._entries).json_serialization(pretty_print=True)
         )
 
     def _output_text(self):

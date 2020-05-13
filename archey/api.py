@@ -5,7 +5,6 @@ from datetime import datetime
 import json
 
 from archey._version import __version__
-from archey.colors import Colors
 
 
 class API:
@@ -14,12 +13,12 @@ class API:
     At the moment, only JSON has been implemented.
     Feel free to contribute to add other formats as needed.
     """
-    def __init__(self, results):
-        self.results = results
+    def __init__(self, entries):
+        self.entries = entries
 
     def json_serialization(self, pretty_print=False):
         """
-        JSON serialization of results.
+        JSON serialization of entries.
         Set `pretty_print` to `True` to enable output indentation.
 
         Note: For Python < 3.6, the keys order is not guaranteed.
@@ -31,14 +30,8 @@ class API:
                 'date': datetime.now().isoformat()
             }
         }
-        for result in self.results:
-            document['data'].setdefault(
-                result[0], []
-            ).append(
-                Colors.remove_colors(result[1])
-                if isinstance(result[1], str)
-                else result[1]
-            )
+        for entry in self.entries:
+            document['data'][entry.name] = entry.value
 
         return json.dumps(
             document,

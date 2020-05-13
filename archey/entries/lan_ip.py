@@ -38,9 +38,17 @@ class LanIp(Entry):
         if lan_ip_max_count is not False:
             ip_addresses = ip_addresses[:lan_ip_max_count]
 
-        if self._format_to_json:
-            self.value = ip_addresses or self._configuration.get('default_strings')['no_address']
+        self.value = ip_addresses or self._configuration.get('default_strings')['no_address']
 
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting the IP address list."""
+        if isinstance(self.value, list):
+            # If we found IP addresses, join them together nicely.
+            output.append(
+                self.name,
+                ', '.join(self.value)
+            )
         else:
-            self.value = ', '.join(ip_addresses) or \
-                self._configuration.get('default_strings')['no_address']
+            # Otherwise go with the default behaviour for the "no address" string.
+            super().output(output)

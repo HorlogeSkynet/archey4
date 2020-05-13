@@ -46,26 +46,37 @@ class RAM(Entry):
             if used < 0:
                 used = total - ram['MemFree']
 
-        if self._format_to_json:
-            self.value = {
-                'used': int(used),
-                'total': int(total),
-                'units': 'MiB'
-            }
+        self.value = {
+            'used': used,
+            'total': total,
+            'unit': 'MiB'
+        }
 
-        else:
-            # Fetch the user-defined RAM limits from configuration.
-            ram_limits = self._configuration.get('limits')['ram']
 
-            # Based on the RAM percentage usage, select the corresponding level color.
-            level_color = Colors.get_level_color(
-                (used / total) * 100,
-                ram_limits['warning'], ram_limits['danger']
-            )
+    def output(self, output):
+        """
+        Adds the entry to `output` after pretty-formatting the RAM usage with colour and units.
+        """
+        # DRY some constants
+        used = self.value['used']
+        total = self.value['total']
+        unit = self.value['unit']
+        # Fetch the user-defined RAM limits from configuration.
+        ram_limits = self._configuration.get('limits')['ram']
 
-            self.value = '{0}{1} MiB{2} / {3} MiB'.format(
+        # Based on the RAM percentage usage, select the corresponding level color.
+        level_color = Colors.get_level_color(
+            (used / total) * 100,
+            ram_limits['warning'], ram_limits['danger']
+        )
+
+        output.append(
+            self.name,
+            '{0}{1} {unit}{2} / {3} {unit}'.format(
                 level_color,
                 int(used),
                 Colors.CLEAR,
-                int(total)
+                int(total),
+                unit=unit
             )
+        )
