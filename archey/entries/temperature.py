@@ -131,6 +131,11 @@ class Temperature(Entry):
 
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting with units."""
+        if not self.value:
+            # Fall back to the default behaviour if no temperatures were detected.
+            super().output(output)
+            return
+
         # DRY some constants
         char_before_unit = self.value['char_before_unit']
         unit = self.value['unit']
