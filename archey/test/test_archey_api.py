@@ -62,7 +62,9 @@ class TestApiUtil(unittest.TestCase):
         # Check that generated `date` meta-data is correct and not in the future.
         self.assertGreater(
             datetime.now(),
-            datetime.fromisoformat(output_json_document['meta']['date'])
+            # `datetime.fromisoformat` is not available for Python < 3.7, so we parse it manually.
+            #datetime.fromisoformat(output_json_document['meta']['date'])
+            datetime.strptime(output_json_document['meta']['date'], "%Y-%m-%dT%H:%M:%S.%f")
         )
 
     def test_version_to_semver_segments(self):
