@@ -24,7 +24,7 @@ class Terminal(Entry):
 
     def output(self, output):
         """
-        Adds the entry to `output` after pretty-formatting with colours and potentially unicode.
+        Adds the entry to `output` after pretty-formatting with colors and potentially Unicode.
         """
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
