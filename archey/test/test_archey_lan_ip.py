@@ -124,14 +124,13 @@ class TestLanIpEntry(unittest.TestCase):
 
         output_mock = MagicMock()
         lan_ip.output(output_mock)
-        output = output_mock.append.call_args[0][1]
 
         self.assertListEqual(
             lan_ip.value,
             ['192.168.1.55', '2001::45:6789:abcd:6817']
         )
         self.assertEqual(
-            output,
+            output_mock.append.call_args[0][1],
             '192.168.1.55, 2001::45:6789:abcd:6817'
         )
 
@@ -249,10 +248,12 @@ class TestLanIpEntry(unittest.TestCase):
 
         output_mock = MagicMock()
         lan_ip.output(output_mock)
-        output = output_mock.append.call_args[0][1]
 
         self.assertFalse(lan_ip.value)
-        self.assertEqual(output, 'No address')
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'No address'
+        )
 
 
 if __name__ == '__main__':
