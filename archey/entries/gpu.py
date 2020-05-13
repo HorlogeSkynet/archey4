@@ -32,7 +32,4 @@ class GPU(Entry):
         except (FileNotFoundError, CalledProcessError):
             pass
 
-        if not gpuinfo:
-            gpuinfo = self._configuration.get('default_strings')['not_detected']
-
         self.value = gpuinfo

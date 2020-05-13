@@ -26,6 +26,9 @@ class Packages(Entry):
     """Relies on the first found packages manager to list the installed packages"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.value = None
+
         for packages_tool in PACKAGES_TOOLS:
             try:
                 results = check_output(
@@ -42,20 +45,15 @@ class Packages(Entry):
             except (FileNotFoundError, CalledProcessError):
                 continue
 
-            packages = results.count('\n')
+            self.value = results.count('\n')
 
             # If any, deduct output skew present due to the packages tool.
             if 'skew' in packages_tool:
-                packages -= packages_tool['skew']
+                self.value -= packages_tool['skew']
 
             # For DPKG only, remove any not purged package.
             if packages_tool['cmd'][0] == 'dpkg':
-                packages -= results.count('deinstall')
+                self.value -= results.count('deinstall')
 
             # At this step, we may break the loop.
             break
-
-        else:
-            packages = self._configuration.get('default_strings')['not_detected']
-
-        self.value = packages

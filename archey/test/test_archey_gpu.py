@@ -1,7 +1,7 @@
 """Test module for Archey's GPU detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from archey.entries.gpu import GPU
 
@@ -50,7 +50,16 @@ XX:YY.H Audio device: DDDDDDDDDDDDDDDD
     )
     def test_no_match(self, _, __):
         """Test (non-)detection when there is not any graphical candidate"""
-        self.assertEqual(GPU().value, 'Not detected')
+        gpu = GPU()
+
+        output_mock = MagicMock()
+        gpu.output(output_mock)
+
+        self.assertIsNone(gpu.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'Not detected'
+        )
 
 
 if __name__ == '__main__':

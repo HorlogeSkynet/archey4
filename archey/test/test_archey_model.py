@@ -3,7 +3,7 @@
 from subprocess import CalledProcessError
 
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 from archey.entries.model import Model
 
@@ -143,7 +143,18 @@ class TestModelEntry(unittest.TestCase):
 
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = self._special_func_for_mock_open
-            self.assertEqual(Model().value, 'Not detected')
+
+            model = Model()
+
+            output_mock = MagicMock()
+            model.output(output_mock)
+
+            self.assertIsNone(model.value)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                'Not detected'
+            )
+
 
     def _special_func_for_mock_open(self):
         """
