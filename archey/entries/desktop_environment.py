@@ -29,9 +29,9 @@ class DesktopEnvironment(Entry):
         super().__init__(*args, **kwargs)
 
         processes = Processes().get()
-        for key, value in DE_DICT.items():
-            if key in processes:
-                desktop_environment = value
+        for de_id, de_name in DE_DICT.items():
+            if de_id in processes:
+                desktop_environment = de_name
                 break
         else:
             # Let's rely on an environment variable if the loop above didn't `break`.

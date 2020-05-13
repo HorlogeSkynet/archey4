@@ -52,7 +52,7 @@ class WindowManager(Entry):
         super().__init__(*args, **kwargs)
 
         try:
-            window_manager = re.search(
+            self.value = re.search(
                 '(?<=Name: ).*',
                 check_output(
                     ['wmctrl', '-m'],
@@ -61,11 +61,7 @@ class WindowManager(Entry):
             ).group(0)
         except (FileNotFoundError, CalledProcessError):
             processes = Processes().get()
-            for key, value in WM_DICT.items():
-                if key in processes:
-                    window_manager = value
+            for wm_id, wm_name in WM_DICT.items():
+                if wm_id in processes:
+                    self.value = wm_name
                     break
-            else:
-                window_manager = self._configuration.get('default_strings')['not_detected']
-
-        self.value = window_manager

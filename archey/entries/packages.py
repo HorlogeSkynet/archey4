@@ -27,8 +27,6 @@ class Packages(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = None
-
         for packages_tool in PACKAGES_TOOLS:
             try:
                 results = check_output(

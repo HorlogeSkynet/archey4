@@ -32,7 +32,6 @@ class Temperature(Entry):
 
         # No value could be fetched...
         if not self._temps:
-            self.value = None
             return
 
         # Let's DRY some constants once.
