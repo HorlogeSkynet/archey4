@@ -1,7 +1,7 @@
 """Test module for Archey's distribution detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from archey.entries.distro import Distro
 
@@ -19,10 +19,13 @@ NAME VERSION (CODENAME)\
 ARCHITECTURE
 """)
     def test_ok(self, _, __):
-        """Test for `distro` and `uname` outputs concatenation"""
-        self.assertEqual(
+        """Test for `distro` and `uname` retrievals"""
+        self.assertDictEqual(
             Distro().value,
-            'NAME VERSION (CODENAME) [ARCHITECTURE]'
+            {
+                'name': 'NAME VERSION (CODENAME)',
+                'arch': 'ARCHITECTURE'
+            }
         )
 
     @patch(
@@ -30,20 +33,33 @@ ARCHITECTURE
         return_value=""  # `distro` is soft-failing, returning an empty string...
     )
     @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    @patch(
         'archey.entries.distro.check_output',  # `uname` output
         return_value="""\
 ARCHITECTURE
 """)
-    def test_unknown_distro(self, _, __, ___):
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={'not_detected': 'Not detected'}
+    )
+    def test_unknown_distro_output(self, _, __, ___):
         """Test for `distro` and `uname` outputs concatenation"""
+        distro = Distro()
+
+        output_mock = MagicMock()
+        distro.output(output_mock)
+
+        self.assertDictEqual(
+            distro.value,
+            {
+                'name': None,
+                'arch': 'ARCHITECTURE'
+            }
+        )
         self.assertEqual(
-            Distro().value,
+            output_mock.append.call_args[0][1],
             'Not detected [ARCHITECTURE]'
         )
+
 
 if __name__ == '__main__':
     unittest.main()
