@@ -33,7 +33,7 @@ Swap:          4095          39        4056
         output_mock = MagicMock()
         RAM().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '{0}2043 MiB{1} / 15658 MiB'.format(
                 Colors.GREEN_NORMAL,
                 Colors.CLEAR
@@ -61,7 +61,7 @@ Swap:      7607        5    7602
         output_mock = MagicMock()
         RAM().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '{0}3341 MiB{1} / 7412 MiB'.format(
                 Colors.YELLOW_NORMAL,
                 Colors.CLEAR
@@ -89,7 +89,7 @@ Swap:          4095         160        3935
         output_mock = MagicMock()
         RAM().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args.args[1],
+            output_mock.append.call_args[0][1],
             '{0}12341 MiB{1} / 15658 MiB'.format(
                 Colors.RED_NORMAL,
                 Colors.CLEAR
