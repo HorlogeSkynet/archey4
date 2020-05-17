@@ -8,9 +8,9 @@ from archey.entry import Entry
 
 
 # We detect a terminal by using the following three constants in the order below:
-# First, we try using the value in the `TERM_PROGRAM` enviroment variable.
-# Then, we use `COLORTERM_DICT` to try matching a value with the `COLORTERM` environment variable.
-# Third, we use `TERM_DICT` to try matching a value with the $TERM environment variable.
+# First, we try using the value in the `TERM_PROGRAM` environment variable.
+# Then, we use `COLORTERM_DICT` to try matching a value with the `COLORTERM` one.
+# Third, we use `TERM_DICT` to try matching a value with the `TERM` one.
 # Finally, we fall back to custom environment variables defined in `ENV_DICT`.
 # If none of the above tests find a value, we use whichever value was defined in `$TERM`.
 
@@ -19,7 +19,7 @@ from archey.entry import Entry
 
 
 # This dictionary contains values for the `COLORTERM` environment variable for terminal emulators
-#   which do not propogate any other usable environment variable.
+#   which do not propagate any other usable environment variable.
 # If `COLORTERM` matches one of these values, a normalization is performed with its corresponding
 #   value (i.e. the respective terminal emulator).
 # If the variable does not match any keys in this dictionary, it is ignored.
@@ -29,18 +29,18 @@ COLORTERM_DICT = {
 }
 
 # This dictionary contains values for the `TERM` environment variable for terminal emulators
-#   which do not propogate any other usable environment variable.
+#   which do not propagate any other usable environment variable.
 # If `TERM` matches one of these values, a normalization is performed with its corresponding
 #   value (i.e. the respective terminal emulator).
 # If the variable does not match any keys in this dictionary, it is ignored,
 #   UNLESS it does not begin with `xterm`, at which point its value is taken as the terminal in use.
-#   This behaviour can be overridden by specifying its exact match here.
+#   This behavior can be overridden by specifying its exact match here.
 TERM_DICT = {
     r'xterm-termite': 'Termite',
 }
 
 # This dictionary contains environment variables used to detect terminal emulators...
-#   which do not propagate a usable `COLORTERM`, `TERM`, or `TERM_PROGRAM`.
+#   which do not propagate any usable `COLORTERM`, `TERM`, or `TERM_PROGRAM`.
 # When a key is found in environment, a normalization is performed with its corresponding value.
 ENV_DICT = {
     'ALACRITTY_LOG': 'Alacritty',
@@ -107,6 +107,7 @@ class Terminal(Entry):
             for env_value_re, normalized_name in TERM_DICT.items():
                 if re.match(env_value_re, env_term):
                     return normalized_name
+
             # If we didn't find any match and `TERM` is set to "something special", honor it.
             if not env_term.startswith('xterm'):
                 return env_term

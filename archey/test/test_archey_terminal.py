@@ -107,7 +107,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_terminal_emulator_colorterm_override(self, _):
         """
-        Check we observe terminals using `COLORTERM` even if `TERM` or a known identifier is found.
+        Check we observe terminal using `COLORTERM` even if `TERM` or a "known identifier" is found.
         """
         output = Terminal().value
         self.assertTrue(output.startswith('KMSCON'))
