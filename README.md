@@ -201,6 +201,13 @@ Below, some further explanations of each option available :
 		// `false` would make Archey displays only IPv4 WAN addresses.
 		"wan_ip_v6_support": true
 	},
+	"gpu": {
+		// Display GPUs on multiple lines if set to `false`.
+		"one_line": true,
+		// The maximum number of GPUs you want to display.
+		// `false` --> Unlimited.
+		"max_count": 2
+	},
 	"limits": {
 		// Some threshold values you can adjust affecting disk/ram warning/danger color (percent).
 		"ram": {
