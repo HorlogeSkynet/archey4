@@ -1,22 +1,55 @@
 """Terminal detection class"""
 
 import os
+import re
 
 from archey.colors import Colors
 from archey.entry import Entry
 
 
-# This dictionary contains environment variables used to detect terminal emulators...
-#   which do not propagate `TERM_PROGRAM`.
-# When a key is found in environment, a normalization is performed with its corresponding value.
+# We detect a terminal by using the following three constants in the order below:
+# First, we try using the value in the `TERM_PROGRAM` enviroment variable.
+# Then, we use `COLORTERM_DICT` to try matching a value with the `COLORTERM` environment variable.
+# Third, we use `TERM_DICT` to try matching a value with the $TERM environment variable.
+# Finally, we fall back to custom environment variables defined in `ENV_DICT`.
+# If none of the above tests find a value, we use whichever value was defined in `$TERM`.
+
+# All of the keys in `COLORTERM_DICT` and `TERM_DICT` are matched as regular expressions...
+#   (using `re.match`, i.e. attempting to match once at the beginning of the string), so be careful!
+
+
+# This dictionary contains values for the `COLORTERM` environment variable for terminal emulators
+#   which do not propogate any other usable environment variable.
+# If `COLORTERM` matches one of these values, a normalization is performed with its corresponding
+#   value (i.e. the respective terminal emulator).
+# If the variable does not match any keys in this dictionary, it is ignored.
+COLORTERM_DICT = {
+    r'kmscon': 'KMSCON',
+    r'rxvt': 'rxvt',
+}
+
+# This dictionary contains values for the `TERM` environment variable for terminal emulators
+#   which do not propogate any other usable environment variable.
+# If `TERM` matches one of these values, a normalization is performed with its corresponding
+#   value (i.e. the respective terminal emulator).
+# If the variable does not match any keys in this dictionary, it is ignored,
+#   UNLESS it does not begin with `xterm`, at which point its value is taken as the terminal in use.
+#   This behaviour can be overridden by specifying its exact match here.
 TERM_DICT = {
+    r'xterm-termite': 'Termite',
+}
+
+# This dictionary contains environment variables used to detect terminal emulators...
+#   which do not propagate a usable `COLORTERM`, `TERM`, or `TERM_PROGRAM`.
+# When a key is found in environment, a normalization is performed with its corresponding value.
+ENV_DICT = {
     'ALACRITTY_LOG': 'Alacritty',
     'GNOME_TERMINAL_SCREEN': 'GNOME Terminal',
     'GUAKE_TAB_UUID': 'Guake',
     'KITTY_WINDOW_ID': 'Kitty',
     'KONSOLE_VERSION': 'Konsole',
     'MLTERM': 'MLTERM',
-    'TERMINATOR_UUID': 'Terminator'
+    'TERMINATOR_UUID': 'Terminator',
 }
 
 
@@ -61,13 +94,25 @@ class Terminal(Entry):
         if env_term_program:
             return env_term_program
 
-        # Secondly, if `TERM` is set to "something special", honor it.
+        # Second, check if we have any matches as defined in our `COLORTERM` constant dict.
+        env_colorterm = os.getenv('COLORTERM')
+        if env_colorterm:
+            for env_value_re, normalized_name in COLORTERM_DICT.items():
+                if re.match(env_value_re, env_colorterm):
+                    return normalized_name
+
+        # Third, check if we have any matches defined in our `TERM` constant dict.
         env_term = os.getenv('TERM')
-        if env_term and not env_term.startswith('xterm'):
-            return env_term
+        if env_term:
+            for env_value_re, normalized_name in TERM_DICT.items():
+                if re.match(env_value_re, env_term):
+                    return normalized_name
+            # If we didn't find any match and `TERM` is set to "something special", honor it.
+            if not env_term.startswith('xterm'):
+                return env_term
 
         # If not, try to find a "known identifier" and perform name normalization...
-        for env_var, normalized_name in TERM_DICT.items():
+        for env_var, normalized_name in ENV_DICT.items():
             if env_var in os.environ:
                 return normalized_name
 

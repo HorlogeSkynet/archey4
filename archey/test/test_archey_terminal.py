@@ -15,6 +15,7 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.entries.terminal.os.environ',
         {
             'TERM': 'xterm-256color',
+            'COLORTERM': 'truecolor',
             'TERM_PROGRAM': 'A-COOL-TERMINAL-EMULATOR'
         },
         clear=True
@@ -24,7 +25,7 @@ class TestTerminalEntry(unittest.TestCase):
         return_value={'use_unicode': False}
     )
     def test_terminal_emulator_term_program(self, _):
-        """Check that `TERM_PROGRAM` is honored even if `TERM` is defined"""
+        """Check that `TERM_PROGRAM` is honored even if `TERM` or `COLORTERM` is defined"""
         output = Terminal().value
         self.assertTrue(output.startswith('A-COOL-TERMINAL-EMULATOR'))
 
@@ -72,10 +73,44 @@ class TestTerminalEntry(unittest.TestCase):
         return_value={'use_unicode': True}
     )
     def test_terminal_emulator_term_fallback_and_unicode(self, _):
-        """Chek that `TERM` is honored if present, and Unicode support for the colors palette"""
+        """Check that `TERM` is honored if present, and Unicode support for the colors palette"""
         output = Terminal().value
         self.assertTrue(output.startswith('xterm-256color'))
         self.assertEqual(output.count('\u2588'), 7 * 2)
+
+    @patch.dict(
+        'archey.entries.terminal.os.environ',
+        {'COLORTERM': 'kmscon'},
+        clear=True
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={'use_unicode': False}
+    )
+    def test_terminal_emulator_colorterm(self, _):
+        """Check we can detect terminals using the `COLORTERM` environment variable."""
+        output = Terminal().value
+        self.assertTrue(output.startswith('KMSCON'))
+
+    @patch.dict(
+        'archey.entries.terminal.os.environ',
+        {
+            'TERM': 'xterm-256color',
+            'KONSOLE_VERSION': '200401',
+            'COLORTERM': 'kmscon'
+        },
+        clear=True
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={'use_unicode': False}
+    )
+    def test_terminal_emulator_colorterm_override(self, _):
+        """
+        Check we observe terminals using `COLORTERM` even if `TERM` or a known identifier is found.
+        """
+        output = Terminal().value
+        self.assertTrue(output.startswith('KMSCON'))
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
