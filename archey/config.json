@@ -31,8 +31,8 @@
 		"virtual_environment": "Virtual Environment"
 	},
 	"gpu": {
-		"one_line": false,
-		"max_count": false
+		"one_line": true,
+		"max_count": 2
 	},
 	"ip_settings": {
 		"lan_ip_max_count": 2,
