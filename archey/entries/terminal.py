@@ -13,6 +13,7 @@ TERM_DICT = {
     'ALACRITTY_LOG': 'Alacritty',
     'GNOME_TERMINAL_SCREEN': 'GNOME Terminal',
     'GUAKE_TAB_UUID': 'Guake',
+    'KITTY_WINDOW_ID': 'Kitty',
     'KONSOLE_VERSION': 'Konsole',
     'MLTERM': 'MLTERM',
     'TERMINATOR_UUID': 'Terminator'
@@ -27,8 +28,10 @@ class Terminal(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        terminal_emulator = self._detect_terminal_emulator() or \
-            self._configuration.get('default_strings')['not_detected']
+        terminal_emulator = (
+            self._detect_terminal_emulator()
+            or self._configuration.get('default_strings')['not_detected']
+        )
         colors_palette = self._get_colors_palette()
 
         self.value = '{0} {1}'.format(terminal_emulator, colors_palette)
