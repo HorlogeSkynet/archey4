@@ -27,6 +27,9 @@ class Output:
     It also handles the logo choice based on some system detections.
     """
     def __init__(self):
+        # Fetch a reference to `Configuration` singleton in this class.
+        self._configuration = Configuration()
+
         # First we check whether the Kernel has been compiled as a WSL.
         if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
             self._distribution = Distributions.WINDOWS
@@ -51,7 +54,7 @@ class Output:
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ANSI_COLOR=>.
         ansi_color = distro.os_release_attr('ansi_color')
-        if ansi_color and Configuration().get('colors_palette')['honor_ansi_color']:
+        if ansi_color and self._configuration.get('colors_palette')['honor_ansi_color']:
             # Replace each Archey integrated colors by `ANSI_COLOR`.
             self._colors_palette = len(self._colors_palette) * \
                 [Colors.escape_code_from_attrs(ansi_color)]
@@ -65,14 +68,14 @@ class Output:
         """Append an entry to the list of entries to output"""
         self._entries.append(module)
 
-    def append(self, key, value):
+    def append(self, data):
         """Append a pre-formatted entry to the final output content"""
         self._results.append(
             '{color}{key}:{clear} {value}'.format(
                 color=self._colors_palette[0],
-                key=key,
+                key=data[0],
                 clear=Colors.CLEAR,
-                value=value
+                value=(data[1] or self._configuration('default_strings')['not_detected'])
             )
         )
 

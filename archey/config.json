@@ -30,6 +30,10 @@
 		"not_detected": "Not detected",
 		"virtual_environment": "Virtual Environment"
 	},
+	"gpu": {
+		"one_line": false,
+		"max_count": false
+	},
 	"ip_settings": {
 		"lan_ip_max_count": 2,
 		"lan_ip_v6_support": true,
