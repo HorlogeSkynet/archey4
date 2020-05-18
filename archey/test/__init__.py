@@ -25,5 +25,6 @@ class TestCustomAssertions(unittest.TestCase, CustomAssertions):
     def test_assert_list_empty(self):
         """Test cases for our `self.assertListEmpty` custom assertion"""
         self.assertListEmpty([])
-        self.assertRaises(AssertionError, self.assertListEmpty, 'test')
         self.assertRaises(AssertionError, self.assertListEmpty, {})
+        self.assertRaises(AssertionError, self.assertListEmpty, 'test')
+        self.assertRaises(AssertionError, self.assertListEmpty, ['test'])
