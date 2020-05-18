@@ -87,6 +87,41 @@ total                  305809MB 257598MB   46130MB      84% -
         'archey.entries.disk.check_output',
         side_effect=[
             """\
+Filesystem       1000000-blocks     Used Available Capacity Mounted on
+/dev/mapper/root        39101MB  14216MB   22870MB      39% /
+/dev/sda1                 967MB     91MB     810MB      11% /boot
+/dev/mapper/home       265741MB 243291MB   22450MB      92% /home
+total                  305809MB 257598MB   46130MB      84% -
+""",
+            # Second `df` call will fail.
+            CalledProcessError(1, 'df', "df: no file systems processed\n")
+        ]
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        return_value={
+            'disk': {
+                'warning': 50,
+                'danger': 80
+            }
+        }
+    )
+    def test_df_only_danger(self, _, __):
+        """Test computations around `df` output at disk danger level"""
+        output_mock = MagicMock()
+        Disk().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '{0}251.6 GiB{1} / 298.6 GiB'.format(
+                Colors.RED_NORMAL,
+                Colors.CLEAR
+            )
+        )
+
+    @patch(
+        'archey.entries.disk.check_output',
+        side_effect=[
+            """\
 Filesystem       1000000-blocks    Used Available Capacity Mounted on
 /dev/mapper/root        39101MB 14216MB   22870MB      39% /
 /dev/sda1                 967MB    91MB     810MB      11% /boot
