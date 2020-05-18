@@ -66,7 +66,7 @@ def main():
     parser.add_argument(
         '-j', '--json',
         action='count',
-        help='output entries data to JSON format'
+        help='output entries data to JSON format, use multiple times to increase indentation'
     )
     parser.add_argument(
         '-v', '--version',
