@@ -3,6 +3,7 @@
 import unittest
 
 
+# This global stops `unittest` from printing tracebacks _beyond_ our custom assertion.
 # See <https://stackoverflow.com/a/49929579>.
 __unittest = True  # pylint: disable=invalid-name
 
