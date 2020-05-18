@@ -5,10 +5,11 @@ from unittest.mock import MagicMock, patch
 
 from netifaces import AF_INET, AF_INET6, AF_LINK
 
+from archey.test import CustomAssertions
 from archey.entries.lan_ip import LanIp
 
 
-class TestLanIpEntry(unittest.TestCase):
+class TestLanIpEntry(unittest.TestCase, CustomAssertions):
     """Here, we mock the `netifaces` usages (interfaces and addresses detection calls)"""
     @patch(
         'archey.entries.lan_ip.netifaces.interfaces',
@@ -202,7 +203,7 @@ class TestLanIpEntry(unittest.TestCase):
     )
     def test_no_network_interface(self, _, __):
         """Test when the device does not have any network interface"""
-        self.assertFalse(LanIp().value)
+        self.assertListEmpty(LanIp().value)
 
     @patch(
         'archey.entries.lan_ip.netifaces.interfaces',
@@ -249,7 +250,7 @@ class TestLanIpEntry(unittest.TestCase):
         output_mock = MagicMock()
         lan_ip.output(output_mock)
 
-        self.assertFalse(lan_ip.value)
+        self.assertListEmpty(lan_ip.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             'No address'

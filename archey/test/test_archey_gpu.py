@@ -5,10 +5,11 @@ from unittest.mock import MagicMock, patch
 
 from subprocess import CalledProcessError
 
+from archey.test import CustomAssertions
 from archey.entries.gpu import GPU
 
 
-class TestGPUEntry(unittest.TestCase):
+class TestGPUEntry(unittest.TestCase, CustomAssertions):
     """Here, we mock the `check_output` call to `lspci` to test the logic"""
     @patch(
         'archey.configuration.Configuration.get',
@@ -125,7 +126,7 @@ XX:YY.H Audio device: DDDDDDDDDDDDDDDD
         output_mock = MagicMock()
         gpu.output(output_mock)
 
-        self.assertFalse(gpu.value)
+        self.assertListEmpty(gpu.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             'Not detected'
@@ -150,7 +151,7 @@ XX:YY.H Audio device: DDDDDDDDDDDDDDDD
         output_mock = MagicMock()
         gpu.output(output_mock)
 
-        self.assertFalse(gpu.value)
+        self.assertListEmpty(gpu.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             'Not detected'

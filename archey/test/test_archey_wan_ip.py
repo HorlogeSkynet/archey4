@@ -7,10 +7,10 @@ from socket import timeout as SocketTimeoutError
 from subprocess import TimeoutExpired
 from urllib.error import URLError
 
+from archey.test import CustomAssertions
 from archey.entries.wan_ip import WanIp
 
-
-class TestWanIpEntry(unittest.TestCase):
+class TestWanIpEntry(unittest.TestCase, CustomAssertions):
     """
     Here, we mock calls to `dig` or `urlopen`.
     """
@@ -110,7 +110,7 @@ class TestWanIpEntry(unittest.TestCase):
     )
     def test_ipv4_timeout_twice(self, _, __, ___):
         """Test when both `dig` and `URLOpen` trigger timeouts..."""
-        self.assertFalse(WanIp().value)
+        self.assertListEmpty(WanIp().value)
 
     @patch(
         'archey.entries.wan_ip.check_output',
@@ -130,7 +130,7 @@ class TestWanIpEntry(unittest.TestCase):
     )
     def test_ipv4_timeout_twice_socket_error(self, _, __, ___):
         """Test when both `dig` timeouts and `URLOpen` raises `socket.timeout`..."""
-        self.assertFalse(WanIp().value)
+        self.assertListEmpty(WanIp().value)
 
     @patch(
         'archey.entries.wan_ip.check_output',
@@ -158,7 +158,7 @@ class TestWanIpEntry(unittest.TestCase):
         output_mock = MagicMock()
         wan_ip.output(output_mock)
 
-        self.assertFalse(wan_ip.value)
+        self.assertListEmpty(wan_ip.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             'No Address'
