@@ -21,12 +21,13 @@ class Uptime(Entry):
 
         days, uptime_seconds = divmod(uptime_seconds, 86400)
         hours, uptime_seconds = divmod(uptime_seconds, 3600)
-        minutes = uptime_seconds // 60
+        minutes, seconds = divmod(uptime_seconds, 60)
 
         self.value = {
             'days': days,
             'hours': hours,
             'minutes': minutes,
+            'seconds': seconds
         }
 
     def _get_uptime_delta(self):

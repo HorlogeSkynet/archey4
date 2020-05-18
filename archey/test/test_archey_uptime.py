@@ -21,8 +21,20 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_warming_up(self):
         """Test when the device has just been started..."""
+        uptime = Uptime()
+
         output_mock = MagicMock()
-        Uptime().output(output_mock)
+        uptime.output(output_mock)
+
+        self.assertDictEqual(
+            uptime.value,
+            {
+                'days': 0,
+                'hours': 0,
+                'minutes': 0,
+                'seconds': 0
+            }
+        )
         self.assertEqual(
             output_mock.append.call_args[0][1],
             '< 1 minute'
@@ -79,14 +91,26 @@ class TestUptimeEntry(unittest.TestCase):
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='259380.99 XXXX.XX\n'
+            read_data='259381.99 XXXX.XX\n'
         ),
         create=True
     )
     def test_days_and_minutes(self):
         """Test when only days AND minutes should be displayed"""
+        uptime = Uptime()
+
         output_mock = MagicMock()
-        Uptime().output(output_mock)
+        uptime.output(output_mock)
+
+        self.assertDictEqual(
+            uptime.value,
+            {
+                'days': 3,
+                'hours': 0,
+                'minutes': 3,
+                'seconds': 1
+            }
+        )
         self.assertEqual(
             output_mock.append.call_args[0][1],
             '3 days and 3 minutes'
