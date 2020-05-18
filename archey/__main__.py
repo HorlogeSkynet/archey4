@@ -65,7 +65,7 @@ def main():
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
         '-j', '--json',
-        action='store_true',
+        action='count',
         help='output entries data to JSON format'
     )
     parser.add_argument(

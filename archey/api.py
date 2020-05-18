@@ -16,10 +16,10 @@ class API:
     def __init__(self, entries):
         self.entries = entries
 
-    def json_serialization(self, pretty_print=False):
+    def json_serialization(self, indent=None):
         """
         JSON serialization of entries.
-        Set `pretty_print` to `True` to enable output indentation.
+        Set `indent` to the number of wanted output indentation tabs (2-space long).
 
         Note: For Python < 3.6, the keys order is not guaranteed.
         """
@@ -34,9 +34,12 @@ class API:
         for entry in self.entries:
             document['data'][entry.name] = entry.value
 
+        if indent:
+            indent = (indent - 1) * 2
+
         return json.dumps(
             document,
-            indent=(4 if pretty_print else None)
+            indent=(indent or None)
         )
 
     @staticmethod
