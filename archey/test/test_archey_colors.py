@@ -58,6 +58,10 @@ class TestColorsUtil(unittest.TestCase):
             Colors.remove_colors('\x1b[0;31mTEST\x1b[0;0m'),
             'TEST'
         )
+        self.assertEqual(
+            Colors.remove_colors('\x1b[0nTEST\xde\xad\xbe\xaf'),
+            '\x1b[0nTEST\xde\xad\xbe\xaf'
+        )
 
 
 if __name__ == '__main__':
