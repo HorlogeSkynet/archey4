@@ -60,7 +60,7 @@ class TestApiUtil(unittest.TestCase):
         for semver_segment in output_json_document['meta']['version']:
             self.assertTrue(isinstance(semver_segment, int))
         # Check that generated `date` meta-data is correct and not in the future.
-        self.assertGreater(
+        self.assertGreaterEqual(
             datetime.now(),
             # `datetime.fromisoformat` is not available for Python < 3.7, so we parse it manually.
             #datetime.fromisoformat(output_json_document['meta']['date'])
