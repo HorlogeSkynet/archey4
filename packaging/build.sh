@@ -123,14 +123,14 @@ done
 
 
 # Build an Arch Linux (.TAR.XZ) package.
-ARCH_LINUX_PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
-echo "Now generating Arch Linux package (Python ${python_version})..."
+PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
+echo "Now generating Arch Linux package (Python ${PYTHON_VERSION})..."
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type pacman \
 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
 	--depends 'procps-ng' \
-	--depends "python>=${ARCH_LINUX_PYTHON_VERSION}" \
+	--depends "python>=${PYTHON_VERSION}" \
 	--depends 'python-distro' \
 	--depends 'python-netifaces' \
 	--conflicts 'archey-git' \
@@ -138,7 +138,7 @@ fpm \
 	--conflicts 'archey3-git' \
 	--conflicts 'pyarchey' \
 	--python-install-bin usr/bin \
-	--python-install-lib "usr/lib/python${ARCH_LINUX_PYTHON_VERSION}/site-packages" \
+	--python-install-lib "usr/lib/python${PYTHON_VERSION}/site-packages" \
 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
