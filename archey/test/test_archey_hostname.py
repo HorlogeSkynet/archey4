@@ -22,7 +22,8 @@ MY-COOL-LAPTOP
 
     @patch(
         'archey.entries.hostname.open',
-        side_effect=FileNotFoundError()
+        side_effect=FileNotFoundError(),
+        create=True
     )
     @patch(
         'archey.entries.hostname.check_output',
