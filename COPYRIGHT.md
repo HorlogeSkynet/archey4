@@ -25,4 +25,11 @@ See <https://www.gnu.org/licenses/gpl-3.0.txt> for the full license text.
 * Configurable thresholds for disk and RAM colors by Chris Roth (@czr137)
 * BTRFS disk support proper implementation (and much more) by Michael Bromilow (@ingrinder).
 
-Currently maintained (and packaged) by Samuel Forestier <dev+archey@samuel.domains>
+## Maintainers
+
+* Michael Bromilow (@ingrinder)
+* Samuel Forestier (@HorlogeSkynet) <dev+archey@samuel.domains>
+
+## Packager(s)
+
+* Samuel Forestier (@HorlogeSkynet) <dev+archey@samuel.domains>
