@@ -1,0 +1,65 @@
+.\" Please, before submitting any change, run:
+.\" `groff -man -Tascii -z archey4.1`
+
+.TH ARCHEY4 1 "${DATE}" "archey4 ${VERSION}" "Archey4 man page"
+
+.SH NAME
+archey4 \- A simple system information tool written in Python
+
+.SH SYNOPSIS
+\fBarchey\fR [options]
+.br
+\fBarchey4\fR [options]
+
+.SH DESCRIPTION
+Archey4 is a \fBmaintained\fR fork of the original Archey Linux system
+tool.
+.br
+The original Archey program had been written by Melik Manukyan
+in 2009, and quickly abandoned in 2011.
+.br
+At first, it only supported Arch Linux distribution, further support
+had been added afterwards.
+.br
+Many forks popped in the wild due to inactivity, but this one attends
+since 2017 to succeed where the others failed:
+.br
+Remain \fImaintained\fR, \fIcommunity-driven\fR and
+\fIhighly-compatible\fR with yesterday's and today's systems.
+
+.SH OPTIONS
+.IP "-h, --help"
+show help message and exit
+
+.IP "-v, --version"
+show program's version number and exit
+
+.IP "-j, --json"
+output entries data to JSON format, use multiple times to increase
+indentation
+
+.P
+Archey will regularly run in terminal text output mode if no argument
+is passed.
+
+.SH EXIT STATUS
+Archey exits with \fB0\fR on success.
+.br
+It exits with \fB1\fR on failure, including when PS(1) is unavailable.
+.br
+On arguments parsing error, it exits with \fB2\fR.
+
+.SH FILES
+.I /etc/archey4/config.json
+.br
+.I ~/.config/archey4/config.json
+.PP
+Please refer to \fBREADME.md\fR for further documentation about
+configuration files.
+
+.SH BUGS
+Please report any bug to <https://github.com/HorlogeSkynet/archey4/> or
+<mailto:dev+archey@samuel.domains>.
+
+.SH SEE ALSO
+NEOFETCH(1), SCREENFETCH(1)

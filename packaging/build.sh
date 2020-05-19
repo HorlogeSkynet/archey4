@@ -54,7 +54,7 @@ FPM_COMMON_ARGS=(
 	--category 'utils' \
 	--provides 'archey' \
 	--provides 'archey4' \
-	--config-files "etc/archey4" \
+	--config-files "etc/archey4/" \
 	--config-files "etc/archey4/config.json" \
 	--architecture all \
 	--maintainer "${AUTHOR} <${AUTHOR_EMAIL}>" \
@@ -62,6 +62,8 @@ FPM_COMMON_ARGS=(
 	--after-upgrade packaging/after_install \
 	--before-remove packaging/before_remove \
 	--python-bin python3 \
+	--python-install-bin usr/bin/ \
+	--python-install-data usr/ \
 	--no-python-fix-name \
 	--no-python-dependencies \
 )
@@ -71,7 +73,12 @@ echo ">>> Packages generation for ${NAME}_v${VERSION}-${REVISION} <<<"
 
 
 # Prepare the configuration file under a regular `etc/` directory.
-mkdir -p etc/archey4 && cp archey/config.json etc/archey4/config.json
+mkdir -p etc/archey4/ && \
+	cp archey/config.json etc/archey4/config.json
+# Prepare and compress the manual page.
+sed -e "s/\${DATE}/$(date +'%B %Y')/1" archey.1 | \
+	sed -e "s/\${VERSION}/${VERSION}/1" | \
+		gzip -c --best - > "${DIST_OUTPUT}/archey.1.gz"
 
 
 # Prevent Setuptools from generating byte-code files.
@@ -88,8 +95,7 @@ fpm \
 	--depends 'python3 >= 3.4' \
 	--depends 'python3-distro' \
 	--depends 'python3-netifaces' \
-	--python-install-bin usr/bin \
-	--python-install-lib usr/lib/python3/dist-packages \
+	--python-install-lib usr/lib/python3/dist-packages/ \
 	--deb-priority 'optional' \
 	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what, btrfs-progs' \
 	--deb-no-default-config-files \
@@ -116,8 +122,7 @@ for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 		--depends "python3 >= ${python_version}" \
 		--depends 'python3-distro' \
 		--depends 'python3-netifaces' \
-		--python-install-bin usr/bin \
-		--python-install-lib "usr/lib/python${python_version}/site-packages" \
+		--python-install-lib "usr/lib/python${python_version}/site-packages/" \
 		setup.py
 done
 
@@ -137,8 +142,7 @@ fpm \
 	--conflicts 'archey2' \
 	--conflicts 'archey3-git' \
 	--conflicts 'pyarchey' \
-	--python-install-bin usr/bin \
-	--python-install-lib "usr/lib/python${PYTHON_VERSION}/site-packages" \
+	--python-install-lib "usr/lib/python${PYTHON_VERSION}/site-packages/" \
 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
