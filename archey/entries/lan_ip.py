@@ -1,6 +1,11 @@
 """Local IP addresses detection class"""
 
-import netifaces
+import sys
+
+try:
+    import netifaces
+except ImportError:
+    netifaces = None
 
 from archey.entry import Entry
 
@@ -9,6 +14,16 @@ class LanIp(Entry):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if not netifaces:
+            print(
+                """\
+Warning: `netifaces` Python module couldn\'t be found.
+Please either install it or disable `LAN_IP` entry in configuration.\
+""",
+                file=sys.stderr
+            )
+            return
 
         address_types = [netifaces.AF_INET]
         if self._configuration.get('ip_settings')['lan_ip_v6_support']:
@@ -42,8 +57,12 @@ class LanIp(Entry):
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting the IP address list."""
         # If we found IP addresses, join them together nicely.
-        # If not, fall-back on the "No address" string.
-        output.append(
-            self.name,
-            ', '.join(self.value) or self._configuration.get('default_strings')['no_address']
-        )
+        # If not, fall back on default strings according to `netifaces` availability.
+        if self.value:
+            text_output = ', '.join(self.value)
+        elif netifaces:
+            text_output = self._configuration.get('default_strings')['no_address']
+        else:
+            text_output = self._configuration.get('default_strings')['not_detected']
+
+        output.append(self.name, text_output)

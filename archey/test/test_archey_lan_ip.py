@@ -256,6 +256,29 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
             'No address'
         )
 
+    @patch(
+        'archey.entries.lan_ip.netifaces',
+        None  # Imitate an `ImportError` behavior.
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        side_effect=[
+            {'not_detected': 'Not detected'}
+        ]
+    )
+    def test_netifaces_not_available(self, _):
+        """Check `netifaces` is really acting as a (soft-)dependency"""
+        lan_ip = LanIp()
+
+        output_mock = MagicMock()
+        lan_ip.output(output_mock)
+
+        self.assertIsNone(lan_ip.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'Not detected'
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
