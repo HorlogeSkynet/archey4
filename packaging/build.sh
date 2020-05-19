@@ -127,29 +127,33 @@ for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 done
 
 
-# Build an Arch Linux (.TAR.XZ) package.
-PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
-echo "Now generating Arch Linux package (Python ${PYTHON_VERSION})..."
-fpm \
-	"${FPM_COMMON_ARGS[@]}" \
-	--output-type pacman \
-	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
-	--depends 'procps-ng' \
-	--depends "python>=${PYTHON_VERSION}" \
-	--depends 'python-distro' \
-	--depends 'python-netifaces' \
-	--conflicts 'archey-git' \
-	--conflicts 'archey2' \
-	--conflicts 'archey3-git' \
-	--conflicts 'pyarchey' \
-	--python-install-lib "usr/lib/python${PYTHON_VERSION}/site-packages/" \
-	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
-	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
-	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
-	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
-	--pacman-optional-depends 'virt-what: Model would contain details about the hypervisor' \
-	--pacman-optional-depends 'btrfs-progs: Disk would support BTRFS in usage computations' \
-	setup.py
+## -----------------------------------------------------------------------------------
+## v4.7.2+ : Arch Linux package proposed as GitHub assets will now be built from AUR.
+## See <https://aur.archlinux.org/packages/archey4/>.
+## -----------------------------------------------------------------------------------
+# # Build an Arch Linux (.TAR.XZ) package.
+# PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
+# echo "Now generating Arch Linux package (Python ${PYTHON_VERSION})..."
+# fpm \
+# 	"${FPM_COMMON_ARGS[@]}" \
+# 	--output-type pacman \
+# 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
+# 	--depends 'procps-ng' \
+# 	--depends "python>=${PYTHON_VERSION}" \
+# 	--depends 'python-distro' \
+# 	--depends 'python-netifaces' \
+# 	--conflicts 'archey-git' \
+# 	--conflicts 'archey2' \
+# 	--conflicts 'archey3-git' \
+# 	--conflicts 'pyarchey' \
+# 	--python-install-lib "usr/lib/python${PYTHON_VERSION}/site-packages/" \
+# 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
+# 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
+# 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
+# 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
+# 	--pacman-optional-depends 'virt-what: Model would contain details about the hypervisor' \
+# 	--pacman-optional-depends 'btrfs-progs: Disk would support BTRFS in usage computations' \
+# 	setup.py
 
 
 # Remove the fake `etc/` directory.
