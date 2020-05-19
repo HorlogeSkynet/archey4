@@ -100,7 +100,9 @@ class Output:
         See `archey.api.JSONAPI` for further documentation.
         """
         print(
-            API(self._entries).json_serialization(indent=self._format_to_json)
+            API(self._entries).json_serialization(
+                indent=(self._format_to_json - 1)
+            )
         )
 
     def _output_text(self):

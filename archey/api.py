@@ -34,12 +34,9 @@ class API:
         for entry in self.entries:
             document['data'][entry.name] = entry.value
 
-        if indent:
-            indent = (indent - 1) * 2
-
         return json.dumps(
             document,
-            indent=(indent or None)
+            indent=((indent * 2) or None)
         )
 
     @staticmethod

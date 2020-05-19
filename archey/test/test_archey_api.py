@@ -36,7 +36,16 @@ class TestApiUtil(unittest.TestCase):
             mocked_entries[idx].name = name
 
         api_instance = API(mocked_entries)
-        output_json_document = json.loads(api_instance.json_serialization())
+        json_serialization = api_instance.json_serialization(
+            # Imitates an execution with `-jjj`.
+            indent=2
+        )
+        output_json_document = json.loads(json_serialization)
+
+        # Indentation verification (all bar first and last lines must begin with two tabs).
+        self.assertTrue(
+            all(line.startswith('    ') for line in json_serialization.splitlines()[1:-2])
+        )
 
         # Output data verifications.
         self.assertIn('data', output_json_document)
