@@ -10,7 +10,17 @@ class Hostname(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = check_output(
-            ['uname', '-n'],
-            universal_newlines=True
-        ).rstrip()
+        self.value = self._read_etc_hostname()
+        if not self.value:
+            self.value = check_output(
+                ['uname', '-n'],
+                universal_newlines=True
+            ).rstrip()
+
+    @staticmethod
+    def _read_etc_hostname():
+        try:
+            with open('/etc/hostname') as f_hostname:
+                return f_hostname.read().rstrip()
+        except FileNotFoundError:
+            return None
