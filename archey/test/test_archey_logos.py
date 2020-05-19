@@ -2,6 +2,7 @@
 
 import unittest
 
+from archey.colors import Colors
 from archey.distributions import Distributions
 from archey.constants import LOGOS_DICT
 from archey.logos import get_logo_width
@@ -20,14 +21,26 @@ class TestLogosModule(unittest.TestCase):
             # Make Archey compute the logo width.
             logo_width = get_logo_width(LOGOS_DICT[distribution])
             # Then, check that each logo line got the same effective width.
-            for line in LOGOS_DICT[distribution][1:]:
-                self.assertEqual(get_logo_width([line]), logo_width)
+            for i, line in enumerate(LOGOS_DICT[distribution][1:], start=1):
+                line_width = get_logo_width([line])
+                self.assertEqual(
+                    line_width,
+                    logo_width,
+                    msg='[{0}] line index {1}, got an unexpected width {2} (expected {3})'.format(
+                        distribution, i, line_width, logo_width
+                    )
+                )
 
     def test_distribution_logos_no_empty_lines(self):
         """Check that distribution logos do not contain (useless) empty lines"""
         for distribution in Distributions:
-            for line in LOGOS_DICT[distribution]:
-                self.assertTrue(line.strip())
+            for i, line in enumerate(LOGOS_DICT[distribution]):
+                self.assertTrue(
+                    Colors.remove_colors(line).strip(),
+                    msg='[{0}] line index {1}, got a forbidden empty line'.format(
+                        distribution, i
+                    )
+                )
 
     def test_get_logo_width(self):
         """Test `logos.get_logo_width` behavior"""
