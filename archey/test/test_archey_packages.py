@@ -1,5 +1,6 @@
 """Test module for Archey's installed system packages detection module"""
 
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -11,6 +12,9 @@ class TestPackagesEntry(unittest.TestCase):
     Here, we mock the `check_output` calls and check afterwards
       that the outputs are correct.
     Sorry for the code style, mocking this class is pretty boring.
+
+    Note: Due to the presence of trailing spaces, we may have to manually
+            "inject" the OS line separator in some mocked outputs.
     """
     @patch(
         'archey.entries.packages.check_output',
@@ -93,13 +97,13 @@ These are the packages that would be merged, in order:
 
 Calculating dependencies  ... done!
 [ebuild     U  ] sys-libs/glibc-2.25-r10 [2.25-r9]
-[ebuild   R    ] sys-apps/busybox-1.28.0 \n\
+[ebuild   R    ] sys-apps/busybox-1.28.0 {linesep}\
 [ebuild  N     ] sys-libs/libcap-2.24-r2  \
-USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
+USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" {linesep}\
 [ebuild     U  ] app-misc/pax-utils-1.2.2-r2 [1.1.7]
-[ebuild   R    ] x11-misc/shared-mime-info-1.9 \n\
+[ebuild   R    ] x11-misc/shared-mime-info-1.9 {linesep}\
 
-"""])
+""".format(linesep=os.linesep)])
     def test_match_with_emerge(self, _):
         """Simple test for the Emerge packages manager"""
         self.assertEqual(Packages().value, 5)
@@ -155,10 +159,10 @@ MySQL-client-3.23.57-1
 Loaded plugins: fastestmirror, langpacks
 Installed Packages
 GConf2.x86_64                   3.2.6-8.el7         @base/$releasever
-GeoIP.x86_64                    1.5.0-11.el7        @base            \n\
-ModemManager.x86_64             1.6.0-2.el7         @base            \n\
-ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
-"""])
+GeoIP.x86_64                    1.5.0-11.el7        @base            {linesep}\
+ModemManager.x86_64             1.6.0-2.el7         @base            {linesep}\
+ModemManager-glib.x86_64        1.6.0-2.el7         @base            {linesep}\
+""".format(linesep=os.linesep)])
     def test_match_with_yum(self, _):
         """Simple test for the Yum packages manager"""
         self.assertEqual(Packages().value, 4)
@@ -178,14 +182,14 @@ ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
 Loading repository data...
 Reading installed packages...
 
-S  | Name          | Summary                             | Type       \n\
+S  | Name          | Summary                             | Type       {linesep}\
 ---+---------------+-------------------------------------+------------
-i+ | 5201          | Recommended update for xdg-utils    | patch      \n\
-i  | GeoIP-data    | Free GeoLite country-data for GeoIP | package    \n\
-i  | make          | GNU make                            | package    \n\
+i+ | 5201          | Recommended update for xdg-utils    | patch      {linesep}\
+i  | GeoIP-data    | Free GeoLite country-data for GeoIP | package    {linesep}\
+i  | make          | GNU make                            | package    {linesep}\
 i  | GNOME Nibbles | Guide a worm around a maze          | application
-i  | at            | A Job Manager                       | package    \n\
-"""])
+i  | at            | A Job Manager                       | package    {linesep}\
+""".format(linesep=os.linesep)])
     def test_match_with_zypper(self, _):
         """Simple test for the Zypper packages manager"""
         self.assertEqual(Packages().value, 5)
