@@ -262,8 +262,7 @@ class TestUptimeEntry(unittest.TestCase):
     )
     @patch(
         'archey.entries.uptime.check_output',
-        side_effect=FileNotFoundError(),
-        create=True
+        side_effect=FileNotFoundError()
     )
     @patch.object(
         Uptime,
