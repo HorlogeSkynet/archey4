@@ -118,7 +118,7 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
     )
     @patch(
         'archey.entries.wan_ip.urlopen',
-        side_effect=SocketTimeoutError('The read operation timed out')  # `urlopen` call will fail
+        side_effect=SocketTimeoutError(1)  # `urlopen` call will fail
     )
     @patch(
         'archey.configuration.Configuration.get',
