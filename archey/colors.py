@@ -6,7 +6,7 @@ from enum import Enum
 import re
 
 
-# REGEXP compiled pattern matching ANSI/ECMA-48 escape codes.
+# REGEXP compiled pattern matching ANSI/ECMA-48 color escape codes.
 ANSI_ECMA_REGEXP = re.compile(r'\x1b\[\d+(?:(?:;\d+)+)?m')
 
 
@@ -51,3 +51,8 @@ class Colors(Enum):
         level_colors = (Colors.GREEN_NORMAL, Colors.YELLOW_NORMAL, Colors.RED_NORMAL)
 
         return level_colors[bisect((yellow_bpt, red_bpt), value)]
+
+    @staticmethod
+    def remove_colors(string):
+        """Simple DRY method to remove any ANSI/ECMA-48 color escape code from passed `string`"""
+        return ANSI_ECMA_REGEXP.sub('', string)

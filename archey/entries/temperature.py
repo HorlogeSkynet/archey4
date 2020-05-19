@@ -32,7 +32,6 @@ class Temperature(Entry):
 
         # No value could be fetched...
         if not self._temps:
-            self.value = self._configuration.get('default_strings')['not_detected']
             return
 
         # Let's DRY some constants once.
@@ -41,23 +40,16 @@ class Temperature(Entry):
 
         # Conversion to Fahrenheit if needed.
         if use_fahrenheit:
-            for i in range(len(self._temps)):
-                self._temps[i] = self._convert_to_fahrenheit(self._temps[i])
+            self._temps = list(map(self._convert_to_fahrenheit, self._temps))
 
-        # Final average computation.
-        self.value = '{0}{1}{2}'.format(
-            str(round(sum(self._temps) / len(self._temps), 1)),
-            char_before_unit,
-            'F' if use_fahrenheit else 'C'
-        )
+        # Final average and maximum computations.
+        self.value = {
+            'temperature': float(round(sum(self._temps) / len(self._temps), 1)),
+            'max_temperature': float(round(max(self._temps), 1)),
+            'char_before_unit': char_before_unit,
+            'unit': ('F' if use_fahrenheit else 'C')
+        }
 
-        # Multiple values ? Show the hottest.
-        if len(self._temps) > 1:
-            self.value += ' (Max. {0}{1}{2})'.format(
-                str(round(max(self._temps), 1)),
-                char_before_unit,
-                'F' if use_fahrenheit else 'C'
-            )
 
     def _run_sensors(self, whitelisted_chips):
         # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.
@@ -122,7 +114,33 @@ class Temperature(Entry):
 
     @staticmethod
     def _convert_to_fahrenheit(temp):
-        """
-        Simple Celsius to Fahrenheit conversion method
-        """
+        """Simple Celsius to Fahrenheit conversion method"""
         return temp * (9 / 5) + 32
+
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting with units."""
+        if not self.value:
+            # Fall back on the default behavior if no temperatures were detected.
+            super().output(output)
+            return
+
+        # DRY some constants
+        char_before_unit = self.value['char_before_unit']
+        unit = self.value['unit']
+
+        entry_text = '{0}{1}{2}'.format(
+            self.value['temperature'],
+            char_before_unit,
+            unit
+        )
+        # When there are multiple input sources, show the hottest value.
+        if len(self._temps) > 1:
+            entry_text = '{0} (Max. {1}{2}{3})'.format(
+                entry_text,
+                self.value['max_temperature'],
+                char_before_unit,
+                unit
+            )
+
+        output.append(self.name, entry_text)

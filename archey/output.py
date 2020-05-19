@@ -3,17 +3,18 @@ Output class file.
 It supports entries lazy-insertion, logo detection, and final printing.
 """
 
-import os
+from textwrap import TextWrapper
 
 from subprocess import check_output
+
 from shutil import get_terminal_size
 
+import os
 import sys
-
-from textwrap import TextWrapper
 
 import distro
 
+from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
 from archey.constants import COLOR_DICT, LOGOS_DICT
 from archey.configuration import Configuration
@@ -26,9 +27,9 @@ class Output:
     This is the object handling output entries populating.
     It also handles the logo choice based on some system detections.
     """
-    def __init__(self):
-        # Fetch a reference to `Configuration` singleton in this class.
-        self._configuration = Configuration()
+    def __init__(self, **kwargs):
+        # Fetches passed arguments.
+        self._format_to_json = kwargs.get('format_to_json')
 
         # First we check whether the Kernel has been compiled as a WSL.
         if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
@@ -54,7 +55,7 @@ class Output:
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ANSI_COLOR=>.
         ansi_color = distro.os_release_attr('ansi_color')
-        if ansi_color and self._configuration.get('colors_palette')['honor_ansi_color']:
+        if ansi_color and Configuration().get('colors_palette')['honor_ansi_color']:
             # Replace each Archey integrated colors by `ANSI_COLOR`.
             self._colors_palette = len(self._colors_palette) * \
                 [Colors.escape_code_from_attrs(ansi_color)]
@@ -68,27 +69,47 @@ class Output:
         """Append an entry to the list of entries to output"""
         self._entries.append(module)
 
-    def append(self, data):
+    def append(self, key, value):
         """Append a pre-formatted entry to the final output content"""
         self._results.append(
             '{color}{key}:{clear} {value}'.format(
                 color=self._colors_palette[0],
-                key=data[0],
+                key=key,
                 clear=Colors.CLEAR,
-                value=(data[1] or self._configuration('default_strings')['not_detected'])
+                value=value
             )
         )
 
     def output(self):
         """
-        Finally render the output entries.
-        First we get entries to add their outputs to the results.
-        It then handles text centering additionally to value and colors replacing.
+        Main `Output`'s `output` method.
+        First we get entries to add their outputs to the results and then
+        calls specific `output` methods based (for instance) on preferred format.
         """
-        # Iterate through the entries and run their output method to add their content.
-        for entry in self._entries:
-            entry.output(self)
+        if self._format_to_json:
+            self._output_json()
+        else:
+            # Iterate through the entries and run their output method to add their content.
+            for entry in self._entries:
+                entry.output(self)
+            self._output_text()
 
+    def _output_json(self):
+        """
+        Finally outputs entries data to JSON format.
+        See `archey.api.JSONAPI` for further documentation.
+        """
+        print(
+            API(self._entries).json_serialization(
+                indent=(self._format_to_json - 1)
+            )
+        )
+
+    def _output_text(self):
+        """
+        Finally render the output entries.
+        It handles text centering additionally to value and colors replacing.
+        """
         # Let's copy the logo (so we don't modify the constant!)
         logo = LOGOS_DICT[self._distribution].copy()
         logo_width = get_logo_width(logo, len(self._colors_palette))
@@ -118,7 +139,7 @@ class Output:
         for i, entry in enumerate(self._results):
             # Shortens the entry according to the terminal width.
             # We have to remove any ANSI color, or the result would be skewed.
-            wrapped_entry = text_wrapper.fill(ANSI_ECMA_REGEXP.sub('', entry))
+            wrapped_entry = text_wrapper.fill(Colors.remove_colors(entry))
             placeholder_offset = (
                 placeholder_length if wrapped_entry.endswith(text_wrapper.placeholder) else 0
             )

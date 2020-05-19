@@ -46,6 +46,21 @@ class RAM(Entry):
             if used < 0:
                 used = total - ram['MemFree']
 
+        self.value = {
+            'used': used,
+            'total': total,
+            'unit': 'MiB'
+        }
+
+
+    def output(self, output):
+        """
+        Adds the entry to `output` after pretty-formatting the RAM usage with colour and units.
+        """
+        # DRY some constants
+        used = self.value['used']
+        total = self.value['total']
+        unit = self.value['unit']
         # Fetch the user-defined RAM limits from configuration.
         ram_limits = self._configuration.get('limits')['ram']
 
@@ -55,9 +70,13 @@ class RAM(Entry):
             ram_limits['warning'], ram_limits['danger']
         )
 
-        self.value = '{0}{1} MiB{2} / {3} MiB'.format(
-            level_color,
-            int(used),
-            Colors.CLEAR,
-            int(total)
+        output.append(
+            self.name,
+            '{0}{1} {unit}{2} / {3} {unit}'.format(
+                level_color,
+                int(used),
+                Colors.CLEAR,
+                int(total),
+                unit=unit
+            )
         )

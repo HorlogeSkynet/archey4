@@ -64,10 +64,16 @@ def main():
     """Simple entry point"""
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
-        '-v', '--version',
-        action='version', version=__version__
+        '-j', '--json',
+        action='count',
+        help='output entries data to JSON format, use multiple times to increase indentation'
     )
-    parser.parse_args()
+    parser.add_argument(
+        '-v', '--version',
+        action='version',
+        version=__version__
+    )
+    args = parser.parse_args()
 
     # `Processes` is a singleton, let's populate the internal list here.
     Processes()
@@ -75,7 +81,10 @@ def main():
     # `Configuration` is a singleton, let's populate the internal object here.
     configuration = Configuration()
 
-    output = Output()
+    output = Output(
+        format_to_json=args.json
+    )
+
     for entry in Entries:
         if configuration.get('entries', {}).get(entry.name, True):
             output.add_entry(entry.value(name=entry.name))

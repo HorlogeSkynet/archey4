@@ -61,13 +61,7 @@ class Terminal(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        terminal_emulator = (
-            self._detect_terminal_emulator()
-            or self._configuration.get('default_strings')['not_detected']
-        )
-        colors_palette = self._get_colors_palette()
-
-        self.value = '{0} {1}'.format(terminal_emulator, colors_palette)
+        self.value = self._detect_terminal_emulator()
 
     def _get_colors_palette(self):
         """Build and return a 8-color palette, with Unicode characters if allowed"""
@@ -120,3 +114,14 @@ class Terminal(Entry):
         # When nothing of the above matched, falls-back on the regular `TERM` environment variable.
         # Note : It _might_ be `None` in very specific environments.
         return env_term
+
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting with colors palette"""
+        output.append(
+            self.name,
+            '{0} {1}'.format(
+                (self.value or self._configuration.get('default_strings')['not_detected']),
+                self._get_colors_palette()
+            )
+        )

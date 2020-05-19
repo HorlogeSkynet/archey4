@@ -3,7 +3,7 @@
 from subprocess import CalledProcessError
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from archey.entries.user import User
 
@@ -47,7 +47,16 @@ class TestUserEntry(unittest.TestCase):
     )
     def test_config_fall_back(self, _, __, ___):
         """`id` fails, but Archey must not !"""
-        self.assertEqual(User().value, 'Not detected')
+        user = User()
+
+        output_mock = MagicMock()
+        user.output(output_mock)
+
+        self.assertIsNone(user.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'Not detected'
+        )
 
 
 if __name__ == '__main__':

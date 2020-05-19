@@ -12,15 +12,13 @@ class User(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        user = os.getenv('USER')
-        if not user:
+        self.value = os.getenv('USER')
+        if not self.value:
             try:
-                user = check_output(
+                self.value = check_output(
                     ['id', '-u', '-n'],
                     universal_newlines=True
                 ).rstrip()
             except CalledProcessError:
                 # Should not occur, but who knows ?
-                user = self._configuration.get('default_strings')['not_detected']
-
-        self.value = user
+                pass

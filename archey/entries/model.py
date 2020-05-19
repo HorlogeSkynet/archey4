@@ -24,9 +24,6 @@ class Model(Entry):
         if not self.value:
             self._check_rasperry_pi()
 
-        if not self.value:
-            self.value = self._configuration.get('default_strings')['not_detected']
-
     def _check_virtualization(self):
         """
         Relying on some system tools, tries to gather some details about hypervisor.

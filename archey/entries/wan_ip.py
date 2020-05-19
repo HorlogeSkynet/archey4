@@ -13,17 +13,15 @@ class WanIp(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        ipv4_addr = self._retrieve_ipv4_address()
+        self.value = []
+
+        self._retrieve_ipv4_address()
 
         # IPv6 address retrieval (unless the user doesn't want it).
         if self._configuration.get('ip_settings')['wan_ip_v6_support']:
-            ipv6_addr = self._retrieve_ipv6_address()
-        else:
-            ipv6_addr = None
+            self._retrieve_ipv6_address()
 
-        self.value = ', '.join(
-            filter(None, (ipv4_addr, ipv6_addr))
-        ) or self._configuration.get('default_strings')['no_address']
+        self.value = list(filter(None, self.value))
 
     def _retrieve_ipv4_address(self):
         try:
@@ -43,11 +41,11 @@ class WanIp(Entry):
                 )
             except (HTTPError, URLError, SocketTimeoutError):
                 # The machine does not seem to be connected to Internet...
-                return None
+                return
 
             ipv4_addr = ipv4_addr.read().decode().strip()
 
-        return ipv4_addr
+        self.value.append(ipv4_addr)
 
     def _retrieve_ipv6_address(self):
         try:
@@ -68,8 +66,18 @@ class WanIp(Entry):
             except (HTTPError, URLError, SocketTimeoutError):
                 # It looks like this machine doesn't have any IPv6 address...
                 # ... or is not connected to Internet.
-                return None
+                return
 
             ipv6_addr = response.read().decode().strip()
 
-        return ipv6_addr
+        self.value.append(ipv6_addr)
+
+
+    def output(self, output):
+        """Adds the entry to `output` after pretty-formatting our list of IP addresses."""
+        # If we found IP addresses, join them together nicely.
+        # If not, fall-back on the "No address" string.
+        output.append(
+            self.name,
+            ', '.join(self.value) or self._configuration.get('default_strings')['no_address']
+        )

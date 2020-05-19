@@ -9,14 +9,14 @@ from archey.processes import Processes
 DE_DICT = {
     'cinnamon': 'Cinnamon',
     'dde-dock': 'Deepin',
+    'fur-box-session': 'Fur Box',
     'gnome-session': 'GNOME',
     'gnome-shell': 'GNOME',
-    'mate-session': 'MATE',
     'ksmserver': 'KDE',
-    'xfce4-session': 'Xfce',
-    'fur-box-session': 'Fur Box',
+    'lxqt-session': 'LXQt',
     'lxsession': 'LXDE',
-    'lxqt-session': 'LXQt'
+    'mate-session': 'MATE',
+    'xfce4-session': 'Xfce'
 }
 
 
@@ -29,15 +29,12 @@ class DesktopEnvironment(Entry):
         super().__init__(*args, **kwargs)
 
         processes = Processes().get()
-        for key, value in DE_DICT.items():
-            if key in processes:
-                desktop_environment = value
+        for de_id, de_name in DE_DICT.items():
+            if de_id in processes:
+                desktop_environment = de_name
                 break
         else:
-            # Let's rely on an environment var if the loop above didn't `break`
-            desktop_environment = os.getenv(
-                'XDG_CURRENT_DESKTOP',
-                self._configuration.get('default_strings')['not_detected']
-            )
+            # Let's rely on an environment variable if the loop above didn't `break`.
+            desktop_environment = os.getenv('XDG_CURRENT_DESKTOP')
 
         self.value = desktop_environment

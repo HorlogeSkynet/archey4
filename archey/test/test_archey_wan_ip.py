@@ -1,16 +1,16 @@
 """Test module for Archey's public IP address detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from socket import timeout as SocketTimeoutError
 from subprocess import TimeoutExpired
 from urllib.error import URLError
 
+from archey.test import CustomAssertions
 from archey.entries.wan_ip import WanIp
 
-
-class TestWanIpEntry(unittest.TestCase):
+class TestWanIpEntry(unittest.TestCase, CustomAssertions):
     """
     Here, we mock calls to `dig` or `urlopen`.
     """
@@ -33,7 +33,7 @@ class TestWanIpEntry(unittest.TestCase):
         """Test the regular case : Both IPv4 and IPv6 are retrieved"""
         self.assertEqual(
             WanIp().value,
-            'XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef'
+            ['XXX.YY.ZZ.TTT', '0123::4567:89a:dead:beef']
         )
 
     @patch(
@@ -51,7 +51,7 @@ class TestWanIpEntry(unittest.TestCase):
         """Test only public IPv4 detection"""
         self.assertEqual(
             WanIp().value,
-            'XXX.YY.ZZ.TTT'
+            ['XXX.YY.ZZ.TTT']
         )
 
     @patch(
@@ -72,11 +72,23 @@ class TestWanIpEntry(unittest.TestCase):
         ]
     )
     def test_ipv6_timeout(self, _, urlopen_mock, ___):
-        """Test when `dig` call timeout for the IPv6 detection"""
+        """
+        Test when `dig` call timeout for the IPv6 detection.
+        Additionally check the `output` method behavior.
+        """
         urlopen_mock.return_value.read.return_value = b'0123::4567:89a:dead:beef\n'
 
+        wan_ip = WanIp()
+
+        output_mock = MagicMock()
+        wan_ip.output(output_mock)
+
+        self.assertListEqual(
+            wan_ip.value,
+            ['XXX.YY.ZZ.TTT', '0123::4567:89a:dead:beef']
+        )
         self.assertEqual(
-            WanIp().value,
+            output_mock.append.call_args[0][1],
             'XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef'
         )
 
@@ -93,13 +105,12 @@ class TestWanIpEntry(unittest.TestCase):
         side_effect=[
             {'ipv4_detection': None},  # Needed key.
             {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': False},
-            {'no_address': 'No Address'}
+            {'wan_ip_v6_support': False}
         ]
     )
     def test_ipv4_timeout_twice(self, _, __, ___):
         """Test when both `dig` and `URLOpen` trigger timeouts..."""
-        self.assertEqual(WanIp().value, 'No Address')
+        self.assertListEmpty(WanIp().value)
 
     @patch(
         'archey.entries.wan_ip.check_output',
@@ -114,13 +125,12 @@ class TestWanIpEntry(unittest.TestCase):
         side_effect=[
             {'ipv4_detection': None},  # Needed key.
             {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': False},
-            {'no_address': 'No Address'}
+            {'wan_ip_v6_support': False}
         ]
     )
     def test_ipv4_timeout_twice_socket_error(self, _, __, ___):
         """Test when both `dig` timeouts and `URLOpen` raises `socket.timeout`..."""
-        self.assertEqual(WanIp().value, 'No Address')
+        self.assertListEmpty(WanIp().value)
 
     @patch(
         'archey.entries.wan_ip.check_output',
@@ -139,8 +149,20 @@ class TestWanIpEntry(unittest.TestCase):
         ]
     )
     def test_no_address(self, _, __, ___):
-        """Test when no address could be retrieved"""
-        self.assertEqual(WanIp().value, 'No Address')
+        """
+        Test when no address could be retrieved.
+        Additionally check the `output` method behavior.
+        """
+        wan_ip = WanIp()
+
+        output_mock = MagicMock()
+        wan_ip.output(output_mock)
+
+        self.assertListEmpty(wan_ip.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'No Address'
+        )
 
 
 if __name__ == '__main__':

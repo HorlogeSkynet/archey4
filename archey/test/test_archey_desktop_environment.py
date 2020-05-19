@@ -42,6 +42,24 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         """Simple list (mis-)-matching"""
         self.assertEqual(DesktopEnvironment().value, 'DESKTOP ENVIRONMENT')
 
+    @patch(
+        'archey.entries.desktop_environment.Processes.get',
+        return_value=[  # Fake running processes list
+            'do',
+            'you',
+            'like',
+            'unsweetened',  # Mismatch...
+            'coffee'
+        ]
+    )
+    @patch(
+        'archey.entries.desktop_environment.os.getenv',
+        return_value=None  # The environment variable is empty...
+    )
+    def test_non_detection(self, _, __):
+        """Simple global non-detection"""
+        self.assertIsNone(DesktopEnvironment().value)
+
 
 if __name__ == '__main__':
     unittest.main()

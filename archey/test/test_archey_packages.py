@@ -1,7 +1,7 @@
 """Test module for Archey's installed system packages detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from archey.entries.packages import Packages
 
@@ -210,7 +210,16 @@ i  | at            | A Job Manager                       | package    \n\
     )
     def test_no_packages_manager(self, _, __):
         """No packages manager is available at the moment..."""
-        self.assertEqual(Packages().value, 'Not detected')
+        packages = Packages()
+
+        output_mock = MagicMock()
+        packages.output(output_mock)
+
+        self.assertIsNone(packages.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'Not detected'
+        )
 
 
 if __name__ == '__main__':

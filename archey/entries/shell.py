@@ -15,15 +15,13 @@ class Shell(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        shell = os.getenv('SHELL')
-        if not shell:
+        self.value = os.getenv('SHELL')
+        if not self.value:
             try:
-                shell = check_output(
+                self.value = check_output(
                     ['getent', 'passwd', str(os.getuid())],
                     universal_newlines=True
                 ).rstrip().split(':')[-1]
             except CalledProcessError:
                 # Where does this user come from ?
-                shell = self._configuration.get('default_strings')['not_detected']
-
-        self.value = shell
+                pass

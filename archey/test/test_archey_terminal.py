@@ -1,7 +1,7 @@
 """Test module for Archey's terminal detection module"""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from archey.entries.terminal import Terminal
 
@@ -74,9 +74,19 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_terminal_emulator_term_fallback_and_unicode(self, _):
         """Check that `TERM` is honored if present, and Unicode support for the colors palette"""
-        output = Terminal().value
-        self.assertTrue(output.startswith('xterm-256color'))
-        self.assertEqual(output.count('\u2588'), 7 * 2)
+        terminal = Terminal()
+
+        output_mock = MagicMock()
+        terminal.output(output_mock)
+
+        self.assertTrue(terminal.value.startswith('xterm-256color'))
+        self.assertTrue(
+            output_mock.append.call_args[0][1].startswith('xterm-256color')
+        )
+        self.assertEqual(
+            output_mock.append.call_args[0][1].count('\u2588'),
+            7 * 2
+        )
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -121,13 +131,19 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.configuration.Configuration.get',
         side_effect=[
             {'not_detected': 'Not detected'},
-            {'use_unicode': False},
+            {'use_unicode': False}
         ]
     )
     def test_not_detected(self, _):
         """Test terminal emulator (non-)detection, without Unicode support"""
-        output = Terminal().value
-        self.assertTrue(output.startswith('Not detected'))
+        terminal = Terminal()
+
+        output_mock = MagicMock()
+        terminal.output(output_mock)
+        output = output_mock.append.call_args[0][1]
+
+        self.assertIsNone(terminal.value)
+        self.assertTrue(output.startswith('Not detected '))
         self.assertFalse(output.count('\u2588'))
 
 

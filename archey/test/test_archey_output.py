@@ -1,7 +1,8 @@
 """Test module for `archey.output`"""
 
+import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from collections import namedtuple
 
 from archey.colors import Colors
@@ -196,7 +197,7 @@ class TestOutputUtil(unittest.TestCase):
     def test_append_regular(self, _, __, ___):
         """Test the `append` method, for new entries"""
         output = Output()
-        output.append(('KEY', 'VALUE'))
+        output.append('KEY', 'VALUE')
 
         self.assertListEqual(
             output._results,  # pylint: disable=protected-access
@@ -430,7 +431,7 @@ FAKE_COLOR 22\x1b[0m\
             [
                 '', '', '', '', '', '',
                 '', '', '', '', '', '',
-                '', '', '', '', '', '',
+                '', '', '', '', '', ''
             ]
         )
 
@@ -477,9 +478,8 @@ FAKE_COLOR 22\x1b[0m\
             'looooooong',                  # truncation - too long
             'tenchars',                    # no truncation - exactly the right width
             '\x1b[0;31mshort\x1b[0m',      # no truncation - too short
-            '\x1b[0;31mlooooooong\x1b[0m', # truncation - too long, long word truncated
+            '\x1b[0;31mlooooooong\x1b[0m'  # truncation - too long, long word truncated
         ]
-
         output.output()
 
         print_mock.assert_called_with("""\
@@ -492,6 +492,41 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         # Check that `print` has been called only once.
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
         self.assertEqual(print_mock.call_count, 1)
+
+    @patch(
+        'archey.output.Configuration.get',
+        return_value={'honor_ansi_color': False}
+    )
+    @patch(
+        'archey.output.print',
+        return_value=None,  # Let's nastily mute class' outputs.
+        create=True
+    )
+    def test_json_output_format(self, print_mock, _):
+        """Test how the `output` method handles JSON preferred formatting of entries"""
+        output = Output(format_to_json=True)
+        # We can't set the `name` attribute of a mock on its creation,
+        # so this is a little bit messy...
+        mocked_entries = [
+            Mock(value='test'),
+            Mock(value=0xDEAD)
+        ]
+        mocked_entries[0].name = 'test'
+        mocked_entries[1].name = 'name'
+
+        output._entries = mocked_entries # pylint: disable=protected-access
+        output.output()
+
+        # Check that `print` output is properly formatted as JSON, with expected results.
+        output_json_data = json.loads(print_mock.call_args[0][0])['data']
+        self.assertEqual(
+            output_json_data['test'],
+            'test'
+        )
+        self.assertEqual(
+            output_json_data['name'],
+            0xDEAD
+        )
 
 
 if __name__ == '__main__':

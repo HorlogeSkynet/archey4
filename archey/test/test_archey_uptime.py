@@ -1,7 +1,7 @@
 """Test module for Archey's uptime detection module"""
 
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, MagicMock
 from datetime import timedelta
 from itertools import product
 
@@ -21,7 +21,24 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_warming_up(self):
         """Test when the device has just been started..."""
-        self.assertEqual(Uptime().value, '< 1 minute')
+        uptime = Uptime()
+
+        output_mock = MagicMock()
+        uptime.output(output_mock)
+
+        self.assertDictEqual(
+            uptime.value,
+            {
+                'days': 0,
+                'hours': 0,
+                'minutes': 0,
+                'seconds': 0
+            }
+        )
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '< 1 minute'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -32,7 +49,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_minutes_only(self):
         """Test when only minutes should be displayed"""
-        self.assertEqual(Uptime().value, '2 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '2 minutes'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -43,7 +65,12 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_hours_and_minute(self):
         """Test when only hours AND minutes should be displayed"""
-        self.assertEqual(Uptime().value, '2 hours and 1 minute')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '2 hours and 1 minute'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -54,18 +81,40 @@ class TestUptimeEntry(unittest.TestCase):
     )
     def test_day_and_hour_and_minutes(self):
         """Test when only days, hours AND minutes should be displayed"""
-        self.assertEqual(Uptime().value, '1 day, 1 hour and 2 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '1 day, 1 hour and 2 minutes'
+        )
 
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='259380.99 XXXX.XX\n'
+            read_data='259381.99 XXXX.XX\n'
         ),
         create=True
     )
     def test_days_and_minutes(self):
         """Test when only days AND minutes should be displayed"""
-        self.assertEqual(Uptime().value, '3 days and 3 minutes')
+        uptime = Uptime()
+
+        output_mock = MagicMock()
+        uptime.output(output_mock)
+
+        self.assertDictEqual(
+            uptime.value,
+            {
+                'days': 3,
+                'hours': 0,
+                'minutes': 3,
+                'seconds': 1
+            }
+        )
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '3 days and 3 minutes'
+        )
 
     @patch(
         'archey.entries.uptime.open',
@@ -86,7 +135,12 @@ class TestUptimeEntry(unittest.TestCase):
         Test when we can't access /proc/uptime on Linux/macOS/BSD.
         We only test one clock as all clocks rely on the same built-in `time.clock_gettime` method.
         """
-        self.assertEqual(Uptime().value, '16 minutes')
+        output_mock = MagicMock()
+        Uptime().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '16 minutes'
+        )
 
     @patch('archey.entries.uptime.check_output')
     def test_uptime_fallback(self, check_output_mock):
@@ -217,7 +271,7 @@ class TestUptimeEntry(unittest.TestCase):
         side_effect=RuntimeError()
     )
     def test_procps_missing(self, _, __, ___):
-        """Test `uptime` failure when no uptime sources are available"""
+        """Test `uptime` failure (program exit) when no uptime sources are available"""
         self.assertRaises(SystemExit, Uptime)
 
 

@@ -1,7 +1,7 @@
 """Test module for Archey's RAM usage detection module"""
 
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, MagicMock
 
 from archey.colors import Colors
 from archey.entries.ram import RAM
@@ -15,9 +15,9 @@ class TestRAMEntry(unittest.TestCase):
     @patch(
         'archey.entries.ram.check_output',
         return_value="""\
-          total     used    free    shared  buff/cache   available
-Mem:       7412     3341    1503       761        2567        3011
-Swap:      7607        5    7602
+              total        used        free      shared  buff/cache   available
+Mem:          15658        2043       10232          12        3382       13268
+Swap:          4095          39        4056
 """)
     @patch(
         'archey.configuration.Configuration.get',
@@ -29,16 +29,23 @@ Swap:      7607        5    7602
         }
     )
     def test_free_dash_m(self, _, __):
-        """Test `free -m` output parsing for low RAM use case and tweaked limits"""
-        ram = RAM().value
-        self.assertTrue(all(i in ram for i in [str(Colors.RED_NORMAL), '3341', '7412']))
+        """Test `free -m` output parsing for low RAM use case"""
+        output_mock = MagicMock()
+        RAM().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '{0}2043 MiB{1} / 15658 MiB'.format(
+                Colors.GREEN_NORMAL,
+                Colors.CLEAR
+            )
+        )
 
     @patch(
         'archey.entries.ram.check_output',
         return_value="""\
-              total        used        free      shared  buff/cache   available
-Mem:          15658        2043       10232          12        3382       13268
-Swap:          4095          39        4056
+          total     used    free    shared  buff/cache   available
+Mem:       7412     3341    1503       761        2567        3011
+Swap:      7607        5    7602
 """)
     @patch(
         'archey.configuration.Configuration.get',
@@ -51,8 +58,15 @@ Swap:          4095          39        4056
     )
     def test_free_dash_m_warning(self, _, __):
         """Test `free -m` output parsing for warning RAM use case"""
-        ram = RAM().value
-        self.assertTrue(all(i in ram for i in [str(Colors.GREEN_NORMAL), '2043', '15658']))
+        output_mock = MagicMock()
+        RAM().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '{0}3341 MiB{1} / 7412 MiB'.format(
+                Colors.YELLOW_NORMAL,
+                Colors.CLEAR
+            )
+        )
 
     @patch(
         'archey.entries.ram.check_output',
@@ -72,21 +86,19 @@ Swap:          4095         160        3935
     )
     def test_free_dash_m_danger(self, _, __):
         """Test `free -m` output parsing for danger RAM use case"""
-        ram = RAM().value
-        self.assertTrue(all(i in ram for i in [str(Colors.RED_NORMAL), '12341', '15658']))
+        output_mock = MagicMock()
+        RAM().output(output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '{0}12341 MiB{1} / 15658 MiB'.format(
+                Colors.RED_NORMAL,
+                Colors.CLEAR
+            )
+        )
 
     @patch(
         'archey.entries.ram.check_output',
         side_effect=IndexError()  # `free` call will fail
-    )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 33.3,
-                'danger': 66.7
-            },
-        }
     )
     @patch(
         'archey.entries.ram.open',
@@ -119,10 +131,16 @@ SUnreclaim:       113308 kB
 """),  # Some lines have been ignored as they are useless for computations.
         create=True
     )
-    def test_proc_meminfo(self, _, __):
+    def test_proc_meminfo(self, _):
         """Test `/proc/meminfo` parsing (when `free` is not available)"""
-        ram = RAM().value
-        self.assertTrue(all(i in ram for i in [str(Colors.YELLOW_NORMAL), '3739', '7403']))
+        self.assertDictEqual(
+            RAM().value,
+            {
+                'used': 3739.296875,
+                'total': 7403.3203125,
+                'unit': 'MiB'
+            }
+        )
 
 
 if __name__ == '__main__':
