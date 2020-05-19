@@ -131,7 +131,7 @@ class TestTerminalEntry(unittest.TestCase):
         'archey.configuration.Configuration.get',
         side_effect=[
             {'not_detected': 'Not detected'},
-            {'use_unicode': False},
+            {'use_unicode': False}
         ]
     )
     def test_not_detected(self, _):

@@ -431,7 +431,7 @@ FAKE_COLOR 22\x1b[0m\
             [
                 '', '', '', '', '', '',
                 '', '', '', '', '', '',
-                '', '', '', '', '', '',
+                '', '', '', '', '', ''
             ]
         )
 
@@ -474,11 +474,11 @@ FAKE_COLOR 22\x1b[0m\
         termsize_mock.return_value = termsize_tuple(10)
 
         output._results = [ # pylint: disable=protected-access
-            'short',                        # no truncation - too short
-            'looooooong',                   # truncation - too long
-            'tenchars',                     # no truncation - exactly the right width
-            '\x1b[0;31mshort\x1b[0m',       # no truncation - too short
-            '\x1b[0;31mlooooooong\x1b[0m',  # truncation - too long, long word truncated
+            'short',                       # no truncation - too short
+            'looooooong',                  # truncation - too long
+            'tenchars',                    # no truncation - exactly the right width
+            '\x1b[0;31mshort\x1b[0m',      # no truncation - too short
+            '\x1b[0;31mlooooooong\x1b[0m'  # truncation - too long, long word truncated
         ]
         output.output()
 

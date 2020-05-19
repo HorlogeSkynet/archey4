@@ -27,7 +27,7 @@ class TestApiUtil(unittest.TestCase):
                         'dictionary': True
                     }
                 }
-            ),
+            )
         ]
 
         # Since we can't assign a Mock's `name` attribute on creation, we'll do it here.
