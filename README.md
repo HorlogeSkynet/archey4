@@ -37,7 +37,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 > Actually, the maintainer decided to separate it from the original one's "network" with the help of _GitHub_'s staff.  
 > Nevertheless, **this piece of software is still a fork of [djmelik's Archey project](https://github.com/djmelik/archey.git)**.
 
-## Which packages do I need to run this script ?
+## Which packages do I need to run this project ?
 
 ### Required packages
 
@@ -88,7 +88,7 @@ sudo pip3 install archey4
 ### Step 1 : Fetch the source ###
 
 # If you want the latest release :
-LATEST_VERSION="v4.7.1"
+LATEST_VERSION="v4.7.2"
 wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
 tar xvzf "${LATEST_VERSION}.tar.gz"
 cd "archey4-${LATEST_VERSION}/"
