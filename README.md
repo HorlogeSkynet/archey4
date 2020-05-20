@@ -189,6 +189,33 @@ Below, some further explanations of each option available :
 		// `true` by default to honor `os-release`'s `ANSI_COLOR` option.
 		"honor_ansi_color": true
 	},
+	"disk": {
+		// Which filesystems to show:
+		// `["local"]` shows only local filesystems.
+		// You can alternatively list specific filesystems as:
+		//  * A list of device paths - e.g. `["/dev/sda1", "/dev/nvme0n1p1"]`
+		//  * A list of mountpoints - e.g. `["/", "/mnt"]`
+		//  * A combination of the above - e.g. `["/", "/dev/sda2"]`
+		"show_filesystems": ["local"],
+		// Set to `false` to write each filesystem on its own line.
+		"combine_disks": true,
+		// Defines which labels to use for each disk (only works if `combine_disks` is false!)
+		// The options available are:
+		//  * `"mountpoints"`: Shows the mountpoint of the filesystem.
+		//      e.g. `Disk (/): 10.0 GiB/100.0 GiB`
+		//           `Disk (/mnt): 15.0 GiB / 200.0 GiB`
+		//  * `"device_paths"`: Shows the device path of the filesystem.
+		//      e.g. `Disk (/dev/sda1): 10.0 GiB / 100.0 GiB`
+		//           `Disk (/dev/mmcblk0p1): 15.0 GiB / 200.0 GiB`
+		//  * `false` (no quote marks!): Don't show any device labels.
+		//      e.g. `Disk: 10.0 GiB / 100.0 GiB`
+		//           `Disk: 15.0 GiB / 200.0 GiB`
+		"disk_labels": "mountpoints",
+		// Set to `true` to hide the "Disk" entry name from the output.
+		// i.e. false --> `Disk (/):`
+		//      true  --> `(/):`
+		"hide_entry_name": false
+	}
 	"default_strings": {
 		// Use this section to override default strings.
 	},

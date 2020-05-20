@@ -1,149 +1,236 @@
 """Disk usage detection class"""
 
 import re
-
-from subprocess import check_output, CalledProcessError, DEVNULL
+from subprocess import check_output, CalledProcessError
+from csv import register_dialect, reader
 
 from archey.colors import Colors
 from archey.entry import Entry
 
 
 class Disk(Entry):
-    """Uses `df` and `btrfs` commands to compute the total disk usage across devices"""
+    """Uses `df` to compute disk usage across devices"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = {
-            'used': 0.0,
-            'total': 0.0
+        # Populate an output from `df`
+        self._df_table = self.get_df_output_table()
+
+        # `self.value` will be a list of filesystems - which are dicts with the keys:
+        # `devpath`, `mountpoint`, `used_blocks`, `total_blocks`.
+        # Hopefully those are self-explanatory!
+        self.value = []
+
+        config_filesystems = self._configuration.get('disk')['show_filesystems']
+        # This section only adds our filesystems with the device path and mountpoint.
+        if config_filesystems == ['local']:
+            self.value += self._get_local_filesystems()
+        else:
+            self.value += self._get_specified_filesystems(config_filesystems)
+
+        # Iterate over filesystems, not `df` output, to preserve configuration ordering.
+        # Unfortunately, this requires extra iteration over the `df` output...
+        for filesystem in self.value:
+            # We're adding our used and total blocks here.
+            filesystem.update(self._get_filesystem_usage(filesystem))
+
+
+    def _get_local_filesystems(self):
+        """
+        Finds local (i.e. /dev/xxx) filesystems for any *NIX using `df`.
+
+        We additionally ignore...
+        Loop devices:-
+            /dev(/...)/loop filesystems (Linux)
+            /dev(/...)/*vnd filesystems (BSD)
+            /dev(/...)/lofi filesystems (Solaris)
+        Device mappers:- (since their partitions are already included!)
+            /dev(/...)/dm filesystems (Linux)
+        """
+        filesystems = []
+        # Compile a regex to match the device paths we will accept.
+        devpath_regex = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
+        # Extract devpath and mount-point for disks from df output.
+        for row in self._df_table:
+            # Deduplication using device paths:
+            if (devpath_regex.match(row[0])
+                    and not any(disk['devpath'] == row[0] for disk in filesystems)):
+                filesystems.append({
+                    'devpath': row[0],
+                    'mountpoint': row[5]
+                })
+
+        return filesystems
+
+
+    def _get_specified_filesystems(self, specified_filesystems):
+        """
+        Finds the specified filesystems if found in `df_table`.
+        It preserves the mount-point names specified!
+        """
+        # Extract devpaths and mount-points from df output.
+        devpaths, mountpoints = [], []
+        for row in self._df_table:
+            devpaths.append(row[0])
+            mountpoints.append(row[5])
+
+        filesystems = []
+
+        # We could enumerate `devpaths` and `mountpoints` for better performance;
+        # however, this method preserves the order of the specified filesystems.
+        for file_system in specified_filesystems:
+            # EAFP: This is quicker than using `in` followed by `.index` since it
+            # saves an extra iteration of `devpaths` and `mountpoints` every loop.
+            try:
+                # Find the corresponding device path of a mountpoint filesystem.
+                devpath = devpaths[mountpoints.index(file_system)]
+            except ValueError:
+                devpath = file_system
+
+            try:
+                # Find the corresponding mountpoint of a device path filesystem.
+                mountpoint = mountpoints[devpaths.index(file_system)]
+            except ValueError:
+                mountpoint = file_system
+
+            # If these differ, we found a matching filesystem.
+            if devpath != mountpoint:
+                filesystems.append({
+                    'devpath': devpath,
+                    'mountpoint': mountpoint
+                })
+
+        return filesystems
+
+
+    def _get_filesystem_usage(self, filesystem):
+        """
+        Gets the used and total blocks of the filesystem, and returns them in a dict.
+        """
+        # Default to a zero-size and zero-usage disk:
+        used_blocks = 0
+        total_blocks = 0
+
+        for row in self._df_table:
+            if filesystem['devpath'] == row[0] and filesystem['mountpoint'] == row[5]:
+                used_blocks = int(row[2])
+                total_blocks = int(row[1])
+                # We found a match, so we can stop searching.
+                break
+
+        return {
+            'used_blocks': used_blocks,
+            'total_blocks': total_blocks
         }
 
-        self._run_df_usage()
-        self._run_btrfs_usage()
 
-        # Check whether at least one media could be found.
-        if not self.value['total']:
-            self.value = None
-            return
-
-        self.value['unit'] = 'GiB'  # For now.
-
-    def _run_df_usage(self):
-        try:
-            df_output = check_output(
-                [
-                    'df', '-l', '-P', '-B', 'MB', '--total',
-                    '-t', 'ext2', '-t', 'ext3', '-t', 'ext4',
-                    '-t', 'fat32',
-                    '-t', 'fuseblk',
-                    '-t', 'jfs',
-                    '-t', 'lxfs',
-                    '-t', 'ntfs',
-                    '-t', 'reiserfs',
-                    '-t', 'simfs',
-                    '-t', 'xfs',
-                    '-t', 'zfs'
-                ],
-                env={'LANG': 'C'}, universal_newlines=True, stderr=DEVNULL
-            ).splitlines()[-1].split()
-        except CalledProcessError:
-            # It looks like there is not any file system matching our types.
-            # Known bug : `df` available in BusyBox does not support our flags.
-            return
-
-        self.value['used'] += float(df_output[2].rstrip('MB')) / 1024
-        self.value['total'] += float(df_output[1].rstrip('MB')) / 1024
-
-    def _run_btrfs_usage(self):
+    @staticmethod
+    def get_df_output_table():
         """
-        Since btrfs file-systems can span multiple disks, we fetch all mounted
-        btrfs file-systems, retrieve the btrfs partitions associated with each,
-        and remove all mount-points with common partitions, then query file-system
-        usage for each remaining mount-point.
+        Runs `df -P -k` and returns a table (nested lists) of its results.
         """
         try:
-            # Retrieve all mount-points containing btrfs filesystems.
-            df_btrfs_mounts = check_output(
-                ['df', '-l', '--output=target', '-t', 'btrfs'],
-                env={'LANG': 'C'}, universal_newlines=True, stderr=DEVNULL
-            ).splitlines()[1:]
-        except CalledProcessError:
-            # No btrfs file-systems present.
-            return
+            df_output = check_output(['df'], env={'LANG': 'C'}, universal_newlines=True)
+        except (FileNotFoundError, CalledProcessError):
+            # `df` isn't available on this system
+            return []
 
-        # Eliminate duplicate mounts (e.g. different subvolumes).
-        btrfs_unique_mounts = []
-        for mountpoint in df_btrfs_mounts:
-            try:
-                btrfs_mount_output = check_output(
-                    ['btrfs', 'device', 'usage', mountpoint],
-                    env={'LANG': 'C'}, universal_newlines=True, stderr=DEVNULL
-                ).splitlines()
-            except (FileNotFoundError, CalledProcessError):
-                # `btrfs-progs` not available.
-                return
+        # Parse this output as a table in SSV (space-separated values) format
+        register_dialect('ssv', delimiter=' ', skipinitialspace=True)
+        ssv_reader = reader(df_output.splitlines()[1:], 'ssv') # Discarding the header row
+        df_table = []
+        for line in ssv_reader:
+            df_table.append(line)
 
-            if btrfs_mount_output not in btrfs_unique_mounts:
-                btrfs_unique_mounts.append(mountpoint)
+        return df_table
 
-        # Query all unique mount-points for usage.
-        btrfs_usage_output = check_output(
-            ['btrfs', 'filesystem', 'usage', '--gbytes'] + btrfs_unique_mounts,
-            env={'LANG': 'C'}, universal_newlines=True, stderr=DEVNULL
-        )
 
-        # JSON output support landed very "late" in `btrfs-progs` user-space binaries.
-        # We are parsing it the hard way to increase compatibility...
-        physical_device_used = re.findall(
-            r"Used:\s+(\d+\.\d+)GiB", btrfs_usage_output,
-            flags=re.MULTILINE
-        )
-        physical_device_size = re.findall(
-            r"Device size:\s+(\d+\.\d+)GiB", btrfs_usage_output,
-            flags=re.MULTILINE
-        )
-        data_ratios = re.findall(
-            r"Data ratio:\s+(\d+\.\d+)", btrfs_usage_output,
-            flags=re.MULTILINE
-        )
-
-        # Divide physical space by the corresponding data ratio to get space used for that group.
-        logical_device_used = [
-            float(x) / float(y)
-            for x, y in zip(physical_device_used, data_ratios)
-        ]
-        logical_device_size = [
-            float(x) / float(y)
-            for x, y in zip(physical_device_size, data_ratios)
-        ]
-
-        self.value['total'] += sum(logical_device_size)
-        self.value['used'] += sum(logical_device_used)
+    @staticmethod
+    def blocks_to_human_readable(blocks, suffix='B'):
+        """
+        Returns human-readable format of `blocks` supplied in kibibytes (1024 bytes).
+        Taken (and modified) from: <https://stackoverflow.com/a/1094933/13343912>
+        """
+        for unit in ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+            if abs(blocks) < 1024.0:
+                return '{0:02.1f} {1}{2}'.format(blocks, unit, suffix)
+            blocks /= 1024.0
+        return '{0:02.1f} {1}{2}'.format(blocks, 'Yi', suffix)
 
 
     def output(self, output):
-        """Adds the entry to `output` after formatting with color and units."""
-        if not self.value:
+        """
+        Adds the entry to `output` after formatting with color and units.
+        Follows the user configuration supplied for formatting.
+        """
+        # Get our filesystems as a local so we can modify it safely.
+        filesystems = self.value
+
+        if not filesystems:
             # We didn't find any disks, fall back to the default entry behavior.
             super().output(output)
             return
 
-        # Fetch the user-defined disk limits from configuration.
+        # Fetch some configuration objects for the output.
+        combine_disks = self._configuration.get('disk')['combine_disks']
+        disk_labels = self._configuration.get('disk')['disk_labels']
+        hide_entry_name = self._configuration.get('disk')['hide_entry_name']
+
+        # Set the name formatting of our output
+        if combine_disks:
+            name = '{entry_name}'
+        # We will only use disk labels and entry name hiding if we aren't combining disks.
+        else:
+            name = ''
+            if not hide_entry_name:
+                name += '{entry_name}'
+            if disk_labels:
+                name += '{0}({{disk_label}})'.format(
+                    ' ' if not hide_entry_name else ''
+                )
+
+        # Combine all disks into one grand-total if configured to do so.
+        if combine_disks:
+            used_blocks_sum = sum([filesystem['used_blocks'] for filesystem in filesystems])
+            total_blocks_sum = sum([filesystem['total_blocks'] for filesystem in filesystems])
+            # Rewrite our filesystems as one combined filesystem.
+            filesystems = [{
+                'devpath': None,
+                'mountpoint': None,
+                'used_blocks': used_blocks_sum,
+                'total_blocks': total_blocks_sum
+            }]
+
+        # Fetch the user-defined limits from the configuration.
         disk_limits = self._configuration.get('limits')['disk']
 
-        # Based on the disk percentage usage, select the corresponding level color.
-        level_color = Colors.get_level_color(
-            (self.value['used'] / (self.value['total'] or 1)) * 100,
-            disk_limits['warning'], disk_limits['danger']
-        )
-
-        output.append(
-            self.name,
-            '{0}{1} {unit}{2} / {3} {unit}'.format(
-                level_color,
-                round(self.value['used'], 1),
-                Colors.CLEAR,
-                round(self.value['total'], 1),
-                unit=self.value['unit']
+        # We will only run this loop a single time for combined disks.
+        for filesystem in filesystems:
+            # Select the corresponding level colour based on disk percentage usage.
+            level_color = Colors.get_level_color(
+                (filesystem['used_blocks'] / filesystem['total_blocks']) * 100,
+                disk_limits['warning'], disk_limits['danger']
             )
-        )
+
+            # Set the correct disk label
+            if disk_labels == 'mountpoints':
+                disk_label = filesystem['mountpoint']
+            elif disk_labels == 'device_paths':
+                disk_label = filesystem['devpath']
+            else:
+                disk_label = None
+
+            pretty_filesystem_value = '{0}{1}{2} / {3}'.format(
+                level_color,
+                self.blocks_to_human_readable(filesystem['used_blocks']),
+                Colors.CLEAR,
+                self.blocks_to_human_readable(filesystem['total_blocks'])
+            )
+
+            output.append(
+                name.format(
+                    entry_name=self.name,
+                    disk_label=disk_label
+                ),
+                pretty_filesystem_value
+            )

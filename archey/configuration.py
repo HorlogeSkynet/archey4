@@ -19,6 +19,12 @@ class Configuration(metaclass=Singleton):
                 'use_unicode': False,
                 'honor_ansi_color': True
             },
+            'disk': {
+                'show_filesystems': ['local'],
+                'combine_disks': True,
+                'disk_labels': False,
+                'hide_entry_name': False
+            },
             'default_strings': {
                 'no_address': 'No Address',
                 'not_detected': 'Not detected',
