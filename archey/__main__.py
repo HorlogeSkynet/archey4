@@ -7,8 +7,10 @@ Logos are stored under the `logos` module.
 """
 
 import argparse
+import os
 
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor
 
 from archey._version import __version__
 from archey.output import Output
@@ -60,8 +62,8 @@ class Entries(Enum):
     WAN_IP = e_WanIp
 
 
-def main():
-    """Simple entry point"""
+def args_parsing():
+    """Simple wrapper to `argparse`"""
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
         '-j', '--json',
@@ -73,7 +75,12 @@ def main():
         action='version',
         version=__version__
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    """Simple entry point"""
+    args = args_parsing()
 
     # `Processes` is a singleton, let's populate the internal list here.
     Processes()
@@ -81,13 +88,32 @@ def main():
     # `Configuration` is a singleton, let's populate the internal object here.
     configuration = Configuration()
 
+    # From configuration, gather the entries user-enabled.
+    enabled_entries = [
+        (entry.value, entry.name)
+        for entry in Entries
+        if configuration.get('entries', {}).get(entry.name, True)
+    ]
+
     output = Output(
         format_to_json=args.json
     )
 
-    for entry in Entries:
-        if configuration.get('entries', {}).get(entry.name, True):
-            output.add_entry(entry.value(name=entry.name))
+    # We will map this function onto our enabled entries to instantiate them.
+    def _entry_instantiator(entry_tuple):
+        return entry_tuple[0](name=entry_tuple[1])
+
+    if not configuration.get('parallel_loading'):
+        for entry_instance in map(_entry_instantiator, enabled_entries):
+            output.add_entry(entry_instance)
+    else:
+        # Instantiate a threads pool to load our enabled entries in parallel.
+        # We use threads (and not processes) since most work done by our entries is IO-bound.
+        # Note: For Python < 3.5, we manually compute `max_workers`.
+        #   See <https://github.com/python/cpython/blob/3.5/Lib/concurrent/futures/thread.py#L94>.
+        with ThreadPoolExecutor(max_workers=((os.cpu_count() or 1) * 5)) as executor:
+            for entry_instance in executor.map(_entry_instantiator, enabled_entries):
+                output.add_entry(entry_instance)
 
     output.output()
 
