@@ -3,26 +3,21 @@
 > Archey is a simple system information tool written in Python
 
 <p align="center">
-	<!-- TRAVIS CI -->
-	<a href="https://travis-ci.org/HorlogeSkynet/archey4"><img src="https://img.shields.io/travis/HorlogeSkynet/archey4/master.svg?style=for-the-badge"></a>
-	<br />
-	<!-- GITHUB -->
+	<!-- GITHUB & TRAVIS CI -->
 	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/release/HorlogeSkynet/archey4.svg?style=for-the-badge"></a>
+	<a href="https://travis-ci.org/HorlogeSkynet/archey4"><img src="https://img.shields.io/travis/HorlogeSkynet/archey4/master.svg?style=for-the-badge"></a>
 	<a href="https://github.com/HorlogeSkynet/archey4/commits/master"><img src="https://img.shields.io/github/last-commit/HorlogeSkynet/archey4.svg?style=for-the-badge"></a>
-	<br />
-	<a href="https://github.com/HorlogeSkynet/archey4/issues"><img src="https://img.shields.io/github/issues/HorlogeSkynet/archey4.svg?style=for-the-badge"></a>
-	<a href="https://github.com/HorlogeSkynet/archey4/pulls"><img src="https://img.shields.io/github/issues-pr/HorlogeSkynet/archey4.svg?style=for-the-badge"></a>
 	<br />
 	<!-- AUR -->
 	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/version/archey4.svg?style=for-the-badge"></a>
-	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/votes/archey4.svg?style=for-the-badge"></a>
 	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/license/archey4.svg?style=for-the-badge"></a>
+	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/votes/archey4.svg?style=for-the-badge"></a>
+	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/last-modified/archey4.svg?style=for-the-badge"></a>
 	<br />
 	<!-- PYPI -->
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/v/archey4.svg?style=for-the-badge"></a>
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/pyversions/archey4.svg?style=for-the-badge"></a>
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/dm/archey4?style=for-the-badge"></a>
-	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/wheel/archey4.svg?style=for-the-badge"></a>
 </p>
 
 <p align="center">
