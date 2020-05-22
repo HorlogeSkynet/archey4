@@ -196,9 +196,9 @@ Below, some further explanations of each option available :
 		// The maximum number of local addresses you want to display.
 		// `false` --> Unlimited.
 		"lan_ip_max_count": 2,
-		// `false` would make Archey displays only IPv4 LAN addresses.
+		// `false` would make Archey display IPv4 LAN addresses only.
 		"lan_ip_v6_support": true,
-		// `false` would make Archey displays only IPv4 WAN addresses.
+		// `false` would make Archey display IPv4 WAN addresses only.
 		"wan_ip_v6_support": true
 	},
 	"gpu": {
