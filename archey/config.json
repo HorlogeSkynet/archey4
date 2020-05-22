@@ -22,7 +22,7 @@
 		"WAN_IP": true
 	},
 	"colors_palette": {
-		"use_unicode": false,
+		"use_unicode": true,
 		"honor_ansi_color": true
 	},
 	"default_strings": {

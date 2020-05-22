@@ -16,7 +16,7 @@ class Configuration(metaclass=Singleton):
     def __init__(self):
         self._config = {
             'colors_palette': {
-                'use_unicode': False,
+                'use_unicode': True,
                 'honor_ansi_color': True
             },
             'default_strings': {

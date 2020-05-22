@@ -67,7 +67,6 @@ class Terminal(Entry):
         """Build and return a 8-color palette, with Unicode characters if allowed"""
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
-        # This is the default option for backward compatibility.
         use_unicode = self._configuration.get('colors_palette')['use_unicode']
 
         return ' '.join([

@@ -182,9 +182,9 @@ Below, some further explanations of each option available :
 		// Set to `false` each entry you want to mask.
 	},
 	"colors_palette": {
-		// Set this option to `true` to display a beautiful colors palette.
-		// `false` by default for backward compatibility with non-Unicode locales.
-		"use_unicode": false,
+		// Leave this option set to `true` to display a beautiful colors palette.
+		// Set it to `false` to allow compatibility with non-Unicode locales.
+		"use_unicode": true,
 		// Set this option to `false` to force Archey to use its own colors palettes.
 		// `true` by default to honor `os-release`'s `ANSI_COLOR` option.
 		"honor_ansi_color": true
