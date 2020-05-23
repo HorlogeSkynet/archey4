@@ -37,13 +37,12 @@ class TestModelEntry(unittest.TestCase):
     )
     def test_raspberry(self, _):
         """Test for a typical Raspberry context"""
-        self._return_values = [
-            FileNotFoundError(),  # First `open` call will fail
-            'Hardware\t: HARDWARE\nRevision\t: REVISION\n'
-        ]
-
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
-            mock.return_value.read.side_effect = self._special_func_for_mock_open
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),  # First `open` call will  (`/sys/[...]/product_name`)
+                'Hardware\t: HARDWARE\nRevision\t: REVISION\n'
+            ]
+
             self.assertEqual(
                 Model().value,
                 'Raspberry Pi HARDWARE (Rev. REVISION)'
@@ -136,13 +135,11 @@ class TestModelEntry(unittest.TestCase):
     )
     def test_no_match(self, _, __, ___):
         """Test when no information could be retrieved"""
-        self._return_values = [
-            FileNotFoundError(),      # First `open` call will fail
-            'Hardware\t: HARDWARE\n'  # `Revision` entry is not present
-        ]
-
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
-            mock.return_value.read.side_effect = self._special_func_for_mock_open
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),      # First `open` call will  (`/sys/[...]/product_name`)
+                'Hardware\t: HARDWARE\n'  # `Revision` entry is not present (`/proc/cpuinfo`)
+            ]
 
             model = Model()
 
@@ -154,23 +151,6 @@ class TestModelEntry(unittest.TestCase):
                 output_mock.append.call_args[0][1],
                 'Not detected'
             )
-
-
-    def _special_func_for_mock_open(self):
-        """
-        This method does not belong to the test cases.
-        It's a special method which allows mocking multiple `io.open` calls.
-        You just have to set the values within a list `self._return_values`.
-        And then :
-        `mock.return_value.read.side_effect = self._special_func_for_mock_open`
-        """
-        return_value = self._return_values.pop(0)
-
-        # Either return value or raise any specified exception
-        if issubclass(return_value.__class__, OSError().__class__):
-            raise return_value
-
-        return return_value
 
 
 if __name__ == '__main__':
