@@ -335,14 +335,19 @@ class TestTemperatureEntry(unittest.TestCase):
     )
     def test_celsius_to_fahrenheit_conversion(self, _, __, ___):
         """Simple tests for the `_convert_to_fahrenheit` static method"""
-        temperature = Temperature()
-        # pylint: disable=protected-access
-        self.assertAlmostEqual(temperature._convert_to_fahrenheit(-273.15), -459.67)
-        self.assertAlmostEqual(temperature._convert_to_fahrenheit(0.0), 32.0)
-        self.assertAlmostEqual(temperature._convert_to_fahrenheit(21.0), 69.8)
-        self.assertAlmostEqual(temperature._convert_to_fahrenheit(37.0), 98.6)
-        self.assertAlmostEqual(temperature._convert_to_fahrenheit(100.0), 212.0)
-        # pylint: enable=protected-access
+        test_conversion_cases = [
+            (-273.15, -459.67),
+            (0.0, 32.0),
+            (21.0, 69.8),
+            (37.0, 98.6),
+            (100.0, 212.0)
+        ]
+
+        for celsius_value, expected_fahrenheit in test_conversion_cases:
+            self.assertAlmostEqual(
+                Temperature._convert_to_fahrenheit(celsius_value),  # pylint: disable=protected-access
+                expected_fahrenheit
+            )
 
 
 if __name__ == '__main__':
