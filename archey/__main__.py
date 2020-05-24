@@ -11,6 +11,7 @@ import os
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack
 
 from archey._version import __version__
 from archey.output import Output
@@ -103,17 +104,22 @@ def main():
     def _entry_instantiator(entry_tuple):
         return entry_tuple[0](name=entry_tuple[1])
 
-    if not configuration.get('parallel_loading'):
-        for entry_instance in map(_entry_instantiator, enabled_entries):
+    # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
+    with ExitStack() as cm_stack:
+        if not configuration.get('parallel_loading'):
+            mapper = map
+        else:
+            # Instantiate a threads pool to load our enabled entries in parallel.
+            # We use threads (and not processes) since most work done by our entries is IO-bound.
+            # Note: For Python < 3.5, we manually compute `max_workers`.
+            # See <https://github.com/python/cpython/blob/3.5/Lib/concurrent/futures/thread.py#L94>.
+            executor = cm_stack.enter_context(
+                ThreadPoolExecutor(max_workers=((os.cpu_count() or 1) * 5))
+            )
+            mapper = executor.map
+
+        for entry_instance in mapper(_entry_instantiator, enabled_entries):
             output.add_entry(entry_instance)
-    else:
-        # Instantiate a threads pool to load our enabled entries in parallel.
-        # We use threads (and not processes) since most work done by our entries is IO-bound.
-        # Note: For Python < 3.5, we manually compute `max_workers`.
-        #   See <https://github.com/python/cpython/blob/3.5/Lib/concurrent/futures/thread.py#L94>.
-        with ThreadPoolExecutor(max_workers=((os.cpu_count() or 1) * 5)) as executor:
-            for entry_instance in executor.map(_entry_instantiator, enabled_entries):
-                output.add_entry(entry_instance)
 
     output.output()
 
