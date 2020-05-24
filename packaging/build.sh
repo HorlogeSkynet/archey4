@@ -20,10 +20,6 @@
 # Run it as :
 # $ bash packaging/build.sh [REVISION] [0xGPG_IDENTITY]
 #
-# Known packages error (FPM bug ?) :
-# * Arch Linux :
-#     * `--pacman-optional-depends` appears to be ignored [jordansissel/fpm#1619]
-#
 # If you happen to tweak packaging scripts, please lint them before submitting changes :
 # $ shellcheck packaging/*
 #
@@ -58,12 +54,12 @@ FPM_COMMON_ARGS=(
 	--config-files "etc/archey4/config.json" \
 	--architecture all \
 	--maintainer "${AUTHOR} <${AUTHOR_EMAIL}>" \
-	--after-install packaging/after_install \
-	--after-upgrade packaging/after_install \
-	--before-remove packaging/before_remove \
+	--after-install ./packaging/after_install \
+	--after-upgrade ./packaging/after_install \
+	--before-remove ./packaging/before_remove \
 	--python-bin python3 \
-	--python-install-bin usr/bin/ \
-	--python-install-data usr/ \
+	--python-install-bin 'usr/bin/' \
+	--python-install-data 'usr/' \
 	--no-python-fix-name \
 	--no-python-dependencies \
 )
@@ -99,7 +95,7 @@ fpm \
 	--depends 'python3 >= 3.4' \
 	--depends 'python3-distro' \
 	--depends 'python3-netifaces' \
-	--python-install-lib usr/lib/python3/dist-packages/ \
+	--python-install-lib 'usr/lib/python3/dist-packages/' \
 	--deb-priority 'optional' \
 	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what, btrfs-progs' \
 	--deb-no-default-config-files \
@@ -174,13 +170,13 @@ python3 setup.py -q sdist bdist_wheel
 
 # Check whether packages description will render correctly on PyPI.
 echo 'Now checking PyPI description rendering...'
-if twine check dist/*.{tar.gz,whl}; then
+if twine check ./dist/*.{tar.gz,whl}; then
 	echo -n 'Upload source and wheel distribution packages to PyPI ? [y/N] '
 	read -r -n 1 -p '' && echo
 	if [[ "$REPLY" =~ ^[yY]$ ]]; then
 		echo 'Now signing & uploading source TAR and WHEEL to PyPI...'
 		twine upload \
 			--sign --identity "$GPG_IDENTITY" \
-			dist/*.{tar.gz,whl}
+			./dist/*.{tar.gz,whl}
 	fi
 fi
