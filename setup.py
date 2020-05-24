@@ -23,6 +23,7 @@ setup(
     license='GPLv3',
     packages=find_packages(exclude=['archey.test']),
     test_suite='archey.test',
+    python_requires='>=3.4',
     install_requires=[
         'distro',
         'netifaces'
