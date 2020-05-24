@@ -82,6 +82,10 @@ sed -e "s/\${DATE}/$(date +'%B %Y')/1" archey.1 | \
 
 
 # Prevent Setuptools from generating byte-code files.
+# Important note :
+#   It allows the packager to build generic distribution packages without shipping byte-code related to its Python interpreter version.
+#   A noticeable side-effect may be the appearance of "untracked" byte-code files (when running Archey as root for instance).
+#   Check `packaging/before_remove` script to see how Archey deals with them.
 export PYTHONDONTWRITEBYTECODE=1
 
 
