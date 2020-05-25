@@ -86,8 +86,11 @@ class Model(Entry):
 
     def _check_rasperry_pi(self):
         """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
-        with open('/proc/cpuinfo') as f_cpu_info:
-            cpu_info = f_cpu_info.read()
+        try:
+            with open('/proc/cpuinfo') as f_cpu_info:
+                cpu_info = f_cpu_info.read()
+        except (PermissionError, FileNotFoundError):
+            return
 
         # If the output contains 'Hardware' and 'Revision'...
         hardware = re.search('(?<=Hardware\t: ).*', cpu_info)

@@ -137,8 +137,8 @@ class TestModelEntry(unittest.TestCase):
         """Test when no information could be retrieved"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = [
-                FileNotFoundError(),      # First `open` call will  (`/sys/[...]/product_name`)
-                'Hardware\t: HARDWARE\n'  # `Revision` entry is not present (`/proc/cpuinfo`)
+                FileNotFoundError(),  # First `open` call will  (`/sys/[...]/product_name`)
+                PermissionError()     # `/proc/cpuinfo` won't be available
             ]
 
             model = Model()
