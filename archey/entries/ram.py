@@ -16,8 +16,24 @@ class RAM(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        used, total = self._run_free_dash_m()
+        if not total:
+            used, total = self._read_proc_meminfo()
+
+        if not total:
+            return
+
+        self.value = {
+            'used': used,
+            'total': total,
+            'unit': 'MiB'
+        }
+
+    @staticmethod
+    def _run_free_dash_m():
+        """Call `free -m` and parse its output to retrieve current used and total RAM"""
         try:
-            ram = ''.join(
+            memory_usage = ''.join(
                 filter(
                     re.compile('Mem').search,
                     check_output(
@@ -26,37 +42,50 @@ class RAM(Entry):
                     ).splitlines()
                 )
             ).split()
-            used = float(ram[2])
-            total = float(ram[1])
         except (IndexError, FileNotFoundError):
-            # An in-digest one-liner to retrieve memory info into a dictionary
-            with open('/proc/meminfo') as file:
-                ram = {
-                    i.split(':')[0]: float(i.split(':')[1].strip(' kB')) / 1024
-                    for i in filter(None, file.read().splitlines())
-                }
+            return None, None
 
-            total = ram['MemTotal']
-            # Here, let's imitate Neofetch's behavior.
-            # See <https://github.com/dylanaraps/neofetch/wiki/Frequently-Asked-Questions>.
-            used = total + ram['Shmem'] - (
-                ram['MemFree'] + ram['Cached'] + ram['SReclaimable'] + ram['Buffers'])
-            # Imitates what `free` does when the obtained value happens to be incorrect.
-            # See <https://gitlab.com/procps-ng/procps/blob/master/proc/sysinfo.c#L790>.
-            if used < 0:
-                used = total - ram['MemFree']
+        return float(memory_usage[2]), float(memory_usage[1])
 
-        self.value = {
-            'used': used,
-            'total': total,
-            'unit': 'MiB'
-        }
+    @staticmethod
+    def _read_proc_meminfo():
+        """Same behavior but by reading from `/proc/meminfo` directly"""
+        try:
+            with open('/proc/meminfo') as f_mem_info:
+                mem_info_lines = f_mem_info.read().splitlines()
+        except (PermissionError, FileNotFoundError):
+            return None, None
+
+        # Store memory information into a dictionary.
+        mem_info = {}
+        for line in filter(None, mem_info_lines):
+            key, value = line.split(':', maxsplit=1)
+            mem_info[key] = float(value.strip(' kB')) / 1024
+
+        total = mem_info['MemTotal']
+        # Here, let's imitate Neofetch's behavior.
+        # See <https://github.com/dylanaraps/neofetch/wiki/Frequently-Asked-Questions>.
+        used = total + mem_info['Shmem'] - (
+            mem_info['MemFree'] + mem_info['Cached']
+            + mem_info['SReclaimable'] + mem_info['Buffers']
+        )
+        # Imitates what `free` does when the obtained value happens to be incorrect.
+        # See <https://gitlab.com/procps-ng/procps/blob/master/proc/sysinfo.c#L790>.
+        if used < 0:
+            used = total - mem_info['MemFree']
+
+        return used, total
 
 
     def output(self, output):
         """
-        Adds the entry to `output` after pretty-formatting the RAM usage with colour and units.
+        Adds the entry to `output` after pretty-formatting the RAM usage with color and units.
         """
+        if not self.value:
+            # Fall back on the default behavior if no RAM usage could be detected.
+            super().output(output)
+            return
+
         # DRY some constants
         used = self.value['used']
         total = self.value['total']

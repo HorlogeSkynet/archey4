@@ -142,6 +142,34 @@ SUnreclaim:       113308 kB
             }
         )
 
+    @patch(
+        'archey.entries.ram.check_output',
+        side_effect=IndexError()  # `free` call will fail
+    )
+    @patch(
+        'archey.entries.ram.open',
+        side_effect=PermissionError(),
+        create=True
+    )
+    @patch(
+        'archey.configuration.Configuration.get',
+        side_effect=[
+            {'not_detected': 'Not detected'}
+        ]
+    )
+    def test_not_detected(self, _, __, ___):
+        """Check Archey does not crash when `/proc/meminfo` is not readable"""
+        ram = RAM()
+
+        output_mock = MagicMock()
+        ram.output(output_mock)
+
+        self.assertIsNone(ram.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            'Not detected'
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
