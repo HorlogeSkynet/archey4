@@ -1,7 +1,5 @@
 """Test module for `archey.processes`"""
 
-from subprocess import CalledProcessError
-
 import unittest
 from unittest.mock import patch
 
@@ -21,6 +19,7 @@ class TestProcessesUtil(unittest.TestCase):
     @patch(
         'archey.processes.check_output',
         return_value="""\
+COMMAND
 what
 an
 awesome
@@ -44,27 +43,6 @@ there
         # The class has been instantiated twice, but `check_output` has been called only once.
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
         self.assertEqual(check_output_mock.call_count, 1)
-
-    @patch.dict(
-        'archey.singleton.Singleton._instances',
-        clear=True
-    )
-    @patch(
-        'archey.processes.check_output',
-        side_effect=[
-            CalledProcessError(1, 'ps', "ps: unrecognized option: u\n"),
-            """\
-COMMAND
-sh
-top
-ps
-"""])
-    def test_ps_failed(self, _):
-        """Verifies that the program correctly handles first crashing `ps` call"""
-        self.assertListEqual(
-            Processes().get(),
-            ['sh', 'top', 'ps']
-        )
 
     @patch.dict(
         'archey.singleton.Singleton._instances',
