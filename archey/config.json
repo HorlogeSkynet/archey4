@@ -2,68 +2,75 @@
 	"allow_overriding": true,
 	"parallel_loading": true,
 	"suppress_warnings": false,
-	"entries": {
-		"User": true,
-		"Hostname": true,
-		"Model": true,
-		"Distro": true,
-		"Kernel": true,
-		"Uptime": true,
-		"Processes": true,
-		"WindowManager": true,
-		"DesktopEnvironment": true,
-		"Shell": true,
-		"Terminal": true,
-		"Packages": true,
-		"Temperature": true,
-		"CPU": true,
-		"GPU": true,
-		"RAM": true,
-		"Disk": true,
-		"LAN_IP": true,
-		"WAN_IP": true
-	},
+	"entries": [
+		{ "type": "User" },
+		{ "type": "Hostname" },
+		{ "type": "Model" },
+		{ "type": "Distro" },
+		{ "type": "Kernel" },
+		{ "type": "Uptime" },
+		{ "type": "WindowManager" },
+		{ "type": "DesktopEnvironment" },
+		{ "type": "Shell" },
+		{ "type": "Terminal" },
+		{ "type": "Packages" },
+		{
+			"type": "Temperature",
+			"options": {
+				"char_before_unit": " ",
+				"sensors_chipsets": [],
+				"use_fahrenheit": false
+			}
+		},
+		{ "type": "CPU" },
+		{
+			"type": "GPU",
+			"options": {
+				"one_line": true,
+				"max_count": 2
+			}
+		},
+		{
+			"type": "RAM",
+			"options": {
+				"warning": 33.3,
+				"danger": 66.7
+			}
+		},
+		{
+			"type": "Disk",
+			"options": {
+				"show_filesystems": ["local"],
+				"combine_total": true,
+				"disk_labels": null,
+				"hide_entry_name": null,
+				"warning_use_percent": 50,
+				"danger_use_percent": 75
+			}
+		},
+		{
+			"type": "LanIP",
+			"options": {
+				"max_count": 2,
+				"ipv6_support": true
+			}
+		},
+		{
+			"type": "WanIP",
+			"options": {
+				"ipv6_support": true,
+				"ipv4_timeout_secs": 1,
+				"ipv6_timeout_secs": 1
+			}
+		}
+	],
 	"colors_palette": {
 		"use_unicode": true,
 		"honor_ansi_color": true
-	},
-	"disk": {
-		"show_filesystems": ["local"],
-		"combine_total": true,
-		"disk_labels": null,
-		"hide_entry_name": null
 	},
 	"default_strings": {
 		"no_address": "No Address",
 		"not_detected": "Not detected",
 		"virtual_environment": "Virtual Environment"
-	},
-	"gpu": {
-		"one_line": true,
-		"max_count": 2
-	},
-	"ip_settings": {
-		"lan_ip_max_count": 2,
-		"lan_ip_v6_support": true,
-		"wan_ip_v6_support": true
-	},
-	"limits": {
-		"ram": {
-			"warning": 33.3,
-			"danger": 66.7
-		},
-		"disk": {
-			"warning": 50,
-			"danger": 75
-		}
-	},
-	"temperature": {
-		"char_before_unit": " ",
-		"sensors_chipsets": [],
-		"use_fahrenheit": false
-	},
-	"timeout": {
-		"ipv4_detection": 1,
-		"ipv6_detection": 1
 	}
 }

@@ -17,7 +17,7 @@ class HelperMethods:
     We kindly borrow `update_recursive` class method from `Configuration` to DRY its implementation.
     """
     @staticmethod
-    def entry_mock(entry, configuration=None):
+    def entry_mock(entry, options=None, configuration=None):
         """
         Creates a placeholder "instance" of the entry class passed, with a clean default
         `_configuration` which is optionally updated by `configuration`.
@@ -34,6 +34,8 @@ class HelperMethods:
         # These instance-attributes are quite important, so let's mimic them.
         instance_mock.name = str(entry.__name__)
         instance_mock.value = None  # (entry default)
+        # We don't have default entry options defined outside of entries.
+        instance_mock.entry_options = options or {}
 
         # Let's initially give the entry configuration the defaults.
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
@@ -138,7 +140,10 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
                 'key_1': 10  # Updating a nested key-value pair.
             }
         }
-        simple_mock_instance = self.entry_mock(TestHelperMethods._SimpleEntry, configuration_dict)
+        simple_mock_instance = self.entry_mock(
+            TestHelperMethods._SimpleEntry,
+            configuration=configuration_dict
+        )
         self.assertDictEqual(
             simple_mock_instance._configuration,  # pylint: disable=protected-access
             {

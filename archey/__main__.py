@@ -36,8 +36,8 @@ from archey.entries.cpu import CPU as e_CPU
 from archey.entries.gpu import GPU as e_GPU
 from archey.entries.ram import RAM as e_RAM
 from archey.entries.disk import Disk as e_Disk
-from archey.entries.lan_ip import LanIp as e_LanIp
-from archey.entries.wan_ip import WanIp as e_WanIp
+from archey.entries.lan_ip import LanIP as e_LanIP
+from archey.entries.wan_ip import WanIP as e_WanIP
 
 
 class Entries(Enum):
@@ -63,8 +63,8 @@ class Entries(Enum):
     GPU = e_GPU
     RAM = e_RAM
     Disk = e_Disk
-    LAN_IP = e_LanIp
-    WAN_IP = e_WanIp
+    LanIP = e_LanIP
+    WanIP = e_WanIP
 
 
 def args_parsing():
@@ -112,11 +112,7 @@ def main():
     configuration = Configuration(config_path=args.config_path)
 
     # From configuration, gather the entries user-enabled.
-    enabled_entries = [
-        (entry.value, entry.name)
-        for entry in Entries
-        if configuration.get('entries', {}).get(entry.name, True)
-    ]
+    enabled_entries = configuration.get('entries', [])
 
     output = Output(
         preferred_distribution=args.distribution,
@@ -124,8 +120,14 @@ def main():
     )
 
     # We will map this function onto our enabled entries to instantiate them.
-    def _entry_instantiator(entry_tuple):
-        return entry_tuple[0](name=entry_tuple[1])
+    def _entry_instantiator(entry_dict):
+        entry_args = {
+            'name': entry_dict['type'],
+            'options': entry_dict.get('options')  # since it isn't always present.
+        }
+        return Entries[entry_dict['type']].value(**entry_args)
+
+    enabled_entries = configuration.get('entries') or []
 
     # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
     with ExitStack() as cm_stack:

@@ -10,7 +10,7 @@ except ImportError:
 from archey.entry import Entry
 
 
-class LanIp(Entry):
+class LanIP(Entry):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,7 +26,7 @@ Please either install it or disable `LAN_IP` entry in configuration.\
             return
 
         address_types = [netifaces.AF_INET]
-        if self._configuration.get('ip_settings')['lan_ip_v6_support']:
+        if self.entry_options.get('ipv6_support', True):
             address_types.append(netifaces.AF_INET6)
 
         self.value = []
@@ -49,7 +49,7 @@ Please either install it or disable `LAN_IP` entry in configuration.\
 
                     self.value.append(if_addr['addr'].split('%')[0])
 
-        lan_ip_max_count = self._configuration.get('ip_settings')['lan_ip_max_count']
+        lan_ip_max_count = self.entry_options.get('max_count', 2)
         if lan_ip_max_count is not False:
             self.value = self.value[:lan_ip_max_count]
 

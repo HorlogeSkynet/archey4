@@ -98,13 +98,12 @@ class RAM(Entry):
         used = self.value['used']
         total = self.value['total']
         unit = self.value['unit']
-        # Fetch the user-defined RAM limits from configuration.
-        ram_limits = self._configuration.get('limits')['ram']
 
         # Based on the RAM percentage usage, select the corresponding level color.
         level_color = Colors.get_level_color(
             (used / total) * 100,
-            ram_limits['warning'], ram_limits['danger']
+            self.entry_options.get('warning', 33.3),
+            self.entry_options.get('danger', 66.7)
         )
 
         output.append(

@@ -21,7 +21,7 @@ class Temperature(Entry):
         self._temps = []
 
         # Tries `sensors` at first.
-        self._run_sensors(self._configuration.get('temperature')['sensors_chipsets'])
+        self._run_sensors(self.entry_options.get('sensors_chipsets', []))
 
         # On error (list still empty), checks for system thermal zones files.
         if not self._temps:
@@ -35,8 +35,8 @@ class Temperature(Entry):
             return
 
         # Let's DRY some constants once.
-        use_fahrenheit = self._configuration.get('temperature')['use_fahrenheit']
-        char_before_unit = self._configuration.get('temperature')['char_before_unit']
+        use_fahrenheit = self.entry_options.get('use_fahrenheit')
+        char_before_unit = self.entry_options.get('char_before_unit', ' ')
 
         # Conversion to Fahrenheit if needed.
         if use_fahrenheit:

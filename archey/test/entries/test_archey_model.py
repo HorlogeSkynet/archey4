@@ -128,8 +128,8 @@ class TestModelEntry(unittest.TestCase):
             'MY-LAPTOP-MODEL'
         )
 
-    def test_fetch_rasperry_pi_revision(self):
-        """Test `_fetch_rasperry_pi_revision` static method"""
+    def test_fetch_raspberry_pi_revision(self):
+        """Test `_fetch_raspberry_pi_revision` static method"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = [
                 'Hardware\t: HARDWARE\nRevision\t: REVISION\n',
@@ -137,11 +137,11 @@ class TestModelEntry(unittest.TestCase):
             ]
 
             self.assertEqual(
-                Model._fetch_rasperry_pi_revision(),  # pylint: disable=protected-access
+                Model._fetch_raspberry_pi_revision(),  # pylint: disable=protected-access
                 'Raspberry Pi HARDWARE (Rev. REVISION)'
             )
             self.assertIsNone(
-                Model._fetch_rasperry_pi_revision()  # pylint: disable=protected-access
+                Model._fetch_raspberry_pi_revision()  # pylint: disable=protected-access
             )
 
     @patch(
@@ -171,7 +171,7 @@ class TestModelEntry(unittest.TestCase):
         return_value=None  # No model name could be retrieved...
     )
     @patch(
-        'archey.entries.model.Model._fetch_rasperry_pi_revision',
+        'archey.entries.model.Model._fetch_raspberry_pi_revision',
         return_value=None  # Not a Raspberry Pi device either...
     )
     @patch(
