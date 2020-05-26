@@ -7,8 +7,11 @@ Logos are stored under the `logos` module.
 """
 
 import argparse
+import os
 
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack
 
 from archey._version import __version__
 from archey.output import Output
@@ -60,8 +63,8 @@ class Entries(Enum):
     WAN_IP = e_WanIp
 
 
-def main():
-    """Simple entry point"""
+def args_parsing():
+    """Simple wrapper to `argparse`"""
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
         '-j', '--json',
@@ -73,7 +76,12 @@ def main():
         action='version',
         version=__version__
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    """Simple entry point"""
+    args = args_parsing()
 
     # `Processes` is a singleton, let's populate the internal list here.
     Processes()
@@ -81,13 +89,37 @@ def main():
     # `Configuration` is a singleton, let's populate the internal object here.
     configuration = Configuration()
 
+    # From configuration, gather the entries user-enabled.
+    enabled_entries = [
+        (entry.value, entry.name)
+        for entry in Entries
+        if configuration.get('entries', {}).get(entry.name, True)
+    ]
+
     output = Output(
         format_to_json=args.json
     )
 
-    for entry in Entries:
-        if configuration.get('entries', {}).get(entry.name, True):
-            output.add_entry(entry.value(name=entry.name))
+    # We will map this function onto our enabled entries to instantiate them.
+    def _entry_instantiator(entry_tuple):
+        return entry_tuple[0](name=entry_tuple[1])
+
+    # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
+    with ExitStack() as cm_stack:
+        if not configuration.get('parallel_loading'):
+            mapper = map
+        else:
+            # Instantiate a threads pool to load our enabled entries in parallel.
+            # We use threads (and not processes) since most work done by our entries is IO-bound.
+            # `max_workers` is manually computed to mimic Python 3.8+ behaviour, but for our needs.
+            #   See <https://github.com/python/cpython/pull/13618>.
+            executor = cm_stack.enter_context(ThreadPoolExecutor(
+                max_workers=min(len(enabled_entries) or 1, (os.cpu_count() or 1) + 4)
+            ))
+            mapper = executor.map
+
+        for entry_instance in mapper(_entry_instantiator, enabled_entries):
+            output.add_entry(entry_instance)
 
     output.output()
 

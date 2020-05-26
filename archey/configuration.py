@@ -15,6 +15,7 @@ class Configuration(metaclass=Singleton):
     """
     def __init__(self):
         self._config = {
+            'parallel_loading': True,
             'colors_palette': {
                 'use_unicode': True,
                 'honor_ansi_color': True
