@@ -113,9 +113,9 @@ def main():
             # We use threads (and not processes) since most work done by our entries is IO-bound.
             # `max_workers` is manually computed to mimic Python 3.8+ behaviour, but for our needs.
             #   See <https://github.com/python/cpython/pull/13618>.
-            executor = cm_stack.enter_context(
-                ThreadPoolExecutor(max_workers=min(len(enabled_entries), (os.cpu_count() or 1) + 4))
-            )
+            executor = cm_stack.enter_context(ThreadPoolExecutor(
+                max_workers=min(len(enabled_entries) or 1, (os.cpu_count() or 1) + 4)
+            ))
             mapper = executor.map
 
         for entry_instance in mapper(_entry_instantiator, enabled_entries):
