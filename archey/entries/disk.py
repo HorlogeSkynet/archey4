@@ -1,8 +1,8 @@
 """Disk usage detection class"""
 
 import re
-from subprocess import check_output, CalledProcessError
-from csv import register_dialect, reader
+from subprocess import CalledProcessError, check_output
+from csv import reader as csv_reader
 
 from archey.colors import Colors
 from archey.entry import Entry
@@ -16,13 +16,16 @@ class Disk(Entry):
         # Populate an output from `df`
         self._df_table = self.get_df_output_table()
 
-        # `self.value` will be a list of filesystems - which are dicts with the keys:
-        # `devpath`, `mountpoint`, `used_blocks`, `total_blocks`.
+        # `self.value` will be a list of filesystems represented by dictionaries, with below keys:
+        # - `devpath`
+        # - `mountpoint`
+        # - `used_blocks`
+        # - `total_blocks`
         # Hopefully those are self-explanatory!
         self.value = []
 
         config_filesystems = self._configuration.get('disk')['show_filesystems']
-        # This section only adds our filesystems with the device path and mountpoint.
+        # This section only adds our filesystems with the device path and mounting point.
         if config_filesystems == ['local']:
             self.value += self._get_local_filesystems()
         else:
@@ -48,12 +51,14 @@ class Disk(Entry):
             /dev(/...)/dm filesystems (Linux)
         """
         filesystems = []
-        # Compile a regex to match the device paths we will accept.
-        devpath_regex = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
-        # Extract devpath and mount-point for disks from df output.
+
+        # Compile a REGEXP pattern to match the device paths we will accept.
+        devpath_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
+
+        # Extract `devpath` and `mountpoint` for each disk from `df` output.
         for row in self._df_table:
-            # Deduplication using device paths:
-            if (devpath_regex.match(row[0])
+            # De-duplication using device paths:
+            if (devpath_regexp.match(row[0])
                     and not any(disk['devpath'] == row[0] for disk in filesystems)):
                 filesystems.append({
                     'devpath': row[0],
@@ -105,7 +110,11 @@ class Disk(Entry):
 
     def _get_filesystem_usage(self, filesystem):
         """
-        Gets the used and total blocks of the filesystem, and returns them in a dict.
+        Gets the used and total blocks of the passed `filesystem`, and returns them in a dict, as:
+        {
+            'used_blocks': XXX
+            'total_blocks': YYY
+        }
         """
         # Default to a zero-size and zero-usage disk:
         used_blocks = 0
@@ -127,35 +136,40 @@ class Disk(Entry):
     @staticmethod
     def get_df_output_table():
         """
-        Runs `df -P -k` and returns a table (nested lists) of its results.
+        Runs `df -P` and returns a "table" (list) representing its results as nested lists.
         """
         try:
-            df_output = check_output(['df'], env={'LANG': 'C'}, universal_newlines=True)
+            df_output = check_output(
+                ['df', '-P'],
+                env={'LANG': 'C'}, universal_newlines=True
+            )
         except (FileNotFoundError, CalledProcessError):
-            # `df` isn't available on this system
+            # `df` isn't available on this system.
             return []
 
         # Parse this output as a table in SSV (space-separated values) format
-        register_dialect('ssv', delimiter=' ', skipinitialspace=True)
-        ssv_reader = reader(df_output.splitlines()[1:], 'ssv') # Discarding the header row
-        df_table = []
-        for line in ssv_reader:
-            df_table.append(line)
+        ssv_reader = csv_reader(
+            df_output.splitlines()[1:],  # Discarding the header row.
+            delimiter=' ',
+            skipinitialspace=True
+        )
 
-        return df_table
+        return list(ssv_reader)
 
 
     @staticmethod
-    def blocks_to_human_readable(blocks, suffix='B'):
+    def _blocks_to_human_readable(blocks, suffix='B'):
         """
         Returns human-readable format of `blocks` supplied in kibibytes (1024 bytes).
         Taken (and modified) from: <https://stackoverflow.com/a/1094933/13343912>
         """
-        for unit in ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+        for unit in ('Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'):
             if abs(blocks) < 1024.0:
-                return '{0:02.1f} {1}{2}'.format(blocks, unit, suffix)
+                break
+
             blocks /= 1024.0
-        return '{0:02.1f} {1}{2}'.format(blocks, 'Yi', suffix)
+
+        return '{0:02.1f} {1}{2}'.format(blocks, unit, suffix)
 
 
     def output(self, output):
@@ -163,57 +177,52 @@ class Disk(Entry):
         Adds the entry to `output` after formatting with color and units.
         Follows the user configuration supplied for formatting.
         """
-        # Get our filesystems as a local so we can modify it safely.
+        # Fetch our `filesystems` object locally so we can modify it safely.
         filesystems = self.value
 
         if not filesystems:
-            # We didn't find any disks, fall back to the default entry behavior.
+            # We didn't find any disk, fall back to the default entry behavior.
             super().output(output)
             return
 
-        # Fetch some configuration objects for the output.
-        combine_disks = self._configuration.get('disk')['combine_disks']
+        # DRY configuration object for the output.
         disk_labels = self._configuration.get('disk')['disk_labels']
         hide_entry_name = self._configuration.get('disk')['hide_entry_name']
 
-        # Set the name formatting of our output
-        if combine_disks:
-            name = '{entry_name}'
-        # We will only use disk labels and entry name hiding if we aren't combining disks.
-        else:
-            name = ''
-            if not hide_entry_name:
-                name += '{entry_name}'
-            if disk_labels:
-                name += '{0}({{disk_label}})'.format(
-                    ' ' if not hide_entry_name else ''
-                )
-
         # Combine all disks into one grand-total if configured to do so.
-        if combine_disks:
-            used_blocks_sum = sum([filesystem['used_blocks'] for filesystem in filesystems])
-            total_blocks_sum = sum([filesystem['total_blocks'] for filesystem in filesystems])
-            # Rewrite our filesystems as one combined filesystem.
+        if self._configuration.get('disk')['combine_total']:
+            name = self.name
+
+            # Rewrite our `filesystems` object as one combining all of them.
             filesystems = [{
                 'devpath': None,
                 'mountpoint': None,
-                'used_blocks': used_blocks_sum,
-                'total_blocks': total_blocks_sum
+                'used_blocks': sum([filesystem['used_blocks'] for filesystem in filesystems]),
+                'total_blocks': sum([filesystem['total_blocks'] for filesystem in filesystems])
             }]
+        else:
+            # We will only use disk labels and entry name hiding if we aren't combining disks.
+            name = ''
+            if not hide_entry_name:
+                name += self.name
+            if disk_labels:
+                if not hide_entry_name:
+                    name += ' '
+                name += '({disk_label})'
 
         # Fetch the user-defined limits from the configuration.
         disk_limits = self._configuration.get('limits')['disk']
 
         # We will only run this loop a single time for combined disks.
         for filesystem in filesystems:
-            # Select the corresponding level colour based on disk percentage usage.
+            # Select the corresponding level color based on disk percentage usage.
             level_color = Colors.get_level_color(
                 (filesystem['used_blocks'] / filesystem['total_blocks']) * 100,
                 disk_limits['warning'], disk_limits['danger']
             )
 
             # Set the correct disk label
-            if disk_labels == 'mountpoints':
+            if disk_labels == 'mount_points':
                 disk_label = filesystem['mountpoint']
             elif disk_labels == 'device_paths':
                 disk_label = filesystem['devpath']
@@ -222,15 +231,12 @@ class Disk(Entry):
 
             pretty_filesystem_value = '{0}{1}{2} / {3}'.format(
                 level_color,
-                self.blocks_to_human_readable(filesystem['used_blocks']),
+                self._blocks_to_human_readable(filesystem['used_blocks']),
                 Colors.CLEAR,
-                self.blocks_to_human_readable(filesystem['total_blocks'])
+                self._blocks_to_human_readable(filesystem['total_blocks'])
             )
 
             output.append(
-                name.format(
-                    entry_name=self.name,
-                    disk_label=disk_label
-                ),
+                name.format(disk_label=disk_label),
                 pretty_filesystem_value
             )

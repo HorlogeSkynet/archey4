@@ -27,9 +27,9 @@
 	},
 	"disk": {
 		"show_filesystems": ["local"],
-		"combine_disks": true,
-		"disk_labels": false,
-		"hide_entry_name": true
+		"combine_total": true,
+		"disk_labels": null,
+		"hide_entry_name": null
 	},
 	"default_strings": {
 		"no_address": "No Address",

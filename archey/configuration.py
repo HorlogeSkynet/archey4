@@ -21,9 +21,9 @@ class Configuration(metaclass=Singleton):
             },
             'disk': {
                 'show_filesystems': ['local'],
-                'combine_disks': True,
-                'disk_labels': False,
-                'hide_entry_name': False
+                'combine_total': True,
+                'disk_labels': None,
+                'hide_entry_name': None
             },
             'default_strings': {
                 'no_address': 'No Address',
