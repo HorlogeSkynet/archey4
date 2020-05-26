@@ -111,10 +111,10 @@ def main():
         else:
             # Instantiate a threads pool to load our enabled entries in parallel.
             # We use threads (and not processes) since most work done by our entries is IO-bound.
-            # Note: For Python < 3.5, we manually compute `max_workers`.
-            # See <https://github.com/python/cpython/blob/3.5/Lib/concurrent/futures/thread.py#L94>.
+            # `max_workers` is manually computed to mimic Python 3.8+ behaviour, but for our needs.
+            #   See <https://github.com/python/cpython/pull/13618>.
             executor = cm_stack.enter_context(
-                ThreadPoolExecutor(max_workers=((os.cpu_count() or 1) * 5))
+                ThreadPoolExecutor(max_workers=min(len(enabled_entries), (os.cpu_count() or 1) + 4))
             )
             mapper = executor.map
 
