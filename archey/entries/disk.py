@@ -14,35 +14,23 @@ class Disk(Entry):
         super().__init__(*args, **kwargs)
 
         # Populate an output from `df`
-        self._df_table = self.get_df_output_table()
-
-        # `self.value` will be a list of filesystems represented by dictionaries, with below keys:
-        # - `devpath`
-        # - `mountpoint`
-        # - `used_blocks`
-        # - `total_blocks`
-        # Hopefully those are self-explanatory!
-        self.value = []
+        self._disk_dict = self.get_df_output_dict()
 
         config_filesystems = self._configuration.get('disk')['show_filesystems']
-        # This section only adds our filesystems with the device path and mounting point.
+        # See `Disk.get_df_output_dict` for the format we use in `self.value`.
         if config_filesystems == ['local']:
-            self.value += self._get_local_filesystems()
+            self.value = self._get_local_filesystems()
         else:
-            self.value += self._get_specified_filesystems(config_filesystems)
+            self.value = self._get_specified_filesystems(config_filesystems)
 
-        # Iterate over filesystems, not `df` output, to preserve configuration ordering.
-        # Unfortunately, this requires extra iteration over the `df` output...
-        for filesystem in self.value:
-            # We're adding our used and total blocks here.
-            filesystem.update(self._get_filesystem_usage(filesystem))
 
 
     def _get_local_filesystems(self):
         """
-        Finds local (i.e. /dev/xxx) filesystems for any *NIX using `df`.
+        Extracts local (i.e. /dev/xxx) filesystems for any *NIX from `self._disk_dict`,
+        returning a copy with those filesystems only.
 
-        We additionally ignore...
+        We specifically ignore...
         Loop devices:-
             /dev(/...)/loop filesystems (Linux)
             /dev(/...)/*vnd filesystems (BSD)
@@ -50,93 +38,73 @@ class Disk(Entry):
         Device mappers:- (since their partitions are already included!)
             /dev(/...)/dm filesystems (Linux)
         """
-        filesystems = []
-
         # Compile a REGEXP pattern to match the device paths we will accept.
-        devpath_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
+        device_path_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
 
-        # Extract `devpath` and `mountpoint` for each disk from `df` output.
-        for row in self._df_table:
-            # De-duplication using device paths:
-            if (devpath_regexp.match(row[0])
-                    and not any(disk['devpath'] == row[0] for disk in filesystems)):
-                filesystems.append({
-                    'devpath': row[0],
-                    'mountpoint': row[5]
-                })
+        # Build the dictionary
+        local_disk_dict = {}
+        for mount_point, disk_data in self._disk_dict.items():
+            if (
+                    device_path_regexp.match(disk_data['device_path'])
+                    # Deduplication based on `device_path`s:
+                    and not any(
+                        disk_data['device_path'] == present_disk_data['device_path']
+                        for _, present_disk_data in local_disk_dict.items()
+                    )
+            ):
+                local_disk_dict[mount_point] = disk_data
 
-        return filesystems
+        return local_disk_dict
 
 
     def _get_specified_filesystems(self, specified_filesystems):
         """
-        Finds the specified filesystems if found in `df_table`.
-        It preserves the mount-point names specified!
+        Extracts the specified filesystems (if found) from `self._disk_dict`,
+        returning a copy with those filesystems only, preserving specified mount point names.
+
+        Searching for non-existent filesystems or filesystems based on device paths is slower,
+        so try to only search for existing *mount points* if possible!
         """
-        # Extract devpaths and mount-points from df output.
-        devpaths, mountpoints = [], []
-        for row in self._df_table:
-            devpaths.append(row[0])
-            mountpoints.append(row[5])
+        specified_disk_dict = {}
 
-        filesystems = []
-
-        # We could enumerate `devpaths` and `mountpoints` for better performance;
-        # however, this method preserves the order of the specified filesystems.
-        for file_system in specified_filesystems:
-            # EAFP: This is quicker than using `in` followed by `.index` since it
-            # saves an extra iteration of `devpaths` and `mountpoints` every loop.
+        for filesystem in specified_filesystems:
+            # Let's use EAFP and first assume the filesystem is a mount point,
+            # since the dictionary lookup is O(1).
             try:
-                # Find the corresponding device path of a mountpoint filesystem.
-                devpath = devpaths[mountpoints.index(file_system)]
-            except ValueError:
-                devpath = file_system
+                specified_disk_dict[filesystem] = self._disk_dict[filesystem]
+                # If we reach here, we found the filesystem - we can move on to the next.
+                continue
+            except KeyError:
+                # It's not a mount point!
+                pass
 
-            try:
-                # Find the corresponding mountpoint of a device path filesystem.
-                mountpoint = mountpoints[devpaths.index(file_system)]
-            except ValueError:
-                mountpoint = file_system
+            # Now assume this is a device path.
+            for mount_point, disk_data in self._disk_dict.items():
+                if disk_data['device_path'] == filesystem:
+                    specified_disk_dict[mount_point] = disk_data
+                    # We only need one match, so we can stop when it's found.
+                    break
 
-            # If these differ, we found a matching filesystem.
-            if devpath != mountpoint:
-                filesystems.append({
-                    'devpath': devpath,
-                    'mountpoint': mountpoint
-                })
-
-        return filesystems
-
-
-    def _get_filesystem_usage(self, filesystem):
-        """
-        Gets the used and total blocks of the passed `filesystem`, and returns them in a dict, as:
-        {
-            'used_blocks': XXX
-            'total_blocks': YYY
-        }
-        """
-        # Default to a zero-size and zero-usage disk:
-        used_blocks = 0
-        total_blocks = 0
-
-        for row in self._df_table:
-            if filesystem['devpath'] == row[0] and filesystem['mountpoint'] == row[5]:
-                used_blocks = int(row[2])
-                total_blocks = int(row[1])
-                # We found a match, so we can stop searching.
-                break
-
-        return {
-            'used_blocks': used_blocks,
-            'total_blocks': total_blocks
-        }
+        return specified_disk_dict
 
 
     @staticmethod
-    def get_df_output_table():
+    def get_df_output_dict():
         """
-        Runs `df -P` and returns a "table" (list) representing its results as nested lists.
+        Runs `df -P` and returns disks in a dict formatted as:
+        {
+            'mount_point_1': {
+                'device_path': AAA,
+                'used_blocks': BBB,
+                'total_blocks': CCC
+            },
+            'mount_point_2': {
+                'device_path': XXX,
+                'used_blocks': YYY,
+                'total_blocks': ZZZ
+            }
+        }
+        Mount points are used as keys since they are always unique.
         """
         try:
             df_output = check_output(
@@ -145,16 +113,25 @@ class Disk(Entry):
             )
         except (FileNotFoundError, CalledProcessError):
             # `df` isn't available on this system.
-            return []
+            return {}
 
         # Parse this output as a table in SSV (space-separated values) format
         ssv_reader = csv_reader(
-            df_output.splitlines()[1:],  # Discarding the header row.
+            df_output.splitlines()[1:],  # Discard the header row here.
             delimiter=' ',
             skipinitialspace=True
         )
 
-        return list(ssv_reader)
+        # Build the dictionary.
+        results_dict = {}
+        for line in ssv_reader:
+            results_dict[line[5]] = {  # 6th column (@ index 5) == mount point.
+                'device_path': line[0],
+                'used_blocks': int(line[2]),
+                'total_blocks': int(line[1])
+            }
+
+        return results_dict
 
 
     @staticmethod
@@ -194,12 +171,19 @@ class Disk(Entry):
             name = self.name
 
             # Rewrite our `filesystems` object as one combining all of them.
-            filesystems = [{
-                'devpath': None,
-                'mountpoint': None,
-                'used_blocks': sum([filesystem['used_blocks'] for filesystem in filesystems]),
-                'total_blocks': sum([filesystem['total_blocks'] for filesystem in filesystems])
-            }]
+            filesystems = {
+                None: {
+                    'device_path': None,
+                    'used_blocks': sum([
+                        filesystem_data['used_blocks']
+                        for _, filesystem_data in filesystems.items()
+                    ]),
+                    'total_blocks': sum([
+                        filesystem_data['total_blocks']
+                        for _, filesystem_data in filesystems.items()
+                    ])
+                }
+            }
         else:
             # We will only use disk labels and entry name hiding if we aren't combining disks.
             name = ''
@@ -214,26 +198,26 @@ class Disk(Entry):
         disk_limits = self._configuration.get('limits')['disk']
 
         # We will only run this loop a single time for combined disks.
-        for filesystem in filesystems:
+        for mount_point, filesystem_data in filesystems.items():
             # Select the corresponding level color based on disk percentage usage.
             level_color = Colors.get_level_color(
-                (filesystem['used_blocks'] / filesystem['total_blocks']) * 100,
+                (filesystem_data['used_blocks'] / filesystem_data['total_blocks']) * 100,
                 disk_limits['warning'], disk_limits['danger']
             )
 
             # Set the correct disk label
             if disk_labels == 'mount_points':
-                disk_label = filesystem['mountpoint']
+                disk_label = mount_point
             elif disk_labels == 'device_paths':
-                disk_label = filesystem['devpath']
+                disk_label = filesystem_data['device_path']
             else:
                 disk_label = None
 
             pretty_filesystem_value = '{0}{1}{2} / {3}'.format(
                 level_color,
-                self._blocks_to_human_readable(filesystem['used_blocks']),
+                self._blocks_to_human_readable(filesystem_data['used_blocks']),
                 Colors.CLEAR,
-                self._blocks_to_human_readable(filesystem['total_blocks'])
+                self._blocks_to_human_readable(filesystem_data['total_blocks'])
             )
 
             output.append(
