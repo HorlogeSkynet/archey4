@@ -24,7 +24,6 @@ class Disk(Entry):
             self.value = self._get_specified_filesystems(config_filesystems)
 
 
-
     def _get_local_filesystems(self):
         """
         Extracts local (i.e. /dev/xxx) filesystems for any *NIX from `self._disk_dict`,
@@ -46,10 +45,10 @@ class Disk(Entry):
         for mount_point, disk_data in self._disk_dict.items():
             if (
                     device_path_regexp.match(disk_data['device_path'])
-                    # Deduplication based on `device_path`s:
+                    # De-duplication based on `device_path`s:
                     and not any(
                         disk_data['device_path'] == present_disk_data['device_path']
-                        for _, present_disk_data in local_disk_dict.items()
+                        for present_disk_data in local_disk_dict.values()
                     )
             ):
                 local_disk_dict[mount_point] = disk_data
@@ -91,7 +90,7 @@ class Disk(Entry):
     @staticmethod
     def get_df_output_dict():
         """
-        Runs `df -P` and returns disks in a dict formatted as:
+        Runs `df -P -k` and returns disks in a dict formatted as:
         {
             'mount_point_1': {
                 'device_path': AAA,
@@ -108,7 +107,7 @@ class Disk(Entry):
         """
         try:
             df_output = check_output(
-                ['df', '-P'],
+                ['df', '-P', '-k'],
                 env={'LANG': 'C'}, universal_newlines=True
             )
         except (FileNotFoundError, CalledProcessError):
@@ -122,16 +121,13 @@ class Disk(Entry):
             skipinitialspace=True
         )
 
-        # Build the dictionary.
-        results_dict = {}
-        for line in ssv_reader:
-            results_dict[line[5]] = {  # 6th column (@ index 5) == mount point.
+        return {
+            line[5]: {  # 6th column === mount point.
                 'device_path': line[0],
                 'used_blocks': int(line[2]),
                 'total_blocks': int(line[1])
-            }
-
-        return results_dict
+            } for line in ssv_reader
+        }
 
 
     @staticmethod
@@ -141,7 +137,7 @@ class Disk(Entry):
         Taken (and modified) from: <https://stackoverflow.com/a/1094933/13343912>
         """
         for unit in ('Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'):
-            if abs(blocks) < 1024.0:
+            if blocks < 1024.0:
                 break
 
             blocks /= 1024.0
@@ -176,11 +172,11 @@ class Disk(Entry):
                     'device_path': None,
                     'used_blocks': sum([
                         filesystem_data['used_blocks']
-                        for _, filesystem_data in filesystems.items()
+                        for filesystem_data in filesystems.values()
                     ]),
                     'total_blocks': sum([
                         filesystem_data['total_blocks']
-                        for _, filesystem_data in filesystems.items()
+                        for filesystem_data in filesystems.values()
                     ])
                 }
             }
