@@ -74,7 +74,7 @@ class TestConfigurationUtil(unittest.TestCase):
 """)
 
             # Let's load it into our `Configuration` instance
-            configuration.load_configuration(temp_dir)
+            configuration._load_configuration(temp_dir)  # pylint: disable=protected-access
 
             # Let's check the result :S
             self.assertDictEqual(
@@ -98,7 +98,7 @@ class TestConfigurationUtil(unittest.TestCase):
             self.assertNotEqual(configuration._stderr, sys.stderr)  # pylint: disable=protected-access
 
             # Let's try to load the `config.json` file present in this project.
-            configuration.load_configuration(os.getcwd() + '/archey/')
+            configuration._load_configuration(os.getcwd() + '/archey/')  # pylint: disable=protected-access
 
             # It should not happen as `allow_overriding` has been set to false.
             # Thus, the configuration is supposed to be the same as before.
