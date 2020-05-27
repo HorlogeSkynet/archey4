@@ -162,7 +162,7 @@ class Disk(Entry):
         disk_labels = self._configuration.get('disk')['disk_labels']
         hide_entry_name = self._configuration.get('disk')['hide_entry_name']
 
-        # Combine all disks into one grand-total if configured to do so.
+        # Combine all entries into one grand-total if configured to do so.
         if self._configuration.get('disk')['combine_total']:
             name = self.name
 
@@ -181,9 +181,10 @@ class Disk(Entry):
                 }
             }
         else:
-            # We will only use disk labels and entry name hiding if we aren't combining disks.
+            # We will only use disk labels and entry name hiding if we aren't combining entries.
             name = ''
-            if not hide_entry_name:
+            # Hide `Disk` from entry name only if the user specified it... as long as a label.
+            if not hide_entry_name or not disk_labels:
                 name += self.name
             if disk_labels:
                 if not hide_entry_name:
@@ -193,7 +194,7 @@ class Disk(Entry):
         # Fetch the user-defined limits from the configuration.
         disk_limits = self._configuration.get('limits')['disk']
 
-        # We will only run this loop a single time for combined disks.
+        # We will only run this loop a single time for combined entries.
         for mount_point, filesystem_data in filesystems.items():
             # Select the corresponding level color based on disk percentage usage.
             level_color = Colors.get_level_color(
