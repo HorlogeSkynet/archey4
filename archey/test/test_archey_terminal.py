@@ -26,8 +26,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_terminal_emulator_term_program(self, _):
         """Check that `TERM_PROGRAM` is honored even if `TERM` or `COLORTERM` is defined"""
-        output = Terminal().value
-        self.assertTrue(output.startswith('A-COOL-TERMINAL-EMULATOR'))
+        self.assertEqual(Terminal().value, 'A-COOL-TERMINAL-EMULATOR')
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -43,8 +42,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_terminal_emulator_special_term(self, _):
         """Check that `TERM` is honored even if a "known identifier" could be found"""
-        output = Terminal().value
-        self.assertTrue(output.startswith('OH-A-SPECIAL-CASE'))
+        self.assertEqual(Terminal().value, 'OH-A-SPECIAL-CASE')
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -60,8 +58,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_terminal_emulator_name_normalization(self, _):
         """Check that our manual terminal detection as long as name normalization are working"""
-        output = Terminal().value
-        self.assertTrue(output.startswith('Konsole'))
+        self.assertEqual(Terminal().value, 'Konsole')
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -79,7 +76,7 @@ class TestTerminalEntry(unittest.TestCase):
         output_mock = MagicMock()
         terminal.output(output_mock)
 
-        self.assertTrue(terminal.value.startswith('xterm-256color'))
+        self.assertEqual(terminal.value, 'xterm-256color')
         self.assertTrue(
             output_mock.append.call_args[0][1].startswith('xterm-256color')
         )
@@ -99,8 +96,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_terminal_emulator_colorterm(self, _):
         """Check we can detect terminals using the `COLORTERM` environment variable."""
-        output = Terminal().value
-        self.assertTrue(output.startswith('KMSCON'))
+        self.assertEqual(Terminal().value, 'KMSCON')
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -119,8 +115,7 @@ class TestTerminalEntry(unittest.TestCase):
         """
         Check we observe terminal using `COLORTERM` even if `TERM` or a "known identifier" is found.
         """
-        output = Terminal().value
-        self.assertTrue(output.startswith('KMSCON'))
+        self.assertEqual(Terminal().value, 'KMSCON')
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
@@ -143,7 +138,7 @@ class TestTerminalEntry(unittest.TestCase):
         output = output_mock.append.call_args[0][1]
 
         self.assertIsNone(terminal.value)
-        self.assertTrue(output.startswith('Not detected '))
+        self.assertTrue(output.startswith('Not detected'))
         self.assertFalse(output.count('\u2588'))
 
 
