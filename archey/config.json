@@ -1,6 +1,6 @@
 {
-	"parallel_loading": true,
 	"allow_overriding": true,
+	"parallel_loading": true,
 	"suppress_warnings": false,
 	"entries": {
 		"User": true,

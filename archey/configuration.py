@@ -11,13 +11,15 @@ class Configuration(metaclass=Singleton):
     """
     The default needed configuration which will be used by Archey is present below.
     Values present in the `self._config` dictionary below are needed.
-    New optional values may be added with `_update_recursive()` method.
+    New optional values may be added with `_update_recursive` method.
 
     If a `config_path` is passed during instantiation, it will be loaded.
     """
     def __init__(self, config_path=None):
         self._config = {
+            'allow_overriding': True,
             'parallel_loading': True,
+            'suppress_warnings': False,
             'colors_palette': {
                 'use_unicode': True,
                 'honor_ansi_color': True
@@ -81,7 +83,7 @@ class Configuration(metaclass=Singleton):
         It will try to load any `config.json` present under `path`.
         """
         # If a previous configuration file has denied overriding...
-        if not self.get('allow_overriding', True):
+        if not self.get('allow_overriding'):
             #  ... don't load this one.
             return
 
@@ -96,12 +98,12 @@ class Configuration(metaclass=Singleton):
             return
         # For backward compatibility with Python versions prior to 3.5.0
         #   we use `ValueError` instead of `json.JSONDecodeError`.
-        except ValueError as error:
-            print('Warning: {0} ({1})'.format(error, path), file=sys.stderr)
+        except ValueError as value_error:
+            print('Warning: {0} ({1})'.format(value_error, path), file=sys.stderr)
             return
 
         # If the user does not want any warning to appear : 2> /dev/null
-        if self.get('suppress_warnings', False):
+        if self.get('suppress_warnings'):
             # One more if statement to avoid multiple `open` calls.
             if sys.stderr == self._stderr:
                 sys.stderr = open(os.devnull, 'w')
