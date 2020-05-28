@@ -4,15 +4,10 @@ It supports entries lazy-insertion, logo detection, and final printing.
 """
 
 from textwrap import TextWrapper
-
-from subprocess import check_output
-
 from shutil import get_terminal_size
 
 import os
 import sys
-
-import distro
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
@@ -31,30 +26,14 @@ class Output:
         # Fetches passed arguments.
         self._format_to_json = kwargs.get('format_to_json')
 
-        # First we check whether the Kernel has been compiled as a WSL.
-        if 'microsoft' in check_output(['uname', '-r'], universal_newlines=True).lower():
-            self._distribution = Distributions.WINDOWS
-        else:
-            try:
-                self._distribution = Distributions(distro.id())
-            except ValueError:
-                # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ID_LIKE=>.
-                for distro_like in distro.like().split(' '):
-                    try:
-                        self._distribution = Distributions(distro_like)
-                    except ValueError:
-                        continue
-                    break
-                else:
-                    # Well, we didn't match anything so let's fall-back to default `Linux`.
-                    self._distribution = Distributions.LINUX
+        # Run distribution detection and fetch a local reference to the
+        self._distribution = Distributions.run_detection()
 
         # Fetch the colors palette related to this distribution.
         self._colors_palette = COLOR_DICT[self._distribution]
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
-        # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ANSI_COLOR=>.
-        ansi_color = distro.os_release_attr('ansi_color')
+        ansi_color = Distributions.get_ansi_color()
         if ansi_color and Configuration().get('colors_palette')['honor_ansi_color']:
             # Replace each Archey integrated colors by `ANSI_COLOR`.
             self._colors_palette = len(self._colors_palette) * \

@@ -2,8 +2,7 @@
 
 from subprocess import check_output
 
-import distro
-
+from archey.distributions import Distributions
 from archey.entry import Entry
 
 
@@ -12,17 +11,13 @@ class Distro(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        distro_name = distro.name(pretty=True)
-        if not distro_name:
-            distro_name = None
-
         architecture = check_output(
             ['uname', '-m'],
             universal_newlines=True
         ).rstrip()
 
         self.value = {
-            'name': distro_name,
+            'name': Distributions.get_distro_name(),
             'arch': architecture
         }
 
