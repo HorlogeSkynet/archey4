@@ -6,16 +6,18 @@ from unittest.mock import patch
 from archey.processes import Processes
 
 
+# To avoid edge-case issues due to singleton, we automatically reset internal `_instances`.
+# This is done at the class-level.
+@patch.dict(
+    'archey.singleton.Singleton._instances',
+    clear=True
+)
 class TestProcessesUtil(unittest.TestCase):
     """
     Test cases for the `Processes` (singleton) class.
     To work around the singleton, we reset the internal `_instances` dictionary.
     This way, `check_output` can be mocked here.
     """
-    @patch.dict(
-        'archey.singleton.Singleton._instances',
-        clear=True
-    )
     @patch(
         'archey.processes.check_output',
         return_value="""\
@@ -44,10 +46,6 @@ there
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
         self.assertEqual(check_output_mock.call_count, 1)
 
-    @patch.dict(
-        'archey.singleton.Singleton._instances',
-        clear=True
-    )
     @patch(
         'archey.processes.check_output',
         side_effect=FileNotFoundError()

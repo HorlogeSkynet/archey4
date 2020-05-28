@@ -261,12 +261,17 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
         None  # Imitate an `ImportError` behavior.
     )
     @patch(
+        'archey.entries.lan_ip.print',
+        return_value=None,  # Let's nastily mute class' outputs.
+        create=True
+    )
+    @patch(
         'archey.configuration.Configuration.get',
         side_effect=[
             {'not_detected': 'Not detected'}
         ]
     )
-    def test_netifaces_not_available(self, _):
+    def test_netifaces_not_available(self, _, __):
         """Check `netifaces` is really acting as a (soft-)dependency"""
         lan_ip = LanIp()
 

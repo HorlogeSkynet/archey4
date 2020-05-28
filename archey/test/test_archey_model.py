@@ -15,9 +15,6 @@ class TestModelEntry(unittest.TestCase):
     * Raspberry Pi
     * Virtual environment (as a VM or a container)
     """
-    def setUp(self):
-        self._return_values = None
-
     @patch(
         'archey.entries.model.check_output',
         side_effect=CalledProcessError(1, 'systemd-detect-virt', "none\n")
