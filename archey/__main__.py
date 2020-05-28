@@ -67,6 +67,10 @@ def args_parsing():
     """Simple wrapper to `argparse`"""
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
+        '-c', '--config-path',
+        help='path to a configuration file, or a directory containing a `config.json`'
+    )
+    parser.add_argument(
         '-j', '--json',
         action='count',
         help='output entries data to JSON format, use multiple times to increase indentation'
@@ -87,7 +91,7 @@ def main():
     Processes()
 
     # `Configuration` is a singleton, let's populate the internal object here.
-    configuration = Configuration()
+    configuration = Configuration(config_path=args.config_path)
 
     # From configuration, gather the entries user-enabled.
     enabled_entries = [

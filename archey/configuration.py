@@ -12,8 +12,10 @@ class Configuration(metaclass=Singleton):
     The default needed configuration which will be used by Archey is present below.
     Values present in the `self._config` dictionary below are needed.
     New optional values may be added with `_update_recursive()` method.
+
+    If a `config_path` is passed during instantiation, it will be loaded.
     """
-    def __init__(self):
+    def __init__(self, config_path=None):
         self._config = {
             'parallel_loading': True,
             'colors_palette': {
@@ -58,10 +60,14 @@ class Configuration(metaclass=Singleton):
         # Let's "save" `STDERR` file descriptor for `suppress_warnings` option
         self._stderr = sys.stderr
 
-        # Now, let's load each optional configuration file in a "regular" order
-        self._load_configuration('/etc/archey4/')
-        self._load_configuration(os.path.expanduser('~/.config/archey4/'))
-        self._load_configuration(os.path.dirname(os.path.realpath(__file__)))
+        # If a `config_path` has been specified, (try to) load it directly.
+        if config_path:
+            self._load_configuration(config_path)
+        # If not, load each (optional) configuration file in a "regular" order.
+        else:
+            self._load_configuration('/etc/archey4/')
+            self._load_configuration(os.path.expanduser('~/.config/archey4/'))
+            self._load_configuration(os.path.dirname(os.path.realpath(__file__)))
 
     def get(self, key, default=None):
         """
@@ -79,7 +85,9 @@ class Configuration(metaclass=Singleton):
             #  ... don't load this one.
             return
 
-        path = os.path.join(path, 'config.json')
+        # If the specified `path` is a directory, append the file name we are looking for.
+        if os.path.isdir(path):
+            path = os.path.join(path, 'config.json')
 
         try:
             with open(path) as f_config:

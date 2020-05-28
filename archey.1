@@ -1,5 +1,5 @@
 .\" Please, before submitting any change, run:
-.\" `groff -man -Tascii -z archey4.1`
+.\" `groff -man -Tascii -z archey.1`
 
 .TH ARCHEY4 1 "${DATE}" "archey4 ${VERSION}" "Archey4 man page"
 
@@ -31,12 +31,15 @@ Remain \fImaintained\fR, \fIcommunity-driven\fR and
 .IP "-h, --help"
 show help message and exit
 
-.IP "-v, --version"
-show program's version number and exit
+.IP "-c, --config-path"
+path to a configuration file, or a directory containing a `config.json`
 
 .IP "-j, --json"
 output entries data to JSON format, use multiple times to increase
 indentation
+
+.IP "-v, --version"
+show program's version number and exit
 
 .P
 Archey will regularly run in terminal text output mode if no argument
