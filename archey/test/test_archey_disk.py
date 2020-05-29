@@ -37,6 +37,71 @@ class TestDiskEntry(unittest.TestCase):
             'default_strings': {'not_detected': 'Not detected'}
         }
 
+    def test_disk_get_local_filesystems(self):
+        """Tests `Disk._get_local_filesystems`."""
+        # This minimal `_disk_dict` contains everything this method touches.
+        self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
+            '/very/good/mountpoint': {
+                'device_path': '/dev/sda1'
+            },
+            '/mounted/here/too': {
+                'device_path': '/dev/sda1'
+            },
+            '/other/acceptable/device/paths': {
+                'device_path': '/dev/anything-really'
+            },
+            '/a/samba/share': {
+                'device_path': '//server.local/cool_share'  # ignored - not `/dev/...`
+            },
+            '/linux/loop/device/one': {
+                'device_path': '/dev/loop0'  # ignored - loop device
+            },
+            '/linux/loop/device/two': {
+                'device_path': '/dev/blah/loop0'  # ignored - loop device
+            },
+            '/bsd/s/loop/device/one': {
+                'device_path': '/dev/svnd'  # ignored - loop device
+            },
+            '/bsd/s/loop/device/two': {
+                'device_path': '/dev/blah/svnd1'  # ignored - loop device
+            },
+            '/bsd/r/loop/device/one': {
+                'device_path': '/dev/rvnd'  # ignored - loop device
+            },
+            '/bsd/r/loop/device/two': {
+                'device_path': '/dev/blah/rvnd1'  # ignored - loop device
+            },
+            '/solaris/loop/device/one': {
+                'device_path': '/dev/lofi1'  # ignored - loop device
+            },
+            '/solaris/loop/device/two': {
+                'device_path': '/dev/blah/lofi'  # ignored - loop device
+            },
+            '/linux/device/mapper': {
+                'device_path': '/dev/dm-1'  # ignored - device mapper
+            }
+        }
+
+        result_disk_dict = Disk._get_local_filesystems(self.disk_instance_mock) # pylint: disable=protected-access
+        # Python < 3.6 doesn't guarantee dict ordering,
+        # so we can't know which `/dev/sda1` mount point was used.
+        self.assertEqual(
+            len(result_disk_dict),
+            2  # (/dev/sda1 is de-duplicated)
+        )
+        self.assertIn(
+            '/other/acceptable/device/paths',
+            result_disk_dict
+        )
+        # If we can now find `/dev/sda1`, then we logically must have the correct result.
+        seen_sda1_device = False
+        for disk_data in result_disk_dict.values():
+            if disk_data['device_path'] == '/dev/sda1':
+                seen_sda1_device = True
+                break
+        if not seen_sda1_device:
+            self.fail('`/dev/sda1` missing from results dict.')
+
     def test_disk_get_specified_filesystems(self):
         """Tests `Disk._get_specified_filesystems`."""
         # This minimal `_disk_dict` contains everything this method touches.
