@@ -18,6 +18,12 @@ class Processes(metaclass=Singleton):
         except FileNotFoundError:
             sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
 
-    def get(self):
-        """Simple getter to retrieve the processes list"""
-        return self._processes
+    @property
+    def list(self):
+        """Simple getter to retrieve (am immutable copy of) the processes list"""
+        return tuple(self._processes)
+
+    @property
+    def number(self):
+        """Simple getter to retrieve the number of stored processes"""
+        return len(self._processes)

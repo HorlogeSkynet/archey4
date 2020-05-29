@@ -60,7 +60,7 @@ class WindowManager(Entry):
                 )
             ).group(0)
         except (FileNotFoundError, CalledProcessError):
-            processes = Processes().get()
+            processes = Processes().list
             for wm_id, wm_name in WM_DICT.items():
                 if wm_id in processes:
                     self.value = wm_name

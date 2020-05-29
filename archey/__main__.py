@@ -23,6 +23,7 @@ from archey.entries.model import Model as e_Model
 from archey.entries.distro import Distro as e_Distro
 from archey.entries.kernel import Kernel as e_Kernel
 from archey.entries.uptime import Uptime as e_Uptime
+from archey.entries.processes import Processes as e_Processes
 from archey.entries.window_manager import WindowManager as e_WindowManager
 from archey.entries.desktop_environment import DesktopEnvironment as e_DesktopEnvironment
 from archey.entries.shell import Shell as e_Shell
@@ -49,6 +50,7 @@ class Entries(Enum):
     Distro = e_Distro
     Kernel = e_Kernel
     Uptime = e_Uptime
+    Processes = e_Processes
     WindowManager = e_WindowManager
     DesktopEnvironment = e_DesktopEnvironment
     Shell = e_Shell

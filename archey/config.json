@@ -9,6 +9,7 @@
 		"Distro": true,
 		"Kernel": true,
 		"Uptime": true,
+		"Processes": true,
 		"WindowManager": true,
 		"DesktopEnvironment": true,
 		"Shell": true,

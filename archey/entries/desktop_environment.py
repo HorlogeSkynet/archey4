@@ -28,7 +28,7 @@ class DesktopEnvironment(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        processes = Processes().get()
+        processes = Processes().list
         for de_id, de_name in DE_DICT.items():
             if de_id in processes:
                 desktop_environment = de_name

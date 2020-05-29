@@ -37,10 +37,11 @@ there
         processes_1 = Processes()
         _ = Processes()
 
-        self.assertListEqual(
-            processes_1.get(),
-            ['what', 'an', 'awesome', 'processes', 'list', 'you', 'got', 'there']
+        self.assertTupleEqual(
+            processes_1.list,
+            ('what', 'an', 'awesome', 'processes', 'list', 'you', 'got', 'there')
         )
+        self.assertEqual(processes_1.number, 8)
 
         # The class has been instantiated twice, but `check_output` has been called only once.
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
