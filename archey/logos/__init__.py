@@ -13,6 +13,7 @@ from archey.logos.manjaro import MANJARO
 from archey.logos.linux import LINUX
 from archey.logos.linux_mint import LINUX_MINT
 from archey.logos.opensuse import OPENSUSE
+from archey.logos.raspbian import RASPBIAN
 from archey.logos.red_hat import RED_HAT
 from archey.logos.slackware import SLACKWARE
 from archey.logos.ubuntu import UBUNTU
