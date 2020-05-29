@@ -49,7 +49,7 @@ class TestDiskEntry(unittest.TestCase):
             ""
         ))
     )
-    def test_df_output_dict(self, _):
+    def test_disk_df_output_dict(self, _):
         """Test method to get `df` output as a dict by mocking calls to `check_output`."""
         self.assertDictEqual(
             Disk.get_df_output_dict(),
@@ -71,6 +71,30 @@ class TestDiskEntry(unittest.TestCase):
                 }
             }
         )
+
+    def test_disk_blocks_to_human_readable(self):
+        """Test method to convert 1024-byte blocks to a human readable format."""
+        # Each tuple is a number of blocks followed by the expected output.
+        tests = (
+            (1, '1.0 KiB'),
+            (1024, '1.0 MiB'),
+            (2048, '2.0 MiB'),
+            (95604, '93.4 MiB'),
+            (1048576, '1.0 GiB'),
+            (2097152, '2.0 GiB'),
+            (92156042, '87.9 GiB'),
+            (1073742000, '1.0 TiB'),
+            (2147484000, '2.0 TiB'),
+            (458028916298, '426.6 TiB'),
+            (1099512000000, '1.0 PiB'),
+            (2199023000000, '2.0 PiB')  # I think we can safely stop here :)
+        )
+        for test in tests:
+            with self.subTest(test[1]):
+                self.assertEqual(
+                    Disk._blocks_to_human_readable(test[0]),  # pylint: disable=protected-access
+                    test[1]
+                )
 
     def test_disk_output_colors(self):
         """Test `output` disk level coloring."""
