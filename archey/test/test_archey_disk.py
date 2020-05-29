@@ -1,7 +1,5 @@
 """Test module for Archey's disks usage detection module"""
 
-from subprocess import CalledProcessError
-
 import unittest
 from unittest.mock import patch, MagicMock
 from os import linesep
@@ -39,15 +37,64 @@ class TestDiskEntry(unittest.TestCase):
             'default_strings': {'not_detected': 'Not detected'}
         }
 
+    def test_disk_get_specified_filesystems(self):
+        """Tests `Disk._get_specified_filesystems`."""
+        # This minimal `_disk_dict` contains everything this method touches.
+        self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
+            '/very/good/mountpoint': {
+                'device_path': '/dev/sda1'
+            },
+            '/mounted/here/too': {
+                'device_path': '/dev/sda1'
+            },
+            '/less/good/mountpoint': {
+                'device_path': '/dev/sda2'
+            },
+            '/a/samba/share': {
+                'device_path': '//server.local/cool_share'
+            }
+        }
+
+        with self.subTest('Get all filesystems with mount points.'):
+            # pylint: disable=protected-access
+            self.assertDictEqual(
+                Disk._get_specified_filesystems(
+                    self.disk_instance_mock,
+                    self.disk_instance_mock._disk_dict  # recall dicts are iterables of their keys.
+                ),
+                self.disk_instance_mock._disk_dict
+            )
+            # pylint: enable=protected-access
+
+        with self.subTest('Get only `/dev/sda1` filesystems.'):
+            result_disk_dict = Disk._get_specified_filesystems(  # pylint: disable=protected-access
+                self.disk_instance_mock,
+                ('/dev/sda1',)
+            )
+            # With Python < 3.6, dict ordering isn't guaranteed,
+            # so we don't know which disk will be selected.
+            self.assertEqual(len(result_disk_dict), 1)
+            # As long as `device_path` is also correct, this passes.
+            self.assertEqual(
+                result_disk_dict[list(result_disk_dict.keys())[0]]['device_path'],
+                '/dev/sda1'
+            )
+
+
     @patch(
         'archey.entries.disk.check_output',
-        return_value=linesep.join((
-            "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
-            "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
-            "tmpfs                        8127236       292       8126944       1% /tmp",
-            "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
-            ""
-        ))
+        side_effect=[
+            # First `df` call succeeds.
+            linesep.join((
+                "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
+                "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
+                "tmpfs                        8127236       292       8126944       1% /tmp",
+                "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
+                ""
+            )),
+            # Second `df` call fails (emulating it not being present).
+            FileNotFoundError
+        ]
     )
     def test_disk_df_output_dict(self, _):
         """Test method to get `df` output as a dict by mocking calls to `check_output`."""
@@ -71,6 +118,12 @@ class TestDiskEntry(unittest.TestCase):
                 }
             }
         )
+
+        with self.subTest('Missing `df` from system.'):
+            self.assertDictEqual(
+                Disk.get_df_output_dict(),
+                {}
+            )
 
     def test_disk_blocks_to_human_readable(self):
         """Test method to convert 1024-byte blocks to a human readable format."""
