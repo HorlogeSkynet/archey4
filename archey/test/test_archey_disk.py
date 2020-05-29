@@ -4,6 +4,7 @@ from subprocess import CalledProcessError
 
 import unittest
 from unittest.mock import patch, MagicMock
+from os import linesep
 
 from archey.colors import Colors
 from archey.entries.disk import Disk
@@ -38,6 +39,38 @@ class TestDiskEntry(unittest.TestCase):
             'default_strings': {'not_detected': 'Not detected'}
         }
 
+    @patch(
+        'archey.entries.disk.check_output',
+        return_value=linesep.join((
+            "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
+            "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
+            "tmpfs                        8127236       292       8126944       1% /tmp",
+            "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
+            ""
+        ))
+    )
+    def test_df_output_dict(self, _):
+        """Test method to get `df` output as a dict by mocking calls to `check_output`."""
+        self.assertDictEqual(
+            Disk.get_df_output_dict(),
+            {
+                '/': {
+                    'device_path': '/dev/nvme0n1p2',
+                    'used_blocks': 427458276,
+                    'total_blocks': 499581952
+                },
+                '/tmp': {
+                    'device_path': 'tmpfs',
+                    'used_blocks': 292,
+                    'total_blocks': 8127236
+                },
+                '/boot': {
+                    'device_path': '/dev/nvme0n1p1',
+                    'used_blocks': 35908,
+                    'total_blocks': 523248
+                }
+            }
+        )
 
     def test_disk_output_colors(self):
         """Test `output` disk level coloring."""
