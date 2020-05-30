@@ -1,8 +1,8 @@
 """Test module for Archey's disks usage detection module"""
 
+import os
 import unittest
 from unittest.mock import call, patch, MagicMock
-from os import linesep
 
 from archey.colors import Colors
 from archey.entries.disk import Disk
@@ -93,14 +93,15 @@ class TestDiskEntry(unittest.TestCase):
             '/other/acceptable/device/paths',
             result_disk_dict
         )
+
         # If we can now find `/dev/sda1`, then we logically must have the correct result.
-        seen_sda1_device = False
-        for disk_data in result_disk_dict.values():
-            if disk_data['device_path'] == '/dev/sda1':
-                seen_sda1_device = True
-                break
-        if not seen_sda1_device:
-            self.fail('`/dev/sda1` missing from results dict.')
+        self.assertTrue(
+            any(
+                disk_data['device_path'] == '/dev/sda1'
+                for disk_data in result_disk_dict.values()
+            ),
+            msg='`/dev/sda1` missing from results dict'
+        )
 
     def test_disk_get_specified_filesystems(self):
         """Tests `Disk._get_specified_filesystems`."""
@@ -136,6 +137,7 @@ class TestDiskEntry(unittest.TestCase):
                 self.disk_instance_mock,
                 ('/dev/sda1',)
             )
+
             # With Python < 3.6, dict ordering isn't guaranteed,
             # so we don't know which disk will be selected.
             self.assertEqual(len(result_disk_dict), 1)
@@ -150,7 +152,7 @@ class TestDiskEntry(unittest.TestCase):
         'archey.entries.disk.check_output',
         side_effect=[
             # First `df` call succeeds.
-            linesep.join((
+            os.linesep.join((
                 "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
                 "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
                 "tmpfs                        8127236       292       8126944       1% /tmp",
@@ -193,7 +195,7 @@ class TestDiskEntry(unittest.TestCase):
     def test_disk_blocks_to_human_readable(self):
         """Test method to convert 1024-byte blocks to a human readable format."""
         # Each tuple is a number of blocks followed by the expected output.
-        tests = (
+        test_cases = (
             (1, '1.0 KiB'),
             (1024, '1.0 MiB'),
             (2048, '2.0 MiB'),
@@ -207,11 +209,11 @@ class TestDiskEntry(unittest.TestCase):
             (1099512000000, '1.0 PiB'),
             (2199023000000, '2.0 PiB')  # I think we can safely stop here :)
         )
-        for test in tests:
-            with self.subTest(test[1]):
+        for test_case in test_cases:
+            with self.subTest(test_case[1]):
                 self.assertEqual(
-                    Disk._blocks_to_human_readable(test[0]),  # pylint: disable=protected-access
-                    test[1]
+                    Disk._blocks_to_human_readable(test_case[0]),  # pylint: disable=protected-access
+                    test_case[1]
                 )
 
     def test_disk_output_colors(self):
@@ -219,9 +221,9 @@ class TestDiskEntry(unittest.TestCase):
         # This dict's values are tuples of used blocks, and the level's corresponding color.
         # For reference, this test uses a disk whose total block count is 100.
         levels = {
-            'normal': (45, Colors.GREEN_NORMAL),
-            'warning': (70, Colors.YELLOW_NORMAL),
-            'danger': (95, Colors.RED_NORMAL)
+            'normal': (45.0, Colors.GREEN_NORMAL),
+            'warning': (70.0, Colors.YELLOW_NORMAL),
+            'danger': (95.0, Colors.RED_NORMAL)
         }
         for level, blocks_color_tuple in levels.items():
             with self.subTest(level):
@@ -235,7 +237,7 @@ class TestDiskEntry(unittest.TestCase):
                 Disk.output(self.disk_instance_mock, self.output_mock)
                 self.output_mock.append.assert_called_with(
                     'Disk',
-                    '{color}{used}.0 KiB{clear} / 100.0 KiB'.format(
+                    '{color}{used} KiB{clear} / 100.0 KiB'.format(
                         color=blocks_color_tuple[1],
                         used=blocks_color_tuple[0],
                         clear=Colors.CLEAR
@@ -261,9 +263,7 @@ class TestDiskEntry(unittest.TestCase):
             Disk.output(self.disk_instance_mock, self.output_mock)
             self.output_mock.append.assert_called_once_with(
                 'Disk',
-                '{0}20.0 KiB{1} / 40.0 KiB'.format(
-                    Colors.YELLOW_NORMAL, Colors.CLEAR
-                )
+                '{0}20.0 KiB{1} / 40.0 KiB'.format(Colors.YELLOW_NORMAL, Colors.CLEAR)
             )
 
         self.output_mock.reset_mock()
@@ -276,15 +276,80 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(
-                            Colors.RED_NORMAL, Colors.CLEAR
-                        )
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
                     ),
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(
-                            Colors.GREEN_NORMAL, Colors.CLEAR
-                        )
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Entry name labeling (device path with entry name)'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['disk_labels'] = 'device_paths'  # pylint: disable=protected-access
+
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        'Disk (/dev/my-cool-disk)',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        'Disk (/dev/my-cooler-disk)',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Entry name labeling (mount points without entry name)'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['disk_labels'] = 'mount_points'  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['hide_entry_name'] = True  # pylint: disable=protected-access
+
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        '(first_mount_point)',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        '(second_mount_point)',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Entry name labeling (without disk label nor entry name)'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['disk_labels'] = False  # pylint: disable=protected-access
+            # `hide_entry_name` is being ignored as `disk_labels` evaluates to "falsy" too.
+            self.disk_instance_mock._configuration['disk']['hide_entry_name'] = True  # pylint: disable=protected-access
+
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
                     )
                 ],
                 any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
