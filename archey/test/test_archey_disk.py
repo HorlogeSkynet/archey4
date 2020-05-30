@@ -1,7 +1,7 @@
 """Test module for Archey's disks usage detection module"""
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import call, patch, MagicMock
 from os import linesep
 
 from archey.colors import Colors
@@ -82,7 +82,7 @@ class TestDiskEntry(unittest.TestCase):
             }
         }
 
-        result_disk_dict = Disk._get_local_filesystems(self.disk_instance_mock) # pylint: disable=protected-access
+        result_disk_dict = Disk._get_local_filesystems(self.disk_instance_mock)  # pylint: disable=protected-access
         # Python < 3.6 doesn't guarantee dict ordering,
         # so we can't know which `/dev/sda1` mount point was used.
         self.assertEqual(
@@ -241,6 +241,51 @@ class TestDiskEntry(unittest.TestCase):
                         clear=Colors.CLEAR
                     )
                 )
+
+    def test_disk_multiline_output(self):
+        """Test `output`'s multi-line capability."""
+        self.disk_instance_mock.value = {
+            'first_mount_point': {
+                'device_path': '/dev/my-cool-disk',
+                'used_blocks': 10,
+                'total_blocks': 10
+            },
+            'second_mount_point': {
+                'device_path': '/dev/my-cooler-disk',
+                'used_blocks': 10,
+                'total_blocks': 30
+            }
+        }
+
+        with self.subTest('Single-line combined output.'):
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.output_mock.append.assert_called_once_with(
+                'Disk',
+                '{0}20.0 KiB{1} / 40.0 KiB'.format(
+                    Colors.YELLOW_NORMAL, Colors.CLEAR
+                )
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Multi-line output'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls([
+                call(
+                    'Disk',
+                    '{0}10.0 KiB{1} / 10.0 KiB'.format(
+                        Colors.RED_NORMAL, Colors.CLEAR
+                    )
+                ),
+                call(
+                    'Disk',
+                    '{0}10.0 KiB{1} / 30.0 KiB'.format(
+                        Colors.GREEN_NORMAL, Colors.CLEAR
+                    )
+                )
+            ])
 
 
 if __name__ == '__main__':
