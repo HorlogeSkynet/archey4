@@ -272,20 +272,23 @@ class TestDiskEntry(unittest.TestCase):
             self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
             Disk.output(self.disk_instance_mock, self.output_mock)
             self.assertEqual(self.output_mock.append.call_count, 2)
-            self.output_mock.append.assert_has_calls([
-                call(
-                    'Disk',
-                    '{0}10.0 KiB{1} / 10.0 KiB'.format(
-                        Colors.RED_NORMAL, Colors.CLEAR
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(
+                            Colors.RED_NORMAL, Colors.CLEAR
+                        )
+                    ),
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(
+                            Colors.GREEN_NORMAL, Colors.CLEAR
+                        )
                     )
-                ),
-                call(
-                    'Disk',
-                    '{0}10.0 KiB{1} / 30.0 KiB'.format(
-                        Colors.GREEN_NORMAL, Colors.CLEAR
-                    )
-                )
-            ])
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
 
 
 if __name__ == '__main__':
