@@ -1,301 +1,359 @@
 """Test module for Archey's disks usage detection module"""
 
-from subprocess import CalledProcessError
-
+import os
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import call, patch, MagicMock
 
-from archey.entries.disk import Disk
 from archey.colors import Colors
+from archey.entries.disk import Disk
 
 
 class TestDiskEntry(unittest.TestCase):
     """
     Here, we mock `check_output` calls to disk utility tools.
     """
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            """\
-Filesystem       1000000-blocks    Used Available Capacity Mounted on
-/dev/mapper/root        39101MB 14216MB   22870MB      39% /
-/dev/sda1                 967MB    91MB     810MB      11% /boot
-/dev/mapper/home       265741MB 32700MB  219471MB      13% /home
-total                  305809MB 47006MB  243149MB      17% -
-""",
-            # Second `df` call will fail.
-            CalledProcessError(1, 'df', "df: no file systems processed\n")
-        ]
-    )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
+    def setUp(self):
+        """Some useful setup tasks to do before each test, to help us DRY."""
+        self.disk_instance_mock = MagicMock(spec=Disk, wraps=Disk)
+        self.output_mock = MagicMock()
+        # Let's set `Disk` instance mock's attributes to sensible defaults.
+        self.disk_instance_mock.name = 'Disk'
+        self.disk_instance_mock.value = None
+        # We can always change this configuration in tests if need be.
+        self.disk_instance_mock._configuration = {  # pylint: disable=protected-access
             'disk': {
-                'warning': 50,
-                'danger': 75
+                'show_filesystems': ['local'],
+                'combine_total': True,
+                'disk_labels': None,
+                'hide_entry_name': None
+            },
+            'limits': {
+                'disk': {
+                    'warning': 50,
+                    'danger': 75
+                }
+            },
+            # Required by all entries:
+            'default_strings': {'not_detected': 'Not detected'}
+        }
+
+    def test_disk_get_local_filesystems(self):
+        """Tests `Disk._get_local_filesystems`."""
+        # This minimal `_disk_dict` contains everything this method touches.
+        self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
+            '/very/good/mountpoint': {
+                'device_path': '/dev/sda1'
+            },
+            '/mounted/here/too': {
+                'device_path': '/dev/sda1'
+            },
+            '/other/acceptable/device/paths': {
+                'device_path': '/dev/anything-really'
+            },
+            '/a/samba/share': {
+                'device_path': '//server.local/cool_share'  # ignored - not `/dev/...`
+            },
+            '/linux/loop/device/one': {
+                'device_path': '/dev/loop0'  # ignored - loop device
+            },
+            '/linux/loop/device/two': {
+                'device_path': '/dev/blah/loop0'  # ignored - loop device
+            },
+            '/bsd/s/loop/device/one': {
+                'device_path': '/dev/svnd'  # ignored - loop device
+            },
+            '/bsd/s/loop/device/two': {
+                'device_path': '/dev/blah/svnd1'  # ignored - loop device
+            },
+            '/bsd/r/loop/device/one': {
+                'device_path': '/dev/rvnd'  # ignored - loop device
+            },
+            '/bsd/r/loop/device/two': {
+                'device_path': '/dev/blah/rvnd1'  # ignored - loop device
+            },
+            '/solaris/loop/device/one': {
+                'device_path': '/dev/lofi1'  # ignored - loop device
+            },
+            '/solaris/loop/device/two': {
+                'device_path': '/dev/blah/lofi'  # ignored - loop device
+            },
+            '/linux/device/mapper': {
+                'device_path': '/dev/dm-1'  # ignored - device mapper
             }
         }
-    )
-    def test_df_only(self, _, __):
-        """Test computations around `df` output at disk regular level"""
-        output_mock = MagicMock()
-        Disk().output(output_mock)
+
+        result_disk_dict = Disk._get_local_filesystems(self.disk_instance_mock)  # pylint: disable=protected-access
+        # Python < 3.6 doesn't guarantee dict ordering,
+        # so we can't know which `/dev/sda1` mount point was used.
         self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '{0}45.9 GiB{1} / 298.6 GiB'.format(
-                Colors.GREEN_NORMAL,
-                Colors.CLEAR
-            )
+            len(result_disk_dict),
+            2  # (/dev/sda1 is de-duplicated)
+        )
+        self.assertIn(
+            '/other/acceptable/device/paths',
+            result_disk_dict
         )
 
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            """\
-Filesystem       1000000-blocks     Used Available Capacity Mounted on
-/dev/mapper/root        39101MB  14216MB   22870MB      39% /
-/dev/sda1                 967MB     91MB     810MB      11% /boot
-/dev/mapper/home       265741MB 243291MB   22450MB      92% /home
-total                  305809MB 257598MB   46130MB      84% -
-""",
-            # Second `df` call will fail.
-            CalledProcessError(1, 'df', "df: no file systems processed\n")
-        ]
-    )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 80,
-                'danger': 90
+        # If we can now find `/dev/sda1`, then we logically must have the correct result.
+        self.assertTrue(
+            any(
+                disk_data['device_path'] == '/dev/sda1'
+                for disk_data in result_disk_dict.values()
+            ),
+            msg='`/dev/sda1` missing from results dict'
+        )
+
+    def test_disk_get_specified_filesystems(self):
+        """Tests `Disk._get_specified_filesystems`."""
+        # This minimal `_disk_dict` contains everything this method touches.
+        self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
+            '/very/good/mountpoint': {
+                'device_path': '/dev/sda1'
+            },
+            '/mounted/here/too': {
+                'device_path': '/dev/sda1'
+            },
+            '/less/good/mountpoint': {
+                'device_path': '/dev/sda2'
+            },
+            '/a/samba/share': {
+                'device_path': '//server.local/cool_share'
             }
         }
-    )
-    def test_df_only_warning(self, _, __):
-        """Test computations around `df` output at disk warning level"""
-        output_mock = MagicMock()
-        Disk().output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '{0}251.6 GiB{1} / 298.6 GiB'.format(
-                Colors.YELLOW_NORMAL,
-                Colors.CLEAR
+
+        with self.subTest('Get all filesystems with mount points.'):
+            # pylint: disable=protected-access
+            self.assertDictEqual(
+                Disk._get_specified_filesystems(
+                    self.disk_instance_mock,
+                    self.disk_instance_mock._disk_dict  # recall dicts are iterables of their keys.
+                ),
+                self.disk_instance_mock._disk_dict
             )
-        )
+            # pylint: enable=protected-access
+
+        with self.subTest('Get only `/dev/sda1` filesystems.'):
+            result_disk_dict = Disk._get_specified_filesystems(  # pylint: disable=protected-access
+                self.disk_instance_mock,
+                ('/dev/sda1',)
+            )
+
+            # With Python < 3.6, dict ordering isn't guaranteed,
+            # so we don't know which disk will be selected.
+            self.assertEqual(len(result_disk_dict), 1)
+            # As long as `device_path` is also correct, this passes.
+            self.assertEqual(
+                result_disk_dict[list(result_disk_dict.keys())[0]]['device_path'],
+                '/dev/sda1'
+            )
+
 
     @patch(
         'archey.entries.disk.check_output',
         side_effect=[
-            """\
-Filesystem       1000000-blocks     Used Available Capacity Mounted on
-/dev/mapper/root        39101MB  14216MB   22870MB      39% /
-/dev/sda1                 967MB     91MB     810MB      11% /boot
-/dev/mapper/home       265741MB 243291MB   22450MB      92% /home
-total                  305809MB 257598MB   46130MB      84% -
-""",
-            # Second `df` call will fail.
-            CalledProcessError(1, 'df', "df: no file systems processed\n")
+            # First `df` call succeeds.
+            os.linesep.join((
+                "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
+                "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
+                "tmpfs                        8127236       292       8126944       1% /tmp",
+                "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
+                ""
+            )),
+            # Second `df` call fails (emulating it not being present).
+            FileNotFoundError
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'disk': {
-                'warning': 50,
-                'danger': 80
-            }
-        }
-    )
-    def test_df_only_danger(self, _, __):
-        """Test computations around `df` output at disk danger level"""
-        output_mock = MagicMock()
-        Disk().output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '{0}251.6 GiB{1} / 298.6 GiB'.format(
-                Colors.RED_NORMAL,
-                Colors.CLEAR
-            )
-        )
-
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            """\
-Filesystem       1000000-blocks    Used Available Capacity Mounted on
-/dev/mapper/root        39101MB 14216MB   22870MB      39% /
-/dev/sda1                 967MB    91MB     810MB      11% /boot
-/dev/mapper/home       265741MB 32700MB  219471MB      13% /home
-total                  305809MB 47006MB  243149MB      17% -
-""",
-            """\
-Mounted on
-/
-/vol
-""",
-            """\
-/dev/nvme0n1p1, ID: 1
-   Device size:               0.00B
-   Device slack:              0.00B
-   Unallocated:           476.44GiB
-
-""",
-            """\
-/dev/sda1, ID: 1
-   Device size:               0.00B
-   Device slack:              0.00B
-   Unallocated:             3.64TiB
-
-""",
-            """\
-Overall:
-    Device size:                         476.44GiB
-    Device allocated:                    432.02GiB
-    Device unallocated:                   44.42GiB
-    Device missing:                      476.44GiB
-    Used:                                352.13GiB
-    Free (estimated):                    122.57GiB      (min: 122.57GiB)
-    Data ratio:                               1.00
-    Metadata ratio:                           1.00
-    Global reserve:                        0.43GiB      (used: 0.00GiB)
-
-Data,single: Size:429.01GiB, Used:350.85GiB (81.78%)
-
-Metadata,single: Size:3.01GiB, Used:1.28GiB (42.56%)
-
-System,single: Size:0.00GiB, Used:0.00GiB (1.95%)
-
-
-Overall:
-    Device size:                        3726.02GiB
-    Device allocated:                    592.01GiB
-    Device unallocated:                 3134.02GiB
-    Device missing:                     3726.02GiB
-    Used:                                591.27GiB
-    Free (estimated):                   1567.03GiB      (min: 1567.03GiB)
-    Data ratio:                               1.00
-    Metadata ratio:                           1.00
-    Global reserve:                        0.50GiB      (used: 0.00GiB)
-
-Data,single: Size:590.00GiB, Used:589.95GiB (99.99%)
-
-Metadata,single: Size:2.00GiB, Used:1.32GiB (66.16%)
-
-System,single: Size:0.01GiB, Used:0.00GiB (1.03%)
-
-"""
-        ]
-    )
-    def test_df_and_btrfs(self, _):
-        """Test computations around `df` and `btrfs` outputs"""
+    def test_disk_df_output_dict(self, _):
+        """Test method to get `df` output as a dict by mocking calls to `check_output`."""
         self.assertDictEqual(
-            Disk().value,
+            Disk.get_df_output_dict(),
             {
-                'used': 989.304296875,
-                'total': 4501.1016015625,
-                'unit': 'GiB'
+                '/': {
+                    'device_path': '/dev/nvme0n1p2',
+                    'used_blocks': 427458276,
+                    'total_blocks': 499581952
+                },
+                '/tmp': {
+                    'device_path': 'tmpfs',
+                    'used_blocks': 292,
+                    'total_blocks': 8127236
+                },
+                '/boot': {
+                    'device_path': '/dev/nvme0n1p1',
+                    'used_blocks': 35908,
+                    'total_blocks': 523248
+                }
             }
         )
 
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            CalledProcessError(1, 'df', "df: no file systems processed\n"),
-            """\
-Mounted on
-/
-/vol
-""",
-            """\
-/dev/nvme0n1p1, ID: 1
-   Device size:               0.00B
-   Device slack:              0.00B
-   Unallocated:           476.44GiB
+        with self.subTest('Missing `df` from system.'):
+            self.assertDictEqual(
+                Disk.get_df_output_dict(),
+                {}
+            )
 
-""",
-            """\
-/dev/sda1, ID: 1
-   Device size:               0.00B
-   Device slack:              0.00B
-   Unallocated:             3.64TiB
-
-/dev/sdb1, ID: 2
-   Device size:               0.00B
-   Device slack:              0.00B
-   Unallocated:             3.64TiB
-
-""",
-            """\
-Overall:
-    Device size:                         476.44GiB
-    Device allocated:                    432.02GiB
-    Device unallocated:                   44.42GiB
-    Device missing:                      476.44GiB
-    Used:                                352.13GiB
-    Free (estimated):                    122.57GiB      (min: 122.57GiB)
-    Data ratio:                               1.00
-    Metadata ratio:                           1.00
-    Global reserve:                        0.43GiB      (used: 0.00GiB)
-
-Data,single: Size:429.01GiB, Used:350.85GiB (81.78%)
-
-Metadata,single: Size:3.01GiB, Used:1.28GiB (42.56%)
-
-System,single: Size:0.00GiB, Used:0.00GiB (1.95%)
-
-
-Overall:
-    Device size:                        7452.04GiB
-    Device allocated:                   1184.02GiB
-    Device unallocated:                 6268.03GiB
-    Device missing:                     7452.04GiB
-    Used:                               1182.54GiB
-    Free (estimated):                   3134.06GiB      (min: 3134.06GiB)
-    Data ratio:                               2.00
-    Metadata ratio:                           2.00
-    Global reserve:                        0.50GiB      (used: 0.00GiB)
-
-Data,RAID1: Size:590.00GiB, Used:589.95GiB
-
-Metadata,RAID1: Size:2.00GiB, Used:1.32GiB
-
-System,RAID1: Size:0.01GiB, Used:0.00GiB
-
-"""
-        ]
-    )
-    def test_btrfs_only_with_raid_configuration(self, _):
-        """Test computations around `btrfs` outputs with a RAID-1 setup"""
-        self.assertDictEqual(
-            Disk().value,
-            {
-                'used': 943.4,
-                'total': 4202.46,
-                'unit': 'GiB'
-            }
+    def test_disk_blocks_to_human_readable(self):
+        """Test method to convert 1024-byte blocks to a human readable format."""
+        # Each tuple is a number of blocks followed by the expected output.
+        test_cases = (
+            (1, '1.0 KiB'),
+            (1024, '1.0 MiB'),
+            (2048, '2.0 MiB'),
+            (95604, '93.4 MiB'),
+            (1048576, '1.0 GiB'),
+            (2097152, '2.0 GiB'),
+            (92156042, '87.9 GiB'),
+            (1073742000, '1.0 TiB'),
+            (2147484000, '2.0 TiB'),
+            (458028916298, '426.6 TiB'),
+            (1099512000000, '1.0 PiB'),
+            (2199023000000, '2.0 PiB')  # I think we can safely stop here :)
         )
+        for test_case in test_cases:
+            with self.subTest(test_case[1]):
+                self.assertEqual(
+                    Disk._blocks_to_human_readable(test_case[0]),  # pylint: disable=protected-access
+                    test_case[1]
+                )
 
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            CalledProcessError(1, 'df', "df: unrecognized option: l\n"),
-            CalledProcessError(1, 'df', "df: unrecognized option: l\n")
-        ]
-    )
-    def test_df_failing(self, _):
-        """Test df call failing against the BusyBox implementation"""
-        self.assertIsNone(Disk().value)
+    def test_disk_output_colors(self):
+        """Test `output` disk level coloring."""
+        # This dict's values are tuples of used blocks, and the level's corresponding color.
+        # For reference, this test uses a disk whose total block count is 100.
+        levels = {
+            'normal': (45.0, Colors.GREEN_NORMAL),
+            'warning': (70.0, Colors.YELLOW_NORMAL),
+            'danger': (95.0, Colors.RED_NORMAL)
+        }
+        for level, blocks_color_tuple in levels.items():
+            with self.subTest(level):
+                self.disk_instance_mock.value = {
+                    'mount_point': {
+                        'device_path': '/dev/my-cool-disk',
+                        'used_blocks': blocks_color_tuple[0],
+                        'total_blocks': 100
+                    }
+                }
+                Disk.output(self.disk_instance_mock, self.output_mock)
+                self.output_mock.append.assert_called_with(
+                    'Disk',
+                    '{color}{used} KiB{clear} / 100.0 KiB'.format(
+                        color=blocks_color_tuple[1],
+                        used=blocks_color_tuple[0],
+                        clear=Colors.CLEAR
+                    )
+                )
 
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            CalledProcessError(1, 'df', "df: no file systems processed\n"),
-            CalledProcessError(1, 'df', "df: no file systems processed\n")
-        ]
-    )
-    def test_no_recognised_disks(self, _):
-        """Test df failing to detect any valid file-systems"""
-        self.assertIsNone(Disk().value)
+    def test_disk_multiline_output(self):
+        """Test `output`'s multi-line capability."""
+        self.disk_instance_mock.value = {
+            'first_mount_point': {
+                'device_path': '/dev/my-cool-disk',
+                'used_blocks': 10,
+                'total_blocks': 10
+            },
+            'second_mount_point': {
+                'device_path': '/dev/my-cooler-disk',
+                'used_blocks': 10,
+                'total_blocks': 30
+            }
+        }
+
+        with self.subTest('Single-line combined output.'):
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.output_mock.append.assert_called_once_with(
+                'Disk',
+                '{0}20.0 KiB{1} / 40.0 KiB'.format(Colors.YELLOW_NORMAL, Colors.CLEAR)
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Multi-line output'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Entry name labeling (device path with entry name)'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['disk_labels'] = 'device_paths'  # pylint: disable=protected-access
+
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        'Disk (/dev/my-cool-disk)',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        'Disk (/dev/my-cooler-disk)',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Entry name labeling (mount points without entry name)'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['disk_labels'] = 'mount_points'  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['hide_entry_name'] = True  # pylint: disable=protected-access
+
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        '(first_mount_point)',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        '(second_mount_point)',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
+
+        self.output_mock.reset_mock()
+
+        with self.subTest('Entry name labeling (without disk label nor entry name)'):
+            self.disk_instance_mock._configuration['disk']['combine_total'] = False  # pylint: disable=protected-access
+            self.disk_instance_mock._configuration['disk']['disk_labels'] = False  # pylint: disable=protected-access
+            # `hide_entry_name` is being ignored as `disk_labels` evaluates to "falsy" too.
+            self.disk_instance_mock._configuration['disk']['hide_entry_name'] = True  # pylint: disable=protected-access
+
+            Disk.output(self.disk_instance_mock, self.output_mock)
+            self.assertEqual(self.output_mock.append.call_count, 2)
+            self.output_mock.append.assert_has_calls(
+                [
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                    ),
+                    call(
+                        'Disk',
+                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                    )
+                ],
+                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+            )
 
 
 if __name__ == '__main__':

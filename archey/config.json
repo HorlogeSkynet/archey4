@@ -27,6 +27,12 @@
 		"use_unicode": true,
 		"honor_ansi_color": true
 	},
+	"disk": {
+		"show_filesystems": ["local"],
+		"combine_total": true,
+		"disk_labels": null,
+		"hide_entry_name": null
+	},
 	"default_strings": {
 		"no_address": "No Address",
 		"not_detected": "Not detected",

@@ -45,14 +45,13 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ### Highly recommended packages
 
-|     Environments      |              Packages               |                       Reasons                        |            Notes             |
-| :-------------------- | :---------------------------------- | :--------------------------------------------------- | :--------------------------- |
-| All                   | `dnsutils` (maybe `bind-tools`)     | **WAN\_IP** would be detected faster                 | Would provide `dig`          |
-| All                   | `lm-sensors` (maybe `lm_sensors`)   | **Temperature** would be more accurate               | N/A                          |
-| Graphical (desktop)   | `pciutils`                          | **GPU** wouldn't be detected without it              | Would provide `lspci`        |
-| Graphical (desktop)   | `wmctrl`                            | **WindowManager** would be more accurate             | N/A                          |
-| Virtual w/o `systemd` | `virt-what` and `dmidecode`         | **Model** would contain details about the hypervisor | **root** privileges required |
-| BTRFS file-systems    | `btrfs-progs` (maybe `btrfs-tools`) | **Disk** would support BTRFS in usage computations   | N/A                          |
+|     Environments      |             Packages              |                       Reasons                        |            Notes             |
+| :-------------------- | :-------------------------------- | :--------------------------------------------------- | :--------------------------- |
+| All                   | `dnsutils` (maybe `bind-tools`)   | **WAN\_IP** would be detected faster                 | Would provide `dig`          |
+| All                   | `lm-sensors` (maybe `lm_sensors`) | **Temperature** would be more accurate               | N/A                          |
+| Graphical (desktop)   | `pciutils`                        | **GPU** wouldn't be detected without it              | Would provide `lspci`        |
+| Graphical (desktop)   | `wmctrl`                          | **WindowManager** would be more accurate             | N/A                          |
+| Virtual w/o `systemd` | `virt-what` and `dmidecode`       | **Model** would contain details about the hypervisor | **root** privileges required |
 
 ### :warning: Various notes to read before going down :warning:
 
@@ -185,6 +184,34 @@ Below, some further explanations of each option available :
 		// Set this option to `false` to force Archey to use its own colors palettes.
 		// `true` by default to honor `os-release`'s `ANSI_COLOR` option.
 		"honor_ansi_color": true
+	},
+	"disk": {
+		// Which filesystems to show:
+		// `["local"]` shows only local filesystems.
+		// You can alternatively list specific filesystems as:
+		//  * A list of device paths - e.g. `["/dev/sda1", "/dev/nvme0n1p1"]`
+		//  * A list of mount points - e.g. `["/", "/mnt"]`
+		//  * A combination of the above - e.g. `["/", "/dev/sda2"]`
+		"show_filesystems": ["local"],
+		// Set to `false` to write each filesystem on its own line.
+		"combine_total": true,
+		// Defines which labels to use for each disk (only works if `combine_total` is false!)
+		// The options available are:
+		//  * `"mount_points"`: Shows the mount point of the filesystem.
+		//      e.g. `Disk (/): 10.0 GiB/100.0 GiB`
+		//           `Disk (/mnt): 15.0 GiB / 200.0 GiB`
+		//  * `"device_paths"`: Shows the device path of the filesystem.
+		//      e.g. `Disk (/dev/sda1): 10.0 GiB / 100.0 GiB`
+		//           `Disk (/dev/mmcblk0p1): 15.0 GiB / 200.0 GiB`
+		//  * `false` or `null` (no quote marks!): Don't show any device labels.
+		//      e.g. `Disk: 10.0 GiB / 100.0 GiB`
+		//           `Disk: 15.0 GiB / 200.0 GiB`
+		"disk_labels": null,
+		// Set to `true` to hide the "Disk" entry name from the output.
+		// i.e. null  --> `Disk (/):`
+		//      false --> `Disk (/):`
+		//      true  --> `(/):`
+		"hide_entry_name": null
 	},
 	"default_strings": {
 		// Use this section to override default strings.
