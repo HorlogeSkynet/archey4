@@ -79,10 +79,10 @@ def args_parsing():
     )
     parser.add_argument(
         '-s', '--screenshot',
-        metavar='FILENAME',
+        metavar='PATH',
         nargs='?',
         const=False,
-        help='take a screenshot once execution is done, optionally specify an output filename'
+        help='take a screenshot once execution is done, optionally specify a target path'
     )
     parser.add_argument(
         '-v', '--version',

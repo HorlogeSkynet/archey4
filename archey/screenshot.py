@@ -10,15 +10,17 @@ from subprocess import CalledProcessError, DEVNULL, check_call
 def take_screenshot(output_file=None):
     """
     Simple function trying to take a screenshot using various famous back-end programs.
-    When supported by the found available back-end, try to honor `output_file`.
+    When supported by the found and available back-end, try to honor `output_file`.
     """
-    if not output_file:
+    if not output_file or os.path.isdir(output_file):
+        # When a directory is provided, we've to force `output_file` to represent a **file** path.
         output_file = os.path.join(
-            os.getcwd(),
+            (output_file or os.getcwd()),
             datetime.now().strftime('archey4_screenshot_%Y%m%d_%H%M%S.png')
         )
 
-    # Some programs don't allow specific filenames, so we may give them a target directory instead.
+    # Some programs don't accept specific filename as parameters.
+    # In such cases, we may provide them a target directory instead.
     output_dir = os.path.dirname(output_file)
 
     # Back-end programs that _may_ (?) be available across different platforms.
