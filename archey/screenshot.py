@@ -74,10 +74,6 @@ def take_screenshot(output_file=None):
                     file=sys.stderr
                 ))
                 continue
-            defer_stack.callback(partial(
-                print,
-                'Took screenshot with {}'.format(screenshot_tool)
-            ))
             break
         else:
             defer_stack.callback(partial(
