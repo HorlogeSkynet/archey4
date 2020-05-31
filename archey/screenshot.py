@@ -3,7 +3,9 @@
 import os
 import sys
 
+from contextlib import ExitStack
 from datetime import datetime
+from functools import partial
 from subprocess import CalledProcessError, DEVNULL, check_call
 
 
@@ -16,7 +18,7 @@ def take_screenshot(output_file=None):
         # When a directory is provided, we've to force `output_file` to represent a **file** path.
         output_file = os.path.join(
             (output_file or os.getcwd()),
-            datetime.now().strftime('archey4_screenshot_%Y%m%d_%H%M%S.png')
+            datetime.now().strftime('archey4_screenshot_%Y-%m-%d_%H.%M.%S.png')
         )
 
     # Some programs don't accept specific filename as parameters.
@@ -47,24 +49,28 @@ def take_screenshot(output_file=None):
         screenshot_tools['KDE-Spectacle'] = ['spectacle', '-b', '-o', output_file]
         screenshot_tools['Xfce4-Screenshooter'] = ['xfce4-screenshooter', '-f', '-s', output_dir]
 
-    for screenshot_tool, screenshot_cmd in screenshot_tools.items():
-        try:
-            check_call(screenshot_cmd, stderr=DEVNULL)
-        except FileNotFoundError:
-            continue
-        except CalledProcessError as process_error:
-            print(
-                'Couldn\'t take a screenshot with {}: \"{}\".'.format(
-                    screenshot_tool, process_error
-                ),
-                file=sys.stderr
-            )
-        break
-    else:
-        print(
-            """\
+    with ExitStack() as defer_stack:
+        for screenshot_tool, screenshot_cmd in screenshot_tools.items():
+            try:
+                check_call(screenshot_cmd, stderr=DEVNULL)
+            except FileNotFoundError:
+                continue
+            except CalledProcessError as process_error:
+                defer_stack.callback(partial(
+                    print,
+                    'Couldn\'t take a screenshot with {}: \"{}\".'.format(
+                        screenshot_tool, process_error
+                    ),
+                    file=sys.stderr
+                ))
+                continue
+            break
+        else:
+            defer_stack.callback(partial(
+                print,
+                """\
 Sorry, we couldn\'t find any supported program to take a screenshot on your system.
 Please install one of the following and try again: {}.\
 """.format(', '.join(screenshot_tools.keys())),
-            file=sys.stderr
-        )
+                file=sys.stderr
+            ))
