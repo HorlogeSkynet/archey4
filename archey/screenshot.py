@@ -52,10 +52,11 @@ def take_screenshot(output_file=None):
 
     # This part purposefully blocks so we wait a little bit before taking the screenshot.
     # It prevents taking a screenshot before Archey's output has appeared.
+    taking_sc_fstring = '\rTaking screenshot in {:1d}...'
     for time_remaining in range(3, 0, -1):
-        print('\rTaking screenshot in {:1d}...'.format(time_remaining), end='', flush=True)
+        print(taking_sc_fstring.format(time_remaining), end='', flush=True)
         time.sleep(1)
-    print('\r' + ' ' * 26, end='\r', flush=True)
+    print('\r' + ' ' * len(taking_sc_fstring), end='\r', flush=True)
     time.sleep(0.5)
 
     with ExitStack() as defer_stack:
