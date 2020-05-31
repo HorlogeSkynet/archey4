@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 from contextlib import ExitStack
 from datetime import datetime
@@ -49,6 +50,14 @@ def take_screenshot(output_file=None):
         screenshot_tools['KDE-Spectacle'] = ['spectacle', '-b', '-o', output_file]
         screenshot_tools['Xfce4-Screenshooter'] = ['xfce4-screenshooter', '-f', '-s', output_dir]
 
+    # This part purposefully blocks so we wait a little bit before taking the screenshot.
+    # It prevents taking a screenshot before Archey's output has appeared.
+    for time_remaining in range(3, 0, -1):
+        print('\rTaking screenshot in {:1d}...'.format(time_remaining), end='', flush=True)
+        time.sleep(1)
+    print('\r' + ' ' * 26, end='\r', flush=True)
+    time.sleep(0.5)
+
     with ExitStack() as defer_stack:
         for screenshot_tool, screenshot_cmd in screenshot_tools.items():
             try:
@@ -64,6 +73,10 @@ def take_screenshot(output_file=None):
                     file=sys.stderr
                 ))
                 continue
+            defer_stack.callback(partial(
+                print,
+                'Took screenshot with {}'.format(screenshot_tool)
+            ))
             break
         else:
             defer_stack.callback(partial(
