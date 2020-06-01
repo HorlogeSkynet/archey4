@@ -8,7 +8,6 @@ Logos are stored under the `logos` module.
 
 import argparse
 import os
-import sys
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
