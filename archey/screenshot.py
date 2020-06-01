@@ -50,6 +50,11 @@ def take_screenshot(output_file=None):
         screenshot_tools['grim'] = ['grim', output_file]
         screenshot_tools['KDE-Spectacle'] = ['spectacle', '-b', '-o', output_file]
         screenshot_tools['Xfce4-Screenshooter'] = ['xfce4-screenshooter', '-f', '-s', output_dir]
+        screenshot_tools['Screencap (Android)'] = [
+            'screencap',  # Binary available on Android.
+            '-p',         # It only accepts PNG as image output format.
+            (output_file.rpart('.')[0] + '.png')
+        ]
 
     # This part purposefully blocks so we wait a little bit before taking the screenshot.
     # It prevents taking a screenshot before Archey's output has appeared.
