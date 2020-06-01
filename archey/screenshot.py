@@ -45,6 +45,7 @@ def take_screenshot(output_file=None):
             output_file
         ]
     else:  # *NIX systems (and others)...
+        screenshot_tools['Escrotum'] = ['escrotum', output_file]
         screenshot_tools['GNOME-Screenshot'] = ['gnome-screenshot', '-f', output_file]
         screenshot_tools['grim'] = ['grim', output_file]
         screenshot_tools['KDE-Spectacle'] = ['spectacle', '-b', '-o', output_file]
