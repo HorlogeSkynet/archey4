@@ -31,10 +31,8 @@ class DesktopEnvironment(Entry):
         processes = Processes().list
         for de_id, de_name in DE_DICT.items():
             if de_id in processes:
-                desktop_environment = de_name
+                self.value = de_name
                 break
         else:
             # Let's rely on an environment variable if the loop above didn't `break`.
-            desktop_environment = os.getenv('XDG_CURRENT_DESKTOP')
-
-        self.value = desktop_environment
+            self.value = os.getenv('XDG_CURRENT_DESKTOP')

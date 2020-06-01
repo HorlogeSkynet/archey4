@@ -11,14 +11,12 @@ class Distro(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        architecture = check_output(
-            ['uname', '-m'],
-            universal_newlines=True
-        ).rstrip()
-
         self.value = {
             'name': Distributions.get_distro_name(),
-            'arch': architecture
+            'arch': check_output(
+                ['uname', '-m'],
+                universal_newlines=True
+            ).rstrip()
         }
 
 
