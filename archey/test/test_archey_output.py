@@ -314,6 +314,22 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
         self.assertEqual(print_mock.call_count, 1)
 
+    @patch('archey.output.Distributions.run_detection')
+    @patch(
+        'archey.output.Distributions.get_ansi_color',
+        return_value=None
+    )
+    def test_preferred_distribution(self, _, run_detection_mock):
+        """Simple test checking behavior when `preferred_distribution` is passed at instantiation"""
+        output = Output(preferred_distribution='rhel')
+
+        self.assertEqual(
+            output._distribution,  # pylint: disable=protected-access
+            Distributions.RED_HAT
+        )
+        # Check `Distributions.run_detection` method has not been called at all.
+        self.assertFalse(run_detection_mock.called)
+
     @patch(
         'archey.output.Distributions.run_detection',
         return_value=Distributions.DEBIAN  # Make Debian being selected.
@@ -327,7 +343,7 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
-    def test_json_output_format(self, print_mock, _, __):
+    def test_format_to_json(self, print_mock, _, __):
         """Test how the `output` method handles JSON preferred formatting of entries"""
         output = Output(format_to_json=True)
         # We can't set the `name` attribute of a mock on its creation,

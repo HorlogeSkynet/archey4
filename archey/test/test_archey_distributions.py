@@ -15,11 +15,16 @@ class TestDistributionsUtil(unittest.TestCase):
         self.assertEqual(Distributions('debian'), Distributions.DEBIAN)
         self.assertRaises(ValueError, Distributions, 'unknown')
 
+        # Check `get_distribution_identifiers` consistency.
+        distribution_identifiers = Distributions.get_distribution_identifiers()
+        self.assertTrue(isinstance(distribution_identifiers, list))
+        self.assertTrue(all(isinstance(i, str) for i in distribution_identifiers))
+
     @patch(
         'archey.distributions.sys.platform',
         'win32'
     )
-    def test_detection_windows(self):
+    def test_run_detection_windows(self):
         """Test output for Windows"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -34,7 +39,7 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.check_output',
         return_value=b'X.Y.Z-R-Microsoft\n'
     )
-    def test_detection_windows_subsystem(self, _):
+    def test_run_detection_windows_subsystem(self, _):
         """Test output for Windows Subsystem Linux"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -53,7 +58,7 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.id',
         return_value='debian'
     )
-    def test_detection_known_distro_id(self, _, __):
+    def test_run_detection_known_distro_id(self, _, __):
         """Test known distribution output"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -76,7 +81,7 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value=''  # No `ID_LIKE` specified.
     )
-    def test_detection_unknown_distro_id(self, _, __, ___):
+    def test_run_detection_unknown_distro_id(self, _, __, ___):
         """Test unknown distribution output"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -99,7 +104,7 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value='ubuntu'  # Oh, it's actually an Ubuntu-based one !
     )
-    def test_detection_known_distro_like(self, _, __, ___):
+    def test_run_detection_known_distro_like(self, _, __, ___):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -122,7 +127,7 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value='an-unknown-distro-id arch'  # Hmmm, an unknown Arch-based...
     )
-    def test_detection_distro_like_second(self, _, __, ___):
+    def test_run_detection_distro_like_second(self, _, __, ___):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (second candidate)"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -145,9 +150,39 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value=''  # No `ID_LIKE` either...
     )
-    def test_detection_both_distro_calls_fail(self, _, __, ___):
+    def test_run_detection_both_distro_calls_fail(self, _, __, ___):
         """Test distribution fall-back when `distro` soft-fail two times"""
         self.assertEqual(
             Distributions.run_detection(),
             Distributions.LINUX
         )
+
+    @patch(
+        'archey.distributions.distro.name',
+        side_effect=[
+            'Debian GNU/Linux 10 (buster)',
+            ''  # Second call will (soft-)fail.
+        ]
+    )
+    def test_get_distro_name(self, _):
+        """Very basic test cases for `get_distro_name` static method"""
+        self.assertEqual(
+            Distributions.get_distro_name(),
+            'Debian GNU/Linux 10 (buster)'
+        )
+        self.assertIsNone(Distributions.get_distro_name())
+
+    @patch(
+        'archey.distributions.distro.os_release_attr',
+        side_effect=[
+            '33;1',
+            ''  # Second call will (soft-)fail.
+        ]
+    )
+    def test_get_ansi_color(self, _):
+        """Very basic test cases for `get_ansi_color` static method"""
+        self.assertEqual(
+            Distributions.get_ansi_color(),
+            '33;1',
+        )
+        self.assertIsNone(Distributions.get_ansi_color())

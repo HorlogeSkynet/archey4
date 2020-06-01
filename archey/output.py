@@ -26,8 +26,12 @@ class Output:
         # Fetches passed arguments.
         self._format_to_json = kwargs.get('format_to_json')
 
-        # Run distribution detection and fetch a local reference to the
-        self._distribution = Distributions.run_detection()
+        try:
+            # If set, force the distribution to `preferred_distribution` argument.
+            self._distribution = Distributions(kwargs.get('preferred_distribution'))
+        except ValueError:
+            # If not (or unknown), run distribution detection.
+            self._distribution = Distributions.run_detection()
 
         # Fetch the colors palette related to this distribution.
         self._colors_palette = COLOR_DICT[self._distribution]

@@ -39,6 +39,11 @@ class Distributions(Enum):
 
 
     @staticmethod
+    def get_distribution_identifiers():
+        """Simple getter returning current supported distributions identifiers"""
+        return [d.value for d in Distributions.__members__.values()]
+
+    @staticmethod
     def run_detection():
         """Entry point of Archey distribution detection logic"""
         # Are we running on Windows ?

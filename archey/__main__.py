@@ -8,6 +8,7 @@ Logos are stored under the `logos` module.
 
 import argparse
 import os
+import sys
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
@@ -16,6 +17,7 @@ from contextlib import ExitStack
 from archey._version import __version__
 from archey.output import Output
 from archey.configuration import Configuration
+from archey.distributions import Distributions
 from archey.processes import Processes
 from archey.entries.user import User as e_User
 from archey.entries.hostname import Hostname as e_Hostname
@@ -73,6 +75,12 @@ def args_parsing():
         help='path to a configuration file, or a directory containing a `config.json`'
     )
     parser.add_argument(
+        '-d', '--distribution',
+        metavar='IDENTIFIER',
+        choices=Distributions.get_distribution_identifiers(),
+        help='supported distribution identifier to show the logo of, pass `unknown` to list them'
+    )
+    parser.add_argument(
         '-j', '--json',
         action='count',
         help='output entries data to JSON format, use multiple times to increase indentation'
@@ -103,6 +111,7 @@ def main():
     ]
 
     output = Output(
+        preferred_distribution=args.distribution,
         format_to_json=args.json
     )
 
