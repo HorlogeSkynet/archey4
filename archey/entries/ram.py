@@ -16,10 +16,7 @@ class RAM(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        used, total = self._run_free_dash_m()
-        if not total:
-            used, total = self._read_proc_meminfo()
-
+        used, total = self._get_used_total_values()
         if not total:
             return
 
@@ -29,32 +26,43 @@ class RAM(Entry):
             'unit': 'MiB'
         }
 
+    def _get_used_total_values(self):
+        """
+        Returns a tuple containing used and total RAM values.
+        Tries a variety of methods, increasing compatibility for a wide range of systems.
+        """
+        try:
+            return self._run_free_dash_m()
+        except (IndexError, FileNotFoundError):
+            pass
+
+        try:
+            return self._read_proc_meminfo()
+        except (PermissionError, FileNotFoundError):
+            pass
+
+        return None, None
+
     @staticmethod
     def _run_free_dash_m():
         """Call `free -m` and parse its output to retrieve current used and total RAM"""
-        try:
-            memory_usage = ''.join(
-                filter(
-                    re.compile('Mem').search,
-                    check_output(
-                        ['free', '-m'],
-                        env={'LANG': 'C'}, universal_newlines=True
-                    ).splitlines()
-                )
-            ).split()
-        except (IndexError, FileNotFoundError):
-            return None, None
+        memory_usage = ''.join(
+            filter(
+                re.compile('Mem').search,
+                check_output(
+                    ['free', '-m'],
+                    env={'LANG': 'C'}, universal_newlines=True
+                ).splitlines()
+            )
+        ).split()
 
         return float(memory_usage[2]), float(memory_usage[1])
 
     @staticmethod
     def _read_proc_meminfo():
         """Same behavior but by reading from `/proc/meminfo` directly"""
-        try:
-            with open('/proc/meminfo') as f_mem_info:
-                mem_info_lines = f_mem_info.read().splitlines()
-        except (PermissionError, FileNotFoundError):
-            return None, None
+        with open('/proc/meminfo') as f_mem_info:
+            mem_info_lines = f_mem_info.read().splitlines()
 
         # Store memory information into a dictionary.
         mem_info = {}
