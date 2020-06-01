@@ -4,66 +4,19 @@ import os
 import sys
 import json
 
+from archey.constants import DEFAULT_CONFIG
 from archey.singleton import Singleton
 
 
 class Configuration(metaclass=Singleton):
     """
-    The default needed configuration which will be used by Archey is present below.
-    Values present in the `self._config` dictionary below are needed.
+    Values present in `archey.constants.DEFAULT_CONFIG` dictionary are required.
     New optional values may be added with `_update_recursive` method.
 
     If a `config_path` is passed during instantiation, it will be loaded.
     """
     def __init__(self, config_path=None):
-        self._config = {
-            'allow_overriding': True,
-            'parallel_loading': True,
-            'suppress_warnings': False,
-            'colors_palette': {
-                'use_unicode': True,
-                'honor_ansi_color': True
-            },
-            'disk': {
-                'show_filesystems': ['local'],
-                'combine_total': True,
-                'disk_labels': None,
-                'hide_entry_name': None
-            },
-            'default_strings': {
-                'no_address': 'No Address',
-                'not_detected': 'Not detected',
-                'virtual_environment': 'Virtual Environment'
-            },
-            'gpu': {
-                'one_line': True,
-                'max_count': 2
-            },
-            'ip_settings': {
-                'lan_ip_max_count': 2,
-                'lan_ip_v6_support': True,
-                'wan_ip_v6_support': True
-            },
-            'limits': {
-                'ram': {
-                    'warning': 33.3,
-                    'danger': 66.7
-                },
-                'disk': {
-                    'warning': 50,
-                    'danger': 75
-                }
-            },
-            'temperature': {
-                'char_before_unit': ' ',
-                'sensors_chipsets': [],
-                'use_fahrenheit': False
-            },
-            'timeout': {
-                'ipv4_detection': 1,
-                'ipv6_detection': 1
-            }
-        }
+        self._config = DEFAULT_CONFIG
 
         # Let's "save" `STDERR` file descriptor for `suppress_warnings` option
         self._stderr = sys.stderr
