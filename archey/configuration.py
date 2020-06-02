@@ -3,6 +3,7 @@
 import os
 import sys
 import json
+from copy import deepcopy
 
 from archey.constants import DEFAULT_CONFIG
 from archey.singleton import Singleton
@@ -16,7 +17,8 @@ class Configuration(metaclass=Singleton):
     If a `config_path` is passed during instantiation, it will be loaded.
     """
     def __init__(self, config_path=None):
-        self._config = DEFAULT_CONFIG
+        # Deep-copy `DEFAULT_CONFIG` so we have a local copy to safely mutate.
+        self._config = deepcopy(DEFAULT_CONFIG)
 
         # Let's "save" `STDERR` file descriptor for `suppress_warnings` option
         self._stderr = sys.stderr

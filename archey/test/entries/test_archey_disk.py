@@ -6,7 +6,7 @@ from unittest.mock import call, patch, MagicMock
 
 from archey.colors import Colors
 from archey.entries.disk import Disk
-from archey.test import HelperMethods
+from archey.test.entries import HelperMethods
 
 
 class TestDiskEntry(unittest.TestCase):
