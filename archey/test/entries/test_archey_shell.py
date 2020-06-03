@@ -6,6 +6,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from archey.entries.shell import Shell
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestShellEntry(unittest.TestCase):
@@ -44,11 +46,8 @@ class TestShellEntry(unittest.TestCase):
         'archey.entries.shell.check_output',
         side_effect=CalledProcessError(2, 'getent')
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_config_fall_back(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_config_fall_back(self, _, __):
         """`id` fails, but Archey must not !"""
         shell = Shell()
 
@@ -58,7 +57,7 @@ class TestShellEntry(unittest.TestCase):
         self.assertIsNone(shell.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'Not detected'
+            DEFAULT_CONFIG['default_strings']['not_detected']
         )
 
 if __name__ == '__main__':

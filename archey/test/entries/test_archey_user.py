@@ -6,6 +6,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from archey.entries.user import User
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestUserEntry(unittest.TestCase):
@@ -41,11 +43,8 @@ class TestUserEntry(unittest.TestCase):
         'archey.entries.user.check_output',
         side_effect=CalledProcessError(1, 'id', "id: ’1000’: no such user\n")
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_config_fall_back(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_config_fall_back(self, _, __):
         """`id` fails, but Archey must not !"""
         user = User()
 
@@ -55,7 +54,7 @@ class TestUserEntry(unittest.TestCase):
         self.assertIsNone(user.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'Not detected'
+            DEFAULT_CONFIG['default_strings']['not_detected']
         )
 
 

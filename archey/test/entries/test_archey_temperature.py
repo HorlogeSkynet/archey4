@@ -10,6 +10,7 @@ from unittest.mock import MagicMock, patch
 
 
 from archey.entries.temperature import Temperature
+from archey.test.entries import HelperMethods
 
 
 class TestTemperatureEntry(unittest.TestCase):
@@ -48,15 +49,16 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.iglob',
         return_value=[]  # No temperature from file will be retrieved
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'use_fahrenheit': False},
-            {'char_before_unit': ' '}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'temperature': {
+                'sensors_chipsets': [],
+                'use_fahrenheit': False,
+                'char_before_unit': ' '
+            }
+        }
     )
-    def test_vcgencmd_only_no_max(self, _, __, ___):
+    def test_vcgencmd_only_no_max(self, _, __):
         """
         Test for `vcgencmd` output only (no sensor files).
         Only one value is retrieved, so no maximum should be displayed (see #39).
@@ -88,15 +90,16 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.iglob')
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'use_fahrenheit': False},
-            {'char_before_unit': ' '}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'temperature': {
+                'sensors_chipsets': [],
+                'use_fahrenheit': False,
+                'char_before_unit': ' '
+            }
+        }
     )
-    def test_vcgencmd_and_files(self, _, iglob_mock, __):
+    def test_vcgencmd_and_files(self, iglob_mock, _):
         """Tests `vcgencmd` output AND sensor files"""
         iglob_mock.return_value = iter([file.name for file in self._temp_files])
         self.assertDictEqual(
@@ -117,15 +120,16 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.iglob')
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'use_fahrenheit': True},
-            {'char_before_unit': '@'}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'temperature': {
+                'sensors_chipsets': [],
+                'use_fahrenheit': True,
+                'char_before_unit': '@'
+            }
+        }
     )
-    def test_files_only_in_fahrenheit(self, _, iglob_mock, __):
+    def test_files_only_in_fahrenheit(self, iglob_mock, _):
         """Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
         iglob_mock.return_value = iter([file.name for file in self._temp_files])
         self.assertDictEqual(
@@ -149,14 +153,10 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.iglob',
         return_value=[]  # No temperature from file will be retrieved.
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'not_detected': 'Not detected'}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={'temperature': {'sensors_chipsets': []}}
     )
-    def test_no_output(self, _, __, ___):
+    def test_no_output(self, _, __):
         """Test when no value could be retrieved (anyhow)"""
         self.assertIsNone(Temperature().value)
 
@@ -221,15 +221,16 @@ class TestTemperatureEntry(unittest.TestCase):
             FileNotFoundError()  # No temperature from `vcgencmd` call.
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'use_fahrenheit': True},
-            {'char_before_unit': ' '}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'temperature': {
+                'sensors_chipsets': [],
+                'use_fahrenheit': True,
+                'char_before_unit': ' '
+            }
+        }
     )
-    def test_sensors_only_in_fahrenheit(self, _, __):
+    def test_sensors_only_in_fahrenheit(self, _):
         """Test computations around `sensors` output and Fahrenheit (naive) conversion"""
         self.assertDictEqual(
             Temperature().value,
@@ -249,15 +250,16 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.iglob')
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'use_fahrenheit': False},
-            {'char_before_unit': 'o'}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'temperature': {
+                'sensors_chipsets': [],
+                'use_fahrenheit': False,
+                'char_before_unit': 'o'
+            }
+        }
     )
-    def test_sensors_error_1(self, _, iglob_mock, ___):
+    def test_sensors_error_1(self, iglob_mock, _):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         iglob_mock.return_value = iter([file.name for file in self._temp_files])
 
@@ -294,15 +296,16 @@ class TestTemperatureEntry(unittest.TestCase):
         ]
     )
     @patch('archey.entries.temperature.iglob')
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},
-            {'use_fahrenheit': False},
-            {'char_before_unit': 'o'}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'temperature': {
+                'sensors_chipsets': [],
+                'use_fahrenheit': False,
+                'char_before_unit': 'o'
+            }
+        }
     )
-    def test_sensors_error_2(self, _, iglob_mock, ___):
+    def test_sensors_error_2(self, iglob_mock, _):
         """Test `sensors` (hard) failure handling and polling from files in Celsius"""
         iglob_mock.return_value = iter([file.name for file in self._temp_files])
         self.assertDictEqual(
@@ -326,14 +329,8 @@ class TestTemperatureEntry(unittest.TestCase):
         'archey.entries.temperature.iglob',
         return_value=[]  # No temperature from file will be retrieved.
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'sensors_chipsets': []},         # Needed key.
-            {'not_detected': 'Not detected'}  # Needed key.
-        ]
-    )
-    def test_celsius_to_fahrenheit_conversion(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_celsius_to_fahrenheit_conversion(self, _, __):
         """Simple tests for the `_convert_to_fahrenheit` static method"""
         test_conversion_cases = [
             (-273.15, -459.67),
