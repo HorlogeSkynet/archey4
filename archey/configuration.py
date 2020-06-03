@@ -12,7 +12,7 @@ from archey.singleton import Singleton
 class Configuration(metaclass=Singleton):
     """
     Values present in `archey.constants.DEFAULT_CONFIG` dictionary are required.
-    New optional values may be added with `_update_recursive` method.
+    New optional values may be added with `update_recursive` method.
 
     If a `config_path` is passed during instantiation, it will be loaded.
     """
@@ -54,7 +54,7 @@ class Configuration(metaclass=Singleton):
 
         try:
             with open(path) as f_config:
-                self._update_recursive(self._config, json.load(f_config))
+                self.update_recursive(self._config, json.load(f_config))
         except FileNotFoundError:
             return
         # For backward compatibility with Python versions prior to 3.5.0
@@ -71,7 +71,8 @@ class Configuration(metaclass=Singleton):
         else:
             self._close_and_restore_sys_stderr()
 
-    def _update_recursive(self, old_dict, new_dict):
+    @classmethod
+    def update_recursive(cls, old_dict, new_dict):
         """
         A method for recursively merging dictionaries as `dict.update()` is not able to do this.
         Original snippet taken from here : <https://gist.github.com/angstwad/bf22d1822c38a92ec0a9>
@@ -80,7 +81,7 @@ class Configuration(metaclass=Singleton):
             if key in old_dict \
                 and isinstance(old_dict[key], dict) \
                 and isinstance(value, dict):
-                self._update_recursive(old_dict[key], value)
+                cls.update_recursive(old_dict[key], value)
             else:
                 old_dict[key] = value
 

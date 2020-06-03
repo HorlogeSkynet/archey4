@@ -1,15 +1,21 @@
 """`archey.test.entries` module initialization file"""
 
-import unittest
-from unittest.mock import patch, MagicMock
 from copy import deepcopy
 from functools import partial, wraps
 
+import unittest
+from unittest.mock import MagicMock, patch
+
+from archey.configuration import Configuration
 from archey.constants import DEFAULT_CONFIG
 from archey.entry import Entry
 
+
 class HelperMethods:
-    """This class contains helper methods we commonly use in our entry unit tests."""
+    """
+    This class contains helper methods we commonly use in our entry unit tests.
+    We kindly borrow `update_recursive` class method from `Configuration` to DRY its implementation.
+    """
     @staticmethod
     def entry_mock(entry, configuration=None):
         """
@@ -33,11 +39,10 @@ class HelperMethods:
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
         entry_configuration = deepcopy(DEFAULT_CONFIG)
         # Then, let's merge in `configuration` recursively.
-        HelperMethods._update_recursive(
-            entry_configuration,
-            configuration or {}
-        )
-        instance_mock._configuration = entry_configuration  # pylint: disable=protected-access
+        Configuration.update_recursive(entry_configuration, (configuration or {}))
+        # Finally, replaces the internal (and private!) `_configuration` attribute by...
+        # ... the corresponding configuration object.
+        setattr(instance_mock, '_configuration', entry_configuration)
 
         return instance_mock
 
@@ -51,10 +56,7 @@ class HelperMethods:
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
         entry_configuration = deepcopy(DEFAULT_CONFIG)
         # Then, let's merge in `configuration` recursively.
-        HelperMethods._update_recursive(
-            entry_configuration,
-            configuration or {}
-        )
+        Configuration.update_recursive(entry_configuration, (configuration or {}))
 
         def decorator_patch_clean_configuration(method):
             @wraps(method)
@@ -70,20 +72,6 @@ class HelperMethods:
             return decorator_patch_clean_configuration
 
         return decorator_patch_clean_configuration(method_definition)
-
-    @staticmethod
-    def _update_recursive(old_dict, new_dict):
-        """
-        A method for recursively merging dictionaries as `dict.update()` is not able to do this.
-        Original snippet taken from here : <https://gist.github.com/angstwad/bf22d1822c38a92ec0a9>
-        """
-        for key, value in new_dict.items():
-            if key in old_dict \
-                and isinstance(old_dict[key], dict) \
-                and isinstance(value, dict):
-                HelperMethods._update_recursive(old_dict[key], value)
-            else:
-                old_dict[key] = value
 
 
 class TestHelperMethods(unittest.TestCase, HelperMethods):

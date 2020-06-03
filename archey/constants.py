@@ -1,4 +1,8 @@
-"""Logos colors and distributions / logos matching"""
+"""
+Logos colors definition.
+Distributions / logos correspondences.
+Default configuration.
+"""
 
 import archey.logos as logos
 
