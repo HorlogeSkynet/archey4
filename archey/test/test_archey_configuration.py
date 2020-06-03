@@ -238,6 +238,14 @@ class TestConfigurationUtil(unittest.TestCase):
             self.assertEqual(configuration.get('ip_settings')['lan_ip_max_count'], 4)
             self.assertTrue(configuration.get('temperature')['use_fahrenheit'])
 
+    def test__iter__(self):
+        """Very simple method checking our `__iter__` implementation"""
+        configuration = Configuration()
+        self.assertEqual(
+            configuration._config,  # pylint: disable=protected-access
+            dict(configuration)
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

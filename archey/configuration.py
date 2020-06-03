@@ -93,3 +93,7 @@ class Configuration(metaclass=Singleton):
 
     def __del__(self):
         self._close_and_restore_sys_stderr()
+
+    def __iter__(self):
+        """When used as an iterator, directly yield `_config` elements"""
+        return iter(self._config.items())

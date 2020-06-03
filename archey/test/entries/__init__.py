@@ -1,7 +1,7 @@
 """`archey.test.entries` module initialization file"""
 
 from copy import deepcopy
-from functools import partial, wraps
+from functools import wraps
 
 import unittest
 from unittest.mock import MagicMock, patch
@@ -62,8 +62,9 @@ class HelperMethods:
             @wraps(method)
             def wrapper_patch_clean_configuration(*args, **kwargs):
                 with patch('archey.entry.Configuration', autospec=True) as config_instance_mock:
-                    # Since `get` is the only "public" method, we only need to mock that.
+                    # Mock "publicly" used methods.
                     config_instance_mock().get = entry_configuration.get
+                    config_instance_mock().__iter__ = lambda _: iter(entry_configuration.items())
                     return method(*args, **kwargs)
 
             return wrapper_patch_clean_configuration
@@ -150,18 +151,13 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
             }
         )
 
-    # TODO: Working tests for `patch_clean_configuration`.
-    #       Since we don't implement all the container methods in `Configuration`,
-    #       it seems like we can't just interpret the `_configuration` `MagicMock` as a `dict`.
-    #       Somehow we need to compare using the `.get` method. Is that possible...?
-
     def test_patch_clean_configuration_defaults(self):
         """Test the default configuration-setting of `patch_clean_configuration."""
         @HelperMethods.patch_clean_configuration
         def test(self):
             simple_entry = TestHelperMethods._SimpleEntry()
             self.assertDictEqual(
-                simple_entry._configuration,  # pylint: disable=protected-access
+                dict(simple_entry._configuration),  # pylint: disable=protected-access
                 DEFAULT_CONFIG
             )
 
@@ -192,7 +188,7 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
         def test(self):
             simple_entry = TestHelperMethods._SimpleEntry()
             self.assertDictEqual(
-                simple_entry._configuration,  # pylint: disable=protected-access
+                dict(simple_entry._configuration),  # pylint: disable=protected-access
                 {
                     'a_key': 'a_value',
                     'another_key': 'another_value',
