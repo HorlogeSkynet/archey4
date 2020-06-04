@@ -18,6 +18,7 @@ from archey.output import Output
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.processes import Processes
+from archey.screenshot import take_screenshot
 from archey.entries.user import User as e_User
 from archey.entries.hostname import Hostname as e_Hostname
 from archey.entries.model import Model as e_Model
@@ -71,6 +72,7 @@ def args_parsing():
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
         '-c', '--config-path',
+        metavar='PATH',
         help='path to a configuration file, or a directory containing a `config.json`'
     )
     parser.add_argument(
@@ -83,6 +85,13 @@ def args_parsing():
         '-j', '--json',
         action='count',
         help='output entries data to JSON format, use multiple times to increase indentation'
+    )
+    parser.add_argument(
+        '-s', '--screenshot',
+        metavar='PATH',
+        nargs='?',
+        const=False,
+        help='take a screenshot once execution is done, optionally specify a target path'
     )
     parser.add_argument(
         '-v', '--version',
@@ -136,6 +145,11 @@ def main():
             output.add_entry(entry_instance)
 
     output.output()
+
+    # Has the screenshot flag been specified ?
+    if args.screenshot is not None:
+        # If so, but still _falsy_, pass `None` as no output file has been specified by the user.
+        take_screenshot((args.screenshot or None))
 
 
 if __name__ == '__main__':

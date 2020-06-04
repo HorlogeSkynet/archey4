@@ -140,13 +140,13 @@ sudo mv dist/archey /usr/local/bin/
 ## Usage
 
 ```bash
-archey
+archey --help
 ```
 
 or if you only want to try this out (for instance, from source) :
 
 ```bash
-python3 -m archey
+python3 -m archey --help
 ```
 
 ## Configuration (optional)

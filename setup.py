@@ -16,7 +16,7 @@ setup(
     name='archey4',
     version=__version__.lstrip('v'),
     description='Archey is a simple system information tool written in Python',
-    keywords='archey python3 linux system-information monitoring',
+    keywords='archey python3 linux system-information monitoring screenshot',
     url='https://github.com/HorlogeSkynet/archey4',
     author='Samuel Forestier',  # Not alone
     author_email='dev+archey@samuel.domains',
