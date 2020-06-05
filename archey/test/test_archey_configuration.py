@@ -132,82 +132,78 @@ class TestConfigurationUtil(unittest.TestCase):
             )
 
     def test_update_recursive(self):
-        """Test for the `_update_recursive` private method"""
-        configuration = Configuration()
-        with patch.dict(
-                configuration._config,  # pylint: disable=protected-access
-                {
-                    'allow_overriding': True,
-                    'suppress_warnings': False,
-                    'default_strings': {
-                        'no_address': 'No Address',
-                        'not_detected': 'Not detected'
-                    },
-                    'colors_palette': {
-                        'use_unicode': False
-                    },
-                    'ip_settings': {
-                        'lan_ip_max_count': 2
-                    },
-                    'temperature': {
-                        'use_fahrenheit': False
-                    }
-                },
-                clear=True
-            ):
-            # We change existing values, add new ones, and omit some others.
-            configuration._update_recursive(  # pylint: disable=protected-access
-                configuration._config,  # pylint: disable=protected-access
-                {
-                    'suppress_warnings': True,
-                    'colors_palette': {
-                        'use_unicode': False
-                    },
-                    'default_strings': {
-                        'no_address': '\xde\xad \xbe\xef',
-                        'not_detected': 'Not detected',
-                        'virtual_environment': 'Virtual Environment'
-                    },
-                    'temperature': {
-                        'a_weird_new_dict': [
-                            None,
-                            'l33t',
-                            {
-                                'really': 'one_more_?'
-                            }
-                        ]
-                    }
-                }
-            )
+        """Test for the `update_recursive` class method"""
+        test_dict = {
+            'allow_overriding': True,
+            'suppress_warnings': False,
+            'default_strings': {
+                'no_address': 'No Address',
+                'not_detected': 'Not detected'
+            },
+            'colors_palette': {
+                'use_unicode': False
+            },
+            'ip_settings': {
+                'lan_ip_max_count': 2
+            },
+            'temperature': {
+                'use_fahrenheit': False
+            }
+        }
 
-            self.assertDictEqual(
-                configuration._config,  # pylint: disable=protected-access
-                {
-                    'allow_overriding': True,
-                    'suppress_warnings': True,
-                    'colors_palette': {
-                        'use_unicode': False
-                    },
-                    'default_strings': {
-                        'no_address': '\xde\xad \xbe\xef',
-                        'not_detected': 'Not detected',
-                        'virtual_environment': 'Virtual Environment'
-                    },
-                    'ip_settings': {
-                        'lan_ip_max_count': 2
-                    },
-                    'temperature': {
-                        'use_fahrenheit': False,
-                        'a_weird_new_dict': [
-                            None,
-                            'l33t',
-                            {
-                                'really': 'one_more_?'
-                            }
-                        ]
-                    }
+        # We change existing values, add new ones, and omit some others.
+        Configuration.update_recursive(
+            test_dict,
+            {
+                'suppress_warnings': True,
+                'colors_palette': {
+                    'use_unicode': False
+                },
+                'default_strings': {
+                    'no_address': '\xde\xad \xbe\xef',
+                    'not_detected': 'Not detected',
+                    'virtual_environment': 'Virtual Environment'
+                },
+                'temperature': {
+                    'a_weird_new_dict': [
+                        None,
+                        'l33t',
+                        {
+                            'really': 'one_more_?'
+                        }
+                    ]
                 }
-            )
+            }
+        )
+
+        self.assertDictEqual(
+            test_dict,
+            {
+                'allow_overriding': True,
+                'suppress_warnings': True,
+                'colors_palette': {
+                    'use_unicode': False
+                },
+                'default_strings': {
+                    'no_address': '\xde\xad \xbe\xef',
+                    'not_detected': 'Not detected',
+                    'virtual_environment': 'Virtual Environment'
+                },
+                'ip_settings': {
+                    'lan_ip_max_count': 2
+                },
+                'temperature': {
+                    'use_fahrenheit': False,
+                    'a_weird_new_dict': [
+                        None,
+                        'l33t',
+                        {
+                            'really': 'one_more_?'
+                        }
+                    ]
+                }
+            }
+        )
 
     def test_instantiation_config_path(self):
         """Test for configuration loading from specific user-defined path"""
@@ -241,6 +237,14 @@ class TestConfigurationUtil(unittest.TestCase):
             self.assertFalse(configuration.get('colors_palette')['use_unicode'])
             self.assertEqual(configuration.get('ip_settings')['lan_ip_max_count'], 4)
             self.assertTrue(configuration.get('temperature')['use_fahrenheit'])
+
+    def test__iter__(self):
+        """Very simple method checking our `__iter__` implementation"""
+        configuration = Configuration()
+        self.assertEqual(
+            configuration._config,  # pylint: disable=protected-access
+            dict(configuration)
+        )
 
 
 if __name__ == '__main__':

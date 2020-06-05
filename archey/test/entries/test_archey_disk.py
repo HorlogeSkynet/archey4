@@ -6,6 +6,7 @@ from unittest.mock import call, patch, MagicMock
 
 from archey.colors import Colors
 from archey.entries.disk import Disk
+from archey.test.entries import HelperMethods
 
 
 class TestDiskEntry(unittest.TestCase):
@@ -13,29 +14,9 @@ class TestDiskEntry(unittest.TestCase):
     Here, we mock `check_output` calls to disk utility tools.
     """
     def setUp(self):
-        """Some useful setup tasks to do before each test, to help us DRY."""
-        self.disk_instance_mock = MagicMock(spec=Disk, wraps=Disk)
+        """We use these mocks so often, it's worth defining them here."""
+        self.disk_instance_mock = HelperMethods.entry_mock(Disk)
         self.output_mock = MagicMock()
-        # Let's set `Disk` instance mock's attributes to sensible defaults.
-        self.disk_instance_mock.name = 'Disk'
-        self.disk_instance_mock.value = None
-        # We can always change this configuration in tests if need be.
-        self.disk_instance_mock._configuration = {  # pylint: disable=protected-access
-            'disk': {
-                'show_filesystems': ['local'],
-                'combine_total': True,
-                'disk_labels': None,
-                'hide_entry_name': None
-            },
-            'limits': {
-                'disk': {
-                    'warning': 50,
-                    'danger': 75
-                }
-            },
-            # Required by all entries:
-            'default_strings': {'not_detected': 'Not detected'}
-        }
 
     def test_disk_get_local_filesystems(self):
         """Tests `Disk._get_local_filesystems`."""

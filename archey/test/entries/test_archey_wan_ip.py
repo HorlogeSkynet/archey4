@@ -9,6 +9,8 @@ from urllib.error import URLError
 
 from archey.test import CustomAssertions
 from archey.entries.wan_ip import WanIp
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 class TestWanIpEntry(unittest.TestCase, CustomAssertions):
     """
@@ -21,15 +23,14 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
             '0123::4567:89a:dead:beef\n'
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': True},
-            {'ipv6_detection': None}  # Needed key.
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'wan_ip_v6_support': True
+            }
+        }
     )
-    def test_ipv6_and_ipv4(self, _, __):
+    def test_ipv6_and_ipv4(self, _):
         """Test the regular case : Both IPv4 and IPv6 are retrieved"""
         self.assertEqual(
             WanIp().value,
@@ -40,14 +41,14 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
         'archey.entries.wan_ip.check_output',
         return_value='XXX.YY.ZZ.TTT'
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': False}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'wan_ip_v6_support': False
+            }
+        }
     )
-    def test_ipv4_only(self, _, __):
+    def test_ipv4_only(self, _):
         """Test only public IPv4 detection"""
         self.assertEqual(
             WanIp().value,
@@ -62,16 +63,14 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
         ]
     )
     @patch('archey.entries.wan_ip.urlopen')
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'ipv4_detection': None},   # Needed key.
-            {'wan_ip_v6_support': True},
-            {'ipv6_detection': None},  # Needed key.
-            {'ipv6_detection': None}   # Needed key.
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'wan_ip_v6_support': True
+            }
+        }
     )
-    def test_ipv6_timeout(self, _, urlopen_mock, ___):
+    def test_ipv6_timeout(self, urlopen_mock, _):
         """
         Test when `dig` call timeout for the IPv6 detection.
         Additionally check the `output` method behavior.
@@ -100,15 +99,14 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
         'archey.entries.wan_ip.urlopen',
         side_effect=URLError('<urlopen error timed out>')  # `urlopen` call will fail
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'ipv4_detection': None},  # Needed key.
-            {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': False}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'wan_ip_v6_support': False
+            }
+        }
     )
-    def test_ipv4_timeout_twice(self, _, __, ___):
+    def test_ipv4_timeout_twice(self, _, __):
         """Test when both `dig` and `URLOpen` trigger timeouts..."""
         self.assertListEmpty(WanIp().value)
 
@@ -120,15 +118,14 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
         'archey.entries.wan_ip.urlopen',
         side_effect=SocketTimeoutError(1)  # `urlopen` call will fail
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'ipv4_detection': None},  # Needed key.
-            {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': False}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'wan_ip_v6_support': False
+            }
+        }
     )
-    def test_ipv4_timeout_twice_socket_error(self, _, __, ___):
+    def test_ipv4_timeout_twice_socket_error(self, _, __):
         """Test when both `dig` timeouts and `URLOpen` raises `socket.timeout`..."""
         self.assertListEmpty(WanIp().value)
 
@@ -140,15 +137,14 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
         'urllib.request.urlopen',
         return_value=None  # No object will be returned
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'ipv4_detection': None},  # Needed key.
-            {'wan_ip_v6_support': False},
-            {'no_address': 'No Address'}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'wan_ip_v6_support': False
+            }
+        }
     )
-    def test_no_address(self, _, __, ___):
+    def test_no_address(self, _, __):
         """
         Test when no address could be retrieved.
         Additionally check the `output` method behavior.
@@ -161,7 +157,7 @@ class TestWanIpEntry(unittest.TestCase, CustomAssertions):
         self.assertListEmpty(wan_ip.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'No Address'
+            DEFAULT_CONFIG['default_strings']['no_address']
         )
 
 

@@ -6,6 +6,8 @@ import unittest
 from unittest.mock import MagicMock, mock_open, patch
 
 from archey.entries.model import Model
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestModelEntry(unittest.TestCase):
@@ -24,6 +26,7 @@ class TestModelEntry(unittest.TestCase):
         mock_open(read_data='MY-LAPTOP-MODEL\n'),
         create=True
     )
+    @HelperMethods.patch_clean_configuration
     def test_regular(self, _):
         """Sometimes, it could be quite simple..."""
         self.assertEqual(Model().value, 'MY-LAPTOP-MODEL')
@@ -32,6 +35,7 @@ class TestModelEntry(unittest.TestCase):
         'archey.entries.model.check_output',
         side_effect=CalledProcessError(1, 'systemd-detect-virt', "none\n")
     )
+    @HelperMethods.patch_clean_configuration
     def test_raspberry(self, _):
         """Test for a typical Raspberry context"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
@@ -57,6 +61,7 @@ class TestModelEntry(unittest.TestCase):
             'MY-LAPTOP-MODEL\n'   # `dmidecode` example output
         ]
     )
+    @HelperMethods.patch_clean_configuration
     def test_virtual_environment(self, _, __):
         """Test for virtual machine"""
         self.assertEqual(
@@ -76,15 +81,12 @@ class TestModelEntry(unittest.TestCase):
             FileNotFoundError()   # `dmidecode` call will fail
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'virtual_environment': 'Virtual Environment'}
-    )
-    def test_virtual_environment_without_dmidecode(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_virtual_environment_without_dmidecode(self, _, __):
         """Test for virtual machine (with a failing `dmidecode` call)"""
         self.assertEqual(
             Model().value,
-            'Virtual Environment (xen, xen-domU)'
+            DEFAULT_CONFIG['default_strings']['virtual_environment'] + ' (xen, xen-domU)'
         )
 
     @patch(
@@ -95,13 +97,13 @@ class TestModelEntry(unittest.TestCase):
         'archey.entries.model.check_output',
         return_value='systemd-nspawn\n'  # `systemd-detect-virt` example output
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'virtual_environment': 'Virtual Environment'}
-    )
-    def test_virtual_environment_systemd_alone(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_virtual_environment_systemd_alone(self, _, __):
         """Test for virtual environments, with systemd tools and `dmidecode`"""
-        self.assertEqual(Model().value, 'Virtual Environment (systemd-nspawn)')
+        self.assertEqual(
+            Model().value,
+            DEFAULT_CONFIG['default_strings']['virtual_environment'] + ' (systemd-nspawn)'
+        )
 
     @patch(
         'archey.entries.model.os.getuid',
@@ -114,6 +116,7 @@ class TestModelEntry(unittest.TestCase):
             'MY-LAPTOP-MODEL\n'  # `dmidecode` example output
         ]
     )
+    @HelperMethods.patch_clean_configuration
     def test_virtual_environment_systemd_and_dmidecode(self, _, __):
         """Test for virtual environments, with systemd tools and `dmidecode`"""
         self.assertEqual(Model().value, 'MY-LAPTOP-MODEL (systemd-nspawn)')
@@ -126,11 +129,8 @@ class TestModelEntry(unittest.TestCase):
         'archey.entries.model.check_output',
         side_effect=FileNotFoundError()
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_no_match(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_no_match(self, _, __):
         """Test when no information could be retrieved"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = [
@@ -146,7 +146,7 @@ class TestModelEntry(unittest.TestCase):
             self.assertIsNone(model.value)
             self.assertEqual(
                 output_mock.append.call_args[0][1],
-                'Not detected'
+                DEFAULT_CONFIG['default_strings']['not_detected']
             )
 
 

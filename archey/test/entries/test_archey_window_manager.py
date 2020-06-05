@@ -4,6 +4,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from archey.entries.window_manager import WindowManager
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestWindowManagerEntry(unittest.TestCase):
@@ -56,11 +58,8 @@ Window manager's "showing the desktop" mode: OFF
             'here'
         )
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_no_wmctrl_mismatch(self, _, __):
+    @HelperMethods.patch_clean_configuration
+    def test_no_wmctrl_mismatch(self, _):
         """Test (non-detection) when processes list do not contain any known value"""
         window_manager = WindowManager()
 
@@ -70,7 +69,7 @@ Window manager's "showing the desktop" mode: OFF
         self.assertIsNone(window_manager.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'Not detected'
+            DEFAULT_CONFIG['default_strings']['not_detected']
         )
 
 

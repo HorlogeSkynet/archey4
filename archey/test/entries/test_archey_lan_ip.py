@@ -5,8 +5,10 @@ from unittest.mock import MagicMock, patch
 
 from netifaces import AF_INET, AF_INET6, AF_LINK
 
-from archey.test import CustomAssertions
 from archey.entries.lan_ip import LanIp
+from archey.test import CustomAssertions
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestLanIpEntry(unittest.TestCase, CustomAssertions):
@@ -46,14 +48,10 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
             }
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': False}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={'ip_settings': {'lan_ip_max_count': False}}
     )
-    def test_multiple_interfaces(self, _, __, ___):
+    def test_multiple_interfaces(self, _, __):
         """Test for multiple interfaces, multiple addresses (including a loopback one)"""
         self.assertListEqual(
             LanIp().value,
@@ -109,14 +107,15 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
             }
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': True},
-            {'lan_ip_max_count': 2}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'ip_settings': {
+                'lan_ip_max_count': 2,
+                'lan_ip_v6_support': True
+            }
+        }
     )
-    def test_ipv6_and_limit_and_ether(self, _, __, ___):
+    def test_ipv6_and_limit_and_ether(self, _, __):
         """
         Test for IPv6 support, final set length limit and Ethernet interface filtering.
         Additionally check the `output` method behavior.
@@ -176,14 +175,10 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
             }
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': False},
-            {'lan_ip_max_count': None}
-        ]
+    @HelperMethods.patch_clean_configuration(
+        configuration={'ip_settings': {'lan_ip_v6_support': False}}
     )
-    def test_no_ipv6(self, _, __, ___):
+    def test_no_ipv6(self, _, __):
         """Test for IPv6 hiding"""
         self.assertListEqual(
             LanIp().value,
@@ -194,14 +189,8 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
         'archey.entries.lan_ip.netifaces.interfaces',
         return_value=[]  # No interface returned by `netifaces`.
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None}    # Needed key.
-        ]
-    )
-    def test_no_network_interface(self, _, __):
+    @HelperMethods.patch_clean_configuration
+    def test_no_network_interface(self, _):
         """Test when the device does not have any network interface"""
         self.assertListEmpty(LanIp().value)
 
@@ -232,15 +221,8 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
             }
         ]
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'lan_ip_v6_support': None},  # Needed key.
-            {'lan_ip_max_count': None},   # Needed key.
-            {'no_address': 'No address'}
-        ]
-    )
-    def test_no_network_address_output(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_no_network_address_output(self, _, __):
         """
         Test when the network interface(s) do not have any IP address.
         Additionally check the `output` method behavior.
@@ -253,7 +235,7 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
         self.assertListEmpty(lan_ip.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'No address'
+            DEFAULT_CONFIG['default_strings']['no_address']
         )
 
     @patch(
@@ -265,13 +247,8 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
         return_value=None,  # Let's nastily mute class' outputs.
         create=True
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'not_detected': 'Not detected'}
-        ]
-    )
-    def test_netifaces_not_available(self, _, __):
+    @HelperMethods.patch_clean_configuration
+    def test_netifaces_not_available(self, _):
         """Check `netifaces` is really acting as a (soft-)dependency"""
         lan_ip = LanIp()
 
@@ -281,7 +258,7 @@ class TestLanIpEntry(unittest.TestCase, CustomAssertions):
         self.assertIsNone(lan_ip.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'Not detected'
+            DEFAULT_CONFIG['default_strings']['not_detected']
         )
 
 

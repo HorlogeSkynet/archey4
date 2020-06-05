@@ -5,6 +5,8 @@ from unittest.mock import mock_open, patch, MagicMock
 
 from archey.colors import Colors
 from archey.entries.ram import RAM
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestRAMEntry(unittest.TestCase):
@@ -19,16 +21,17 @@ class TestRAMEntry(unittest.TestCase):
 Mem:          15658        2043       10232          12        3382       13268
 Swap:          4095          39        4056
 """)
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 25,
-                'danger': 45
-            },
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'limits': {
+                'ram': {
+                    'warning': 25,
+                    'danger': 45
+                }
+            }
         }
     )
-    def test_free_dash_m(self, _, __):
+    def test_free_dash_m(self, _):
         """Test `free -m` output parsing for low RAM use case"""
         output_mock = MagicMock()
         RAM().output(output_mock)
@@ -47,16 +50,17 @@ Swap:          4095          39        4056
 Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 33.3,
-                'danger': 66.7
-            },
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'limits': {
+                'ram': {
+                    'warning': 33.3,
+                    'danger': 66.7
+                }
+            }
         }
     )
-    def test_free_dash_m_warning(self, _, __):
+    def test_free_dash_m_warning(self, _):
         """Test `free -m` output parsing for warning RAM use case"""
         output_mock = MagicMock()
         RAM().output(output_mock)
@@ -75,16 +79,17 @@ Swap:      7607        5    7602
 Mem:          15658       12341         624         203        2692        2807
 Swap:          4095         160        3935
 """)
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={
-            'ram': {
-                'warning': 33.3,
-                'danger': 66.7
-            },
+    @HelperMethods.patch_clean_configuration(
+        configuration={
+            'limits': {
+                'ram': {
+                    'warning': 33.3,
+                    'danger': 66.7
+                }
+            }
         }
     )
-    def test_free_dash_m_danger(self, _, __):
+    def test_free_dash_m_danger(self, _):
         """Test `free -m` output parsing for danger RAM use case"""
         output_mock = MagicMock()
         RAM().output(output_mock)
@@ -151,13 +156,8 @@ SUnreclaim:       113308 kB
         side_effect=PermissionError(),
         create=True
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        side_effect=[
-            {'not_detected': 'Not detected'}
-        ]
-    )
-    def test_not_detected(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_not_detected(self, _, __):
         """Check Archey does not crash when `/proc/meminfo` is not readable"""
         ram = RAM()
 
@@ -167,7 +167,7 @@ SUnreclaim:       113308 kB
         self.assertIsNone(ram.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'Not detected'
+            DEFAULT_CONFIG['default_strings']['not_detected']
         )
 
 

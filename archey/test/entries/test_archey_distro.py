@@ -4,6 +4,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from archey.entries.distro import Distro
+from archey.test.entries import HelperMethods
+from archey.constants import DEFAULT_CONFIG
 
 
 class TestDistroEntry(unittest.TestCase):
@@ -37,11 +39,8 @@ ARCHITECTURE
         'archey.entries.distro.Distributions.get_distro_name',
         return_value=None  # Soft-failing : No _pretty_ distribution name found...
     )
-    @patch(
-        'archey.configuration.Configuration.get',
-        return_value={'not_detected': 'Not detected'}
-    )
-    def test_unknown_distro_output(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_unknown_distro_output(self, _, __):
         """Test for `distro` and `uname` outputs concatenation"""
         distro = Distro()
 
@@ -57,7 +56,7 @@ ARCHITECTURE
         )
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            'Not detected [ARCHITECTURE]'
+            DEFAULT_CONFIG['default_strings']['not_detected'] + ' [ARCHITECTURE]'
         )
 
 
