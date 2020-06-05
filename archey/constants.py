@@ -12,7 +12,7 @@ from archey.distributions import Distributions
 
 # This dictionary contains which colors should be used for each supported distribution.
 # The first element (`[0]`) of each list will be used to display text entries.
-COLOR_DICT = {
+COLORS_DICT = {
     Distributions.ARCH_LINUX: [Colors.CYAN_BRIGHT, Colors.CYAN_NORMAL],
     Distributions.ALPINE_LINUX: [Colors.BLUE_BRIGHT],
     Distributions.BUNSENLABS: [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT, Colors.YELLOW_NORMAL],

@@ -6,7 +6,7 @@ from unittest.mock import patch, Mock
 from collections import namedtuple
 
 from archey.colors import Colors
-from archey.constants import COLOR_DICT
+from archey.constants import COLORS_DICT
 from archey.output import Output
 from archey.distributions import Distributions
 
@@ -20,7 +20,7 @@ class TestOutputUtil(unittest.TestCase):
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch.dict(
-        'archey.output.COLOR_DICT',
+        'archey.output.COLORS_DICT',
         {Distributions.DEBIAN: ['COLOR_0']}
     )
     @patch(
@@ -59,7 +59,7 @@ class TestOutputUtil(unittest.TestCase):
         )
         self.assertEqual(
             len(output._colors_palette),  # pylint: disable=protected-access
-            len(COLOR_DICT[Distributions.SLACKWARE])
+            len(COLORS_DICT[Distributions.SLACKWARE])
         )
 
     @patch(
@@ -84,7 +84,7 @@ class TestOutputUtil(unittest.TestCase):
         )
         self.assertListEqual(
             output._colors_palette,  # pylint: disable=protected-access
-            COLOR_DICT[Distributions.WINDOWS]
+            COLORS_DICT[Distributions.WINDOWS]
         )
 
     @patch(
@@ -121,7 +121,7 @@ class TestOutputUtil(unittest.TestCase):
         }
     )
     @patch.dict(
-        'archey.constants.COLOR_DICT',
+        'archey.constants.COLORS_DICT',
         {
             Distributions.DEBIAN: ['FAKE_COLOR']
         }

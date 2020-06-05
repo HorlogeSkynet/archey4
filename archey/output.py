@@ -11,7 +11,7 @@ import sys
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
-from archey.constants import COLOR_DICT, LOGOS_DICT
+from archey.constants import COLORS_DICT, LOGOS_DICT
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.logos import get_logo_width
@@ -34,7 +34,7 @@ class Output:
             self._distribution = Distributions.run_detection()
 
         # Fetch the colors palette related to this distribution.
-        self._colors_palette = COLOR_DICT[self._distribution]
+        self._colors_palette = COLORS_DICT[self._distribution]
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
