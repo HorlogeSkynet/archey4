@@ -16,6 +16,8 @@ PACKAGES_TOOLS = (
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
     {'cmd': ('pacman', '-Q')},
+    {'cmd': ('pkg_info', '-a')},
+    {'cmd': ('pkg', '-N', 'info', '-a'), 'skew': 1},
     {'cmd': ('rpm', '-qa')},
     {'cmd': ('yum', 'list', 'installed'), 'skew': 2},
     {'cmd': ('zypper', 'search', '-i'), 'skew': 5}
