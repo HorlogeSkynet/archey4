@@ -124,6 +124,41 @@ argon2 20171227-3
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
+OpenEXR-2.3.0       high dynamic range image format
+adwaita-icon-theme-3.32.0 base icon theme for GNOME
+akonadi-1.13.0p5    PIM cache and access services
+aom-1.0.0.20190901  Alliance for Open Media AV1 video codec
+aspell-0.60.6.1p10  spell checker designed to eventually replace Ispell
+at-spi2-atk-2.32.0  atk-bridge for at-spi2
+"""
+    )
+    def test_match_with_pkg_info(self, check_output_mock):
+        """Simple test for the OpenBSD `pkg_*` package manager"""
+        check_output_mock.side_effect = self._check_output_side_effect('pkg_info')
+
+        self.assertEqual(Packages().value, 6)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        return_value="""\
+apr-1.7.0.1.6.1_1              Apache Portability Library
+ca_root_nss-3.51.1             Root certificate bundle from the Mozilla Project
+curl-7.69.1                    Command line tool and library for transferring data with URLs
+cvsps-2.1_2                    Create patchset information from CVS
+db5-5.3.28_7                   Oracle Berkeley DB, revision 5.3
+doas-6.2p4_1                   Simple sudo alternative to run commands as another user
+expat-2.2.8                    XML 1.0 parser written in C
+"""
+    )
+    def test_match_with_pkg(self, check_output_mock):
+        """Simple test for the FreeBSD `pkg` package manager"""
+        check_output_mock.side_effect = self._check_output_side_effect('pkg')
+
+        self.assertEqual(Packages().value, 6)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        return_value="""\
 cdrecord-2.01-10.7.el5
 bluez-libs-3.7-1.1
 setarch-2.0-1.1
