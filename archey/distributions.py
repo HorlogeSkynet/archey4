@@ -4,6 +4,7 @@ Operating Systems detection logic.
 Interface to `os-release` (through `distro` module).
 """
 
+import os
 import sys
 
 from enum import Enum
@@ -46,6 +47,25 @@ class Distributions(Enum):
     @staticmethod
     def run_detection():
         """Entry point of Archey distribution detection logic"""
+        distribution = Distributions._detection_logic()
+
+        # In case nothing got detected the "regular" way, fall-back on the Linux logo.
+        if not distribution:
+            return Distributions.LINUX
+
+        # Below are brain-dead cases for distributions not properly handled by `distro`.
+        # One _may_ want to add its own logic to add support for such undetectable systems.
+        if distribution == Distributions.DEBIAN:
+            # Crunchbang is tagged as _regular_ Debian by `distro`.
+            # Below condition is here to work-around this issue.
+            if os.path.isfile('/etc/lsb-release-crunchbang'):
+                return Distributions.CRUNCHBANG
+
+        return distribution
+
+    @staticmethod
+    def _detection_logic():
+        """Main distribution detection logic, relying on `distro`, handling _common_ cases"""
         # Are we running on Windows ?
         if sys.platform in ('win32', 'cygwin'):
             return Distributions.WINDOWS
@@ -67,10 +87,10 @@ class Distributions(Enum):
             try:
                 return Distributions(id_like)
             except ValueError:
-                continue
+                pass
 
-        # At the moment, fall-back to default `Linux` if nothing of the above matched.
-        return Distributions.LINUX
+        # Nothing of the above matched, let's return `None` and let the caller handle it.
+        return None
 
     @staticmethod
     def get_distro_name():

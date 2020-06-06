@@ -58,7 +58,11 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.id',
         return_value='debian'
     )
-    def test_run_detection_known_distro_id(self, _, __):
+    @patch(
+        'archey.distributions.os.path.isfile',  # Emulate a "regular" Debian file-system.
+        return_value=False                      # Any additional check will fail.
+    )
+    def test_run_detection_known_distro_id(self, _, __, ___):
         """Test known distribution output"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -155,6 +159,31 @@ class TestDistributionsUtil(unittest.TestCase):
         self.assertEqual(
             Distributions.run_detection(),
             Distributions.LINUX
+        )
+
+    @patch(
+        'archey.distributions.sys.platform',
+        'linux'
+    )
+    @patch(
+        'archey.distributions.check_output',
+        return_value=b'X.Y.Z-R-ARCH\n'
+    )
+    @patch(
+        'archey.distributions.distro.id',
+        return_value='debian'
+    )
+    @patch(
+        'archey.distributions.os.path.isfile',  # Emulate a CrunchBang file-system.
+        side_effect=(
+            lambda file_path: file_path == '/etc/lsb-release-crunchbang'
+        )
+    )
+    def test_run_detection_specific_crunchbang(self, _, __, ___):
+        """Test CrunchBang specific detection"""
+        self.assertEqual(
+            Distributions.run_detection(),
+            Distributions.CRUNCHBANG
         )
 
     @patch(
