@@ -15,6 +15,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
+    {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
     {'cmd': ('pkg', '-N', 'info', '-a')},

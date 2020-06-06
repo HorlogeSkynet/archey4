@@ -110,6 +110,20 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" {linesep}\
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
+nix-2.3.4
+nss-cacert-3.49.2
+python3-3.8.2
+python3.8-pip-20.1
+""")
+    def test_match_with_nix_env(self, check_output_mock):
+        """Simple test for the Emerge packages manager"""
+        check_output_mock.side_effect = self._check_output_side_effect('nix-env')
+
+        self.assertEqual(Packages().value, 4)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        return_value="""\
 acl 2.2.52-4
 archey4 v4.3.3-1
 archlinux-keyring 20180108-1

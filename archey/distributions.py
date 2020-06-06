@@ -29,6 +29,7 @@ class Distributions(Enum):
     GENTOO = 'gentoo'
     KALI_LINUX = 'kali'
     MANJARO_LINUX = 'manjaro'
+    NIXOS = 'nixos'
     LINUX = 'linux'
     LINUX_MINT = 'linuxmint'
     OPENSUSE = 'opensuse'
