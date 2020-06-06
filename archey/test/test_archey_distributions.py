@@ -85,7 +85,11 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value=''  # No `ID_LIKE` specified.
     )
-    def test_run_detection_unknown_distro_id(self, _, __, ___):
+    @patch(
+        'archey.distributions.os.path.isdir',  # Make Android detection fails.
+        return_value=False
+    )
+    def test_run_detection_unknown_distro_id(self, _, __, ___, ____):
         """Test unknown distribution output"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -154,7 +158,11 @@ class TestDistributionsUtil(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value=''  # No `ID_LIKE` either...
     )
-    def test_run_detection_both_distro_calls_fail(self, _, __, ___):
+    @patch(
+        'archey.distributions.os.path.isdir',  # Make Android detection fails.
+        return_value=False
+    )
+    def test_run_detection_both_distro_calls_fail(self, _, __, ___, ____):
         """Test distribution fall-back when `distro` soft-fail two times"""
         self.assertEqual(
             Distributions.run_detection(),
@@ -184,6 +192,23 @@ class TestDistributionsUtil(unittest.TestCase):
         self.assertEqual(
             Distributions.run_detection(),
             Distributions.CRUNCHBANG
+        )
+
+    @patch(
+        'archey.distributions.Distributions._detection_logic',
+        return_value=None  # Base detection logic soft-fails...
+    )
+    @patch(
+        'archey.distributions.os.path.isdir',  # Emulate an Android file-system.
+        side_effect=(
+            lambda dir_path: dir_path.startswith('/system/') and dir_path.endswith('app')
+        )
+    )
+    def test_run_detection_specific_android(self, _, __):
+        """Test Android specific detection"""
+        self.assertEqual(
+            Distributions.run_detection(),
+            Distributions.ANDROID
         )
 
     @patch(

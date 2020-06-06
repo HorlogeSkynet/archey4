@@ -14,6 +14,7 @@ from archey.distributions import Distributions
 # The first element (`[0]`) of each list will be used to display text entries.
 COLORS_DICT = {
     Distributions.ARCH_LINUX: [Colors.CYAN_BRIGHT, Colors.CYAN_NORMAL],
+    Distributions.ANDROID: [Colors.GREEN_BRIGHT, Colors.WHITE_BRIGHT],
     Distributions.ALPINE_LINUX: [Colors.BLUE_BRIGHT],
     Distributions.BUNSENLABS: [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT, Colors.YELLOW_NORMAL],
     Distributions.CENTOS: [
@@ -43,6 +44,7 @@ COLORS_DICT = {
 # This dictionary contains which logo should be used for each supported distribution.
 LOGOS_DICT = {
     Distributions.ALPINE_LINUX: logos.ALPINE_LINUX,
+    Distributions.ANDROID: logos.ANDROID,
     Distributions.ARCH_LINUX: logos.ARCH_LINUX,
     Distributions.BUNSENLABS: logos.BUNSENLABS,
     Distributions.CENTOS: logos.CENTOS,

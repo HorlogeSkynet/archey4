@@ -24,6 +24,10 @@ class Model(Entry):
         if not self.value:
             self._check_rasperry_pi()
 
+        # Is this machine an Android device ?
+        if not self.value:
+            self._check_android_device()
+
     def _check_virtualization(self):
         """
         Relying on some system tools, tries to gather some details about hypervisor.
@@ -101,3 +105,19 @@ class Model(Entry):
                 hardware.group(0),
                 revision.group(0)
             )
+
+    def _check_android_device(self):
+        """Tries to retrieve `brand` and `model` device properties on Android platforms"""
+        try:
+            brand = check_output(
+                ['getprop', 'ro.product.brand'],
+                universal_newlines=True
+            ).rstrip()
+            model = check_output(
+                ['getprop', 'ro.product.model'],
+                universal_newlines=True
+            ).rstrip()
+        except FileNotFoundError:
+            return
+
+        self.value = '{0} ({1})'.format(brand, model)

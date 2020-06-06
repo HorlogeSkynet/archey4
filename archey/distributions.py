@@ -20,6 +20,7 @@ class Distributions(Enum):
     See <https://distro.readthedocs.io/en/latest/#distro.id>.
     """
     ALPINE_LINUX = 'alpine'
+    ANDROID = 'android'
     ARCH_LINUX = 'arch'
     BUNSENLABS = 'bunsenlabs'
     CENTOS = 'centos'
@@ -52,6 +53,12 @@ class Distributions(Enum):
 
         # In case nothing got detected the "regular" way, fall-back on the Linux logo.
         if not distribution:
+            # Android systems are currently not being handled by `distro`.
+            # We imitate Neofetch behavior to manually "detect" them.
+            # See <https://github.com/nir0s/distro/issues/253>.
+            if os.path.isdir('/system/app') and os.path.isdir('/system/priv-app'):
+                return Distributions.ANDROID
+
             return Distributions.LINUX
 
         # Below are brain-dead cases for distributions not properly handled by `distro`.

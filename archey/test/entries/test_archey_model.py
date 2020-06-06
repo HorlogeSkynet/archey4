@@ -40,13 +40,35 @@ class TestModelEntry(unittest.TestCase):
         """Test for a typical Raspberry context"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = [
-                FileNotFoundError(),  # First `open` call will  (`/sys/[...]/product_name`)
+                FileNotFoundError(),  # First `open` call will fail (`/sys/[...]/product_name`)
                 'Hardware\t: HARDWARE\nRevision\t: REVISION\n'
             ]
 
             self.assertEqual(
                 Model().value,
                 'Raspberry Pi HARDWARE (Rev. REVISION)'
+            )
+
+    @patch(
+        'archey.entries.model.check_output',
+        side_effect=[
+            CalledProcessError(1, 'systemd-detect-virt', "none\n"),  # Not a virtual machine.
+            'PHONE-BRAND\n',   # First `getprop` call.
+            'PHONE-DEVICE\n',  # Second `getprop` call.
+        ]
+    )
+    @HelperMethods.patch_clean_configuration
+    def test_android(self, _):
+        """Test for a typical Android context"""
+        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),  # First `open` call will fail (`/sys/[...]/product_name`)
+                PermissionError()     # `/proc/cpuinfo` won't be available
+            ]
+
+            self.assertEqual(
+                Model().value,
+                'PHONE-BRAND (PHONE-DEVICE)'
             )
 
     @patch(
@@ -134,7 +156,7 @@ class TestModelEntry(unittest.TestCase):
         """Test when no information could be retrieved"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = [
-                FileNotFoundError(),  # First `open` call will  (`/sys/[...]/product_name`)
+                FileNotFoundError(),  # First `open` call will fail (`/sys/[...]/product_name`)
                 PermissionError()     # `/proc/cpuinfo` won't be available
             ]
 

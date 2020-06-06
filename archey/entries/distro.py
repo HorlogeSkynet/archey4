@@ -11,13 +11,30 @@ class Distro(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        distro_name = Distributions.get_distro_name()
+        if not distro_name:
+            distro_name = self._fetch_android_release()
+
         self.value = {
-            'name': Distributions.get_distro_name(),
+            'name': distro_name,
             'arch': check_output(
                 ['uname', '-m'],
                 universal_newlines=True
             ).rstrip()
         }
+
+    @staticmethod
+    def _fetch_android_release():
+        """Simple method to fetch current release on Android systems"""
+        try:
+            release = check_output(
+                ['getprop', 'ro.build.version.release'],
+                universal_newlines=True
+            ).rstrip()
+        except FileNotFoundError:
+            return None
+
+        return 'Android {0}'.format(release)
 
 
     def output(self, output):
