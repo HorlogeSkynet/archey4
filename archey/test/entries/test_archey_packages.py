@@ -124,37 +124,41 @@ argon2 20171227-3
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
-OpenEXR-2.3.0       high dynamic range image format
-adwaita-icon-theme-3.32.0 base icon theme for GNOME
-akonadi-1.13.0p5    PIM cache and access services
-aom-1.0.0.20190901  Alliance for Open Media AV1 video codec
-aspell-0.60.6.1p10  spell checker designed to eventually replace Ispell
-at-spi2-atk-2.32.0  atk-bridge for at-spi2
+bzip2-1.0.8         block-sorting file compressor, unencumbered
+gettext-runtime-0.20.1p0 GNU gettext runtime libraries and programs
+intel-firmware-20191115v0 microcode update binaries for Intel CPUs
+libffi-3.2.1p5      Foreign Function Interface
+libiconv-1.16p0     character set conversion library
+python-3.7.4        interpreted object-oriented programming language
+quirks-3.187        exceptions to pkg_add rules
+sqlite3-3.29.0      embedded SQL implementation
+xz-5.2.4            LZMA compression and decompression tools
 """
     )
     def test_match_with_pkg_info(self, check_output_mock):
         """Simple test for the OpenBSD `pkg_*` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect('pkg_info')
 
-        self.assertEqual(Packages().value, 6)
+        self.assertEqual(Packages().value, 9)
 
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
-apr-1.7.0.1.6.1_1              Apache Portability Library
-ca_root_nss-3.51.1             Root certificate bundle from the Mozilla Project
-curl-7.69.1                    Command line tool and library for transferring data with URLs
-cvsps-2.1_2                    Create patchset information from CVS
-db5-5.3.28_7                   Oracle Berkeley DB, revision 5.3
-doas-6.2p4_1                   Simple sudo alternative to run commands as another user
-expat-2.2.8                    XML 1.0 parser written in C
+gettext-runtime-0.20.1         GNU gettext runtime libraries and programs
+indexinfo-0.3.1                Utility to regenerate the GNU info page index
+libffi-3.2.1_3                 Foreign Function Interface
+pkg-1.13.2                     Package manager
+python-3.7_3,2                 "meta-port" for the default version of Python interpreter
+python3-3_3                    The "meta-port" for version 3 of the Python interpreter
+python37-3.7.7                 Interpreted object-oriented programming language
+readline-8.0.4                 Library for editing command lines as they are typed
 """
     )
     def test_match_with_pkg(self, check_output_mock):
         """Simple test for the FreeBSD `pkg` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect('pkg')
 
-        self.assertEqual(Packages().value, 6)
+        self.assertEqual(Packages().value, 7)
 
     @patch(
         'archey.entries.packages.check_output',
