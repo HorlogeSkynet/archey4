@@ -158,7 +158,7 @@ readline-8.0.4                 Library for editing command lines as they are typ
         """Simple test for the FreeBSD `pkg` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect('pkg')
 
-        self.assertEqual(Packages().value, 7)
+        self.assertEqual(Packages().value, 8)
 
     @patch(
         'archey.entries.packages.check_output',
