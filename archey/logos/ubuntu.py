@@ -20,4 +20,3 @@ UBUNTU = [
     """{c[0]}         ':QOOOOOOOOOOOOOOOQ:'         """,
     """{c[0]}             '"":YOOOY:""'             """
 ]
-# pylint: enable=line-too-long

@@ -22,7 +22,7 @@ COLORS_DICT = {
     ],
     Distributions.CRUNCHBANG: [Colors.WHITE_BRIGHT],
     Distributions.DEBIAN: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
-    Distributions.FEDORA: [Colors.BLUE_NORMAL, Colors.WHITE_BRIGHT],
+    Distributions.FEDORA: [Colors.BLUE_BRIGHT, Colors.BLUE_NORMAL, Colors.WHITE_BRIGHT],
     Distributions.FREEBSD: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
     Distributions.GENTOO: [Colors.MAGENTA_BRIGHT, Colors.WHITE_BRIGHT],
     Distributions.KALI_LINUX: [Colors.BLUE_BRIGHT, Colors.WHITE_BRIGHT],
