@@ -46,7 +46,8 @@ class Packages(Entry):
             except (FileNotFoundError, CalledProcessError):
                 continue
 
-            self.value = results.count(os.linesep)
+            # Here we *may* use `\n` as `universal_newlines` has been set to `True`.
+            self.value = results.count('\n')
 
             # If any, deduct output skew present due to the packages tool.
             if 'skew' in packages_tool:
