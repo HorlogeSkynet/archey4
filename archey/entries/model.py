@@ -13,22 +13,13 @@ class Model(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Is this a virtual machine ?
-        self._check_virtualization()
+        self.value = \
+            self._fetch_virtual_env_info() \
+            or self._fetch_product_name() \
+            or self._fetch_rasperry_pi_revision() \
+            or self._fetch_android_device_model() \
 
-        # Does the OS know something about the hardware ?
-        if not self.value:
-            self._check_product_name()
-
-        # Is this machine a Raspberry Pi ?
-        if not self.value:
-            self._check_rasperry_pi()
-
-        # Is this machine an Android device ?
-        if not self.value:
-            self._check_android_device()
-
-    def _check_virtualization(self):
+    def _fetch_virtual_env_info(self):
         """
         Relying on some system tools, tries to gather some details about hypervisor.
         When available, relies on systemd.
@@ -43,7 +34,7 @@ class Model(Entry):
             ).rstrip()
         except CalledProcessError:
             # Not a virtual environment.
-            return
+            return None
         except FileNotFoundError:
             pass
 
@@ -61,6 +52,10 @@ class Model(Entry):
                 except (FileNotFoundError, CalledProcessError):
                     pass
 
+                # Definitely not a virtual environment.
+                if not environment:
+                    return None
+
             try:
                 # Sometimes we may gather info added by hosting service provider this way.
                 product_name = check_output(
@@ -70,43 +65,46 @@ class Model(Entry):
             except (FileNotFoundError, CalledProcessError):
                 pass
 
-        # Definitely not a virtual environment.
-        if not environment:
-            return
-
         # If we got there, this _should_ be a virtual environment.
-        self.value = '{0} ({1})'.format(
+        return '{0} ({1})'.format(
             product_name or self._configuration.get('default_strings')['virtual_environment'],
             environment
         )
 
-    def _check_product_name(self):
+    @staticmethod
+    def _fetch_product_name():
         """Tries to open a specific Linux file, looking for machine's product name"""
         try:
             with open('/sys/devices/virtual/dmi/id/product_name') as f_product_name:
-                self.value = f_product_name.read().rstrip()
+                return f_product_name.read().rstrip()
         except FileNotFoundError:
             pass
 
-    def _check_rasperry_pi(self):
+        return None
+
+    @staticmethod
+    def _fetch_rasperry_pi_revision():
         """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
         try:
             with open('/proc/cpuinfo') as f_cpu_info:
                 cpu_info = f_cpu_info.read()
         except (PermissionError, FileNotFoundError):
-            return
+            return None
 
         # If the output contains 'Hardware' and 'Revision'...
         hardware = re.search('(?<=Hardware\t: ).*', cpu_info)
         revision = re.search('(?<=Revision\t: ).*', cpu_info)
         if hardware and revision:
             # ... let's set a pretty info string with these data
-            self.value = 'Raspberry Pi {0} (Rev. {1})'.format(
+            return 'Raspberry Pi {0} (Rev. {1})'.format(
                 hardware.group(0),
                 revision.group(0)
             )
 
-    def _check_android_device(self):
+        return None
+
+    @staticmethod
+    def _fetch_android_device_model():
         """Tries to retrieve `brand` and `model` device properties on Android platforms"""
         try:
             brand = check_output(
@@ -118,6 +116,6 @@ class Model(Entry):
                 universal_newlines=True
             ).rstrip()
         except FileNotFoundError:
-            return
+            return None
 
-        self.value = '{0} ({1})'.format(brand, model)
+        return '{0} ({1})'.format(brand, model)
