@@ -20,6 +20,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('pkg_info', '-a')},
     {'cmd': ('pkg', '-N', 'info', '-a')},
     {'cmd': ('rpm', '-qa')},
+    {'cmd': ('ls', '-l', '/var/log/packages/')},  # SlackWare.
     {'cmd': ('yum', 'list', 'installed'), 'skew': 2},
     {'cmd': ('zypper', 'search', '-i'), 'skew': 5}
 )
