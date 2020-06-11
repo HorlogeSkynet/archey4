@@ -17,11 +17,16 @@ class Distro(Entry):
 
         self.value = {
             'name': distro_name,
-            'arch': check_output(
-                ['uname', '-m'],
-                universal_newlines=True
-            ).rstrip()
+            'arch': self._fetch_architecture()
         }
+
+    @staticmethod
+    def _fetch_architecture():
+        """Simple wrapper to `uname -m` returning the current system architecture"""
+        return check_output(
+            ['uname', '-m'],
+            universal_newlines=True
+        ).rstrip()
 
     @staticmethod
     def _fetch_android_release():

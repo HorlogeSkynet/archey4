@@ -12,16 +12,14 @@ class TestDistroEntry(unittest.TestCase):
     """`Distro` entry simple test cases"""
     @patch(
         'archey.entries.distro.Distributions.get_distro_name',
-        return_value="""\
-NAME VERSION (CODENAME)\
-""")
+        return_value='NAME VERSION (CODENAME)'
+    )
     @patch(
-        'archey.entries.distro.check_output',  # `uname` output
-        return_value="""\
-ARCHITECTURE
-""")
-    def test_ok(self, _, __):
-        """Test for `distro` and `uname` retrievals"""
+        'archey.entries.distro.Distro._fetch_architecture',
+        return_value='ARCHITECTURE'
+    )
+    def test_init(self, _, __):
+        """Test `Distro` instantiation"""
         self.assertDictEqual(
             Distro().value,
             {
@@ -31,24 +29,25 @@ ARCHITECTURE
         )
 
     @patch(
-        'archey.entries.distro.Distributions.get_distro_name',
-        return_value=None  # Soft-failing : No _pretty_ distribution name found...
+        'archey.entries.distro.check_output',
+        return_value='x86_64\n'  # Imitate `uname` output on AMD64.
     )
+    def test_fetch_architecture(self, _):
+        """Test `_fetch_architecture` static method"""
+        self.assertEqual(
+            Distro._fetch_architecture(),  # pylint: disable=protected-access
+            'x86_64'
+        )
+
     @patch(
         'archey.entries.distro.check_output',
-        side_effect=[
-            '10\n',           # Imitate Android 10 output for `getprop` execution.
-            'ARCHITECTURE\n'  # `uname` output.
-        ]
+        return_value='10\n'  # Imitate `getprop` output on Android 10.
     )
-    def test_android_device(self, _, __):
-        """Test `value` format on Android devices"""
+    def test_fetch_android_release(self, _):
+        """Test `_fetch_android_release` static method"""
         self.assertEqual(
-            Distro().value,
-            {
-                'name': 'Android 10',
-                'arch': 'ARCHITECTURE'
-            }
+            Distro._fetch_android_release(),  # pylint: disable=protected-access
+            'Android 10'
         )
 
     @patch(
@@ -56,12 +55,12 @@ ARCHITECTURE
         return_value=None  # Soft-failing : No _pretty_ distribution name found...
     )
     @patch(
-        'archey.entries.distro.Distro._fetch_android_release',
-        return_value=None  # Not an Android device either...
+        'archey.entries.distro.Distro._fetch_architecture',
+        return_value='ARCHITECTURE'
     )
     @patch(
-        'archey.entries.distro.check_output',
-        return_value='ARCHITECTURE\n'  # `uname` output.
+        'archey.entries.distro.Distro._fetch_android_release',
+        return_value=None  # Not an Android device either...
     )
     @HelperMethods.patch_clean_configuration
     def test_unknown_distro_output(self, _, __, ___):
