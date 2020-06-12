@@ -32,6 +32,16 @@ The answer is [here](https://blog.samuel.domains/archey4).
 > Actually, the maintainer decided to separate it from the original one's "network" with the help of _GitHub_'s staff.  
 > Nevertheless, **this piece of software is still a fork of [djmelik's Archey project](https://github.com/djmelik/archey.git)**.
 
+## Features
+
+* Run as quickly as possible
+* Stay as light as possible
+* Keep entries ordered despite parallelism
+* Extensive local IP addresses detection
+* General temperature detection
+* JSON output
+* Screen capture ("best effort")
+
 ## Which packages do I need to run this project ?
 
 ### Required packages
@@ -53,12 +63,6 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | Graphical (desktop)   | `wmctrl`                          | **WindowManager** would be more accurate             | N/A                          |
 | Virtual w/o `systemd` | `virt-what` and `dmidecode`       | **Model** would contain details about the hypervisor | **root** privileges required |
 
-### :warning: Various notes to read before going down :warning:
-
-* **Note to Debian Jessie (8) users : As [`python3-distro`](https://tracker.debian.org/pkg/python-distro) is not available in your repositories, you should opt for an [installation from PyPI](#install-from-pypi).**
-
-* **`virt-what` call will be skipped if `systemd` tools are available on your system.**
-
 ## Installation
 
 ### Install from package
@@ -70,10 +74,20 @@ Now, it's time to use your favorite package manager. Some examples :
 * Debian-based distributions : `apt install ./archey4_4.Y.Z-R_all.deb`
 * RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.py??.noarch.rpm`
 
-### Install from PyPI
+**Note to Debian 8 (Jessie) users** : As [`python3-distro`](https://tracker.debian.org/pkg/python-distro) is not available in your repositories, **you should opt for an [installation from PyPI](#install-from-pypi).**
+
+Further information about packaging are available [here](https://github.com/HorlogeSkynet/archey4/wiki/Packaging).
+
+### Install from [PyPI](https://pypi.org/project/archey4/)
 
 ```bash
 sudo pip3 install archey4
+```
+
+### Install from [AUR](https://aur.archlinux.org/packages/archey4/)
+
+```bash
+sudo yay -S archey4
 ```
 
 ### Install from source
@@ -98,8 +112,6 @@ cd archey4/
 
 # If you have PIP installed on your system :
 sudo pip3 install .
-# So if one day you wanna uninstall Archey
-sudo pip3 uninstall archey4
 # _________________________________________
 
 # But if you don't have PIP, no worries :
@@ -161,7 +173,7 @@ You can place a [`config.json`](archey/config.json) file in these locations :
 **If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).**
 
 The [example file](archey/config.json) provided in this repository lists exhaustively the parameters you can set.  
-Below, some further explanations of each option available :
+Below stand further descriptions for each available option :
 
 <!-- We use JavaScript syntax coloration below because JSON does not allow the usage of comments in it -->
 ```javascript
@@ -264,14 +276,15 @@ Below, some further explanations of each option available :
 
 ## Test cases
 
-Tests are now available. Here is a short procedure to run them (you'll only need `python3`) :
+An extensive tests suite is available.  
+Here is a short procedure to run them (you'll only need `python3`) :
 
 ```bash
 git clone https://github.com/HorlogeSkynet/archey4.git
 cd archey4/
 # If you got `setuptools` installed
 python3 setup.py test
-# But if you still don't, no worries !
+# But if you don't, no worries !
 python3 -m unittest
 ```
 
@@ -281,15 +294,8 @@ Any improvement would be appreciated.
 
 * If you experience any trouble during the installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
 
-* If you had to tweak this project to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
+* If you had to tweak this project to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project ! You should also check [Info for contributors](https://github.com/HorlogeSkynet/archey4/wiki/Info-for-contributors).
+
+* If your distribution is not (currently) supported, please check [How do I add a distribution to Archey?](https://github.com/HorlogeSkynet/archey4/wiki/How-do-I-add-a-distribution-to-Archey%3F).
 
 * When looking up your public IP address (**WAN\_IP**), Archey will try at first to run a DNS query for `myip.opendns.com`, against OpenDNS's resolver(s). On error, it would fall back on regular HTTPS request(s) to <https://ident.me> ([server sources](https://github.com/pcarrier/identme)).
-
-## Notes to users (, developers, and maintainers) about packaging
-
-At the moment, [assets published on GitHub](https://github.com/HorlogeSkynet/archey4/releases/latest) are currently built with the `packaging/build.sh` script (a wrapper to [FPM](https://github.com/jordansissel/fpm), [Setuptools](https://github.com/pypa/setuptools) and [Twine](https://github.com/pypa/twine)).
-
-PIP source and wheel distributions (as long as Debian packages since v4.7.0) are GPG-signed using [this key](https://github.com/HorlogeSkynet.gpg).  
-Wheels (and their signatures) are uploaded on GitHub too, whereas source distributions could be watched [here](https://pypi.debian.net/archey4/).
-
-For the Arch Linux community, [an official package is (still) maintained on AUR](https://aur.archlinux.org/packages/archey4/).
