@@ -65,11 +65,14 @@ class Model(Entry):
             except (FileNotFoundError, CalledProcessError):
                 pass
 
-        # If we got there, this _should_ be a virtual environment.
-        return '{0} ({1})'.format(
-            product_name or self._configuration.get('default_strings')['virtual_environment'],
-            environment
-        )
+        if product_name or environment:
+            # If we got there with some info, this _should_ be a virtual environment.
+            return '{0} ({1})'.format(
+                product_name or self._configuration.get('default_strings')['virtual_environment'],
+                environment
+            )
+
+        return None
 
     @staticmethod
     def _fetch_product_name():

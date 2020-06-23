@@ -104,6 +104,18 @@ class TestModelEntry(unittest.TestCase):
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
             )
 
+        with self.subTest('Not a virtual environment (no tools, no root)'):
+            check_output_mock.reset_mock()
+            getuid_mock.reset_mock()
+            check_output_mock.side_effect = [
+                FileNotFoundError()  # `systemd-detect-virt` not available.
+            ]
+            getuid_mock.return_value = 1000  # `virt-what` and `dmidecode` won't be called.
+
+            self.assertIsNone(
+                Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
+            )
+
     @patch(
         'archey.entries.model.open',
         mock_open(read_data='MY-LAPTOP-MODEL\n'),
