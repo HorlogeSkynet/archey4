@@ -108,7 +108,7 @@ class TestModelEntry(unittest.TestCase):
             check_output_mock.reset_mock()
             getuid_mock.reset_mock()
             check_output_mock.side_effect = [
-                FileNotFoundError()  # `systemd-detect-virt` not available.
+                FileNotFoundError()  # `systemd-detect-virt` won't be available.
             ]
             getuid_mock.return_value = 1000  # `virt-what` and `dmidecode` won't be called.
 
