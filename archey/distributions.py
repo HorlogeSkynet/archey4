@@ -64,9 +64,12 @@ class Distributions(Enum):
         # Below are brain-dead cases for distributions not properly handled by `distro`.
         # One _may_ want to add its own logic to add support for such undetectable systems.
         if distribution == Distributions.DEBIAN:
-            # Crunchbang is tagged as _regular_ Debian by `distro`.
-            # Below condition is here to work-around this issue.
-            if os.path.isfile('/etc/lsb-release-crunchbang'):
+            # CrunchBang is tagged as _regular_ Debian by `distro`.
+            # Below conditions are here to work-around this issue.
+            # First condition : CrunchBang-Linux and CrunchBang-Monara.
+            # Second condition : CrunchBang++ (CBPP).
+            if os.path.isfile('/etc/lsb-release-crunchbang') \
+                or os.path.isfile('/usr/bin/cbpp-exit'):
                 return Distributions.CRUNCHBANG
 
         return distribution
