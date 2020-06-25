@@ -227,7 +227,7 @@ i  | at            | A Job Manager                       | package    \n\
         'archey.entries.packages.PACKAGES_TOOLS',
         new=(
             {'cmd': ('pkg_tool_1')},
-            {'cmd': ('pkg_tool_2')}
+            {'cmd': ('pkg_tool_2'), 'skew': 2}
         )
     )
     @patch(
@@ -238,8 +238,10 @@ sample_package_1_1
 sample_package_1_2
 """,
             """\
+  Incredible list of installed packages:
 sample_package_2_1
 sample_package_2_2
+
 """
         ]
     )

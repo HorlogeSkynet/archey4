@@ -11,6 +11,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('apk', 'list', '--installed')},
     # As of 2020, `apt` is _very_ slow compared to `dpkg` on Debian-based distributions.
     # Additional note : `apt`'s CLI is currently not "stable" in Debian terms.
+    # If `apt` happens to be preferred over `dpkg` in the future, don't forget to remove the latter.
     #{'cmd': ('apt', 'list', '-qq', '--installed')},
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
@@ -61,4 +62,4 @@ class Packages(Entry):
             if packages_tool['cmd'][0] == 'dpkg':
                 self.value -= results.count('deinstall')
 
-            # Let's not break in case there are multiple package managers.
+            # Let's just loop over, in case there are multiple package managers.
