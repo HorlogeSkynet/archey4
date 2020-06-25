@@ -4,6 +4,7 @@ Operating Systems detection logic.
 Interface to `os-release` (through `distro` module).
 """
 
+import os
 import sys
 
 from enum import Enum
@@ -19,6 +20,7 @@ class Distributions(Enum):
     See <https://distro.readthedocs.io/en/latest/#distro.id>.
     """
     ALPINE_LINUX = 'alpine'
+    ANDROID = 'android'
     ARCH_LINUX = 'arch'
     BUNSENLABS = 'bunsenlabs'
     CENTOS = 'centos'
@@ -28,6 +30,7 @@ class Distributions(Enum):
     GENTOO = 'gentoo'
     KALI_LINUX = 'kali'
     MANJARO_LINUX = 'manjaro'
+    NIXOS = 'nixos'
     LINUX = 'linux'
     LINUX_MINT = 'linuxmint'
     OPENSUSE = 'opensuse'
@@ -46,6 +49,34 @@ class Distributions(Enum):
     @staticmethod
     def run_detection():
         """Entry point of Archey distribution detection logic"""
+        distribution = Distributions._detection_logic()
+
+        # In case nothing got detected the "regular" way, fall-back on the Linux logo.
+        if not distribution:
+            # Android systems are currently not being handled by `distro`.
+            # We imitate Neofetch behavior to manually "detect" them.
+            # See <https://github.com/nir0s/distro/issues/253>.
+            if os.path.isdir('/system/app') and os.path.isdir('/system/priv-app'):
+                return Distributions.ANDROID
+
+            return Distributions.LINUX
+
+        # Below are brain-dead cases for distributions not properly handled by `distro`.
+        # One _may_ want to add its own logic to add support for such undetectable systems.
+        if distribution == Distributions.DEBIAN:
+            # CrunchBang is tagged as _regular_ Debian by `distro`.
+            # Below conditions are here to work-around this issue.
+            # First condition : CrunchBang-Linux and CrunchBang-Monara.
+            # Second condition : CrunchBang++ (CBPP).
+            if os.path.isfile('/etc/lsb-release-crunchbang') \
+                or os.path.isfile('/usr/bin/cbpp-exit'):
+                return Distributions.CRUNCHBANG
+
+        return distribution
+
+    @staticmethod
+    def _detection_logic():
+        """Main distribution detection logic, relying on `distro`, handling _common_ cases"""
         # Are we running on Windows ?
         if sys.platform in ('win32', 'cygwin'):
             return Distributions.WINDOWS
@@ -67,10 +98,10 @@ class Distributions(Enum):
             try:
                 return Distributions(id_like)
             except ValueError:
-                continue
+                pass
 
-        # At the moment, fall-back to default `Linux` if nothing of the above matched.
-        return Distributions.LINUX
+        # Nothing of the above matched, let's return `None` and let the caller handle it.
+        return None
 
     @staticmethod
     def get_distro_name():

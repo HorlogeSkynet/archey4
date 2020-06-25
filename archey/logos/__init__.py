@@ -1,6 +1,7 @@
 """Simple `__init__` file for the `logos` module, to load each distribution logo"""
 
 from archey.logos.alpine_linux import ALPINE_LINUX
+from archey.logos.android import ANDROID
 from archey.logos.arch_linux import ARCH_LINUX
 from archey.logos.bunsenlabs import BUNSENLABS
 from archey.logos.centos import CENTOS
@@ -10,6 +11,7 @@ from archey.logos.fedora import FEDORA
 from archey.logos.gentoo import GENTOO
 from archey.logos.kali_linux import KALI_LINUX
 from archey.logos.manjaro import MANJARO
+from archey.logos.nixos import NIXOS
 from archey.logos.linux import LINUX
 from archey.logos.linux_mint import LINUX_MINT
 from archey.logos.opensuse import OPENSUSE

@@ -11,14 +11,17 @@ PACKAGES_TOOLS = (
     {'cmd': ('apk', 'list', '--installed')},
     # As of 2020, `apt` is _very_ slow compared to `dpkg` on Debian-based distributions.
     # Additional note : `apt`'s CLI is currently not "stable" in Debian terms.
+    # If `apt` happens to be preferred over `dpkg` in the future, don't forget to remove the latter.
     #{'cmd': ('apt', 'list', '-qq', '--installed')},
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
+    {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
     {'cmd': ('pkg', '-N', 'info', '-a')},
     {'cmd': ('rpm', '-qa')},
+    {'cmd': ('ls', '-l', '/var/log/packages/')},  # SlackWare.
     {'cmd': ('yum', 'list', 'installed'), 'skew': 2},
     {'cmd': ('zypper', 'search', '-i'), 'skew': 5}
 )
@@ -45,7 +48,11 @@ class Packages(Entry):
             except (FileNotFoundError, CalledProcessError):
                 continue
 
-            self.value = results.count(os.linesep)
+            # Here we *may* use `\n` as `universal_newlines` has been set to `True`.
+            if self.value:
+                self.value += results.count('\n')
+            else:
+                self.value = results.count('\n')
 
             # If any, deduct output skew present due to the packages tool.
             if 'skew' in packages_tool:
@@ -55,5 +62,4 @@ class Packages(Entry):
             if packages_tool['cmd'][0] == 'dpkg':
                 self.value -= results.count('deinstall')
 
-            # At this step, we may break the loop.
-            break
+            # Let's just loop over, in case there are multiple package managers.

@@ -1,6 +1,5 @@
 """Test module for Archey's installed system packages detection module"""
 
-import os
 import unittest
 from unittest.mock import DEFAULT as DEFAULT_SENTINEL, MagicMock, patch
 
@@ -94,18 +93,32 @@ These are the packages that would be merged, in order:
 
 Calculating dependencies  ... done!
 [ebuild     U  ] sys-libs/glibc-2.25-r10 [2.25-r9]
-[ebuild   R    ] sys-apps/busybox-1.28.0 {linesep}\
+[ebuild   R    ] sys-apps/busybox-1.28.0 \n\
 [ebuild  N     ] sys-libs/libcap-2.24-r2  \
-USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" {linesep}\
+USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
 [ebuild     U  ] app-misc/pax-utils-1.2.2-r2 [1.1.7]
-[ebuild   R    ] x11-misc/shared-mime-info-1.9 {linesep}\
+[ebuild   R    ] x11-misc/shared-mime-info-1.9 \n\
 
-""".format(linesep=os.linesep))
+""")
     def test_match_with_emerge(self, check_output_mock):
         """Simple test for the Emerge packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect('emerge')
 
         self.assertEqual(Packages().value, 5)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        return_value="""\
+nix-2.3.4
+nss-cacert-3.49.2
+python3-3.8.2
+python3.8-pip-20.1
+""")
+    def test_match_with_nix_env(self, check_output_mock):
+        """Simple test for the Emerge packages manager"""
+        check_output_mock.side_effect = self._check_output_side_effect('nix-env')
+
+        self.assertEqual(Packages().value, 4)
 
     @patch(
         'archey.entries.packages.check_output',
@@ -180,10 +193,10 @@ MySQL-client-3.23.57-1
 Loaded plugins: fastestmirror, langpacks
 Installed Packages
 GConf2.x86_64                   3.2.6-8.el7         @base/$releasever
-GeoIP.x86_64                    1.5.0-11.el7        @base            {linesep}\
-ModemManager.x86_64             1.6.0-2.el7         @base            {linesep}\
-ModemManager-glib.x86_64        1.6.0-2.el7         @base            {linesep}\
-""".format(linesep=os.linesep))
+GeoIP.x86_64                    1.5.0-11.el7        @base            \n\
+ModemManager.x86_64             1.6.0-2.el7         @base            \n\
+ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
+""")
     def test_match_with_yum(self, check_output_mock):
         """Simple test for the Yum packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect('yum')
@@ -196,19 +209,45 @@ ModemManager-glib.x86_64        1.6.0-2.el7         @base            {linesep}\
 Loading repository data...
 Reading installed packages...
 
-S  | Name          | Summary                             | Type       {linesep}\
+S  | Name          | Summary                             | Type       \n\
 ---+---------------+-------------------------------------+------------
-i+ | 5201          | Recommended update for xdg-utils    | patch      {linesep}\
-i  | GeoIP-data    | Free GeoLite country-data for GeoIP | package    {linesep}\
-i  | make          | GNU make                            | package    {linesep}\
+i+ | 5201          | Recommended update for xdg-utils    | patch      \n\
+i  | GeoIP-data    | Free GeoLite country-data for GeoIP | package    \n\
+i  | make          | GNU make                            | package    \n\
 i  | GNOME Nibbles | Guide a worm around a maze          | application
-i  | at            | A Job Manager                       | package    {linesep}\
-""".format(linesep=os.linesep))
+i  | at            | A Job Manager                       | package    \n\
+""")
     def test_match_with_zypper(self, check_output_mock):
         """Simple test for the Zypper packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect('zypper')
 
         self.assertEqual(Packages().value, 5)
+
+    @patch(
+        'archey.entries.packages.PACKAGES_TOOLS',
+        new=(
+            {'cmd': ('pkg_tool_1')},
+            {'cmd': ('pkg_tool_2'), 'skew': 2}
+        )
+    )
+    @patch(
+        'archey.entries.packages.check_output',
+        side_effect=[
+            """\
+sample_package_1_1
+sample_package_1_2
+""",
+            """\
+  Incredible list of installed packages:
+sample_package_2_1
+sample_package_2_2
+
+"""
+        ]
+    )
+    def test_multiple_package_managers(self, _):
+        """Simple test for multiple packages managers"""
+        self.assertEqual(Packages().value, 4)
 
     @patch('archey.entries.packages.check_output')
     @HelperMethods.patch_clean_configuration
