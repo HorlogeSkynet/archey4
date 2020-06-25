@@ -223,6 +223,30 @@ i  | at            | A Job Manager                       | package    \n\
 
         self.assertEqual(Packages().value, 5)
 
+    @patch(
+        'archey.entries.packages.PACKAGES_TOOLS',
+        new=(
+            {'cmd': ('pkg_tool_1')},
+            {'cmd': ('pkg_tool_2')}
+        )
+    )
+    @patch(
+        'archey.entries.packages.check_output',
+        side_effect=[
+            """\
+sample_package_1_1
+sample_package_1_2
+""",
+            """\
+sample_package_2_1
+sample_package_2_2
+"""
+        ]
+    )
+    def test_multiple_package_managers(self, _):
+        """Simple test for multiple packages managers"""
+        self.assertEqual(Packages().value, 4)
+
     @patch('archey.entries.packages.check_output')
     @HelperMethods.patch_clean_configuration
     def test_no_packages_manager(self, check_output_mock):

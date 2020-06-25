@@ -48,7 +48,10 @@ class Packages(Entry):
                 continue
 
             # Here we *may* use `\n` as `universal_newlines` has been set to `True`.
-            self.value = results.count('\n')
+            if self.value:
+                self.value += results.count('\n')
+            else:
+                self.value = results.count('\n')
 
             # If any, deduct output skew present due to the packages tool.
             if 'skew' in packages_tool:
@@ -58,5 +61,4 @@ class Packages(Entry):
             if packages_tool['cmd'][0] == 'dpkg':
                 self.value -= results.count('deinstall')
 
-            # At this step, we may break the loop.
-            break
+            # Let's not break in case there are multiple package managers.
