@@ -8,12 +8,14 @@ from archey.logos.centos import CENTOS
 from archey.logos.crunchbang import CRUNCHBANG
 from archey.logos.debian import DEBIAN
 from archey.logos.fedora import FEDORA
+from archey.logos.freebsd import FREEBSD
 from archey.logos.gentoo import GENTOO
 from archey.logos.kali_linux import KALI_LINUX
 from archey.logos.manjaro import MANJARO
 from archey.logos.nixos import NIXOS
 from archey.logos.linux import LINUX
 from archey.logos.linux_mint import LINUX_MINT
+from archey.logos.openbsd import OPENBSD
 from archey.logos.opensuse import OPENSUSE
 from archey.logos.raspbian import RASPBIAN
 from archey.logos.red_hat import RED_HAT
