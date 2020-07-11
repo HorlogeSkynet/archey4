@@ -11,6 +11,10 @@ from archey.output import Output
 from archey.distributions import Distributions
 
 
+@patch(
+    'archey.colors.NO_COLOR',
+    False  # By default, colors won't be disabled.
+)
 class TestOutputUtil(unittest.TestCase):
     """
     Simple test cases to check the behavior of the `Output` class.

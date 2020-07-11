@@ -3,7 +3,7 @@
 import os
 import re
 
-from archey.colors import Colors
+from archey.colors import Colors, NO_COLOR
 from archey.entry import Entry
 
 
@@ -117,10 +117,8 @@ class Terminal(Entry):
 
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting with colors palette"""
-        output.append(
-            self.name,
-            '{0} {1}'.format(
-                (self.value or self._configuration.get('default_strings')['not_detected']),
-                self._get_colors_palette()
-            )
-        )
+        text_output = (self.value or self._configuration.get('default_strings')['not_detected'])
+        if not NO_COLOR:
+            text_output += ' ' + self._get_colors_palette()
+
+        output.append(self.name, text_output)

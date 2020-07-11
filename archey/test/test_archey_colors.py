@@ -1,10 +1,15 @@
 """Test module for `archey.colors`"""
 
 import unittest
+from unittest.mock import patch
 
 from archey.colors import ANSI_ECMA_REGEXP, Colors
 
 
+@patch(
+    'archey.colors.NO_COLOR',
+    False  # By default, colors won't be disabled.
+)
 class TestColorsUtil(unittest.TestCase):
     """Test cases for the `Colors` (enumeration / utility) class"""
     def test_constant_values(self):
@@ -62,6 +67,14 @@ class TestColorsUtil(unittest.TestCase):
             Colors.remove_colors('\x1b[0nTEST\xde\xad\xbe\xaf'),
             '\x1b[0nTEST\xde\xad\xbe\xaf'
         )
+
+    def test_no_color(self):
+        """Test `Colors` behavior when `NO_COLOR` is set"""
+        with patch(
+                'archey.colors.NO_COLOR',
+                True  # Temporary disable color for this test.
+            ):
+            self.assertFalse(str(Colors.CYAN_NORMAL))
 
 
 if __name__ == '__main__':
