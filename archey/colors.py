@@ -39,9 +39,6 @@ class Colors(Enum):
     WHITE_BRIGHT = (1, 37)
 
     def __str__(self):
-        if NO_COLOR:
-            return ''
-
         return self.escape_code_from_attrs(
             ';'.join(map(str, self.value))
         )
@@ -51,6 +48,9 @@ class Colors(Enum):
         """
         Build and return an ANSI/ECMA-48 escape code string from passed display attributes.
         """
+        if NO_COLOR:
+            return ''
+
         return '\x1b[{}m'.format(display_attrs)
 
     @staticmethod
