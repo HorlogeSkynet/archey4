@@ -28,8 +28,14 @@ script:
   - pylint archey/
 
   # Build a standalone script from sources (Stickytape).
-  - stickytape --add-python-path . --output-file dist/archey archey/__main__.py
-  - time python3 dist/archey
+  - >
+      stickytape \
+        --copy-shebang \
+        --add-python-path . \
+        --output-file dist/archey \
+        archey/__main__.py
+  - chmod +x dist/archey
+  - time ./dist/archey
 
   # Build a standalone script from sources (PyInstaller).
   # (currently) disabled for Python 3.8 and PyPy.

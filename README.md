@@ -133,13 +133,22 @@ cp archey/config.json ~/.config/archey4/config.json
 
 # You can go through StickyTape for this :
 sudo pip3 install stickytape
-stickytape --add-python-path . --output-file dist/archey archey/__main__.py
-python3 dist/archey
+stickytape \
+	--copy-shebang \
+	--add-python-path . \
+	--output-file dist/archey \
+	archey/__main__.py
+chmod +x dist/archey
+./dist/archey
 # ________________________________________
 
 # You can either use PyInstaller :
 sudo pip3 install pyinstaller
-pyinstaller --distpath dist --specpath dist --name archey --onefile archey/__main__.py
+pyinstaller \
+	--distpath dist \
+	--specpath dist \
+	--name archey \
+	--onefile archey/__main__.py
 ./dist/archey
 # ________________________________
 
