@@ -8,6 +8,10 @@ from archey.test.entries import HelperMethods
 from archey.constants import DEFAULT_CONFIG
 
 
+@patch(
+    'archey.entries.terminal.NO_COLOR',
+    False  # By default, colors won't be disabled.
+)
 class TestTerminalEntry(unittest.TestCase):
     """
     For this entry, we'll verify that the output contains what the environment
@@ -106,6 +110,28 @@ class TestTerminalEntry(unittest.TestCase):
         Check we observe terminal using `COLORTERM` even if `TERM` or a "known identifier" is found.
         """
         self.assertEqual(Terminal().value, 'KMSCON')
+
+    @patch.dict(
+        'archey.entries.terminal.os.environ',
+        {'TERM_PROGRAM': 'X-TERMINAL-EMULATOR'},
+        clear=True
+    )
+    def test_no_color(self):
+        """Test `Terminal` output behavior when `NO_COLOR` is set (palette should be hidden)"""
+        with patch(
+                'archey.entries.terminal.NO_COLOR',
+                True  # Temporary disable color for this test.
+            ):
+            terminal = Terminal()
+
+            output_mock = MagicMock()
+            terminal.output(output_mock)
+
+            self.assertEqual(terminal.value, 'X-TERMINAL-EMULATOR')
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                'X-TERMINAL-EMULATOR'
+            )
 
     @patch.dict(
         'archey.entries.terminal.os.environ',
