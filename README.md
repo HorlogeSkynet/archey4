@@ -96,7 +96,7 @@ sudo yay -S archey4
 ### Step 1 : Fetch the source ###
 
 # If you want the latest release :
-LATEST_VERSION="v4.7.2"
+LATEST_VERSION="v4.8.0"
 wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
 tar xvzf "${LATEST_VERSION}.tar.gz"
 cd "archey4-${LATEST_VERSION}/"
