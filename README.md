@@ -153,7 +153,6 @@ pyinstaller \
 # ________________________________
 
 # You can now move this script anywhere, as before :
-chmod +x dist/archey
 sudo mv dist/archey /usr/local/bin/
 # __________________________________________________
 ```
