@@ -23,6 +23,7 @@ COLORS_DICT = {
     ],
     Distributions.CRUNCHBANG: [Colors.WHITE_BRIGHT],
     Distributions.DEBIAN: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
+    Distributions.ELEMENTARY: [Colors.WHITE_BRIGHT],
     Distributions.FEDORA: [Colors.BLUE_BRIGHT, Colors.BLUE_NORMAL, Colors.WHITE_BRIGHT],
     Distributions.FREEBSD: [Colors.RED_BRIGHT, Colors.RED_NORMAL],
     Distributions.GENTOO: [Colors.MAGENTA_BRIGHT, Colors.WHITE_BRIGHT],
@@ -39,8 +40,7 @@ COLORS_DICT = {
     Distributions.UBUNTU: [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT],
     Distributions.WINDOWS: [
         Colors.BLUE_BRIGHT, Colors.RED_BRIGHT, Colors.GREEN_BRIGHT, Colors.YELLOW_NORMAL
-    ],
-    Distributions.ELEMENTARY: [Colors.WHITE_BRIGHT]
+    ]
 }
 
 
@@ -53,6 +53,7 @@ LOGOS_DICT = {
     Distributions.CENTOS: logos.CENTOS,
     Distributions.CRUNCHBANG: logos.CRUNCHBANG,
     Distributions.DEBIAN: logos.DEBIAN,
+    Distributions.ELEMENTARY: logos.ELEMENTARY,
     Distributions.FEDORA: logos.FEDORA,
     Distributions.FREEBSD: logos.FREEBSD,
     Distributions.GENTOO: logos.GENTOO,
@@ -67,8 +68,7 @@ LOGOS_DICT = {
     Distributions.RED_HAT: logos.RED_HAT,
     Distributions.SLACKWARE: logos.SLACKWARE,
     Distributions.UBUNTU: logos.UBUNTU,
-    Distributions.WINDOWS: logos.WINDOWS,
-    Distributions.ELEMENTARY: logos.ELEMENTARY
+    Distributions.WINDOWS: logos.WINDOWS
 }
 
 

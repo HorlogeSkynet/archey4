@@ -7,6 +7,7 @@ from archey.logos.bunsenlabs import BUNSENLABS
 from archey.logos.centos import CENTOS
 from archey.logos.crunchbang import CRUNCHBANG
 from archey.logos.debian import DEBIAN
+from archey.logos.elementary import ELEMENTARY
 from archey.logos.fedora import FEDORA
 from archey.logos.freebsd import FREEBSD
 from archey.logos.gentoo import GENTOO
@@ -22,7 +23,6 @@ from archey.logos.red_hat import RED_HAT
 from archey.logos.slackware import SLACKWARE
 from archey.logos.ubuntu import UBUNTU
 from archey.logos.windows import WINDOWS
-from archey.logos.elementary import ELEMENTARY
 
 
 def get_logo_width(logo, nb_colors=8):

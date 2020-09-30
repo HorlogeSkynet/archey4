@@ -26,6 +26,7 @@ class Distributions(Enum):
     CENTOS = 'centos'
     CRUNCHBANG = 'crunchbang'
     DEBIAN = 'debian'
+    ELEMENTARY = 'elementary'
     FEDORA = 'fedora'
     FREEBSD = 'freebsd'
     GENTOO = 'gentoo'
@@ -41,7 +42,7 @@ class Distributions(Enum):
     SLACKWARE = 'slackware'
     UBUNTU = 'ubuntu'
     WINDOWS = 'windows'
-    ELEMENTARY = 'elementary'
+
 
     @staticmethod
     def get_distribution_identifiers():
