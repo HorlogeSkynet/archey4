@@ -22,6 +22,7 @@ from archey.logos.red_hat import RED_HAT
 from archey.logos.slackware import SLACKWARE
 from archey.logos.ubuntu import UBUNTU
 from archey.logos.windows import WINDOWS
+from archey.logos.elementary import ELEMENTARY
 
 
 def get_logo_width(logo, nb_colors=8):

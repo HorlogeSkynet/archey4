@@ -41,7 +41,7 @@ class Distributions(Enum):
     SLACKWARE = 'slackware'
     UBUNTU = 'ubuntu'
     WINDOWS = 'windows'
-
+    ELEMENTARY = 'elementary'
 
     @staticmethod
     def get_distribution_identifiers():

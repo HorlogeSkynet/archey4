@@ -39,7 +39,8 @@ COLORS_DICT = {
     Distributions.UBUNTU: [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT],
     Distributions.WINDOWS: [
         Colors.BLUE_BRIGHT, Colors.RED_BRIGHT, Colors.GREEN_BRIGHT, Colors.YELLOW_NORMAL
-    ]
+    ],
+    Distributions.ELEMENTARY: [Colors.WHITE_BRIGHT]
 }
 
 
@@ -66,7 +67,8 @@ LOGOS_DICT = {
     Distributions.RED_HAT: logos.RED_HAT,
     Distributions.SLACKWARE: logos.SLACKWARE,
     Distributions.UBUNTU: logos.UBUNTU,
-    Distributions.WINDOWS: logos.WINDOWS
+    Distributions.WINDOWS: logos.WINDOWS,
+    Distributions.ELEMENTARY: logos.ELEMENTARY
 }
 
 
