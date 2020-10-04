@@ -26,7 +26,6 @@ class TestTerminalEntry(unittest.TestCase):
         },
         clear=True
     )
-    @HelperMethods.patch_clean_configuration
     def test_terminal_emulator_term_program(self):
         """Check that `TERM_PROGRAM` is honored even if `TERM` or `COLORTERM` is defined"""
         self.assertEqual(Terminal().value, 'A-COOL-TERMINAL-EMULATOR')
@@ -39,7 +38,6 @@ class TestTerminalEntry(unittest.TestCase):
         },
         clear=True
     )
-    @HelperMethods.patch_clean_configuration
     def test_terminal_emulator_special_term(self):
         """Check that `TERM` is honored even if a "known identifier" could be found"""
         self.assertEqual(Terminal().value, 'OH-A-SPECIAL-CASE')
@@ -52,7 +50,6 @@ class TestTerminalEntry(unittest.TestCase):
         },
         clear=True
     )
-    @HelperMethods.patch_clean_configuration
     def test_terminal_emulator_name_normalization(self):
         """Check that our manual terminal detection as long as name normalization are working"""
         self.assertEqual(Terminal().value, 'Konsole')
@@ -83,7 +80,6 @@ class TestTerminalEntry(unittest.TestCase):
         {'COLORTERM': 'kmscon'},
         clear=True
     )
-    @HelperMethods.patch_clean_configuration
     def test_terminal_emulator_colorterm(self):
         """Check we can detect terminals using the `COLORTERM` environment variable."""
         self.assertEqual(Terminal().value, 'KMSCON')
@@ -97,7 +93,6 @@ class TestTerminalEntry(unittest.TestCase):
         },
         clear=True
     )
-    @HelperMethods.patch_clean_configuration
     def test_terminal_emulator_colorterm_override(self):
         """
         Check we observe terminal using `COLORTERM` even if `TERM` or a "known identifier" is found.
@@ -131,6 +126,7 @@ class TestTerminalEntry(unittest.TestCase):
         {},
         clear=True
     )
+    @HelperMethods.patch_clean_configuration
     def test_not_detected(self):
         """Test terminal emulator (non-)detection, without Unicode support"""
         terminal = Terminal(options={'use_unicode': False})
@@ -140,7 +136,9 @@ class TestTerminalEntry(unittest.TestCase):
         output = output_mock.append.call_args[0][1]
 
         self.assertIsNone(terminal.value)
-        self.assertTrue(output.startswith(DEFAULT_CONFIG['default_strings']['not_detected']))
+        self.assertTrue(
+            output.startswith(DEFAULT_CONFIG['default_strings']['not_detected'])
+        )
         self.assertFalse(output.count('\u2588'))
 
 
