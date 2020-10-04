@@ -158,10 +158,8 @@ class Output:
                 ) + str(Colors.CLEAR)
             )
         except UnicodeError:
-            print(
+            sys.exit(
                 """\
 Your locale or TTY does not seem to support UTF-8 encoding.
 Please disable Unicode within your configuration file.\
-""",
-                file=sys.stderr
-            )
+""")
