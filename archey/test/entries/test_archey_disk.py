@@ -147,7 +147,7 @@ class TestDiskEntry(unittest.TestCase):
     def test_disk_df_output_dict(self, _):
         """Test method to get `df` output as a dict by mocking calls to `check_output`."""
         self.assertDictEqual(
-            Disk.get_df_output_dict(),
+            Disk._get_df_output_dict(),  # pylint: disable=protected-access
             {
                 '/': {
                     'device_path': '/dev/nvme0n1p2',
@@ -169,7 +169,7 @@ class TestDiskEntry(unittest.TestCase):
 
         with self.subTest('Missing `df` from system.'):
             self.assertDictEqual(
-                Disk.get_df_output_dict(),
+                Disk._get_df_output_dict(),  # pylint: disable=protected-access
                 {}
             )
 
@@ -250,7 +250,7 @@ class TestDiskEntry(unittest.TestCase):
         self.output_mock.reset_mock()
 
         with self.subTest('Multi-line output'):
-            self.disk_instance_mock.entry_options['combine_total'] = False
+            self.disk_instance_mock.options['combine_total'] = False
             Disk.output(self.disk_instance_mock, self.output_mock)
             self.assertEqual(self.output_mock.append.call_count, 2)
             self.output_mock.append.assert_has_calls(
@@ -270,7 +270,7 @@ class TestDiskEntry(unittest.TestCase):
         self.output_mock.reset_mock()
 
         with self.subTest('Entry name labeling (device path with entry name)'):
-            self.disk_instance_mock.entry_options = {
+            self.disk_instance_mock.options = {
                 'combine_total': False,
                 'disk_labels': 'device_paths'
             }
@@ -294,7 +294,7 @@ class TestDiskEntry(unittest.TestCase):
         self.output_mock.reset_mock()
 
         with self.subTest('Entry name labeling (mount points without entry name)'):
-            self.disk_instance_mock.entry_options = {
+            self.disk_instance_mock.options = {
                 'combine_total': False,
                 'disk_labels': 'mount_points',
                 'hide_entry_name': True
@@ -319,7 +319,7 @@ class TestDiskEntry(unittest.TestCase):
         self.output_mock.reset_mock()
 
         with self.subTest('Entry name labeling (without disk label nor entry name)'):
-            self.disk_instance_mock.entry_options = {
+            self.disk_instance_mock.options = {
                 'combine_total': False,
                 'disk_labels': False,
                 # `hide_entry_name` is being ignored as `disk_labels` evaluates to "falsy" too.

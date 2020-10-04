@@ -46,8 +46,7 @@ class Distro(Entry):
         output.append(
             self.name,
             '{0} [{1}]'.format(
-                (self.value['name'] or
-                 self._configuration.get('default_strings')['not_detected']),
+                (self.value['name'] or self._default_strings.get('not_detected')),
                 self.value['arch']
             )
         )

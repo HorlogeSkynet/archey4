@@ -11,7 +11,7 @@ class GPU(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        max_count = self.entry_options.get('max_count', 2)
+        max_count = self.options.get('max_count', 2)
         # Consistency with other entries' configuration: Infinite count if false.
         if max_count is False:
             max_count = None
@@ -42,11 +42,10 @@ class GPU(Entry):
     def output(self, output):
         """Writes GPUs to `output` based on preferences"""
         # Even when no GPU device could be detected, be sure to add an "empty" entry to `output`.
-        if self.entry_options.get('one_line', True) or not self.value:
+        if self.options.get('one_line', True) or not self.value:
             output.append(
                 self.name,
-                (', '.join(self.value) or
-                 self._configuration.get('default_strings')['not_detected'])
+                (', '.join(self.value) or self._default_strings.get('not_detected'))
             )
         else:
             for gpu_device in self.value:

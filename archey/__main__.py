@@ -63,8 +63,8 @@ class Entries(Enum):
     GPU = e_GPU
     RAM = e_RAM
     Disk = e_Disk
-    LanIP = e_LanIP
-    WanIP = e_WanIP
+    LAN_IP = e_LanIP
+    WAN_IP = e_WanIP
 
 
 def args_parsing():
@@ -111,8 +111,11 @@ def main():
     # `Configuration` is a singleton, let's populate the internal object here.
     configuration = Configuration(config_path=args.config_path)
 
-    # From configuration, gather the entries user-enabled.
-    enabled_entries = configuration.get('entries', [])
+    # From configuration, gather the entries user-configured.
+    available_entries = configuration.get('entries')
+    if available_entries is None:
+        # If none were specified, lazy-mimic a full-enabled entries list without any configuration.
+        available_entries = [{'type': entry_name} for entry_name in Entries.__members__.keys()]
 
     output = Output(
         preferred_distribution=args.distribution,
@@ -120,14 +123,12 @@ def main():
     )
 
     # We will map this function onto our enabled entries to instantiate them.
-    def _entry_instantiator(entry_dict):
-        entry_args = {
-            'name': entry_dict['type'],
-            'options': entry_dict.get('options')  # since it isn't always present.
-        }
-        return Entries[entry_dict['type']].value(**entry_args)
-
-    enabled_entries = configuration.get('entries') or []
+    def _entry_instantiator(entry):
+        # We pop `type` field from `entry` before passing it to `Entry` initialization.
+        return Entries[entry.pop('type')].value(
+            name=entry.get('name'),
+            options=entry
+        )
 
     # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
     with ExitStack() as cm_stack:
@@ -139,11 +140,14 @@ def main():
             # `max_workers` is manually computed to mimic Python 3.8+ behaviour, but for our needs.
             #   See <https://github.com/python/cpython/pull/13618>.
             executor = cm_stack.enter_context(ThreadPoolExecutor(
-                max_workers=min(len(enabled_entries) or 1, (os.cpu_count() or 1) + 4)
+                max_workers=min(len(available_entries) or 1, (os.cpu_count() or 1) + 4)
             ))
             mapper = executor.map
 
-        for entry_instance in mapper(_entry_instantiator, enabled_entries):
+        for entry_instance in mapper(_entry_instantiator, available_entries):
+            if not entry_instance:
+                continue
+
             output.add_entry(entry_instance)
 
     output.output()

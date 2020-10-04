@@ -102,8 +102,8 @@ class RAM(Entry):
         # Based on the RAM percentage usage, select the corresponding level color.
         level_color = Colors.get_level_color(
             (used / total) * 100,
-            self.entry_options.get('warning', 33.3),
-            self.entry_options.get('danger', 66.7)
+            self.options.get('warning_use_percent', 33.3),
+            self.options.get('danger_use_percent', 66.7)
         )
 
         output.append(

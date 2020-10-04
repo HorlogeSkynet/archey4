@@ -62,16 +62,9 @@ class TestTerminalEntry(unittest.TestCase):
         {'TERM': 'xterm-256color'},
         clear=True
     )
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'colors_palette': {
-                'use_unicode': True
-            }
-        }
-    )
     def test_terminal_emulator_term_fallback_and_unicode(self):
         """Check that `TERM` is honored if present, and Unicode support for the colors palette"""
-        terminal = Terminal()
+        terminal = Terminal(options={'use_unicode': True})
 
         output_mock = MagicMock()
         terminal.output(output_mock)
@@ -138,16 +131,9 @@ class TestTerminalEntry(unittest.TestCase):
         {},
         clear=True
     )
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'colors_palette': {
-                'use_unicode': False
-            }
-        }
-    )
     def test_not_detected(self):
         """Test terminal emulator (non-)detection, without Unicode support"""
-        terminal = Terminal()
+        terminal = Terminal(options={'use_unicode': False})
 
         output_mock = MagicMock()
         terminal.output(output_mock)

@@ -70,7 +70,7 @@ class Model(Entry):
 
         # If we got there with some info, this _should_ be a virtual environment.
         return '{0} ({1})'.format(
-            product_name or self._configuration.get('default_strings')['virtual_environment'],
+            product_name or self._default_strings.get('virtual_environment'),
             environment
         )
 

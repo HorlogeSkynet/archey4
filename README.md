@@ -180,106 +180,139 @@ You can place a [`config.json`](archey/config.json) file in these locations :
 
 **If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).**
 
+Alternatively, you may specify your own configuration file with the `-c` command-line option.
+
 The [example file](archey/config.json) provided in this repository lists exhaustively the parameters you can set.  
-Below stand further descriptions for each available option :
+Below stand further descriptions for each available (default) option :
 
 <!-- We use JavaScript syntax coloration below because JSON does not allow the usage of comments in it -->
 ```javascript
 {
 	// If set to `false`, configurations defined afterwards won't be loaded.
-	// Developers running Archey from the original project may keep in there the original `config.json` while having their own external configuration set elsewhere.
+	// Developers running Archey from the original project may keep in there the original `config.json`,
+	//   while having their own external configuration set elsewhere.
 	"allow_overriding": true,
 	// Set to `false` to disable multi-threaded loading of entries.
 	"parallel_loading": true,
 	// If set to `true`, any execution warning or error would be hidden.
-	// It may not apply to configuration parsing warnings.
+	// Configuration parsing warnings **would** still be shown.
 	"suppress_warnings": false,
-	"entries": {
-		// Set to `false` each entry you want to mask.
-	},
-	"colors_palette": {
-		// Leave this option set to `true` to display a beautiful colors palette.
-		// Set it to `false` to allow compatibility with non-Unicode locales.
-		"use_unicode": true,
-		// Set this option to `false` to force Archey to use its own colors palettes.
-		// `true` by default to honor `os-release`'s `ANSI_COLOR` option.
-		"honor_ansi_color": true
-	},
-	"disk": {
-		// Which filesystems to show:
-		// `["local"]` shows only local filesystems.
-		// You can alternatively list specific filesystems as:
-		//  * A list of device paths - e.g. `["/dev/sda1", "/dev/nvme0n1p1"]`
-		//  * A list of mount points - e.g. `["/", "/mnt"]`
-		//  * A combination of the above - e.g. `["/", "/dev/sda2"]`
-		"show_filesystems": ["local"],
-		// Set to `false` to write each filesystem on its own line.
-		"combine_total": true,
-		// Defines which labels to use for each disk (only works if `combine_total` is false!)
-		// The options available are:
-		//  * `"mount_points"`: Shows the mount point of the filesystem.
-		//      e.g. `Disk (/): 10.0 GiB/100.0 GiB`
-		//           `Disk (/mnt): 15.0 GiB / 200.0 GiB`
-		//  * `"device_paths"`: Shows the device path of the filesystem.
-		//      e.g. `Disk (/dev/sda1): 10.0 GiB / 100.0 GiB`
-		//           `Disk (/dev/mmcblk0p1): 15.0 GiB / 200.0 GiB`
-		//  * `false` or `null` (no quote marks!): Don't show any device labels.
-		//      e.g. `Disk: 10.0 GiB / 100.0 GiB`
-		//           `Disk: 15.0 GiB / 200.0 GiB`
-		"disk_labels": null,
-		// Set to `true` to hide the "Disk" entry name from the output.
-		// i.e. null  --> `Disk (/):`
-		//      false --> `Disk (/):`
-		//      true  --> `(/):`
-		"hide_entry_name": null
-	},
-	"default_strings": {
-		// Use this section to override default strings.
-	},
-	"ip_settings": {
-		// The maximum number of local addresses you want to display.
-		// `false` --> Unlimited.
-		"lan_ip_max_count": 2,
-		// `false` would make Archey display IPv4 LAN addresses only.
-		"lan_ip_v6_support": true,
-		// `false` would make Archey display IPv4 WAN addresses only.
-		"wan_ip_v6_support": true
-	},
-	"gpu": {
-		// Display GPUs on multiple lines if set to `false`.
-		"one_line": true,
-		// The maximum number of GPUs you want to display.
-		// `false` --> Unlimited.
-		"max_count": 2
-	},
-	"limits": {
-		// Some threshold values you can adjust affecting disk/ram warning/danger color (percent).
-		"ram": {
-			"warning": 33.3,
-			"danger": 66.7
+	// Set this option to `false` to force Archey to use its own colors palettes.
+	// `true` by default to honor os-release(5) `ANSI_COLOR` option.
+	"honor_ansi_color": true,
+	// Entries list.
+	// Add a `disabled` option set to `true` to temporary hide one.
+	// You may change entry displayed name by adding a `name` option.
+	// You may re-order the entries list as you wish.
+	"entries": [
+		{ "type": "User" },
+		{ "type": "Hostname" },
+		{ "type": "Model" },
+		{ "type": "Distro" },
+		{ "type": "Kernel" },
+		{ "type": "Uptime" },
+		{ "type": "Processes" },
+		{ "type": "WindowManager" },
+		{ "type": "DesktopEnvironment" },
+		{ "type": "Shell" },
+		{
+			"type": "Terminal",
+			// Leave this option set to `true` to display a beautiful colors palette.
+			// Set it to `false` to allow compatibility with non-Unicode locales.
+			"use_unicode": true
 		},
-		"disk": {
-			"warning": 50,
-			"danger": 75
+		{ "type": "Packages" },
+		{
+			"type": "Temperature",
+			// The character to display between the temperature value and the unit (as '°' in 53.2°C).
+			"char_before_unit": " ",
+			"sensors_chipsets": [
+				// White-list of chipset identifiers (strings) passed to LM-SENSORS when computing the average temperature.
+				// Use `sensors -A` to list the available chipsets on your system (e.g. `coretemp-isa-0000`, `acpitz-acpi-0`, ...).
+				// Leaving empty (default) would make Archey process input data from all available chipsets.
+				// Use this option if a sensor happens to return irrelevant values, or if you want to exclude it.
+			],
+			// Display temperature values in Fahrenheit instead of Celsius.
+			"use_fahrenheit": false
+		},
+		{
+			"type": "CPU",
+			//
+			// As explained above, you may rename entries as you wish.
+			//"name": "Processor"
+		},
+		{
+			"type": "GPU",
+			// Set to `false` to display GPUs on multiple lines.
+			"one_line": true,
+			// The maximum number of GPUs you want to display.
+			// `false` --> Unlimited.
+			"max_count": 2
+		},
+		{
+			"type": "RAM",
+			// Some threshold values you can adjust affecting warning/danger colors.
+			"warning_use_percent": 33.3,
+			"danger_use_percent": 66.7
+		},
+		{
+			"type": "LAN_IP",
+			// The maximum number of local addresses you want to display.
+			// `false` --> Unlimited.
+			"max_count": 2,
+			// Set to `false` to only display IPv4 LAN addresses.
+			"ipv6_support": true
+		},
+		{
+			"type": "Disk",
+			// Which filesystems to show:
+			// `["local"]` shows only local filesystems.
+			// You can alternatively list specific filesystems as:
+			//  * A list of device paths - e.g. `["/dev/sda1", "/dev/nvme0n1p1"]`
+			//  * A list of mount points - e.g. `["/", "/mnt"]`
+			//  * A combination of the above - e.g. `["/", "/dev/sda2"]`
+			"show_filesystems": ["local"],
+			// Set to `false` to write each filesystem on its own line.
+			"combine_total": true,
+			// Defines which labels to use for each disk (only works if `combine_total` is false!)
+			// The options available are:
+			//  * `"mount_points"`: Shows the mount point of the filesystem.
+			//      e.g. `Disk (/): 10.0 GiB/100.0 GiB`
+			//           `Disk (/mnt): 15.0 GiB / 200.0 GiB`
+			//  * `"device_paths"`: Shows the device path of the filesystem.
+			//      e.g. `Disk (/dev/sda1): 10.0 GiB / 100.0 GiB`
+			//           `Disk (/dev/mmcblk0p1): 15.0 GiB / 200.0 GiB`
+			//  * `false` or `null` (no quote marks!): Don't show any device labels.
+			//      e.g. `Disk: 10.0 GiB / 100.0 GiB`
+			//           `Disk: 15.0 GiB / 200.0 GiB`
+			"disk_labels": null,
+			// Set to `true` to hide the "Disk" entry name from the output.
+			// i.e. null  --> `Disk (/):`
+			//      false --> `Disk (/):`
+			//      true  --> `(/):`
+			"hide_entry_name": null
+			// Some threshold values you can adjust affecting warning/danger colors.
+			"warning_use_percent": 50,
+			"danger_use_percent": 75,
+		},
+		{
+			"type": "WAN_IP",
+			// Set to `false` to only display IPv4 WAN addresses.
+			"ipv6_support": true,
+			// Some timeouts you can adjust as default ones might be undersized for your connectivity (seconds).
+			"ipv4_timeout_secs": 1,
+			"ipv6_timeout_secs": 1,
+			//
+			// As explained above, you may temporary hide entries as you wish.
+			// See below example to hide your public IP addresses before posting your configuration on Internet.
+			//"disabled": true
 		}
-	},
-	"temperature": {
-		// The character to display between the temperature value and the unit (as '°' in 53.2°C).
-		// Set to ' ' (space) by default for backward compatibility with non-Unicode locales.
-		"char_before_unit": " ",
-		"sensors_chipsets": [
-			// White-list of chipset identifiers (strings) passed to LM-SENSORS when computing the average temperature.
-			// Uses `sensors -A` to list the available chipsets on your system (e.g. `coretemp-isa-0000`, `acpitz-acpi-0`, ...).
-			// Leaving empty (default) would make Archey process input data from each existing chipset.
-			// Use this option if a sensor happens to return irrelevant values, or if you want to exclude it.
-		],
-		// Display temperature values in Fahrenheit instead of Celsius.
-		"use_fahrenheit": false
-	},
-	"timeout": {
-		// Some values you can adjust if the default ones look undersized for your system (seconds).
+	],
+	"default_strings": {
+		// Use this section to override default strings (internationalization).
 	}
 }
+
 ```
 
 ## Test cases

@@ -26,7 +26,7 @@ Please either install it or disable `LAN_IP` entry in configuration.\
             return
 
         address_types = [netifaces.AF_INET]
-        if self.entry_options.get('ipv6_support', True):
+        if self.options.get('ipv6_support', True):
             address_types.append(netifaces.AF_INET6)
 
         self.value = []
@@ -49,7 +49,7 @@ Please either install it or disable `LAN_IP` entry in configuration.\
 
                     self.value.append(if_addr['addr'].split('%')[0])
 
-        lan_ip_max_count = self.entry_options.get('max_count', 2)
+        lan_ip_max_count = self.options.get('max_count', 2)
         if lan_ip_max_count is not False:
             self.value = self.value[:lan_ip_max_count]
 
@@ -61,8 +61,8 @@ Please either install it or disable `LAN_IP` entry in configuration.\
         if self.value:
             text_output = ', '.join(self.value)
         elif netifaces:
-            text_output = self._configuration.get('default_strings')['no_address']
+            text_output = self._default_strings.get('no_address')
         else:
-            text_output = self._configuration.get('default_strings')['not_detected']
+            text_output = self._default_strings.get('not_detected')
 
         output.append(self.name, text_output)

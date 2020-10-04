@@ -10,17 +10,19 @@ class Entry(AbstractBaseClass):
     @abstractmethod
     def __init__(self, name=None, value=None, options=None):
         # Each entry will have always have the following attributes...
-        # `name`: key;
+        # `name`: key (defaults to the instantiated entry class name);
         # `value`: value of entry as an appropriate object;
-        # `options`: configuration options *specific* to an entry instance
-        # ... which are `None` by default.
-        self.name = name
+        # `options`: configuration options *specific* to an entry instance;
+        self.name = name or self.__class__.__name__
         self.value = value
-        self.entry_options = options or {}
+        self.options = options or {}
 
-        # Propagates a reference to `Configuration` singleton to each inheriting class.
-        self._configuration = Configuration()
+        # Propagates a reference to default strings specified in `Configuration`.
+        self._default_strings = Configuration().get('default_strings')
 
+    def __bool__(self):
+        """Makes an `Entry` evaluates to _falsy_ if `disabled` config field is _truthy_"""
+        return not bool(self.options.get('disabled'))
 
     def output(self, output):
         """Output the results to output. Can be overridden by subclasses."""
@@ -32,5 +34,5 @@ class Entry(AbstractBaseClass):
             # If the value is "falsy" leave a generic "Not detected" message for this entry.
             output.append(
                 self.name,
-                self._configuration.get('default_strings')['not_detected']
+                self._default_strings.get('not_detected')
             )

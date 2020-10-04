@@ -75,10 +75,7 @@ DEFAULT_CONFIG = {
     'allow_overriding': True,
     'parallel_loading': True,
     'suppress_warnings': False,
-    'colors_palette': {
-        'use_unicode': True,
-        'honor_ansi_color': True
-    },
+    'honor_ansi_color': True,
     'default_strings': {
         'no_address': 'No Address',
         'not_detected': 'Not detected',
