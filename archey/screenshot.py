@@ -41,7 +41,7 @@ def take_screenshot(output_file=None):
         screenshot_tools['ScreenCapture'] = [
             'screencapture',
             '-x',
-            '-t', output_file.rpart('.')[2],
+            '-t', output_file.rpartition('.')[2],
             output_file
         ]
     else:  # *NIX systems (and others)...
@@ -53,7 +53,7 @@ def take_screenshot(output_file=None):
         screenshot_tools['Screencap (Android)'] = [
             'screencap',  # Binary available on Android.
             '-p',         # It only accepts PNG as image output format.
-            (output_file.rpart('.')[0] + '.png')
+            (output_file.rpartition('.')[0] + '.png')
         ]
 
     # This part purposefully blocks so we wait a little bit before taking the screenshot.
