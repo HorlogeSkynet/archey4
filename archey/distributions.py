@@ -80,7 +80,7 @@ class Distributions(Enum):
             # Older Pop!_OS releases (< 20.*) didn't ship their own `ID` (from `os-release`).
             # Thus, they are detected as "regular" Ubuntu distributions.
             # We may here rely on their `NAME` (from `os-release`), which is sufficient.
-            if self.get_distro_name(pretty=False) == 'Pop!_OS':
+            if Distributions.get_distro_name(pretty=False) == 'Pop!_OS':
                 return Distributions.POP
 
         return distribution
