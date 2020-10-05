@@ -116,17 +116,40 @@ class TestModelEntry(unittest.TestCase):
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
             )
 
-    @patch(
-        'archey.entries.model.open',
-        mock_open(read_data='MY-LAPTOP-MODEL\n'),
-        create=True
-    )
-    def test_fetch_product_name(self):
-        """Test `_fetch_product_name` static method"""
-        self.assertEqual(
-            Model._fetch_product_name(),  # pylint: disable=protected-access
-            'MY-LAPTOP-MODEL'
-        )
+    def test_fetch_product_info(self):
+        """Test `_fetch_product_info` static method"""
+        # Product name and version available.
+        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+            mock.return_value.read.side_effect = [
+                'MY-LAPTOP-NAME\n',
+                'MY-LAPTOP-VERSION\n'
+            ]
+
+            self.assertEqual(
+                Model._fetch_product_info(),  # pylint: disable=protected-access
+                'MY-LAPTOP-NAME MY-LAPTOP-VERSION'
+            )
+
+        # Only product name is available.
+        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+            mock.return_value.read.side_effect = [
+                'MY-LAPTOP-NAME\n',
+                FileNotFoundError()
+            ]
+
+            self.assertEqual(
+                Model._fetch_product_info(),  # pylint: disable=protected-access
+                'MY-LAPTOP-NAME'
+            )
+
+        # Neither product name nor version are available.
+        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),
+                FileNotFoundError()
+            ]
+
+            self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
 
     def test_fetch_rasperry_pi_revision(self):
         """Test `_fetch_rasperry_pi_revision` static method"""
@@ -167,7 +190,7 @@ class TestModelEntry(unittest.TestCase):
         return_value=None  # Not a virtual environment...
     )
     @patch(
-        'archey.entries.model.Model._fetch_product_name',
+        'archey.entries.model.Model._fetch_product_info',
         return_value=None  # No model name could be retrieved...
     )
     @patch(
