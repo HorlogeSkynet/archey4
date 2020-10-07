@@ -21,7 +21,6 @@ XX:YY.H SMBus: BBBBBBBBBBBBBBBB
 XX:YY.H VGA compatible controller: GPU-MODEL-NAME
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 """)
-    @HelperMethods.patch_clean_configuration
     def test_match_vga(self, _):
         """Simple 'VGA' device type matching"""
         self.assertListEqual(GPU().value, ['GPU-MODEL-NAME'])
@@ -36,20 +35,16 @@ XX:YY.H Display controller: ANOTHER-MATCHING-VIDEO-CONTROLLER
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
 """)
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'gpu': {
-                'one_line': True,
-                'max_count': 2
-            }
-        }
-    )
     def test_multi_matches_capped_one_line(self, _):
         """
         Test detection when there are multiple graphical device candidates.
         Check that `max_count` and `one_line` are honored too, including on `output` overriding.
         """
-        gpu = GPU()
+        gpu = GPU(options={
+            'one_line': True,
+            'max_count': 2
+        })
+
 
         output_mock = MagicMock()
         gpu.output(output_mock)
@@ -72,20 +67,15 @@ XX:YY.H Display controller: ANOTHER-MATCHING-VIDEO-CONTROLLER
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
 """)
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'gpu': {
-                'one_line': False,
-                'max_count': False
-            }
-        }
-    )
     def test_multi_matches_uncapped_multiple_lines(self, _):
         """
         Test detection when there are multiple graphical device candidates.
         Check that `max_count` and `one_line` are honored too, including on `output` overriding.
         """
-        gpu = GPU()
+        gpu = GPU(options={
+            'one_line': False,
+            'max_count': False
+        })
 
         output_mock = MagicMock()
         gpu.output(output_mock)

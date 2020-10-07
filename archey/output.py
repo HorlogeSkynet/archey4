@@ -38,7 +38,7 @@ class Output:
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
-        if ansi_color and Configuration().get('colors_palette')['honor_ansi_color']:
+        if ansi_color and Configuration().get('honor_ansi_color'):
             # Replace each Archey integrated colors by `ANSI_COLOR`.
             self._colors_palette = len(self._colors_palette) * \
                 [Colors.escape_code_from_attrs(ansi_color)]

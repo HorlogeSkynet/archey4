@@ -28,8 +28,10 @@ class TestOutputUtil(unittest.TestCase):
         {Distributions.DEBIAN: ['COLOR_0']}
     )
     @patch(
-        'archey.output.Configuration.get',
-        return_value={'honor_ansi_color': False}
+        'archey.output.Configuration.get',  # Disable `honor_ansi_color` option.
+        side_effect=(
+            lambda config_key: not (config_key == 'honor_ansi_color')
+        )
     )
     def test_append_regular(self, _, __):
         """Test the `append` method, for new entries"""
@@ -50,8 +52,10 @@ class TestOutputUtil(unittest.TestCase):
         return_value='ANSI_COLOR'
     )
     @patch(
-        'archey.output.Configuration.get',
-        return_value={'honor_ansi_color': True}
+        'archey.output.Configuration.get',  # Enable `honor_ansi_color` option.
+        side_effect=(
+            lambda config_key: config_key == 'honor_ansi_color'
+        )
     )
     def test_append_ansi_color(self, _, __, ___):
         """Check that `Output` honor `ANSI_COLOR` as required"""
@@ -75,8 +79,10 @@ class TestOutputUtil(unittest.TestCase):
         return_value='ANSI_COLOR'
     )
     @patch(
-        'archey.output.Configuration.get',
-        return_value={'honor_ansi_color': False}
+        'archey.output.Configuration.get',  # Disable `honor_ansi_color` option.
+        side_effect=(
+            lambda config_key: not (config_key == 'honor_ansi_color')
+        )
     )
     def test_append_no_ansi_color(self, _, __, ___):
         """Check that `Output` DOES NOT honor `ANSI_COLOR` when specified"""
@@ -339,8 +345,10 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch(
-        'archey.output.Configuration.get',
-        return_value={'honor_ansi_color': False}
+        'archey.output.Configuration.get',  # Disable `honor_ansi_color` option.
+        side_effect=(
+            lambda config_key: not (config_key == 'honor_ansi_color')
+        )
     )
     @patch(
         'archey.output.print',

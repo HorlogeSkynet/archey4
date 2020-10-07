@@ -67,7 +67,8 @@ class Terminal(Entry):
         """Build and return a 8-color palette, with Unicode characters if allowed"""
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
-        use_unicode = self._configuration.get('colors_palette')['use_unicode']
+        # Archey >= v4.8.0, Unicode is enabled by default.
+        use_unicode = self.options.get('use_unicode', True)
 
         return ' '.join([
             '{normal}{character}{bright}{character}{clear}'.format(
@@ -117,7 +118,7 @@ class Terminal(Entry):
 
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting with colors palette"""
-        text_output = (self.value or self._configuration.get('default_strings')['not_detected'])
+        text_output = (self.value or self._default_strings.get('not_detected'))
         if not NO_COLOR:
             text_output += ' ' + self._get_colors_palette()
 
