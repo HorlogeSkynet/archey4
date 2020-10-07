@@ -14,10 +14,10 @@ class Disk(Entry):
         super().__init__(*args, **kwargs)
 
         # Populate an output from `df`
-        self._disk_dict = self.get_df_output_dict()
+        self._disk_dict = self._get_df_output_dict()
 
-        config_filesystems = self._configuration.get('disk')['show_filesystems']
-        # See `Disk.get_df_output_dict` for the format we use in `self.value`.
+        config_filesystems = self.options.get('show_filesystems', ['local'])
+        # See `Disk._get_df_output_dict` for the format we use in `self.value`.
         if config_filesystems == ['local']:
             self.value = self._get_local_filesystems()
         else:
@@ -88,7 +88,7 @@ class Disk(Entry):
 
 
     @staticmethod
-    def get_df_output_dict():
+    def _get_df_output_dict():
         """
         Runs `df -P -k` and returns disks in a dict formatted as:
         {
@@ -159,11 +159,11 @@ class Disk(Entry):
             return
 
         # DRY configuration object for the output.
-        disk_labels = self._configuration.get('disk')['disk_labels']
-        hide_entry_name = self._configuration.get('disk')['hide_entry_name']
+        disk_labels = self.options.get('disk_labels')
+        hide_entry_name = self.options.get('hide_entry_name')
 
         # Combine all entries into one grand-total if configured to do so.
-        if self._configuration.get('disk')['combine_total']:
+        if self.options.get('combine_total', True):
             name = self.name
 
             # Rewrite our `filesystems` object as one combining all of them.
@@ -191,15 +191,13 @@ class Disk(Entry):
                     name += ' '
                 name += '({disk_label})'
 
-        # Fetch the user-defined limits from the configuration.
-        disk_limits = self._configuration.get('limits')['disk']
-
         # We will only run this loop a single time for combined entries.
         for mount_point, filesystem_data in filesystems.items():
             # Select the corresponding level color based on disk percentage usage.
             level_color = Colors.get_level_color(
                 (filesystem_data['used_blocks'] / filesystem_data['total_blocks']) * 100,
-                disk_limits['warning'], disk_limits['danger']
+                self.options.get('warning_use_percent', 50),
+                self.options.get('danger_use_percent', 75)
             )
 
             # Set the correct disk label

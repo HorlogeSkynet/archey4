@@ -17,10 +17,10 @@ class HelperMethods:
     We kindly borrow `update_recursive` class method from `Configuration` to DRY its implementation.
     """
     @staticmethod
-    def entry_mock(entry, configuration=None):
+    def entry_mock(entry, options=None, configuration=None):
         """
         Creates a placeholder "instance" of the entry class passed, with a clean default
-        `_configuration` which is optionally updated by `configuration`.
+        `_default_strings` which is optionally updated by `configuration`.
 
         It can be used to very cleanly unit-test instance methods of a class,
         by passing it in (after setting appropriate attributes).
@@ -34,23 +34,25 @@ class HelperMethods:
         # These instance-attributes are quite important, so let's mimic them.
         instance_mock.name = str(entry.__name__)
         instance_mock.value = None  # (entry default)
+        # We don't have default entry options defined outside of entries.
+        instance_mock.options = options or {}
 
         # Let's initially give the entry configuration the defaults.
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
-        entry_configuration = deepcopy(DEFAULT_CONFIG)
+        default_configuration = deepcopy(DEFAULT_CONFIG)
         # Then, let's merge in `configuration` recursively.
-        Configuration.update_recursive(entry_configuration, (configuration or {}))
-        # Finally, replaces the internal (and private!) `_configuration` attribute by...
-        # ... the corresponding configuration object.
-        setattr(instance_mock, '_configuration', entry_configuration)
+        Configuration.update_recursive(default_configuration, (configuration or {}))
+        # Finally, replaces the internal (and private!) `_default_strings` attribute by...
+        # ... the corresponding object from configuration.
+        setattr(instance_mock, '_default_strings', default_configuration.get('default_strings'))
 
         return instance_mock
 
     @staticmethod
     def patch_clean_configuration(method_definition=None, *, configuration=None):
         """
-        Decorator for an entry test definition, which sets the entry's `_configuration` attribute to
-        the Archey defaults, optionally updated with `configuration`.
+        Decorator for an entry test definition, which sets the entry's `_default_strings` attribute
+        to the Archey defaults, optionally updated with `configuration`.
         """
         # Let's initially give the entry configuration the defaults.
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
@@ -64,7 +66,7 @@ class HelperMethods:
                 with patch('archey.entry.Configuration', autospec=True) as config_instance_mock:
                     # Mock "publicly" used methods.
                     config_instance_mock().get = entry_configuration.get
-                    config_instance_mock().__iter__ = lambda _: iter(entry_configuration.items())
+                    config_instance_mock().__iter__ = iter(entry_configuration.items())
                     return method(*args, **kwargs)
 
             return wrapper_patch_clean_configuration
@@ -98,7 +100,10 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
         simple_mock_instance = self.entry_mock(TestHelperMethods._SimpleEntry)
         self.assertEqual(simple_mock_instance.name, '_SimpleEntry')
         self.assertIsNone(simple_mock_instance.value)
-        self.assertDictEqual(simple_mock_instance._configuration, DEFAULT_CONFIG)  # pylint: disable=protected-access
+        self.assertDictEqual(
+            simple_mock_instance._default_strings,  # pylint: disable=protected-access
+            DEFAULT_CONFIG.get('default_strings')
+        )
 
     def test_entry_mock_spec(self):
         """Test `entry_mock`s speccing."""
@@ -126,7 +131,8 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
             'a_dict': {
                 'key_1': 1,
                 'key_2': 2
-            }
+            },
+            'default_strings': {}
         },
         clear=True
     )
@@ -138,17 +144,13 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
                 'key_1': 10  # Updating a nested key-value pair.
             }
         }
-        simple_mock_instance = self.entry_mock(TestHelperMethods._SimpleEntry, configuration_dict)
+        simple_mock_instance = self.entry_mock(
+            TestHelperMethods._SimpleEntry,
+            configuration=configuration_dict
+        )
         self.assertDictEqual(
-            simple_mock_instance._configuration,  # pylint: disable=protected-access
-            {
-                'a_key': 'a_value',
-                'another_key': 'another_value',
-                'a_dict': {
-                    'key_1': 10,
-                    'key_2': 2
-                }
-            }
+            simple_mock_instance._default_strings,  # pylint: disable=protected-access
+            DEFAULT_CONFIG.get('default_strings')
         )
 
     def test_patch_clean_configuration_defaults(self):
@@ -157,8 +159,8 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
         def test(self):
             simple_entry = TestHelperMethods._SimpleEntry()
             self.assertDictEqual(
-                dict(simple_entry._configuration),  # pylint: disable=protected-access
-                DEFAULT_CONFIG
+                simple_entry._default_strings,  # pylint: disable=protected-access
+                DEFAULT_CONFIG.get('default_strings')
             )
 
         test(self)
@@ -170,7 +172,8 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
             'a_dict': {
                 'key_1': 1,
                 'key_2': 2
-            }
+            },
+            'default_strings': {}
         },
         clear=True
     )
@@ -188,15 +191,8 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
         def test(self):
             simple_entry = TestHelperMethods._SimpleEntry()
             self.assertDictEqual(
-                dict(simple_entry._configuration),  # pylint: disable=protected-access
-                {
-                    'a_key': 'a_value',
-                    'another_key': 'another_value',
-                    'a_dict': {
-                        'key_1': 10,
-                        'key_2': 2
-                    }
-                }
+                simple_entry._default_strings,  # pylint: disable=protected-access
+                DEFAULT_CONFIG.get('default_strings')
             )
 
         test(self)

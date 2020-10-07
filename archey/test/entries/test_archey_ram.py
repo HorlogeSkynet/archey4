@@ -21,20 +21,13 @@ class TestRAMEntry(unittest.TestCase):
 Mem:          15658        2043       10232          12        3382       13268
 Swap:          4095          39        4056
 """)
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'limits': {
-                'ram': {
-                    'warning': 25,
-                    'danger': 45
-                }
-            }
-        }
-    )
     def test_free_dash_m(self, _):
         """Test `free -m` output parsing for low RAM use case"""
         output_mock = MagicMock()
-        RAM().output(output_mock)
+        RAM(options={
+            'warning': 25,
+            'danger': 45
+        }).output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             '{0}2043 MiB{1} / 15658 MiB'.format(
@@ -50,20 +43,13 @@ Swap:          4095          39        4056
 Mem:       7412     3341    1503       761        2567        3011
 Swap:      7607        5    7602
 """)
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'limits': {
-                'ram': {
-                    'warning': 33.3,
-                    'danger': 66.7
-                }
-            }
-        }
-    )
     def test_free_dash_m_warning(self, _):
         """Test `free -m` output parsing for warning RAM use case"""
         output_mock = MagicMock()
-        RAM().output(output_mock)
+        RAM(options={
+            'warning': 33.3,
+            'danger': 66.7
+        }).output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             '{0}3341 MiB{1} / 7412 MiB'.format(
@@ -79,20 +65,13 @@ Swap:      7607        5    7602
 Mem:          15658       12341         624         203        2692        2807
 Swap:          4095         160        3935
 """)
-    @HelperMethods.patch_clean_configuration(
-        configuration={
-            'limits': {
-                'ram': {
-                    'warning': 33.3,
-                    'danger': 66.7
-                }
-            }
-        }
-    )
     def test_free_dash_m_danger(self, _):
         """Test `free -m` output parsing for danger RAM use case"""
         output_mock = MagicMock()
-        RAM().output(output_mock)
+        RAM(options={
+            'warning': 25,
+            'danger': 45
+        }).output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             '{0}12341 MiB{1} / 15658 MiB'.format(

@@ -8,7 +8,7 @@ from urllib.request import urlopen
 from archey.entry import Entry
 
 
-class WanIp(Entry):
+class WanIP(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -18,7 +18,7 @@ class WanIp(Entry):
         self._retrieve_ipv4_address()
 
         # IPv6 address retrieval (unless the user doesn't want it).
-        if self._configuration.get('ip_settings')['wan_ip_v6_support']:
+        if self.options.get('ipv6_support', True):
             self._retrieve_ipv6_address()
 
         self.value = list(filter(None, self.value))
@@ -30,14 +30,14 @@ class WanIp(Entry):
                     'dig', '+short', '-4', 'A', 'myip.opendns.com',
                     '@resolver1.opendns.com'
                 ],
-                timeout=self._configuration.get('timeout')['ipv4_detection'],
+                timeout=self.options.get('ipv4_timeout_secs', 1),
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
         except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
                 ipv4_addr = urlopen(
                     'https://v4.ident.me/',
-                    timeout=self._configuration.get('timeout')['ipv4_detection']
+                    timeout=self.options.get('ipv4_timeout_secs', 1)
                 )
             except (HTTPError, URLError, SocketTimeoutError):
                 # The machine does not seem to be connected to Internet...
@@ -54,14 +54,14 @@ class WanIp(Entry):
                     'dig', '+short', '-6', 'AAAA', 'myip.opendns.com',
                     '@resolver1.ipv6-sandbox.opendns.com'
                 ],
-                timeout=self._configuration.get('timeout')['ipv6_detection'],
+                timeout=self.options.get('ipv6_timeout_secs', 1),
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
         except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             try:
                 response = urlopen(
                     'https://v6.ident.me/',
-                    timeout=self._configuration.get('timeout')['ipv6_detection']
+                    timeout=self.options.get('ipv6_timeout_secs', 1)
                 )
             except (HTTPError, URLError, SocketTimeoutError):
                 # It looks like this machine doesn't have any IPv6 address...
@@ -79,5 +79,5 @@ class WanIp(Entry):
         # If not, fall-back on the "No address" string.
         output.append(
             self.name,
-            ', '.join(self.value) or self._configuration.get('default_strings')['no_address']
+            ', '.join(self.value) or self._default_strings.get('no_address')
         )

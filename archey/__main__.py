@@ -36,8 +36,8 @@ from archey.entries.cpu import CPU as e_CPU
 from archey.entries.gpu import GPU as e_GPU
 from archey.entries.ram import RAM as e_RAM
 from archey.entries.disk import Disk as e_Disk
-from archey.entries.lan_ip import LanIp as e_LanIp
-from archey.entries.wan_ip import WanIp as e_WanIp
+from archey.entries.lan_ip import LanIP as e_LanIP
+from archey.entries.wan_ip import WanIP as e_WanIP
 
 
 class Entries(Enum):
@@ -63,8 +63,8 @@ class Entries(Enum):
     GPU = e_GPU
     RAM = e_RAM
     Disk = e_Disk
-    LAN_IP = e_LanIp
-    WAN_IP = e_WanIp
+    LAN_IP = e_LanIP
+    WAN_IP = e_WanIP
 
 
 def args_parsing():
@@ -111,12 +111,11 @@ def main():
     # `Configuration` is a singleton, let's populate the internal object here.
     configuration = Configuration(config_path=args.config_path)
 
-    # From configuration, gather the entries user-enabled.
-    enabled_entries = [
-        (entry.value, entry.name)
-        for entry in Entries
-        if configuration.get('entries', {}).get(entry.name, True)
-    ]
+    # From configuration, gather the entries user-configured.
+    available_entries = configuration.get('entries')
+    if available_entries is None:
+        # If none were specified, lazy-mimic a full-enabled entries list without any configuration.
+        available_entries = [{'type': entry_name} for entry_name in Entries.__members__.keys()]
 
     output = Output(
         preferred_distribution=args.distribution,
@@ -124,8 +123,12 @@ def main():
     )
 
     # We will map this function onto our enabled entries to instantiate them.
-    def _entry_instantiator(entry_tuple):
-        return entry_tuple[0](name=entry_tuple[1])
+    def _entry_instantiator(entry):
+        # We pop `type` field from `entry` before passing it to `Entry` initialization.
+        return Entries[entry.pop('type')].value(
+            name=entry.get('name'),
+            options=entry
+        )
 
     # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
     with ExitStack() as cm_stack:
@@ -137,11 +140,14 @@ def main():
             # `max_workers` is manually computed to mimic Python 3.8+ behaviour, but for our needs.
             #   See <https://github.com/python/cpython/pull/13618>.
             executor = cm_stack.enter_context(ThreadPoolExecutor(
-                max_workers=min(len(enabled_entries) or 1, (os.cpu_count() or 1) + 4)
+                max_workers=min(len(available_entries) or 1, (os.cpu_count() or 1) + 4)
             ))
             mapper = executor.map
 
-        for entry_instance in mapper(_entry_instantiator, enabled_entries):
+        for entry_instance in mapper(_entry_instantiator, available_entries):
+            if not entry_instance:
+                continue
+
             output.add_entry(entry_instance)
 
     output.output()

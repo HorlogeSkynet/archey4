@@ -16,7 +16,7 @@ class Model(Entry):
         self.value = \
             self._fetch_virtual_env_info() \
             or self._fetch_product_name() \
-            or self._fetch_rasperry_pi_revision() \
+            or self._fetch_raspberry_pi_revision() \
             or self._fetch_android_device_model() \
 
     def _fetch_virtual_env_info(self):
@@ -70,7 +70,7 @@ class Model(Entry):
 
         # If we got there with some info, this _should_ be a virtual environment.
         return '{0} ({1})'.format(
-            product_name or self._configuration.get('default_strings')['virtual_environment'],
+            product_name or self._default_strings.get('virtual_environment'),
             environment
         )
 
@@ -86,7 +86,7 @@ class Model(Entry):
         return None
 
     @staticmethod
-    def _fetch_rasperry_pi_revision():
+    def _fetch_raspberry_pi_revision():
         """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
         try:
             with open('/proc/cpuinfo') as f_cpu_info:

@@ -24,11 +24,19 @@ class TestEntry(unittest.TestCase):
         self.assertTrue(issubclass(_SimpleEntry, Entry))
         self.assertRaises(TypeError, Entry)
 
+    def test_entry_boolean_evaluation(self):
+        """Test `Entry` boolean evaluation"""
+        simple_entry = _SimpleEntry()
+        self.assertTrue(simple_entry)
+
+        simple_entry = _SimpleEntry(options={'disabled': True})
+        self.assertFalse(simple_entry)
+
     def test_entry_usage(self):
         """Test `Entry` instantiation and parameters passing"""
         simple_entry = _SimpleEntry()
-        self.assertFalse(simple_entry.name)
-        self.assertFalse(simple_entry.value)
+        self.assertEqual(simple_entry.name, '_SimpleEntry')
+        self.assertIsNone(simple_entry.value)
 
         simple_entry = _SimpleEntry('T', 'est')
         self.assertEqual(simple_entry.name, 'T')
