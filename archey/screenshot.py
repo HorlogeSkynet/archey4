@@ -83,10 +83,8 @@ def take_screenshot(output_file=None):
             break
         else:
             defer_stack.callback(partial(
-                print,
+                sys.exit,
                 """\
 Sorry, we couldn\'t find any supported program to take a screenshot on your system.
 Please install one of the following and try again: {}.\
-""".format(', '.join(screenshot_tools.keys())),
-                file=sys.stderr
-            ))
+""".format(', '.join(screenshot_tools.keys()))))
