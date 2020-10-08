@@ -142,6 +142,18 @@ class TestModelEntry(unittest.TestCase):
                 'MY-LAPTOP-NAME'
             )
 
+        # Product name is available but product version is empty.
+        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+            mock.return_value.read.side_effect = [
+                'MY-LAPTOP-NAME\n',
+                '\n'
+            ]
+
+            self.assertEqual(
+                Model._fetch_product_info(),  # pylint: disable=protected-access
+                'MY-LAPTOP-NAME'
+            )
+
         # Neither product name nor version are available.
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
             mock.return_value.read.side_effect = [

@@ -87,6 +87,9 @@ class Model(Entry):
             with open('/sys/devices/virtual/dmi/id/product_version') as f_product_version:
                 product_version = f_product_version.read().rstrip()
         except FileNotFoundError:
+            product_version = None
+
+        if not product_version:
             return product_name
 
         return "{} {}".format(product_name, product_version)
