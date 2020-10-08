@@ -37,6 +37,7 @@ class Distributions(Enum):
     LINUX_MINT = 'linuxmint'
     OPENBSD = 'openbsd'
     OPENSUSE = 'opensuse'
+    POP = 'pop'
     RASPBIAN = 'raspbian'
     RED_HAT = 'rhel'
     SLACKWARE = 'slackware'
@@ -75,6 +76,13 @@ class Distributions(Enum):
                 or os.path.isfile('/usr/bin/cbpp-exit'):
                 return Distributions.CRUNCHBANG
 
+        elif distribution == Distributions.UBUNTU:
+            # Older Pop!_OS releases (< 20.*) didn't ship their own `ID` (from `os-release`).
+            # Thus, they are detected as "regular" Ubuntu distributions.
+            # We may here rely on their `NAME` (from `os-release`), which is sufficient.
+            if Distributions.get_distro_name(pretty=False) == 'Pop!_OS':
+                return Distributions.POP
+
         return distribution
 
     @staticmethod
@@ -107,9 +115,9 @@ class Distributions(Enum):
         return None
 
     @staticmethod
-    def get_distro_name():
+    def get_distro_name(pretty=True):
         """Simple wrapper to `distro` to return the current distribution _pretty_ name"""
-        return distro.name(pretty=True) or None
+        return distro.name(pretty=pretty) or None
 
     @staticmethod
     def get_ansi_color():

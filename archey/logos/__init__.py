@@ -16,6 +16,7 @@ from archey.logos.manjaro import MANJARO
 from archey.logos.nixos import NIXOS
 from archey.logos.linux import LINUX
 from archey.logos.linux_mint import LINUX_MINT
+from archey.logos.pop import POP
 from archey.logos.openbsd import OPENBSD
 from archey.logos.opensuse import OPENSUSE
 from archey.logos.raspbian import RASPBIAN
