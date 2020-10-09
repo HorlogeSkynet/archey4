@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 from socket import timeout as SocketTimeoutError
 from subprocess import TimeoutExpired
-from urllib.error import URLError
 
 from archey.test import CustomAssertions
 from archey.entries.wan_ip import WanIP
@@ -15,121 +14,116 @@ from archey.constants import DEFAULT_CONFIG
 
 class TestWanIPEntry(unittest.TestCase, CustomAssertions):
     """
-    Here, we mock calls to `dig` or `urlopen`.
+    Here, we end up mocking calls to `dig` or `urlopen`.
     """
-    @patch(
-        'archey.entries.wan_ip.check_output',
-        side_effect=[
-            'XXX.YY.ZZ.TTT\n',
-            '0123::4567:89a:dead:beef\n'
-        ]
-    )
-    def test_ipv6_and_ipv4(self, _):
-        """Test the regular case : Both IPv4 and IPv6 are retrieved"""
-        self.assertEqual(
-            WanIP(options={
-                'ipv6_support': True
-            }).value,
-            ['XXX.YY.ZZ.TTT', '0123::4567:89a:dead:beef']
-        )
-
-    @patch(
-        'archey.entries.wan_ip.check_output',
-        return_value='XXX.YY.ZZ.TTT'
-    )
-    def test_ipv4_only(self, _):
-        """Test only public IPv4 detection"""
-        self.assertEqual(
-            WanIP(options={
-                'ipv6_support': False
-            }).value,
-            ['XXX.YY.ZZ.TTT']
-        )
+    def setUp(self):
+        """We use these mocks so often, it's worth defining them here."""
+        self.wan_ip_mock = HelperMethods.entry_mock(WanIP)
+        self.output_mock = MagicMock()
 
     @patch(
         'archey.entries.wan_ip.check_output',
         side_effect=[
-            'XXX.YY.ZZ.TTT',            # The IPv4 address is detected
-            TimeoutExpired('dig', 1)  # `check_output` call will fail
+            TimeoutExpired('dig', 1),  # `check_output` call will hard-fail.
+            '0123::4567:89a:dead:beef\n',
         ]
     )
     @patch('archey.entries.wan_ip.urlopen')
-    def test_ipv6_timeout(self, urlopen_mock, _):
+    def test_ipv4_ko_and_ipv6_ok(self, urlopen_mock, _):
+        """Test fallback on HTTP method only when DNS lookup failed"""
+        # `urlopen` will hard-fail.
+        urlopen_mock.return_value.read.side_effect = SocketTimeoutError(0)
+
+        # IPv4 retrieval failed.
+        self.assertFalse(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 4),  # pylint: disable=protected-access
+        )
+
+        # IPv6 worked like a (almost !) charm.
+        self.assertEqual(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 6),  # pylint: disable=protected-access
+            '0123::4567:89a:dead:beef'
+        )
+
+    @patch(
+        'archey.entries.wan_ip.check_output',
+        side_effect=[
+            '\n',                     # `check_output` call will soft-fail.
+            FileNotFoundError('dig')  # `check_output` call will hard-fail.
+        ]
+    )
+    @patch('archey.entries.wan_ip.urlopen')
+    def test_proper_http_fallback(self, urlopen_mock, _):
+        """Test fallback on HTTP method only when DNS lookup failed"""
+        urlopen_mock.return_value.read.return_value = b'XXX.YY.ZZ.TTT\n'
+
+        # HTTP back-end was not called, we trust DNS lookup tool which failed.
+        self.assertFalse(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 4),  # pylint: disable=protected-access
+        )
+
+        # New try: HTTP method has been called !
+        self.assertEqual(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 4),  # pylint: disable=protected-access
+            'XXX.YY.ZZ.TTT'
+        )
+
+    def test_retrieval_disabled(self):
+        """Test behavior when both IPv4 and IPv6 retrievals are purposely disabled"""
+        self.wan_ip_mock.options = {
+            'ipv4': False,
+            'ipv6': False
+        }
+
+        # Both retrievals fail.
+        self.assertFalse(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 4)  # pylint: disable=protected-access
+        )
+        self.assertFalse(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 6)  # pylint: disable=protected-access
+        )
+
+    def test_method_disabled(self):
+        """Check whether user could disable resolver back-ends from configuration"""
+        self.wan_ip_mock.options = {
+            'ipv4': {
+                'dns_query': False,
+                'http_url': False
+            }
+        }
+
+        # Internal method doesn't return any address.
+        self.assertFalse(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 4)  # pylint: disable=protected-access
+        )
+
+    def test_two_addresses(self):
         """
-        Test when `dig` call timeout for the IPv6 detection.
+        Test when both IPv4 and IPv6 addresses could be retrieved.
         Additionally check the `output` method behavior.
         """
-        urlopen_mock.return_value.read.return_value = b'0123::4567:89a:dead:beef\n'
+        self.wan_ip_mock.value = ['XXX.YY.ZZ.TTT', '0123::4567:89a:dead:beef']
 
-        wan_ip = WanIP(options={
-            'ipv6_support': True
-        })
+        WanIP.output(self.wan_ip_mock, self.output_mock)
 
-        output_mock = MagicMock()
-        wan_ip.output(output_mock)
-
-        self.assertListEqual(
-            wan_ip.value,
-            ['XXX.YY.ZZ.TTT', '0123::4567:89a:dead:beef']
-        )
         self.assertEqual(
-            output_mock.append.call_args[0][1],
-            'XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef'
+            self.output_mock.append.call_args[0][1],
+            "XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef"
         )
 
-    @patch(
-        'archey.entries.wan_ip.check_output',
-        side_effect=TimeoutExpired('dig', 1)  # `check_output` call will fail
-    )
-    @patch(
-        'archey.entries.wan_ip.urlopen',
-        # `urlopen` call will fail
-        side_effect=URLError('<urlopen error timed out>')
-    )
-    def test_ipv4_timeout_twice(self, _, __):
-        """Test when both `dig` and `URLOpen` trigger timeouts..."""
-        self.assertListEmpty(WanIP(options={
-            'ipv6_support': False
-        }).value)
-
-    @patch(
-        'archey.entries.wan_ip.check_output',
-        side_effect=TimeoutExpired('dig', 1)  # `check_output` call will fail
-    )
-    @patch(
-        'archey.entries.wan_ip.urlopen',
-        side_effect=SocketTimeoutError(1)  # `urlopen` call will fail
-    )
-    def test_ipv4_timeout_twice_socket_error(self, _, __):
-        """Test when both `dig` timeouts and `URLOpen` raises `socket.timeout`..."""
-        self.assertListEmpty(WanIP(options={
-            'ipv6_support': False
-        }).value)
-
-    @patch(
-        'archey.entries.wan_ip.check_output',
-        return_value=''  # No address will be returned
-    )
-    @patch(
-        'urllib.request.urlopen',
-        return_value=None  # No object will be returned
-    )
     @HelperMethods.patch_clean_configuration
-    def test_no_address(self, _, __):
+    def test_no_address(self):
         """
         Test when no address could be retrieved.
         Additionally check the `output` method behavior.
         """
-        wan_ip = WanIP(options={
-            'ipv6_support': False
-        })
+        self.wan_ip_mock.value = []
 
-        output_mock = MagicMock()
-        wan_ip.output(output_mock)
+        WanIP.output(self.wan_ip_mock, self.output_mock)
 
-        self.assertListEmpty(wan_ip.value)
+        self.assertListEmpty(self.wan_ip_mock.value)
         self.assertEqual(
-            output_mock.append.call_args[0][1],
+            self.output_mock.append.call_args[0][1],
             DEFAULT_CONFIG['default_strings']['no_address']
         )
 

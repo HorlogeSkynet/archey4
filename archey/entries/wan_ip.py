@@ -15,62 +15,82 @@ class WanIP(Entry):
 
         self.value = []
 
-        self._retrieve_ipv4_address()
+        ipv4_addr = self._retrieve_ip_address(4)
+        if ipv4_addr:
+            self.value.append(ipv4_addr)
 
-        # IPv6 address retrieval (unless the user doesn't want it).
-        if self.options.get('ipv6_support', True):
-            self._retrieve_ipv6_address()
+        ipv6_addr = self._retrieve_ip_address(6)
+        if ipv6_addr:
+            self.value.append(ipv6_addr)
 
-        self.value = list(filter(None, self.value))
 
-    def _retrieve_ipv4_address(self):
+    def _retrieve_ip_address(self, ip_version):
+        """
+        Best effort to retrieve public IP address based on corresponding options.
+        We are trying special DNS resolutions first for performance and (system) caching purposes.
+        """
+        options = self.options.get('ipv{}'.format(ip_version), {})
+
+        # Is retrieval enabled for this IP version ?
+        if not options and options != {}:
+            return None
+
+        # Is retrieval via DNS query enabled ?
+        dns_query = options.get('dns_query', 'myip.opendns.com')
+        if dns_query:
+            # Run the DNS query.
+            try:
+                ip_address = self._run_dns_query(
+                    dns_query,
+                    options.get('dns_resolver', 'resolver1.opendns.com'),
+                    ('AAAA' if ip_version == 6 else 'A'),
+                    options.get('dns_timeout', 1)
+                )
+            except FileNotFoundError:
+                # DNS lookup tool does not seem to be available.
+                pass
+            else:
+                return ip_address
+
+        # Is retrieval via HTTP(S) request enabled ?
+        http_url = options.get('http_url', 'https://v{}.ident.me/'.format(ip_version))
+        if not http_url:
+            return None
+
+        # Run the HTTP(S) request.
+        return self._run_http_request(
+            http_url,
+            options.get('http_timeout', 1)
+        )
+
+
+    @staticmethod
+    def _run_dns_query(query, resolver, query_type, timeout):
+        """Simple wrapper to `dig` command to perform DNS queries"""
         try:
-            ipv4_addr = check_output(
-                [
-                    'dig', '+short', '-4', 'A', 'myip.opendns.com',
-                    '@resolver1.opendns.com'
-                ],
-                timeout=self.options.get('ipv4_timeout_secs', 1),
+            ip_address = check_output(
+                ['dig', '+short', query_type, query, '@' + resolver],
+                timeout=timeout,
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
-        except (FileNotFoundError, TimeoutExpired, CalledProcessError):
-            try:
-                ipv4_addr = urlopen(
-                    'https://v4.ident.me/',
-                    timeout=self.options.get('ipv4_timeout_secs', 1)
-                )
-            except (HTTPError, URLError, SocketTimeoutError):
-                # The machine does not seem to be connected to Internet...
-                return
+        except (TimeoutExpired, CalledProcessError):
+            return None
 
-            ipv4_addr = ipv4_addr.read().decode().strip()
+        # `ip_address` might be empty here.
+        return ip_address
 
-        self.value.append(ipv4_addr)
-
-    def _retrieve_ipv6_address(self):
+    @staticmethod
+    def _run_http_request(server_url, timeout):
+        """Simple wrapper to `urllib` module to perform HTTP requests"""
         try:
-            ipv6_addr = check_output(
-                [
-                    'dig', '+short', '-6', 'AAAA', 'myip.opendns.com',
-                    '@resolver1.ipv6-sandbox.opendns.com'
-                ],
-                timeout=self.options.get('ipv6_timeout_secs', 1),
-                stderr=DEVNULL, universal_newlines=True
-            ).rstrip()
-        except (FileNotFoundError, TimeoutExpired, CalledProcessError):
-            try:
-                response = urlopen(
-                    'https://v6.ident.me/',
-                    timeout=self.options.get('ipv6_timeout_secs', 1)
-                )
-            except (HTTPError, URLError, SocketTimeoutError):
-                # It looks like this machine doesn't have any IPv6 address...
-                # ... or is not connected to Internet.
-                return
+            http_request = urlopen(
+                server_url,
+                timeout=timeout
+            )
+        except (HTTPError, URLError, SocketTimeoutError):
+            return None
 
-            ipv6_addr = response.read().decode().strip()
-
-        self.value.append(ipv6_addr)
+        return http_request.read().decode().strip()
 
 
     def output(self, output):

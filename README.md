@@ -310,15 +310,31 @@ Below stand further descriptions for each available (default) option :
 		},
 		{
 			"type": "WAN_IP",
-			// Set to `false` to only display IPv4 WAN addresses.
-			"ipv6_support": true,
-			// Some timeouts you can adjust as default ones might be undersized for your connectivity (seconds).
-			"ipv4_timeout_secs": 1,
-			"ipv6_timeout_secs": 1,
 			//
 			// As explained above, you may temporary hide entries as you wish.
 			// See below example to hide your public IP addresses before posting your configuration on Internet.
-			//"disabled": true
+			//"disabled": true,
+			//
+			// Below are settings relative to IPv4/IPv6 public addresses retrieval.
+			// I hope options are self-explanatory.
+			// You may set `dns_query` (or `http_url`) to `false` to disable them.
+			// You may directly set `ipv4` or `ipv6` fields to `false` to completely disable them.
+			//
+			// <https://ident.me/> server sources : <https://github.com/pcarrier/identme>.
+			"ipv4": {
+				"dns_query": "myip.opendns.com",
+				"dns_resolver": "resolver1.opendns.com",
+				"dns_timeout": 1,
+				"http_url": "https://v4.ident.me/",
+				"http_timeout": 1
+			},
+			"ipv6": {
+				"dns_query": "myip.opendns.com",
+				"dns_resolver": "resolver1.opendns.com",
+				"dns_timeout": 1,
+				"http_url": "https://v6.ident.me/",
+				"http_timeout": 1
+			}
 		}
 	],
 	"default_strings": {
@@ -353,5 +369,3 @@ Any improvement would be appreciated.
 * If you had to tweak this project to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project ! You should also check [Info for contributors](https://github.com/HorlogeSkynet/archey4/wiki/Info-for-contributors).
 
 * If your distribution is not (currently) supported, please check [How do I add a distribution to Archey?](https://github.com/HorlogeSkynet/archey4/wiki/How-do-I-add-a-distribution-to-Archey%3F).
-
-* When looking up your public IP address (**WAN\_IP**), Archey will try at first to run a DNS query for `myip.opendns.com`, against OpenDNS's resolver(s). On error, it would fall back on regular HTTPS request(s) to <https://ident.me> ([server sources](https://github.com/pcarrier/identme)).
