@@ -15,7 +15,7 @@ class Model(Entry):
 
         self.value = \
             self._fetch_virtual_env_info() \
-            or self._fetch_product_name() \
+            or self._fetch_product_info() \
             or self._fetch_rasperry_pi_revision() \
             or self._fetch_android_device_model() \
 
@@ -75,15 +75,24 @@ class Model(Entry):
         )
 
     @staticmethod
-    def _fetch_product_name():
-        """Tries to open a specific Linux file, looking for machine's product name"""
+    def _fetch_product_info():
+        """Tries to open specific Linux files, looking for hardware product name and version"""
         try:
             with open('/sys/devices/virtual/dmi/id/product_name') as f_product_name:
-                return f_product_name.read().rstrip()
+                product_name = f_product_name.read().rstrip()
         except FileNotFoundError:
-            pass
+            return None
 
-        return None
+        try:
+            with open('/sys/devices/virtual/dmi/id/product_version') as f_product_version:
+                product_version = f_product_version.read().rstrip()
+        except FileNotFoundError:
+            product_version = None
+
+        if not product_version:
+            return product_name
+
+        return "{} {}".format(product_name, product_version)
 
     @staticmethod
     def _fetch_rasperry_pi_revision():
