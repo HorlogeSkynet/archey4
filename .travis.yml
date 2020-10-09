@@ -12,8 +12,8 @@ install:
   # Archey package installation (and dependencies).
   - pip3 install .
 
-  # Pylint, Stickytape and PyInstaller external dependencies (see below).
-  - pip3 install pylint stickytape pyinstaller
+  # Pylint, Stickytape, PyInstaller and PEX external dependencies (see below).
+  - pip3 install pylint stickytape pyinstaller pex
 
 script:
   # Simple execution.
@@ -50,3 +50,11 @@ script:
           --log-level WARN
         time ./dist/archey
       fi
+
+  # Build a standalone script from sources (PEX).
+  - >
+      pex \
+        -o dist/archey \
+        -m archey \
+        .
+  - time ./dist/archey

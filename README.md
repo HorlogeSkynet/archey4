@@ -37,7 +37,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * Run as quickly as possible
 * Stay as light as possible
 * Keep entries ordered despite parallelism
-* Extensive local IP addresses detection
+* Extensive local and public IP addresses detection
 * General temperature detection
 * JSON output
 * Screen capture ("best effort")
@@ -92,46 +92,50 @@ sudo yay -S archey4
 
 ### Install from source
 
-```bash
-### Step 1 : Fetch the source ###
+#### Step 1 : Fetch sources
 
+```bash
 # If you want the latest release :
 LATEST_VERSION="v4.8.1"
 wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
 tar xvzf "${LATEST_VERSION}.tar.gz"
 cd "archey4-${LATEST_VERSION}/"
-# _______________________________
 
-# If you want the latest changes :
+# If you want the latest (stable) changes :
 git clone https://github.com/HorlogeSkynet/archey4.git
 cd archey4/
-# _______________________________
+```
 
+#### Step 2 : Installation
 
-### Step 2 : Installation ###
-
+```bash
 # If you have PIP installed on your system :
 sudo pip3 install .
-# _________________________________________
 
 # But if you don't have PIP, no worries :
 sudo python3 setup.py install
-# _______________________________________
+```
 
-### Step 3 (Optional) : Configuration files
+#### Step 3 (optional) : Configuration
 
-# System-wide configuration :
+```bash
+# System-wide configuration file :
 sudo mkdir /etc/archey4
 sudo cp archey/config.json /etc/archey4/config.json
-# ___________________________
-# User-specific configuration :
-mkdir ~/.config/archey4
+
+# User-specific configuration file :
+mkdir -p ~/.config/archey4
 cp archey/config.json ~/.config/archey4/config.json
-# _____________________________
+```
 
-### Step 4 (Optional) : I want a standalone script, as before !
+#### Step 4 (optional) : Building & Installing
 
-# You can go through StickyTape for this :
+> Some years ago, Archey was a simple and unique Python file.  
+> Project evolved, and now it's a proper module.  
+> Some procedures below walk you through several ways of building Archey as a standalone program.
+
+```bash
+# Using StickyTape :
 sudo pip3 install stickytape
 stickytape \
 	--copy-shebang \
@@ -139,22 +143,31 @@ stickytape \
 	--output-file dist/archey \
 	archey/__main__.py
 chmod +x dist/archey
-./dist/archey
-# ________________________________________
 
-# You can either use PyInstaller :
+# Using PyInstaller :
 sudo pip3 install pyinstaller
 pyinstaller \
 	--distpath dist \
 	--specpath dist \
 	--name archey \
 	--onefile archey/__main__.py
-./dist/archey
-# ________________________________
 
-# You can now move this script anywhere, as before :
+# Using PEX :
+sudo pip3 install pex
+pex \
+	-o dist/archey \
+	-m archey \
+	.
+```
+
+Resulting program may now be installed system-wide.
+
+```bash
+# Execute program resulting from step 4.
+./dist/archey
+
+# You can now move this file for a system-wide install :
 sudo mv dist/archey /usr/local/bin/
-# __________________________________________________
 ```
 
 ## Usage
