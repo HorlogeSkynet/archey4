@@ -128,14 +128,14 @@ mkdir -p ~/.config/archey4
 cp archey/config.json ~/.config/archey4/config.json
 ```
 
-#### Step 4 (optional) : Building & Installing
+#### Step 4 (optional) : Standalone building
 
 > Some years ago, Archey was a simple and unique Python file.  
 > Project evolved, and now it's a proper module.  
 > Some procedures below walk you through several ways of building Archey as a standalone program.
 
 ```bash
-# Using StickyTape :
+# Using Stickytape :
 sudo pip3 install stickytape
 stickytape \
 	--copy-shebang \
@@ -336,9 +336,11 @@ Here is a short procedure to run them (you'll only need `python3`) :
 ```bash
 git clone https://github.com/HorlogeSkynet/archey4.git
 cd archey4/
-# If you got `setuptools` installed
+
+# Run the suite from SetupTools.
 python3 setup.py test
-# But if you don't, no worries !
+
+# Run the suite from the unit testing framework itself.
 python3 -m unittest
 ```
 
