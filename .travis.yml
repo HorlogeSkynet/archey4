@@ -9,7 +9,7 @@ python:
   - "pypy3"
 
 install:
-  # Archey package installation (and dependencies).
+  # Archey package (as long as its dependencies) install.
   - pip3 install .
 
   # Pylint, Stickytape, PyInstaller and PEX external dependencies (see below).
@@ -28,33 +28,36 @@ script:
   - pylint archey/
 
   # Build a standalone script from sources (Stickytape).
-  - >
+  - |
       stickytape \
         --copy-shebang \
         --add-python-path . \
         --output-file dist/archey \
-        archey/__main__.py
-  - chmod +x dist/archey
-  - time ./dist/archey
+        archey/__main__.py && \
+      chmod +x dist/archey && \
+      time ./dist/archey && \
+      rm ./dist/archey
 
   # Build a standalone script from sources (PyInstaller).
-  # (currently) disabled for Python 3.8 and PyPy.
-  # See <pyinstaller/pyinstaller#4311> & <https://stackoverflow.com/a/22245203>.
-  - >
-      if ! [[ "$TRAVIS_PYTHON_VERSION" =~ ^(3\.8|pypy3)$ ]]; then
+  # Disabled against Python 3.4 (PyInstaller does not support it since 4.0).
+  # Disabled against PyPy (see <https://stackoverflow.com/a/22245203>).
+  - |
+      if ! [[ "$TRAVIS_PYTHON_VERSION" =~ ^(3\.4|pypy3)$ ]]; then
         pyinstaller \
           --distpath dist \
           --specpath dist \
           --name archey \
           --onefile archey/__main__.py \
-          --log-level WARN
-        time ./dist/archey
+          --log-level WARN && \
+        time ./dist/archey && \
+        rm ./dist/archey
       fi
 
   # Build a standalone script from sources (PEX).
-  - >
+  - |
       pex \
         -o dist/archey \
         -m archey \
-        .
-  - time ./dist/archey
+        . && \
+      time ./dist/archey && \
+      rm ./dist/archey
