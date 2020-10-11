@@ -25,7 +25,7 @@
 <!--- Put an `X` in all the boxes that apply : -->
 - [ ] \[IF NEEDED\] I have updated the _README.md_ file accordingly ;
 - [ ] \[IF NEEDED\] I have updated the test cases (which pass) accordingly ;
+- [ ] \[IF BREAKING\] This pull request targets the `develop` branch ;
 - [ ] My changes looks good ;
-- [ ] This pull request targets the `develop` branch ;
 - [ ] I agree that my code may be modified in the future ;
 - [ ] My code follows the code style of this project ([PEP8](https://www.python.org/dev/peps/pep-0008/)).
