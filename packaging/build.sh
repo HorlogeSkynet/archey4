@@ -70,7 +70,7 @@ echo ">>> Packages generation for ${NAME}_v${VERSION}-${REVISION} <<<"
 
 # Prepare the configuration file under a regular `etc/` directory.
 mkdir -p etc/archey4/ && \
-	cp archey/config.json etc/archey4/config.json
+	cp config.json etc/archey4/config.json
 # Prepare and compress the manual page.
 sed -e "s/\${DATE}/$(date +'%B %Y')/1" archey.1 | \
 	sed -e "s/\${VERSION}/${VERSION}/1" | \
