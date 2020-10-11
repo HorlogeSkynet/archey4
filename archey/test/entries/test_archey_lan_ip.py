@@ -231,6 +231,66 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         )
 
     @patch(
+        'archey.entries.lan_ip.netifaces.interfaces',
+        return_value=['lo', 'en0']
+    )
+    @patch(
+        'archey.entries.lan_ip.netifaces.ifaddresses',
+        side_effect=[
+            {
+                AF_INET: [{
+                    'addr': '127.0.0.1',
+                    'netmask': '255.0.0.0',
+                    'peer': '127.0.0.1'
+                }],
+                AF_INET6: [{
+                    'addr': '::1',
+                    'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
+                }]
+            },
+            {
+                AF_INET: [{
+                    'addr': '192.168.1.55',
+                    'netmask': '255.255.255.0',
+                    'broadcast': '192.168.1.255'
+                }],
+                AF_INET6: [
+                    {
+                        'addr': '2001::45:6789:abcd:6817',
+                        'netmask': 'ffff:ffff:ffff:ffff::/64'
+                    },
+                    {
+                        'addr': '2a02::45:6789:abcd:0123/64',
+                        'netmask': 'ffff:ffff:ffff:ffff::/64'
+                    },
+                    {
+                        'addr': r'fe80::abcd:ef0:abef:dead\%en0',
+                        'netmask': 'ffff:ffff:ffff:ffff::/64'
+                    }
+                ]
+            }
+        ]
+    )
+    @HelperMethods.patch_clean_configuration
+    def test_user_disabled(self, _, __):
+        """Check behavior on user inputs edge-cases"""
+        lan_ip = LanIP(
+            options={
+                'ipv6_support': True,
+                'max_count': 0
+            }
+        )
+
+        output_mock = MagicMock()
+        lan_ip.output(output_mock)
+
+        self.assertListEmpty(lan_ip.value)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            DEFAULT_CONFIG['default_strings']['no_address']
+        )
+
+    @patch(
         'archey.entries.lan_ip.netifaces',
         None  # Imitate an `ImportError` behavior.
     )

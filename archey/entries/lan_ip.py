@@ -2,6 +2,8 @@
 
 import sys
 
+from itertools import islice
+
 try:
     import netifaces
 except ImportError:
@@ -25,33 +27,37 @@ Please either install it or disable `LAN_IP` entry in configuration.\
             )
             return
 
-        address_types = [netifaces.AF_INET]
+        # IPv4 will be enabled by default.
+        addr_families = [netifaces.AF_INET]
         if self.options.get('ipv6_support', True):
-            address_types.append(netifaces.AF_INET6)
+            addr_families.append(netifaces.AF_INET6)
 
-        self.value = []
+        max_count = self.options.get('max_count', 2)
+        # Consistency with other entries' configuration: Infinite count if false.
+        if max_count is False:
+            max_count = None
 
+        self.value = list(
+            islice(self._lan_ip_addresses_generator(addr_families), max_count)
+        )
+
+    @staticmethod
+    def _lan_ip_addresses_generator(addr_families):
+        """Generator yielding local IP address according to passed address families"""
         # Loop through all available network interfaces.
         for if_name in netifaces.interfaces():
             # Fetch associated addresses elements.
             if_addrs = netifaces.ifaddresses(if_name)
 
-            # For each IPv4 (or IPv6 address)...
-            for addr_type in address_types:
-                if addr_type not in if_addrs:
-                    continue
-
-                for if_addr in if_addrs[addr_type]:
+            for addr_family in addr_families:
+                for if_addr in if_addrs.get(addr_family, []):
                     # Filter out loopback addresses.
-                    if (addr_type == netifaces.AF_INET and if_addr['addr'].startswith('127.')) \
+                    if (addr_family == netifaces.AF_INET and if_addr['addr'].startswith('127.')) \
                         or if_addr['addr'] == '::1':
                         continue
 
-                    self.value.append(if_addr['addr'].split('%')[0])
-
-        lan_ip_max_count = self.options.get('max_count', 2)
-        if lan_ip_max_count is not False:
-            self.value = self.value[:lan_ip_max_count]
+                    # IPv6 addresses may contain '%' token separator.
+                    yield if_addr['addr'].split('%')[0]
 
 
     def output(self, output):
