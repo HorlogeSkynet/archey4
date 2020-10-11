@@ -24,8 +24,8 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
     @patch(
         'archey.entries.wan_ip.check_output',
         side_effect=[
-            TimeoutExpired('dig', 1),  # `check_output` call will hard-fail.
-            '0123::4567:89a:dead:beef\n',
+            TimeoutExpired('dig', 1),     # `check_output` call will hard-fail.
+            '0123::4567:89a:dead:beef\n'  # `check_output` will work.
         ]
     )
     @patch('archey.entries.wan_ip.urlopen')

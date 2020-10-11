@@ -252,7 +252,7 @@ Below stand further descriptions for each available (default) option :
 			"type": "CPU",
 			//
 			// As explained above, you may rename entries as you wish.
-			//"name": "Processor"
+			"name": "Processor"
 		},
 		{
 			"type": "GPU",
@@ -303,10 +303,10 @@ Below stand further descriptions for each available (default) option :
 			// i.e. null  --> `Disk (/):`
 			//      false --> `Disk (/):`
 			//      true  --> `(/):`
-			"hide_entry_name": null
+			"hide_entry_name": null,
 			// Some threshold values you can adjust affecting warning/danger colors.
 			"warning_use_percent": 50,
-			"danger_use_percent": 75,
+			"danger_use_percent": 75
 		},
 		{
 			"type": "WAN_IP",

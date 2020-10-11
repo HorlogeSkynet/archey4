@@ -237,6 +237,6 @@ class TestDistributionsUtil(unittest.TestCase):
         """Very basic test cases for `get_ansi_color` static method"""
         self.assertEqual(
             Distributions.get_ansi_color(),
-            '33;1',
+            '33;1'
         )
         self.assertIsNone(Distributions.get_ansi_color())
