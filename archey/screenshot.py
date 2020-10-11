@@ -31,7 +31,7 @@ def take_screenshot(output_file=None):
         'Flameshot': ['flameshot', 'full', '-p', output_dir],
         'ImageMagick': ['import', '-window', 'root', output_file],
         'scrot': ['scrot', '-z', output_file],
-        'Shutter': ['shutter', '-f', '-o', output_file, '-e'],
+        'Shutter': ['shutter', '-f', '-o', output_file, '-e']
     }
 
     # Extends the original screenshot tools dictionary according to current platform.

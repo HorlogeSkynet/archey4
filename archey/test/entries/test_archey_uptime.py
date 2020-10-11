@@ -201,7 +201,7 @@ class TestUptimeEntry(unittest.TestCase):
             '{time} up 500 days, 1:00, {user_loadavg}': timedelta(days=500, hours=1),
             '{time} up 500 days, 1:01, {user_loadavg}': timedelta(days=500, hours=1, minutes=1),
             '{time} up 500 days, 1:23, {user_loadavg}': timedelta(days=500, hours=1, minutes=23),
-            '{time} up 500 days, 12:34, {user_loadavg}': timedelta(days=500, hours=12, minutes=34),
+            '{time} up 500 days, 12:34, {user_loadavg}': timedelta(days=500, hours=12, minutes=34)
         }
         # pylint: enable=line-too-long
 
@@ -222,7 +222,7 @@ class TestUptimeEntry(unittest.TestCase):
             '1 user ', '1 user  ', ' 1 user, ', ' 1 user,  ',
             '2 users ', '2 users  ', '  2 users, ', '  2 users,  ',
             '15 users ', '15 users  ', ' 15 users, ', ' 15 users,  ',
-            '150 users ', '150 users  ', '150 users, ', '150 users,  ',
+            '150 users ', '150 users  ', '150 users, ', '150 users,  '
         )
         loadavg_variations = (
             'load averages: 1.95 1.28 2.10',
