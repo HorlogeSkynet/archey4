@@ -23,7 +23,9 @@ See <https://www.gnu.org/licenses/gpl-3.0.txt> for the full license text.
 * `lsb-release` dropping support guidance by Eli Schwartz <eschwartz93@gmail.com>
 * Major software architecture rework by @lannuttia <lannuttia@gmail.com>
 * Configurable thresholds for disk and RAM colors by Chris Roth (@czr137)
-* BTRFS disk support proper implementation (and much more) by Michael Bromilow (@ingrinder).
+* BTRFS disk support proper implementation (and much more) by Michael Bromilow (@ingrinder)
+* Elementary OS proper ASCII logo integration by @SomethingGeneric <mcompton2002@gmail.com>
+* Pop!\_OS proper ASCII logo integration by @airvue
 
 ## Maintainers
 
