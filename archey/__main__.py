@@ -124,10 +124,10 @@ def main():
 
     # We will map this function onto our enabled entries to instantiate them.
     def _entry_instantiator(entry):
-        # We pop `type` field from `entry` before passing it to `Entry` initialization.
+        # Based on **required** `type` field, instantiate the corresponding `Entry` object.
         return Entries[entry.pop('type')].value(
-            name=entry.get('name'),
-            options=entry
+            name=entry.pop('name', None),  # `name` is fully-optional.
+            options=entry                  # Remaining fields should be considered as `Entry` options.
         )
 
     # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
