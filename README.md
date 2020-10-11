@@ -121,11 +121,11 @@ sudo python3 setup.py install
 ```bash
 # System-wide configuration file :
 sudo mkdir /etc/archey4
-sudo cp archey/config.json /etc/archey4/config.json
+sudo cp config.json /etc/archey4/config.json
 
 # User-specific configuration file :
 mkdir -p ~/.config/archey4
-cp archey/config.json ~/.config/archey4/config.json
+cp config.json ~/.config/archey4/config.json
 ```
 
 #### Step 4 (optional) : Standalone building
@@ -185,7 +185,7 @@ python3 -m archey --help
 ## Configuration (optional)
 
 Since v4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
-You can place a [`config.json`](archey/config.json) file in these locations :
+You can place a [`config.json`](config.json) file in these locations :
 
 1. `/etc/archey4/config.json` (system preferences)
 2. `~/.config/archey4/config.json` (user preferences)
@@ -195,7 +195,7 @@ You can place a [`config.json`](archey/config.json) file in these locations :
 
 Alternatively, you may specify your own configuration file with the `-c` command-line option.
 
-The [example file](archey/config.json) provided in this repository lists exhaustively the parameters you can set.  
+The [example file](config.json) provided in this repository lists exhaustively the parameters you can set.  
 Below stand further descriptions for each available (default) option :
 
 <!-- We use JavaScript syntax coloration below because JSON does not allow the usage of comments in it -->
