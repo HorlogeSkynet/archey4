@@ -21,7 +21,7 @@ setup(
     author='Samuel Forestier',  # Not alone
     author_email='dev+archey@samuel.domains',
     license='GPLv3',
-    packages=find_packages(exclude=['archey.test']),
+    packages=find_packages(exclude=['archey.test*']),
     test_suite='archey.test',
     python_requires='>=3.4',
     install_requires=[
