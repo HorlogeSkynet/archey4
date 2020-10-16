@@ -141,10 +141,19 @@ def main():
     # We will map this function onto our enabled entries to instantiate them.
     def _entry_instantiator(entry):
         # Based on **required** `type` field, instantiate the corresponding `Entry` object.
-        return Entries[entry.pop('type')].value(
-            name=entry.pop('name', None),  # `name` is fully-optional.
-            options=entry                  # Remaining fields should be considered as `Entry` options.
-        )
+        try:
+            return Entries[entry.pop('type')].value(
+                name=entry.pop('name', None),  # `name` is fully-optional.
+                options=entry                  # Remaining fields should be propagated as options.
+            )
+        except KeyError as key_error:
+            print(
+                'Warning: One entry (misses or) uses an invalid `type` field ({}).'.format(
+                    key_error
+                ),
+                file=sys.stderr
+            )
+            return None
 
     # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
     with ExitStack() as cm_stack:
