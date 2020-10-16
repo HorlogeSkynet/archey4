@@ -8,6 +8,7 @@ Logos are stored under the `logos` module.
 
 import argparse
 import os
+import sys
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
@@ -116,6 +117,21 @@ def main():
     if available_entries is None:
         # If none were specified, lazy-mimic a full-enabled entries list without any configuration.
         available_entries = [{'type': entry_name} for entry_name in Entries.__members__.keys()]
+
+    # @deprecated >= v4.10
+    # v4.9.0 introduces a new configuration layout.
+    # This statement performs a transformation to avoid crash if the old layout is being used.
+    # Some user options **WILL** be ignored.
+    elif isinstance(available_entries, dict):
+        print(
+            'Warning: Deprecated configuration layout detected, please update !',
+            file=sys.stderr
+        )
+        available_entries = [
+            {'type': entry_name}
+            for entry_name, is_entry_enabled in available_entries.items()
+            if is_entry_enabled
+        ]
 
     output = Output(
         preferred_distribution=args.distribution,
