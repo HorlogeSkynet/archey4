@@ -30,9 +30,7 @@ class Configuration(metaclass=Singleton):
         else:
             self._load_configuration('/etc/archey4/')
             self._load_configuration(os.path.expanduser('~/.config/archey4/'))
-            self._load_configuration(
-                os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)
-            )
+            self._load_configuration(os.getcwd())
 
     def get(self, key, default=None):
         """
