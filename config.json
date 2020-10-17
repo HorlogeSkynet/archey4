@@ -25,7 +25,11 @@
 			"sensors_chipsets": [],
 			"use_fahrenheit": false
 		},
-		{ "type": "CPU" },
+		{
+			"type": "CPU",
+			"one_line": true,
+			"show_count": true
+		},
 		{
 			"type": "GPU",
 			"one_line": true,

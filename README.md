@@ -250,6 +250,10 @@ Below stand further descriptions for each available (default) option :
 		},
 		{
 			"type": "CPU",
+			// Set to `false` to display CPUs on multiple lines.
+			"one_line": true,
+			// Set to `false` to hide the number of cores.
+			"show_count": true,
 			//
 			// As explained above, you may rename entries as you wish.
 			//"name": "Processor"
