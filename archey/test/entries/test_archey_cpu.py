@@ -1,5 +1,6 @@
 """Test module for Archey's CPU detection module"""
 
+import sys
 import unittest
 from unittest.mock import MagicMock, call, mock_open, patch
 
@@ -157,7 +158,7 @@ Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
 
     @HelperMethods.patch_clean_configuration
     def test_various_output_configuration(self):
-        """Test (non-)detection when there is not any graphical candidate"""
+        """Test `output` overloading based on user preferences combination"""
         cpu_instance_mock = HelperMethods.entry_mock(CPU)
         output_mock = MagicMock()
 
@@ -167,6 +168,9 @@ Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
         }
 
         with self.subTest('Single-line combined output.'):
+            if sys.version_info < (3, 6):
+                self.skipTest("Cannot test behavior on Python < 3.6, skipping.")
+
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
                 'CPU',
@@ -176,6 +180,9 @@ Model name:          CPU-MODEL-NAME-WITHOUT-PROC-CPUINFO
         output_mock.reset_mock()
 
         with self.subTest('Single-line combined output (no count).'):
+            if sys.version_info < (3, 6):
+                self.skipTest("Cannot test behavior on Python < 3.6, skipping.")
+
             cpu_instance_mock.options['show_count'] = False
 
             CPU.output(cpu_instance_mock, output_mock)
