@@ -37,11 +37,6 @@
 			"danger_use_percent": 66.7
 		},
 		{
-			"type": "LAN_IP",
-			"max_count": 2,
-			"ipv6_support": true
-		},
-		{
 			"type": "Disk",
 			"show_filesystems": ["local"],
 			"combine_total": true,
@@ -49,6 +44,11 @@
 			"hide_entry_name": null,
 			"warning_use_percent": 50,
 			"danger_use_percent": 75
+		},
+		{
+			"type": "LAN_IP",
+			"max_count": 2,
+			"ipv6_support": true
 		},
 		{
 			"type": "WAN_IP",
