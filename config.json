@@ -27,12 +27,12 @@
 		},
 		{
 			"type": "CPU",
-			"one_line": true,
+			"one_line": false,
 			"show_count": true
 		},
 		{
 			"type": "GPU",
-			"one_line": true,
+			"one_line": false,
 			"max_count": 2
 		},
 		{

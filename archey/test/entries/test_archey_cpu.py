@@ -282,6 +282,8 @@ Model name:          CPU-MODEL-NAME
         ]
 
         with self.subTest('Single-line combined output.'):
+            cpu_instance_mock.options['one_line'] = True
+
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
                 'CPU',
@@ -292,6 +294,7 @@ Model name:          CPU-MODEL-NAME
 
         with self.subTest('Single-line combined output (no count).'):
             cpu_instance_mock.options['show_count'] = False
+            cpu_instance_mock.options['one_line'] = True
 
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(

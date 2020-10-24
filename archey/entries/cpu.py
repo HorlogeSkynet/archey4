@@ -117,7 +117,7 @@ class CPU(Entry):
                 else:
                     entries.append(model_name)
 
-        if self.options.get('one_line', True):
+        if self.options.get('one_line'):
             # One-line output is enabled : Join the results !
             output.append(self.name, ', '.join(entries))
         else:
