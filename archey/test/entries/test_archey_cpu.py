@@ -293,7 +293,7 @@ Model name:          CPU-MODEL-NAME
         output_mock.reset_mock()
 
         with self.subTest('Single-line combined output (no count).'):
-            cpu_instance_mock.options['show_count'] = False
+            cpu_instance_mock.options['show_cores'] = False
             cpu_instance_mock.options['one_line'] = True
 
             CPU.output(cpu_instance_mock, output_mock)
@@ -305,7 +305,7 @@ Model name:          CPU-MODEL-NAME
         output_mock.reset_mock()
 
         with self.subTest('Multi-lines output (with counts).'):
-            cpu_instance_mock.options['show_count'] = True
+            cpu_instance_mock.options['show_cores'] = True
             cpu_instance_mock.options['one_line'] = False
 
             CPU.output(cpu_instance_mock, output_mock)

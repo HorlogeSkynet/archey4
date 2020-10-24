@@ -28,7 +28,7 @@
 		{
 			"type": "CPU",
 			"one_line": false,
-			"show_count": true
+			"show_cores": true
 		},
 		{
 			"type": "GPU",

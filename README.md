@@ -253,7 +253,7 @@ Below stand further descriptions for each available (default) option :
 			// Set to `true` to join all CPUs on the same line.
 			"one_line": false,
 			// Set to `false` to hide the number of cores.
-			"show_count": true,
+			"show_cores": true,
 			//
 			// As explained above, you may rename entries as you wish.
 			//"name": "Processor"
