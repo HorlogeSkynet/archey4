@@ -12,15 +12,27 @@ class CPU(Entry):
     Parse `/proc/cpuinfo` file to retrieve model names.
     If no information could be retrieved, call `lscpu`.
 
-    `value` attribute is populated as a `dict`.
-    It means that for Python < 3.6, "physical" CPU order **MAY** be lost.
+    `value` attribute is populated as a `list` of `dict`.
+    Each `dict` **SHOULD** contain only one entry (CPU model name as key and cores count as value).
     """
     _MODEL_NAME_REGEXP = re.compile(
         r'^model name\s*:\s*(.*)$',
         flags=re.IGNORECASE | re.MULTILINE
     )
-    _CPUS_COUNT_REGEXP = re.compile(
-        r'^CPU\(s\)\s*:\s*(\d+)$',
+    _PHYSICAL_ID_REGEXP = re.compile(
+        r'^physical id\s*:\s*(\d+)$',
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+    _THREADS_PER_CORE_REGEXP = re.compile(
+        r'^Thread\(s\) per core\s*:\s*(\d+)$',
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+    _CORES_PER_SOCKET_REGEXP = re.compile(
+        r'^Core\(s\) per socket\s*:\s*(\d+)$',
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+    _SOCKETS_REGEXP = re.compile(
+        r'^Socket\(s\)\s*:\s*(\d+)$',
         flags=re.IGNORECASE | re.MULTILINE
     )
 
@@ -40,22 +52,29 @@ class CPU(Entry):
         """Read `/proc/cpuinfo` and search for CPU model names occurrences"""
         try:
             with open('/proc/cpuinfo') as f_cpu_info:
-                cpu_models = cls._MODEL_NAME_REGEXP.findall(f_cpu_info.read())
+                cpu_info = f_cpu_info.read()
         except (PermissionError, FileNotFoundError):
-            return {}
+            return []
+
+        model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)
+        physical_ids = cls._PHYSICAL_ID_REGEXP.findall(cpu_info)
+
+        cpus_list = []
 
         # Manually de-duplicates CPUs count.
-        cpu_info = {}
-        for cpu_model in cpu_models:
+        for model_name, physical_id in zip(model_names, physical_ids):
             # Sometimes CPU model names contain extra ugly white-spaces.
-            cpu_model = re.sub(r'\s+', ' ', cpu_model)
+            model_name = re.sub(r'\s+', ' ', model_name)
 
-            if cpu_model not in cpu_info:
-                cpu_info[cpu_model] = 1
-            else:
-                cpu_info[cpu_model] += 1
+            try:
+                cpus_list[int(physical_id)][model_name] += 1
+            except KeyError:
+                # Different CPUs with same physical ids ? Shouldn't happen.
+                cpus_list[int(physical_id)][model_name] = 1
+            except IndexError:
+                cpus_list.append({model_name: 1})
 
-        return cpu_info
+        return cpus_list
 
     @classmethod
     def _parse_lscpu_output(cls):
@@ -65,38 +84,43 @@ class CPU(Entry):
             env={'LANG': 'C'}, universal_newlines=True
         )
 
-        cpu_models = cls._MODEL_NAME_REGEXP.findall(cpu_info)
-        cpu_counts = cls._CPUS_COUNT_REGEXP.findall(cpu_info)
+        nb_threads = cls._THREADS_PER_CORE_REGEXP.findall(cpu_info)
+        nb_cores = cls._CORES_PER_SOCKET_REGEXP.findall(cpu_info)
+        nb_sockets = cls._SOCKETS_REGEXP.findall(cpu_info)
+        model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)
 
-        return {
-            # Sometimes CPU model names contain extra ugly white-spaces.
-            re.sub(r'\s+', ' ', cpu_model): int(cpu_count)
-            for cpu_model, cpu_count in zip(cpu_models, cpu_counts)
-        }
+        cpus_list = []
 
+        for threads, cores, sockets, model_name in zip(
+                nb_threads, nb_cores, nb_sockets, model_names
+            ):
+            for _ in range(int(sockets)):
+                # Sometimes CPU model names contain extra ugly white-spaces.
+                cpus_list.append(
+                    {re.sub(r'\s+', ' ', model_name): int(threads) * int(cores)}
+                )
+
+        return cpus_list
 
     def output(self, output):
         """Writes CPUs to `output` based on preferences"""
-        def _pre_format(cpu_model, cpu_count):
-            """Simple closure to format our CPU final entry content"""
-            if cpu_count > 1 and self.options.get('show_count', True):
-                return '{} x {}'.format(cpu_count, cpu_model)
-
-            return cpu_model
-
         # No CPU could be detected.
         if not self.value:
             output.append(self.name, self._default_strings.get('not_detected'))
-        # One-line output is enabled : Join the results !
-        elif self.options.get('one_line', True):
-            output.append(
-                self.name,
-                ', '.join([
-                    _pre_format(cpu_model, cpu_count)
-                    for cpu_model, cpu_count in self.value.items()
-                ])
-            )
-        # One-line output has been disabled, add one entry per item.
+            return
+
+        entries = []
+        for cpus in self.value:
+            for model_name, cpu_count in cpus.items():
+                if cpu_count > 1 and self.options.get('show_count', True):
+                    entries.append('{} x {}'.format(cpu_count, model_name))
+                else:
+                    entries.append(model_name)
+
+        if self.options.get('one_line', True):
+            # One-line output is enabled : Join the results !
+            output.append(self.name, ', '.join(entries))
         else:
-            for cpu_model, cpu_count in self.value.items():
-                output.append(self.name, _pre_format(cpu_model, cpu_count))
+            # One-line output has been disabled, add one entry per item.
+            for entry in entries:
+                output.append(self.name, entry)
