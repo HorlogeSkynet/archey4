@@ -41,12 +41,14 @@ class GPU(Entry):
 
     def output(self, output):
         """Writes GPUs to `output` based on preferences"""
-        # Even when no GPU device could be detected, be sure to add an "empty" entry to `output`.
-        if self.options.get('one_line', True) or not self.value:
-            output.append(
-                self.name,
-                (', '.join(self.value) or self._default_strings.get('not_detected'))
-            )
+        # No GPU could be detected.
+        if not self.value:
+            output.append(self.name, self._default_strings.get('not_detected'))
+            return
+
+        # Join the results only if `one_line` option is enabled.
+        if self.options.get('one_line'):
+            output.append(self.name, ', '.join(self.value))
         else:
             for gpu_device in self.value:
                 output.append(self.name, gpu_device)

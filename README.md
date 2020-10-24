@@ -250,14 +250,18 @@ Below stand further descriptions for each available (default) option :
 		},
 		{
 			"type": "CPU",
+			// Set to `true` to join all CPUs on the same line.
+			"one_line": false,
+			// Set to `false` to hide the number of cores.
+			"show_cores": true,
 			//
 			// As explained above, you may rename entries as you wish.
 			//"name": "Processor"
 		},
 		{
 			"type": "GPU",
-			// Set to `false` to display GPUs on multiple lines.
-			"one_line": true,
+			// Set to `true` to join all GPUs on the same line.
+			"one_line": false,
 			// The maximum number of GPUs you want to display.
 			// `false` --> Unlimited.
 			"max_count": 2
