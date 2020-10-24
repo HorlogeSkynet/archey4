@@ -45,7 +45,6 @@ XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
             'max_count': 2
         })
 
-
         output_mock = MagicMock()
         gpu.output(output_mock)
 
