@@ -91,15 +91,15 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                 }],
                 AF_INET6: [
                     {
-                        'addr': '2001::45:6789:abcd:6817',
+                        'addr': '2001:0000:0000:0000:0045:6789:abcd:6817',
+                        'netmask': 'ffff:ffff:ffff:ffff::/64'
+                    },
+                    {
+                        'addr': r'fe80::abcd:ef0:abef:dead%en0',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
                         'addr': '2a02::45:6789:abcd:0123/64',
-                        'netmask': 'ffff:ffff:ffff:ffff::/64'
-                    },
-                    {
-                        'addr': r'fe80::abcd:ef0:abef:dead\%en0',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     }
                 ]
@@ -110,9 +110,11 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         """
         Test for IPv6 support, final set length limit and Ethernet interface filtering.
         Additionally check the `output` method behavior.
+
+        IP address "compression" and interface name splitting will also be tested.
         """
         lan_ip = LanIP(options={
-            'max_count': 2,
+            'max_count': 3,
             'ipv6_support': True
         })
 
@@ -121,11 +123,11 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
 
         self.assertListEqual(
             lan_ip.value,
-            ['192.168.1.55', '2001::45:6789:abcd:6817']
+            ['192.168.1.55', '2001::45:6789:abcd:6817', 'fe80::abcd:ef0:abef:dead']
         )
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '192.168.1.55, 2001::45:6789:abcd:6817'
+            '192.168.1.55, 2001::45:6789:abcd:6817, fe80::abcd:ef0:abef:dead'
         )
 
     @patch(
@@ -162,7 +164,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
-                        'addr': r'fe80::abcd:ef0:abef:dead\%en0',
+                        'addr': r'fe80::abcd:ef0:abef:dead%en0',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     }
                 ]
@@ -204,7 +206,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                     'peer': '127.0.0.1'
                 }],
                 AF_INET6: [{
-                    'addr': '::1',
+                    'addr': '0000:0000:0000:0000:0000:0000:0000:0001',
                     'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
                 }]
             },
@@ -264,7 +266,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
-                        'addr': r'fe80::abcd:ef0:abef:dead\%en0',
+                        'addr': r'fe80::abcd:ef0:abef:dead%en0',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     }
                 ]

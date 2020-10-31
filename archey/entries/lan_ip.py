@@ -1,5 +1,6 @@
 """Local IP addresses detection class"""
 
+import ipaddress
 import sys
 
 from itertools import islice
@@ -51,13 +52,13 @@ Please either install it or disable `LAN_IP` entry in configuration.\
 
             for addr_family in addr_families:
                 for if_addr in if_addrs.get(addr_family, []):
-                    # Filter out loopback addresses.
-                    if (addr_family == netifaces.AF_INET and if_addr['addr'].startswith('127.')) \
-                        or if_addr['addr'] == '::1':
-                        continue
-
                     # IPv6 addresses may contain '%' token separator.
-                    yield if_addr['addr'].split('%')[0]
+                    ip_addr = ipaddress.ip_address(if_addr['addr'].split('%')[0])
+
+                    # Filter out loopback addresses.
+                    if not ip_addr.is_loopback:
+                        # Finally, yield the address compressed representation.
+                        yield ip_addr.compressed
 
 
     def output(self, output):
