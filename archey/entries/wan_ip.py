@@ -43,7 +43,7 @@ class WanIP(Entry):
                 ip_address = self._run_dns_query(
                     dns_query,
                     options.get('dns_resolver', 'resolver1.opendns.com'),
-                    ('AAAA' if ip_version == 6 else 'A'),
+                    ip_version,
                     options.get('dns_timeout', 1)
                 )
             except FileNotFoundError:
@@ -65,11 +65,16 @@ class WanIP(Entry):
 
 
     @staticmethod
-    def _run_dns_query(query, resolver, query_type, timeout):
+    def _run_dns_query(query, resolver, ip_version, timeout):
         """Simple wrapper to `dig` command to perform DNS queries"""
         try:
             ip_address = check_output(
-                ['dig', '+short', query_type, query, '@' + resolver],
+                [
+                    'dig', '+short',
+                    ('-' + str(ip_version)),
+                    ('AAAA' if ip_version == 6 else 'A'),
+                    query, '@' + resolver
+                ],
                 timeout=timeout,
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
