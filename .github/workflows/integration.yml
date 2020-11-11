@@ -85,8 +85,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: sudo apt install -y shellcheck
-
       - run: shellcheck packaging/*
 
   man:
