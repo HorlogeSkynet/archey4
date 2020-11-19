@@ -83,6 +83,10 @@ class Model(Entry):
         except FileNotFoundError:
             return None
 
+        # Stop `/sys/devices/virtual/dmi/id/*` parsing on fuzzy data.
+        if re.search(r'To Be Filled.*', product_name, re.IGNORECASE):
+            return None
+
         try:
             with open('/sys/devices/virtual/dmi/id/product_version') as f_product_version:
                 product_version = f_product_version.read().rstrip()

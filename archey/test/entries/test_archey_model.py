@@ -163,6 +163,14 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
 
+        # Product information are really weird...
+        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+            mock.return_value.read.side_effect = [
+                'To Be Filled By O.E.M.\n'  # Only `product_name` will be read.
+            ]
+
+            self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
+
     def test_fetch_rasperry_pi_revision(self):
         """Test `_fetch_rasperry_pi_revision` static method"""
         with patch('archey.entries.model.open', mock_open(), create=True) as mock:
