@@ -1,6 +1,5 @@
 """Test module for Archey's disks usage detection module"""
 
-import os
 import unittest
 from unittest.mock import call, patch, MagicMock
 
@@ -11,7 +10,7 @@ from archey.test.entries import HelperMethods
 
 class TestDiskEntry(unittest.TestCase):
     """
-    Here, we mock `check_output` calls to disk utility tools.
+    Here, we mock `subprocess.run` calls to disk utility tools.
     """
     def setUp(self):
         """We use these mocks so often, it's worth defining them here."""
@@ -129,45 +128,40 @@ class TestDiskEntry(unittest.TestCase):
             )
 
 
-    @patch(
-        'archey.entries.disk.check_output',
-        side_effect=[
-            # First `df` call succeeds.
-            os.linesep.join((
+    @patch('archey.entries.disk.run')
+    def test_disk_df_output_dict(self, run_mock):
+        """Test method to get `df` output as a dict by mocking calls to `subprocess.run`"""
+        with self.subTest('`df` regular output.'):
+            run_mock.return_value.stdout = '\n'.join([
                 "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
                 "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
                 "tmpfs                        8127236       292       8126944       1% /tmp",
                 "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
                 ""
-            )),
-            # Second `df` call fails (emulating it not being present).
-            FileNotFoundError
-        ]
-    )
-    def test_disk_df_output_dict(self, _):
-        """Test method to get `df` output as a dict by mocking calls to `check_output`."""
-        self.assertDictEqual(
-            Disk.get_df_output_dict(),
-            {
-                '/': {
-                    'device_path': '/dev/nvme0n1p2',
-                    'used_blocks': 427458276,
-                    'total_blocks': 499581952
-                },
-                '/tmp': {
-                    'device_path': 'tmpfs',
-                    'used_blocks': 292,
-                    'total_blocks': 8127236
-                },
-                '/boot': {
-                    'device_path': '/dev/nvme0n1p1',
-                    'used_blocks': 35908,
-                    'total_blocks': 523248
+            ])
+            self.assertDictEqual(
+                Disk.get_df_output_dict(),
+                {
+                    '/': {
+                        'device_path': '/dev/nvme0n1p2',
+                        'used_blocks': 427458276,
+                        'total_blocks': 499581952
+                    },
+                    '/tmp': {
+                        'device_path': 'tmpfs',
+                        'used_blocks': 292,
+                        'total_blocks': 8127236
+                    },
+                    '/boot': {
+                        'device_path': '/dev/nvme0n1p1',
+                        'used_blocks': 35908,
+                        'total_blocks': 523248
+                    }
                 }
-            }
-        )
+            )
 
-        with self.subTest('Missing `df` from system.'):
+        with self.subTest('`df` missing from system.'):
+            run_mock.side_effect = FileNotFoundError()
             self.assertDictEqual(
                 Disk.get_df_output_dict(),
                 {}

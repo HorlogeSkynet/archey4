@@ -1,7 +1,7 @@
 """Disk usage detection class"""
 
 import re
-from subprocess import CalledProcessError, check_output
+from subprocess import DEVNULL, PIPE, run
 from csv import reader as csv_reader
 
 from archey.colors import Colors
@@ -106,11 +106,16 @@ class Disk(Entry):
         Mount points are used as keys since they are always unique.
         """
         try:
-            df_output = check_output(
+            df_output = run(
                 ['df', '-P', '-k'],
-                env={'LANG': 'C'}, universal_newlines=True
-            )
-        except (FileNotFoundError, CalledProcessError):
+                env={'LANG': 'C'}, universal_newlines=True,
+                stdout=PIPE,
+                # On error, `df` may "hold" `EXIT_FAILURE` as exit status code.
+                # Thus, we purposely silence STDERR and ignore its returned status code.
+                # See #92 (related to flatpak/xdg-desktop-portal#512).
+                stderr=DEVNULL, check=False
+            ).stdout
+        except FileNotFoundError:
             # `df` isn't available on this system.
             return {}
 
