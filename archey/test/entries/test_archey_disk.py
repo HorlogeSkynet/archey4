@@ -128,11 +128,11 @@ class TestDiskEntry(unittest.TestCase):
             )
 
 
-    @patch('archey.entries.disk.run')
-    def test_disk_df_output_dict(self, run_mock):
-        """Test method to get `df` output as a dict by mocking calls to `subprocess.run`"""
+    @patch('archey.entries.disk.Popen')
+    def test_disk_df_output_dict(self, popen_mock):
+        """Test method to get `df` output as a dict by mocking calls to `Popen`"""
         with self.subTest('`df` regular output.'):
-            run_mock.return_value.stdout = '\n'.join([
+            popen_mock.return_value.stdout.read.return_value = '\n'.join([
                 "Filesystem               1024-blocks      Used     Available Capacity Mounted on",
                 "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
                 "tmpfs                        8127236       292       8126944       1% /tmp",
@@ -161,7 +161,7 @@ class TestDiskEntry(unittest.TestCase):
             )
 
         with self.subTest('`df` missing from system.'):
-            run_mock.side_effect = FileNotFoundError()
+            popen_mock.side_effect = FileNotFoundError()
             self.assertDictEqual(
                 Disk.get_df_output_dict(),
                 {}
