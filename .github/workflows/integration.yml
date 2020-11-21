@@ -1,0 +1,103 @@
+---
+name: Integration
+
+on: [push, pull_request]
+
+jobs:
+  python:
+    name: Run, lint & test on Python ${{ matrix.python-version }}
+    if: |
+      !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy3]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install required dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint stickytape pyinstaller pex
+
+      - name: Install module regularly
+        run: pip install .
+
+      - name: Simple module execution
+        run: |
+          time archey
+          time python -m archey
+
+      - name: Lint source code against Pylint
+        run: pylint archey/
+
+      - name: Run our test suite
+        run: |
+          python setup.py -q test
+          python -m unittest
+
+      - name: Standalone building (with Stickytape)
+        run: |
+          stickytape \
+            --copy-shebang \
+            --add-python-path . \
+            --output-file dist/archey \
+            archey/__main__.py
+          chmod +x dist/archey
+          time ./dist/archey
+          rm dist/archey
+
+      # Disabled against Python 3.4 (PyInstaller does not support it since 4.0).
+      # Disabled against PyPy (see <https://stackoverflow.com/a/22245203>).
+      - name: Standalone building (with PyInstaller)
+        if: ${{ matrix.python-version != '3.4' && matrix.python-version != 'pypy3' }}
+        run: |
+          pyinstaller \
+            --distpath dist \
+            --specpath dist \
+            --name archey \
+            --onefile archey/__main__.py \
+            --log-level WARN
+          time ./dist/archey
+          rm dist/archey
+
+      - name: Standalone building (with PEX)
+        run: |
+          pex \
+            -o dist/archey \
+            -m archey \
+            .
+          time ./dist/archey
+          rm dist/archey
+
+  shell:
+    name: Lint packaging shell scripts
+    if: |
+      !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: shellcheck packaging/*
+
+  man:
+    name: Lint manual page
+    if: |
+      !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: sudo apt install -y groff
+
+      - run: |
+          groff -man -Tascii -z archey.1 2&>1 | tee errors
+          test ! -s errors
