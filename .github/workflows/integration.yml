@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy3]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, pypy3]
 
     steps:
       - uses: actions/checkout@v2
@@ -53,10 +53,9 @@ jobs:
           time ./dist/archey
           rm dist/archey
 
-      # Disabled against Python 3.4 (PyInstaller does not support it since 4.0).
       # Disabled against PyPy (see <https://stackoverflow.com/a/22245203>).
       - name: Standalone building (with PyInstaller)
-        if: ${{ matrix.python-version != '3.4' && matrix.python-version != 'pypy3' }}
+        if: ${{ matrix.python-version != 'pypy3' }}
         run: |
           pyinstaller \
             --distpath dist \
