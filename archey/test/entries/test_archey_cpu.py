@@ -24,9 +24,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
 physical id\t: 0
-"""),
-        create=True
-    )
+"""))
     def test_parse_proc_cpuinfo_one_entry(self):
         """Test `/proc/cpuinfo` parsing"""
         self.assertListEqual(
@@ -58,9 +56,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: ANOTHER-CPU-MODEL
 physical id\t: 1
-"""),
-        create=True
-    )
+"""))
     def test_parse_proc_cpuinfo_multiple_entries(self):
         """Test `/proc/cpuinfo` parsing"""
         self.assertListEqual(
@@ -102,9 +98,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
 physical id\t: 1
-"""),
-        create=True
-    )
+"""))
     def test_parse_proc_cpuinfo_one_cpu_dual_socket(self):
         """Test `/proc/cpuinfo` parsing for same CPU model across two sockets"""
         self.assertListEqual(
@@ -146,9 +140,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: ANOTHER\tCPU   MODEL WITH STRANGE S P  A   C     E     S
 physical id\t: 1
-"""),
-        create=True
-    )
+"""))
     def test_parse_proc_cpuinfo_multiple_inconsistent_entries(self):
         """
         Test `/proc/cpuinfo` parsing with multiple CPUs sharing same physical ids (unlikely).
@@ -169,8 +161,7 @@ physical id\t: 1
 
     @patch(
         'archey.entries.cpu.open',
-        side_effect=PermissionError(),
-        create=True
+        side_effect=PermissionError()
     )
     def test_parse_proc_cpuinfo_unreadable_file(self, _):
         """Check behavior when `/proc/cpuinfo` could not be read from disk"""

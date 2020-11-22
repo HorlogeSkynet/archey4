@@ -15,10 +15,9 @@ class TestUptimeEntry(unittest.TestCase):
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='0.00 XXXX.XX\n'
-        ),
-        create=True
-    )
+            read_data="""\
+0.00 XXXX.XX
+"""))
     def test_warming_up(self):
         """Test when the device has just been started..."""
         uptime = Uptime()
@@ -43,10 +42,9 @@ class TestUptimeEntry(unittest.TestCase):
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='120.25 XXXX.XX\n'
-        ),
-        create=True
-    )
+            read_data="""\
+120.25 XXXX.XX
+"""))
     def test_minutes_only(self):
         """Test when only minutes should be displayed"""
         output_mock = MagicMock()
@@ -59,10 +57,9 @@ class TestUptimeEntry(unittest.TestCase):
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='7260.50 XXXX.XX\n'
-        ),
-        create=True
-    )
+            read_data="""\
+7260.50 XXXX.XX
+"""))
     def test_hours_and_minute(self):
         """Test when only hours AND minutes should be displayed"""
         output_mock = MagicMock()
@@ -75,10 +72,9 @@ class TestUptimeEntry(unittest.TestCase):
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='90120.75 XXXX.XX\n'
-        ),
-        create=True
-    )
+            read_data="""\
+90120.75 XXXX.XX
+"""))
     def test_day_and_hour_and_minutes(self):
         """Test when only days, hours AND minutes should be displayed"""
         output_mock = MagicMock()
@@ -91,10 +87,9 @@ class TestUptimeEntry(unittest.TestCase):
     @patch(
         'archey.entries.uptime.open',
         mock_open(
-            read_data='259381.99 XXXX.XX\n'
-        ),
-        create=True
-    )
+            read_data="""\
+259381.99 XXXX.XX
+"""))
     def test_days_and_minutes(self):
         """Test when only days AND minutes should be displayed"""
         uptime = Uptime()
@@ -118,17 +113,15 @@ class TestUptimeEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.uptime.open',
-        side_effect=PermissionError(),
-        create=True
+        side_effect=PermissionError()
     )
     @patch(
         'archey.entries.uptime.time.CLOCK_BOOTTIME',  # Ensure first `getattr` call succeeds anyhow.
-        create=True
+        create=True                                   # Required for Python < 3.7.
     )
     @patch(
         'archey.entries.uptime.time.clock_gettime',
-        return_value=1000,
-        create=True
+        return_value=1000
     )
     def test_clock_fallback(self, _, __, ___):
         """
@@ -257,8 +250,7 @@ class TestUptimeEntry(unittest.TestCase):
 
     @patch(
         'archey.entries.uptime.open',
-        side_effect=PermissionError(),
-        create=True
+        side_effect=PermissionError()
     )
     @patch(
         'archey.entries.uptime.check_output',

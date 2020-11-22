@@ -13,17 +13,14 @@ class TestHostnameEntry(unittest.TestCase):
         mock_open(
             read_data="""\
 MY-COOL-LAPTOP
-"""),
-        create=True
-    )
+"""))
     def test_etc_hostname(self):
         """Mock reading from `/etc/hostname`"""
         self.assertEqual(Hostname().value, 'MY-COOL-LAPTOP')
 
     @patch(
         'archey.entries.hostname.open',
-        side_effect=FileNotFoundError(),
-        create=True
+        side_effect=FileNotFoundError()
     )
     @patch(
         'archey.entries.hostname.check_output',

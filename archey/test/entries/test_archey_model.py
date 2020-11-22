@@ -119,7 +119,7 @@ class TestModelEntry(unittest.TestCase):
     def test_fetch_product_info(self):
         """Test `_fetch_product_info` static method"""
         # Product name and version available.
-        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+        with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 'MY-LAPTOP-NAME\n',
                 'MY-LAPTOP-VERSION\n'
@@ -131,7 +131,7 @@ class TestModelEntry(unittest.TestCase):
             )
 
         # Only product name is available.
-        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+        with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 'MY-LAPTOP-NAME\n',
                 FileNotFoundError()
@@ -143,7 +143,7 @@ class TestModelEntry(unittest.TestCase):
             )
 
         # Product name is available but product version is empty.
-        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+        with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 'MY-LAPTOP-NAME\n',
                 '\n'
@@ -155,7 +155,7 @@ class TestModelEntry(unittest.TestCase):
             )
 
         # Neither product name nor version are available.
-        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+        with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 FileNotFoundError(),
                 FileNotFoundError()
@@ -164,7 +164,7 @@ class TestModelEntry(unittest.TestCase):
             self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
 
         # Product information are really weird...
-        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+        with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 'To Be Filled By O.E.M.\n'  # Only `product_name` will be read.
             ]
@@ -173,7 +173,7 @@ class TestModelEntry(unittest.TestCase):
 
     def test_fetch_raspberry_pi_revision(self):
         """Test `_fetch_raspberry_pi_revision` static method"""
-        with patch('archey.entries.model.open', mock_open(), create=True) as mock:
+        with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 'Hardware\t: HARDWARE\nRevision\t: REVISION\n',
                 'processor   : 0\ncpu family  : X\n'

@@ -138,8 +138,7 @@ class TestOutputUtil(unittest.TestCase):
     )
     @patch(
         'archey.output.print',
-        return_value=None,  # Let's nastily mute class' outputs.
-        create=True
+        return_value=None  # Let's nastily mute class' outputs.
     )
     def test_centered_output(self, print_mock, _, __):
         """Test how the `output` method handles centering operations"""
@@ -293,8 +292,7 @@ FAKE_COLOR 22\x1b[0m\
     @patch('archey.output.get_terminal_size')
     @patch(
         'archey.output.print',
-        return_value=None,  # Let's nastily mute class' outputs.
-        create=True
+        return_value=None  # Let's nastily mute class' outputs.
     )
     def test_line_wrapping(self, print_mock, termsize_mock, _, __):
         """Test how the `output` method handles wrapping lines that are too long"""
@@ -352,8 +350,7 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
     )
     @patch(
         'archey.output.print',
-        return_value=None,  # Let's nastily mute class' outputs.
-        create=True
+        return_value=None  # Let's nastily mute class' outputs.
     )
     def test_format_to_json(self, print_mock, _, __):
         """Test how the `output` method handles JSON preferred formatting of entries"""

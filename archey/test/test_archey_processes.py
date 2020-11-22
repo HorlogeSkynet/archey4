@@ -53,8 +53,7 @@ there
     )
     @patch(
         'archey.processes.print',
-        return_value=None,  # Let's nastily mute class' outputs.
-        create=True
+        return_value=None  # Let's nastily mute class' outputs.
     )
     def test_ps_not_available(self, _, __):
         """Verifies that the program stops when `ps` is not available"""
