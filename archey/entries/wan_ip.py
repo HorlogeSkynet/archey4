@@ -2,6 +2,7 @@
 
 from socket import timeout as SocketTimeoutError
 from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
+from typing import Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
@@ -24,7 +25,7 @@ class WanIP(Entry):
             self.value.append(ipv6_addr)
 
 
-    def _retrieve_ip_address(self, ip_version):
+    def _retrieve_ip_address(self, ip_version: int) -> Optional[str]:
         """
         Best effort to retrieve public IP address based on corresponding options.
         We are trying special DNS resolutions first for performance and (system) caching purposes.
@@ -65,7 +66,7 @@ class WanIP(Entry):
 
 
     @staticmethod
-    def _run_dns_query(query, resolver, ip_version, timeout):
+    def _run_dns_query(query, resolver: str, ip_version: int, timeout: float) -> Optional[str]:
         """Simple wrapper to `dig` command to perform DNS queries"""
         try:
             ip_address = check_output(
@@ -85,7 +86,7 @@ class WanIP(Entry):
         return ip_address
 
     @staticmethod
-    def _run_http_request(server_url, timeout):
+    def _run_http_request(server_url: str, timeout: float) -> Optional[str]:
         """Simple wrapper to `urllib` module to perform HTTP requests"""
         try:
             http_request = urlopen(

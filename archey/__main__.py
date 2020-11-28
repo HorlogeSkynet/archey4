@@ -13,11 +13,13 @@ import sys
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import ExitStack
+from typing import Optional
 
 from archey._version import __version__
 from archey.output import Output
 from archey.configuration import Configuration
 from archey.distributions import Distributions
+from archey.entry import Entry
 from archey.processes import Processes
 from archey.screenshot import take_screenshot
 from archey.entries.user import User as e_User
@@ -68,7 +70,7 @@ class Entries(Enum):
     WAN_IP = e_WanIP
 
 
-def args_parsing():
+def args_parsing() -> argparse.Namespace:
     """Simple wrapper to `argparse`"""
     parser = argparse.ArgumentParser(prog='archey')
     parser.add_argument(
@@ -139,7 +141,7 @@ def main():
     )
 
     # We will map this function onto our enabled entries to instantiate them.
-    def _entry_instantiator(entry):
+    def _entry_instantiator(entry: dict) -> Optional[Entry]:
         # Based on **required** `type` field, instantiate the corresponding `Entry` object.
         try:
             return Entries[entry.pop('type')].value(

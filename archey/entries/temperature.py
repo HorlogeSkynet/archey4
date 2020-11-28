@@ -5,6 +5,7 @@ import re
 
 from glob import iglob
 from subprocess import check_output, DEVNULL, CalledProcessError
+from typing import List
 
 from archey.entry import Entry
 
@@ -51,7 +52,7 @@ class Temperature(Entry):
         }
 
 
-    def _run_sensors(self, whitelisted_chips):
+    def _run_sensors(self, whitelisted_chips: List[str]):
         # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.
         try:
             sensors_output = check_output(
@@ -81,7 +82,7 @@ class Temperature(Entry):
 
     def _poll_thermal_zones(self):
         # We just check for values within files present in the path below.
-        for thermal_file in iglob('/sys/class/thermal/thermal_zone*/temp'):
+        for thermal_file in iglob(r'/sys/class/thermal/thermal_zone*/temp'):
             with open(thermal_file) as file:
                 try:
                     temp = float(file.read().strip()) / 1000
@@ -111,7 +112,7 @@ class Temperature(Entry):
         )
 
     @staticmethod
-    def _convert_to_fahrenheit(temp):
+    def _convert_to_fahrenheit(temp: float) -> float:
         """Simple Celsius to Fahrenheit conversion method"""
         return temp * (9 / 5) + 32
 

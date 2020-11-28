@@ -1,6 +1,7 @@
 """Distribution and architecture detection class"""
 
 from subprocess import check_output
+from typing import Optional
 
 from archey.distributions import Distributions
 from archey.entry import Entry
@@ -21,7 +22,7 @@ class Distro(Entry):
         }
 
     @staticmethod
-    def _fetch_architecture():
+    def _fetch_architecture() -> str:
         """Simple wrapper to `uname -m` returning the current system architecture"""
         return check_output(
             ['uname', '-m'],
@@ -29,7 +30,7 @@ class Distro(Entry):
         ).rstrip()
 
     @staticmethod
-    def _fetch_android_release():
+    def _fetch_android_release() -> Optional[str]:
         """Simple method to fetch current release on Android systems"""
         try:
             release = check_output(

@@ -30,7 +30,7 @@ class Uptime(Entry):
             'seconds': seconds
         }
 
-    def _get_uptime_delta(self):
+    def _get_uptime_delta(self) -> timedelta:
         """
         Returns a `datetime.timedelta` instance containing the machine uptime.
         Tries a variety of methods, increasing compatibility for a wide range of systems.
@@ -56,7 +56,7 @@ class Uptime(Entry):
         return self._parse_uptime_cmd()
 
     @staticmethod
-    def _proc_file_uptime():
+    def _proc_file_uptime() -> timedelta:
         """Tries to get uptime using the `/proc/uptime` file"""
         with open('/proc/uptime') as f_uptime:
             return timedelta(
@@ -64,7 +64,7 @@ class Uptime(Entry):
             )
 
     @staticmethod
-    def _clock_uptime():
+    def _clock_uptime() -> timedelta:
         """Tries to get uptime using the clocks from the Python `time` module"""
         # Try: Linux uptime clock, macOS uptime clock, BSD uptime clock.
         for clock in ('CLOCK_BOOTTIME', 'CLOCK_UPTIME_RAW', 'CLOCK_UPTIME'):
@@ -79,7 +79,7 @@ class Uptime(Entry):
         raise RuntimeError
 
     @staticmethod
-    def _parse_uptime_cmd():
+    def _parse_uptime_cmd() -> timedelta:
         """Tries to get uptime by parsing the `uptime` command"""
         try:
             uptime_output = check_output('uptime', env={'LANG': 'C'})
@@ -143,6 +143,8 @@ class Uptime(Entry):
             uptime_output,
             re.VERBOSE
         )
+        if not uptime_match:
+            sys.exit("Couldn\'t parse `uptime` output, please open an issue.")
 
         # Only `days`, `hours`, `minutes` or `seconds` could have been captured.
         # `timedelta` directly accepts them as arguments.

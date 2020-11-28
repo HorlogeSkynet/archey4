@@ -1,8 +1,10 @@
 """Disk usage detection class"""
 
 import re
-from subprocess import DEVNULL, PIPE, run
+
 from csv import reader as csv_reader
+from subprocess import DEVNULL, PIPE, run
+from typing import Dict, List
 
 from archey.colors import Colors
 from archey.entry import Entry
@@ -16,7 +18,7 @@ class Disk(Entry):
         # Populate an output from `df`
         self._disk_dict = self._get_df_output_dict()
 
-        config_filesystems = self.options.get('show_filesystems', ['local'])
+        config_filesystems: List[str] = self.options.get('show_filesystems', ['local'])
         # See `Disk._get_df_output_dict` for the format we use in `self.value`.
         if config_filesystems == ['local']:
             self.value = self._get_local_filesystems()
@@ -24,7 +26,7 @@ class Disk(Entry):
             self.value = self._get_specified_filesystems(config_filesystems)
 
 
-    def _get_local_filesystems(self):
+    def _get_local_filesystems(self) -> Dict[str, dict]:
         """
         Extracts local (i.e. /dev/xxx) filesystems for any *NIX from `self._disk_dict`,
         returning a copy with those filesystems only.
@@ -41,7 +43,7 @@ class Disk(Entry):
         device_path_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
 
         # Build the dictionary
-        local_disk_dict = {}
+        local_disk_dict: Dict[str, dict] = {}
         for mount_point, disk_data in self._disk_dict.items():
             if (
                     device_path_regexp.match(disk_data['device_path'])
@@ -56,7 +58,7 @@ class Disk(Entry):
         return local_disk_dict
 
 
-    def _get_specified_filesystems(self, specified_filesystems):
+    def _get_specified_filesystems(self, specified_filesystems: List[str]) -> Dict[str, dict]:
         """
         Extracts the specified filesystems (if found) from `self._disk_dict`,
         returning a copy with those filesystems only, preserving specified mount point names.
@@ -88,7 +90,7 @@ class Disk(Entry):
 
 
     @staticmethod
-    def _get_df_output_dict():
+    def _get_df_output_dict() -> Dict[str, dict]:
         """
         Runs `df -P -k` and returns disks in a dict formatted as:
         {
@@ -136,7 +138,7 @@ class Disk(Entry):
 
 
     @staticmethod
-    def _blocks_to_human_readable(blocks, suffix='B'):
+    def _blocks_to_human_readable(blocks: float, suffix: str = 'B') -> str:
         """
         Returns human-readable format of `blocks` supplied in kibibytes (1024 bytes).
         Taken (and modified) from: <https://stackoverflow.com/a/1094933/13343912>

@@ -19,11 +19,11 @@ class Processes(metaclass=Singleton):
             sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
 
     @property
-    def list(self):
+    def list(self) -> tuple:
         """Simple getter to retrieve (am immutable copy of) the processes list"""
         return tuple(self._processes)
 
     @property
-    def number(self):
+    def number(self) -> int:
         """Simple getter to retrieve the number of stored processes"""
         return len(self._processes)

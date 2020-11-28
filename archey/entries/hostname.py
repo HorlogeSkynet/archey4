@@ -1,6 +1,7 @@
 """Host name detection class"""
 
 from subprocess import check_output
+from typing import Optional
 
 from archey.entry import Entry
 
@@ -18,7 +19,7 @@ class Hostname(Entry):
             ).rstrip()
 
     @staticmethod
-    def _read_etc_hostname():
+    def _read_etc_hostname() -> Optional[str]:
         try:
             with open('/etc/hostname') as f_hostname:
                 return f_hostname.read().rstrip()

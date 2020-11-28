@@ -9,11 +9,14 @@ from shutil import get_terminal_size
 import os
 import sys
 
+from typing import Type
+
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
 from archey.constants import COLORS_DICT, LOGOS_DICT
 from archey.configuration import Configuration
 from archey.distributions import Distributions
+from archey.entry import Entry
 from archey.logos import get_logo_width
 
 
@@ -48,11 +51,11 @@ class Output:
         # Each class output will be added in the list below afterwards
         self._results = []
 
-    def add_entry(self, module):
+    def add_entry(self, module: Type[Entry]):
         """Append an entry to the list of entries to output"""
         self._entries.append(module)
 
-    def append(self, key, value):
+    def append(self, key: str, value):
         """Append a pre-formatted entry to the final output content"""
         self._results.append(
             '{color}{key}:{clear} {value}'.format(

@@ -3,6 +3,7 @@
 import re
 
 from subprocess import check_output
+from typing import Tuple
 
 from archey.colors import Colors
 from archey.entry import Entry
@@ -26,7 +27,7 @@ class RAM(Entry):
             'unit': 'MiB'
         }
 
-    def _get_used_total_values(self):
+    def _get_used_total_values(self) -> Tuple[float, float]:
         """
         Returns a tuple containing used and total RAM values.
         Tries a variety of methods, increasing compatibility for a wide range of systems.
@@ -41,10 +42,10 @@ class RAM(Entry):
         except (PermissionError, FileNotFoundError):
             pass
 
-        return None, None
+        return 0, 0
 
     @staticmethod
-    def _run_free_dash_m():
+    def _run_free_dash_m() -> Tuple[float, float]:
         """Call `free -m` and parse its output to retrieve current used and total RAM"""
         memory_usage = ''.join(
             filter(
@@ -59,7 +60,7 @@ class RAM(Entry):
         return float(memory_usage[2]), float(memory_usage[1])
 
     @staticmethod
-    def _read_proc_meminfo():
+    def _read_proc_meminfo() -> Tuple[float, float]:
         """Same behavior but by reading from `/proc/meminfo` directly"""
         with open('/proc/meminfo') as f_mem_info:
             mem_info_lines = f_mem_info.read().splitlines()

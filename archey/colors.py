@@ -44,7 +44,7 @@ class Colors(Enum):
         )
 
     @staticmethod
-    def escape_code_from_attrs(display_attrs):
+    def escape_code_from_attrs(display_attrs: str) -> str:
         """
         Build and return an ANSI/ECMA-48 escape code string from passed display attributes.
         """
@@ -54,13 +54,13 @@ class Colors(Enum):
         return '\x1b[{}m'.format(display_attrs)
 
     @staticmethod
-    def get_level_color(value, yellow_bpt, red_bpt):
+    def get_level_color(value: float, yellow_bpt: float, red_bpt: float) -> 'Colors':
         """Returns the best level color according to `value` compared to `{yellow,red}_bpt`"""
         level_colors = (Colors.GREEN_NORMAL, Colors.YELLOW_NORMAL, Colors.RED_NORMAL)
 
         return level_colors[bisect((yellow_bpt, red_bpt), value)]
 
     @staticmethod
-    def remove_colors(string):
+    def remove_colors(string: str) -> str:
         """Simple DRY method to remove any ANSI/ECMA-48 color escape code from passed `string`"""
         return ANSI_ECMA_REGEXP.sub('', string)

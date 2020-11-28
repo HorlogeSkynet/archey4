@@ -10,7 +10,7 @@ from functools import partial
 from subprocess import CalledProcessError, DEVNULL, check_call
 
 
-def take_screenshot(output_file=None):
+def take_screenshot(output_file: str = None):
     """
     Simple function trying to take a screenshot using various famous back-end programs.
     When supported by the found and available back-end, try to honor `output_file`.

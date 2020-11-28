@@ -4,6 +4,7 @@ import os
 import re
 
 from subprocess import CalledProcessError, DEVNULL, check_output
+from typing import Optional
 
 from archey.entry import Entry
 
@@ -19,7 +20,7 @@ class Model(Entry):
             or self._fetch_raspberry_pi_revision() \
             or self._fetch_android_device_model()
 
-    def _fetch_virtual_env_info(self):
+    def _fetch_virtual_env_info(self) -> Optional[str]:
         """
         Relying on some system tools, tries to gather some details about hypervisor.
         When available, relies on systemd.
@@ -75,7 +76,7 @@ class Model(Entry):
         )
 
     @staticmethod
-    def _fetch_product_info():
+    def _fetch_product_info() -> Optional[str]:
         """Tries to open specific Linux files, looking for hardware product name and version"""
         try:
             with open('/sys/devices/virtual/dmi/id/product_name') as f_product_name:
@@ -91,7 +92,7 @@ class Model(Entry):
             with open('/sys/devices/virtual/dmi/id/product_version') as f_product_version:
                 product_version = f_product_version.read().rstrip()
         except FileNotFoundError:
-            product_version = None
+            product_version = ''
 
         if not product_version:
             return product_name
@@ -99,7 +100,7 @@ class Model(Entry):
         return "{} {}".format(product_name, product_version)
 
     @staticmethod
-    def _fetch_raspberry_pi_revision():
+    def _fetch_raspberry_pi_revision() -> Optional[str]:
         """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
         try:
             with open('/proc/cpuinfo') as f_cpu_info:
@@ -120,7 +121,7 @@ class Model(Entry):
         return None
 
     @staticmethod
-    def _fetch_android_device_model():
+    def _fetch_android_device_model() -> Optional[str]:
         """Tries to retrieve `brand` and `model` device properties on Android platforms"""
         try:
             brand = check_output(

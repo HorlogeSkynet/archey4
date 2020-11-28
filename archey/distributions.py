@@ -9,6 +9,7 @@ import sys
 
 from enum import Enum
 from subprocess import check_output
+from typing import List, Optional
 
 import distro
 
@@ -46,12 +47,12 @@ class Distributions(Enum):
 
 
     @staticmethod
-    def get_distribution_identifiers():
+    def get_distribution_identifiers() -> List[str]:
         """Simple getter returning current supported distributions identifiers"""
         return [d.value for d in Distributions.__members__.values()]
 
     @staticmethod
-    def run_detection():
+    def run_detection() -> 'Distributions':
         """Entry point of Archey distribution detection logic"""
         distribution = Distributions._detection_logic()
 
@@ -86,7 +87,7 @@ class Distributions(Enum):
         return distribution
 
     @staticmethod
-    def _detection_logic():
+    def _detection_logic() -> Optional['Distributions']:
         """Main distribution detection logic, relying on `distro`, handling _common_ cases"""
         # Are we running on Windows ?
         if sys.platform in ('win32', 'cygwin'):
@@ -115,12 +116,12 @@ class Distributions(Enum):
         return None
 
     @staticmethod
-    def get_distro_name(pretty=True):
+    def get_distro_name(pretty: bool = True) -> Optional[str]:
         """Simple wrapper to `distro` to return the current distribution _pretty_ name"""
         return distro.name(pretty=pretty) or None
 
     @staticmethod
-    def get_ansi_color():
+    def get_ansi_color() -> Optional[str]:
         """
         Simple wrapper to `distro` to return the distribution preferred ANSI color.
         See <https://www.freedesktop.org/software/systemd/man/os-release.html#ANSI_COLOR=>.

@@ -4,7 +4,10 @@ from datetime import datetime
 
 import json
 
+from typing import Dict, List
+
 from archey._version import __version__
+from archey.entry import Entry
 
 
 class API:
@@ -13,17 +16,17 @@ class API:
     At the moment, only JSON has been implemented.
     Feel free to contribute to add other formats as needed.
     """
-    def __init__(self, entries):
+    def __init__(self, entries: List[Entry]):
         self.entries = entries
 
-    def json_serialization(self, indent=None):
+    def json_serialization(self, indent: int = 0) -> str:
         """
         JSON serialization of entries.
         Set `indent` to the number of wanted output indentation tabs (2-space long).
 
         Note: For Python < 3.6, the keys order is not guaranteed.
         """
-        document = {
+        document: Dict[str, Dict[str, object]] = {
             'data': {},
             'meta': {
                 'version': self._version_to_semver_segments(__version__),
@@ -40,7 +43,7 @@ class API:
         )
 
     @staticmethod
-    def _version_to_semver_segments(version):
+    def _version_to_semver_segments(version: str) -> tuple:
         """Transforms string `version` to a tuple containing SemVer segments"""
         return tuple(
             map(

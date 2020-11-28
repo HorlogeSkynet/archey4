@@ -4,6 +4,7 @@ import ipaddress
 import sys
 
 from itertools import islice
+from typing import Iterator
 
 try:
     import netifaces
@@ -43,7 +44,7 @@ Please either install it or disable `LAN_IP` entry in configuration.\
         )
 
     @staticmethod
-    def _lan_ip_addresses_generator(addr_families):
+    def _lan_ip_addresses_generator(addr_families) -> Iterator[str]:
         """Generator yielding local IP address according to passed address families"""
         # Loop through all available network interfaces.
         for if_name in netifaces.interfaces():

@@ -3,6 +3,8 @@
 import os
 import re
 
+from typing import Optional
+
 from archey.colors import Colors, NO_COLOR
 from archey.entry import Entry
 
@@ -63,7 +65,7 @@ class Terminal(Entry):
 
         self.value = self._detect_terminal_emulator()
 
-    def _get_colors_palette(self):
+    def _get_colors_palette(self) -> str:
         """Build and return a 8-color palette, with Unicode characters if allowed"""
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
@@ -80,7 +82,7 @@ class Terminal(Entry):
         ])
 
     @staticmethod
-    def _detect_terminal_emulator():
+    def _detect_terminal_emulator() -> Optional[str]:
         """Try to detect current terminal emulator based on various environment variables"""
         # At first, try to honor `TERM_PROGRAM` environment variable.
         # See <https://github.com/Maximus5/ConEmu/issues/1837#issuecomment-469199525>.

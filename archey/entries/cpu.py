@@ -3,6 +3,7 @@
 import re
 
 from subprocess import check_output
+from typing import Dict, List
 
 from archey.entry import Entry
 
@@ -48,7 +49,7 @@ class CPU(Entry):
 
 
     @classmethod
-    def _parse_proc_cpuinfo(cls):
+    def _parse_proc_cpuinfo(cls) -> List[Dict[str, int]]:
         """Read `/proc/cpuinfo` and search for CPU model names occurrences"""
         try:
             with open('/proc/cpuinfo') as f_cpu_info:
@@ -59,7 +60,7 @@ class CPU(Entry):
         model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)
         physical_ids = cls._PHYSICAL_ID_REGEXP.findall(cpu_info)
 
-        cpus_list = []
+        cpus_list: List[Dict[str, int]] = []
 
         # Manually de-duplicates CPUs count.
         for model_name, physical_id in zip(model_names, physical_ids):
@@ -77,7 +78,7 @@ class CPU(Entry):
         return cpus_list
 
     @classmethod
-    def _parse_lscpu_output(cls):
+    def _parse_lscpu_output(cls) -> List[Dict[str, int]]:
         """Same operation but from `lscpu` output"""
         cpu_info = check_output(
             ['lscpu'],

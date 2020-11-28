@@ -2,6 +2,7 @@
 
 from subprocess import CalledProcessError, check_output
 from itertools import islice
+from typing import Iterator
 
 from archey.entry import Entry
 
@@ -20,7 +21,7 @@ class GPU(Entry):
         self.value = list(islice(self._gpu_generator(), max_count))
 
     @staticmethod
-    def _gpu_generator():
+    def _gpu_generator() -> Iterator[str]:
         """Based on `lspci` output, return a generator for video controllers names"""
         try:
             lspci_output = check_output(

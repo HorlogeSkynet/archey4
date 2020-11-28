@@ -8,7 +8,7 @@ from archey.configuration import Configuration
 class Entry(AbstractBaseClass):
     """Module base class"""
     @abstractmethod
-    def __init__(self, name=None, value=None, options=None):
+    def __init__(self, name: str = None, value=None, options: dict = None):
         # Each entry will have always have the following attributes...
         # `name`: key (defaults to the instantiated entry class name);
         # `value`: value of entry as an appropriate object;

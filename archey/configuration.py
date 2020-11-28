@@ -1,9 +1,10 @@
 """Archey configuration module"""
 
+from copy import deepcopy
+
+import json
 import os
 import sys
-import json
-from copy import deepcopy
 
 from archey.constants import DEFAULT_CONFIG
 from archey.singleton import Singleton
@@ -32,13 +33,13 @@ class Configuration(metaclass=Singleton):
             self._load_configuration(os.path.expanduser('~/.config/archey4/'))
             self._load_configuration(os.getcwd())
 
-    def get(self, key, default=None):
+    def get(self, key: str, default=None):
         """
         A binding method to imitate the `dict.get()` behavior.
         """
         return self._config.get(key, default)
 
-    def _load_configuration(self, path):
+    def _load_configuration(self, path: str):
         """
         A method handling configuration loading from a JSON file.
         It will try to load any `config.json` present under `path`.
@@ -70,7 +71,7 @@ class Configuration(metaclass=Singleton):
             self._close_and_restore_sys_stderr()
 
     @classmethod
-    def update_recursive(cls, old_dict, new_dict):
+    def update_recursive(cls, old_dict: dict, new_dict: dict):
         """
         A method for recursively merging dictionaries as `dict.update()` is not able to do this.
         Original snippet taken from here : <https://gist.github.com/angstwad/bf22d1822c38a92ec0a9>
