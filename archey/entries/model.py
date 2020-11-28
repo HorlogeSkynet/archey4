@@ -30,7 +30,7 @@ class Model(Entry):
 
         try:
             environment = check_output(
-                ['systemd-detect-virt'],
+                'systemd-detect-virt',
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
         except CalledProcessError:
@@ -46,7 +46,7 @@ class Model(Entry):
                 try:
                     environment = ', '.join(
                         check_output(
-                            ['virt-what'],
+                            'virt-what',
                             stderr=DEVNULL, universal_newlines=True
                         ).splitlines()
                     )

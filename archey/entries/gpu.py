@@ -24,10 +24,7 @@ class GPU(Entry):
     def _gpu_generator() -> Iterator[str]:
         """Based on `lspci` output, return a generator for video controllers names"""
         try:
-            lspci_output = check_output(
-                ['lspci'],
-                universal_newlines=True
-            ).splitlines()
+            lspci_output = check_output('lspci', universal_newlines=True).splitlines()
         except (FileNotFoundError, CalledProcessError):
             return
 
