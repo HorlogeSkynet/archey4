@@ -4,7 +4,7 @@ from datetime import datetime
 
 import json
 
-from typing import Dict, List
+from typing import Dict, List  # pylint: disable=unused-import
 
 from archey._version import __version__
 from archey.entry import Entry

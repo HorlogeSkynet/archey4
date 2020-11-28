@@ -2,7 +2,7 @@
 
 
 from abc import ABCMeta as AbstractBaseMetaClass
-from typing import Dict, Type
+from typing import Dict, Type  # pylint: disable=unused-import
 
 
 class Singleton(AbstractBaseMetaClass):
