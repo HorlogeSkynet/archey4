@@ -53,6 +53,8 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 > PyPy is supported and may replace CPython.
 
+> Looking for Python 3.4 support ? Please refer to the latest v4.9 release.
+
 ### Highly recommended packages
 
 |     Environments      |             Packages              |                       Reasons                        |            Notes             |
