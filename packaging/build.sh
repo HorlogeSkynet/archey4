@@ -92,7 +92,7 @@ fpm \
 	--output-type deb \
 	--package "${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_all.deb" \
 	--depends 'procps' \
-	--depends 'python3 >= 3.4' \
+	--depends 'python3 >= 3.5' \
 	--depends 'python3-distro' \
 	--depends 'python3-netifaces' \
 	--python-install-lib 'usr/lib/python3/dist-packages/' \

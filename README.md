@@ -46,12 +46,14 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ### Required packages
 
-* `python3`
+* `python3` (>= 3.5)
 * `python3-distro` (`python-distro` on Arch Linux)
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
 * `procps` (`procps-ng` on Arch Linux)
 
 > PyPy is supported and may replace CPython.
+
+> Looking for Python 3.4 support ? Please refer to the latest v4.9 release.
 
 ### Highly recommended packages
 
@@ -73,8 +75,6 @@ Now, it's time to use your favorite package manager. Some examples :
 * Arch-based distributions : `pacman -U ./archey4-4.Y.Z-R-any.pkg.tar.xz`
 * Debian-based distributions : `apt install ./archey4_4.Y.Z-R_all.deb`
 * RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.py??.noarch.rpm`
-
-**Note to Debian 8 (Jessie) users** : As [`python3-distro`](https://tracker.debian.org/pkg/python-distro) is not available in your repositories, **you should opt for an [installation from PyPI](#install-from-pypi).**
 
 Further information about packaging are available [here](https://github.com/HorlogeSkynet/archey4/wiki/Packaging).
 

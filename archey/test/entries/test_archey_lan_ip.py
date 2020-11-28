@@ -298,8 +298,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     )
     @patch(
         'archey.entries.lan_ip.print',
-        return_value=None,  # Let's nastily mute class' outputs.
-        create=True
+        return_value=None  # Let's nastily mute class' outputs.
     )
     @HelperMethods.patch_clean_configuration
     def test_netifaces_not_available(self, _):

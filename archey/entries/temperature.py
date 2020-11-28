@@ -63,9 +63,7 @@ class Temperature(Entry):
 
         try:
             sensors_data = json.loads(sensors_output)
-        # For backward compatibility with Python versions prior to 3.5.0
-        #   we use `ValueError` instead of `json.JSONDecodeError`.
-        except ValueError:
+        except json.JSONDecodeError:
             return
 
         # Iterates over the chip-sets outputs to filter interesting values.

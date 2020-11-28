@@ -112,9 +112,7 @@ Shmem:            451056 kB
 Slab:             314100 kB
 SReclaimable:     200792 kB
 SUnreclaim:       113308 kB
-"""),  # Some lines have been ignored as they are useless for computations.
-        create=True
-    )
+"""))  # Some lines have been ignored as they are useless for computations.
     def test_proc_meminfo(self, _):
         """Test `/proc/meminfo` parsing (when `free` is not available)"""
         self.assertDictEqual(
@@ -132,8 +130,7 @@ SUnreclaim:       113308 kB
     )
     @patch(
         'archey.entries.ram.open',
-        side_effect=PermissionError(),
-        create=True
+        side_effect=PermissionError()
     )
     @HelperMethods.patch_clean_configuration
     def test_not_detected(self, _, __):
