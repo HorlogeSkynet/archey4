@@ -27,7 +27,7 @@ class Output:
     """
     def __init__(self, **kwargs):
         # Fetches passed arguments.
-        self._format_to_json = kwargs.get('format_to_json')
+        self._format_to_json = kwargs.get('format_to_json')  # type: int
 
         try:
             # If set, force the distribution to `preferred_distribution` argument.

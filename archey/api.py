@@ -26,14 +26,14 @@ class API:
 
         Note: For Python < 3.6, the keys order is not guaranteed.
         """
-        document: Dict[str, Dict[str, object]] = {
+        document = {
             'data': {},
             'meta': {
                 'version': self._version_to_semver_segments(__version__),
                 'date': datetime.now().isoformat(),
                 'count': len(self.entries)
             }
-        }
+        }  # type: Dict[str, dict]
         for entry in self.entries:
             document['data'][entry.name] = entry.value
 
