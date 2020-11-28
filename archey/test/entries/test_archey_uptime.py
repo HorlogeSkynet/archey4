@@ -243,7 +243,7 @@ class TestUptimeEntry(unittest.TestCase):
                 check_output_mock.return_value = uptime_output.format(
                     time=variations[0],
                     user_loadavg=variations[1]
-                )
+                ).encode()
                 self.assertEqual(
                     uptime_inst._parse_uptime_cmd(),  # pylint: disable=protected-access
                     expected_delta,

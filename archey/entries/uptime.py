@@ -91,7 +91,7 @@ class Uptime(Entry):
 
         # Unfortunately the output is not designed to be machine-readable...
         uptime_match = re.search(
-            r"""
+            rb"""
             up\s+?             # match the `up` preceding the uptime (anchor the start of the regex)
             (?:                # non-capture group for days section.
                (?P<days>       # 'days' named capture group, captures the days digits.
