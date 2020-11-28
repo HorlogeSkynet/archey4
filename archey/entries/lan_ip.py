@@ -55,8 +55,8 @@ Please either install it or disable `LAN_IP` entry in configuration.\
                     # IPv6 addresses may contain '%' token separator.
                     ip_addr = ipaddress.ip_address(if_addr['addr'].split('%')[0])
 
-                    # Filter out loopback addresses.
-                    if not ip_addr.is_loopback:
+                    # Filter out loopback and public IP addresses.
+                    if not ip_addr.is_loopback and not ip_addr.is_global:
                         # Finally, yield the address compressed representation.
                         yield ip_addr.compressed
 

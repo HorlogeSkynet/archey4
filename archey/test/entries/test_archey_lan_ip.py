@@ -42,8 +42,8 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
             },
             {
                 AF_INET: [{
-                    'addr': '172.34.56.78',
-                    'broadcast': '172.34.255.255'
+                    'addr': '172.16.56.78',
+                    'broadcast': '172.16.255.255'
                 }]
             }
         ]
@@ -54,7 +54,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
             LanIP(options={
                 'max_count': False
             }).value,
-            ['192.168.0.11', '192.168.1.11', '172.34.56.78']
+            ['192.168.0.11', '192.168.1.11', '172.16.56.78']
         )
 
     @patch(
@@ -95,11 +95,11 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
-                        'addr': r'fe80::abcd:ef0:abef:dead%en0',
+                        'addr': '2a02::45:6789:abcd:0123',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
-                        'addr': '2a02::45:6789:abcd:0123/64',
+                        'addr': r'fe80::abcd:ef0:abef:dead%en0',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     }
                 ]
@@ -160,7 +160,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
-                        'addr': '2a02::45:6789:abcd:0123/64',
+                        'addr': '2a02::45:6789:abcd:0123',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
@@ -262,7 +262,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
-                        'addr': '2a02::45:6789:abcd:0123/64',
+                        'addr': '2a02::45:6789:abcd:0123',
                         'netmask': 'ffff:ffff:ffff:ffff::/64'
                     },
                     {
