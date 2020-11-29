@@ -13,7 +13,7 @@ class Singleton(AbstractBaseMetaClass):
     ... whereas it is effectively loaded only once.
     You cannot instantiate this meta-class directly.
     """
-    _instances = {}  # type: Dict[Type['Singleton'], object]
+    _instances = {}  # type: Dict[Type['Singleton'], type]
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
