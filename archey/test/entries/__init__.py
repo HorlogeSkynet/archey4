@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 from functools import wraps
+from typing import Callable
 
 import unittest
 from unittest.mock import MagicMock, patch
@@ -17,7 +18,7 @@ class HelperMethods:
     We kindly borrow `update_recursive` class method from `Configuration` to DRY its implementation.
     """
     @staticmethod
-    def entry_mock(entry, options=None, configuration=None):
+    def entry_mock(entry, options: dict = None, configuration: dict = None) -> MagicMock:
         """
         Creates a placeholder "instance" of the entry class passed, with a clean default
         `_default_strings` which is optionally updated by `configuration`.
@@ -49,7 +50,11 @@ class HelperMethods:
         return instance_mock
 
     @staticmethod
-    def patch_clean_configuration(method_definition=None, *, configuration=None):
+    def patch_clean_configuration(
+            method_definition: Callable = None,
+            *,
+            configuration: dict = None
+        ) -> Callable:
         """
         Decorator for an entry test definition, which sets the entry's `_default_strings` attribute
         to the Archey defaults, optionally updated with `configuration`.
@@ -60,7 +65,7 @@ class HelperMethods:
         # Then, let's merge in `configuration` recursively.
         Configuration.update_recursive(entry_configuration, (configuration or {}))
 
-        def decorator_patch_clean_configuration(method):
+        def decorator_patch_clean_configuration(method: Callable) -> Callable:
             @wraps(method)
             def wrapper_patch_clean_configuration(*args, **kwargs):
                 with patch('archey.entry.Configuration', autospec=True) as config_instance_mock:
