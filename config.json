@@ -52,6 +52,7 @@
 		{
 			"type": "LAN_IP",
 			"max_count": 2,
+			"show_global": false,
 			"ipv6_support": true
 		},
 		{

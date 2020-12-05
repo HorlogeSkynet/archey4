@@ -39,12 +39,18 @@ Please either install it or disable `LAN_IP` entry in configuration.\
         if max_count is False:
             max_count = None
 
+        # Global IP addresses (in RFC1918 terms) will be hidden by default.
+        show_global = self.options.get('show_global')
+
         self.value = list(
-            islice(self._lan_ip_addresses_generator(addr_families), max_count)
+            islice(
+                self._lan_ip_addresses_generator(addr_families, show_global),
+                max_count
+            )
         )
 
     @staticmethod
-    def _lan_ip_addresses_generator(addr_families) -> Iterator[str]:
+    def _lan_ip_addresses_generator(addr_families: list, show_global: bool) -> Iterator[str]:
         """Generator yielding local IP address according to passed address families"""
         # Loop through all available network interfaces.
         for if_name in netifaces.interfaces():
@@ -57,7 +63,7 @@ Please either install it or disable `LAN_IP` entry in configuration.\
                     ip_addr = ipaddress.ip_address(if_addr['addr'].split('%')[0])
 
                     # Filter out loopback and public IP addresses.
-                    if not ip_addr.is_loopback and not ip_addr.is_global:
+                    if not ip_addr.is_loopback and (not ip_addr.is_global or show_global):
                         # Finally, yield the address compressed representation.
                         yield ip_addr.compressed
 

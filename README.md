@@ -277,6 +277,8 @@ Below stand further descriptions for each available (default) option :
 			// The maximum number of local addresses you want to display.
 			// `false` --> Unlimited.
 			"max_count": 2,
+			// Set to `true` if your local network does not honor RFC1918.
+			"show_global": false,
 			// Set to `false` to only display IPv4 LAN addresses.
 			"ipv6_support": true
 		},

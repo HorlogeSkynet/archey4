@@ -51,10 +51,49 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     def test_multiple_interfaces(self, _, __):
         """Test for multiple interfaces, multiple addresses (including a loopback one)"""
         self.assertListEqual(
-            LanIP(options={
-                'max_count': False
-            }).value,
+            LanIP(options={'max_count': False}).value,
             ['192.168.0.11', '192.168.1.11', '172.16.56.78']
+        )
+
+    @patch(
+        'archey.entries.lan_ip.netifaces.interfaces',
+        return_value=['lo', 'en0']
+    )
+    @patch(
+        'archey.entries.lan_ip.netifaces.ifaddresses',
+        side_effect=[
+            {
+                AF_INET: [{
+                    'addr': '127.0.0.1',
+                    'netmask': '255.0.0.0',
+                    'peer': '127.0.0.1'
+                }],
+                AF_INET6: [{
+                    'addr': '::1',
+                    'netmask': 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128'
+                }]
+            },
+            {
+                AF_INET: [
+                    {
+                        'addr': '192.168.1.55',
+                        'netmask': '255.255.255.0',
+                        'broadcast': '192.168.1.255'
+                    },
+                    {
+                        'addr': '123.45.67.89',
+                        'netmask': '255.255.0.0',
+                        'broadcast': '123.45.255.255'
+                    }
+                ]
+            }
+        ]
+    )
+    def test_show_global(self, _, __):
+        """Test public IP addresses forced display"""
+        self.assertListEqual(
+            LanIP(options={'show_global': True}).value,
+            ['192.168.1.55', '123.45.67.89']
         )
 
     @patch(
@@ -113,10 +152,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
 
         IP address "compression" and interface name splitting will also be tested.
         """
-        lan_ip = LanIP(options={
-            'max_count': 3,
-            'ipv6_support': True
-        })
+        lan_ip = LanIP(options={'max_count': 3})
 
         output_mock = MagicMock()
         lan_ip.output(output_mock)
@@ -174,9 +210,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     def test_no_ipv6(self, _, __):
         """Test for IPv6 hiding"""
         self.assertListEqual(
-            LanIP(options={
-                'ipv6_support': False
-            }).value,
+            LanIP(options={'ipv6_support': False}).value,
             ['192.168.1.55']
         )
 
@@ -276,12 +310,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     @HelperMethods.patch_clean_configuration
     def test_user_disabled(self, _, __):
         """Check behavior on user inputs edge-cases"""
-        lan_ip = LanIP(
-            options={
-                'ipv6_support': True,
-                'max_count': 0
-            }
-        )
+        lan_ip = LanIP(options={'max_count': 0})
 
         output_mock = MagicMock()
         lan_ip.output(output_mock)
