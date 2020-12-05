@@ -66,7 +66,7 @@ class WanIP(Entry):
 
 
     @staticmethod
-    def _run_dns_query(query, resolver: str, ip_version: int, timeout: float) -> Optional[str]:
+    def _run_dns_query(query: str, resolver: str, ip_version: int, timeout: float) -> Optional[str]:
         """Simple wrapper to `dig` command to perform DNS queries"""
         try:
             ip_address = check_output(
