@@ -12,6 +12,10 @@ from archey.test.entries import HelperMethods
 from archey.constants import DEFAULT_CONFIG
 
 
+@patch(
+    'archey.entries.wan_ip.DO_NOT_TRACK',
+    False  # By default, entry won't be disabled.
+)
 class TestWanIPEntry(unittest.TestCase, CustomAssertions):
     """
     Here, we end up mocking calls to `dig` or `urlopen`.
@@ -110,6 +114,19 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
             self.output_mock.append.call_args[0][1],
             "XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef"
         )
+
+    def test_do_not_track(self):
+        """Check whether `DO_NOT_TRACK` environment variable is correctly honored"""
+        with patch('archey.entries.wan_ip.DO_NOT_TRACK', True):
+            self.wan_ip_mock.value = []
+
+            WanIP.output(self.wan_ip_mock, self.output_mock)
+
+            self.assertListEmpty(self.wan_ip_mock.value)
+            self.assertEqual(
+                self.output_mock.append.call_args[0][1],
+                DEFAULT_CONFIG['default_strings']['not_detected']
+            )
 
     @HelperMethods.patch_clean_configuration
     def test_no_address(self):
