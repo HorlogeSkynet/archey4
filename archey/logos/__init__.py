@@ -7,6 +7,7 @@ from archey.logos.bunsenlabs import BUNSENLABS
 from archey.logos.centos import CENTOS
 from archey.logos.crunchbang import CRUNCHBANG
 from archey.logos.debian import DEBIAN
+from archey.logos.devuan import DEVUAN
 from archey.logos.elementary import ELEMENTARY
 from archey.logos.fedora import FEDORA
 from archey.logos.freebsd import FREEBSD

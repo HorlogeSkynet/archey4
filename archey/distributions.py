@@ -27,6 +27,7 @@ class Distributions(Enum):
     CENTOS = 'centos'
     CRUNCHBANG = 'crunchbang'
     DEBIAN = 'debian'
+    DEVUAN = 'devuan'
     ELEMENTARY = 'elementary'
     FEDORA = 'fedora'
     FREEBSD = 'freebsd'
