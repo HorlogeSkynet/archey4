@@ -109,8 +109,8 @@ class Model(Entry):
             return None
 
         # If the output contains 'Hardware' and 'Revision'...
-        hardware = re.search('(?<=Hardware\t: ).*', cpu_info)
-        revision = re.search('(?<=Revision\t: ).*', cpu_info)
+        hardware = re.search(r'(?<=Hardware\t: ).*', cpu_info)
+        revision = re.search(r'(?<=Revision\t: ).*', cpu_info)
         if hardware and revision:
             # ... let's set a pretty info string with these data
             return 'Raspberry Pi {0} (Rev. {1})'.format(

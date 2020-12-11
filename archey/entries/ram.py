@@ -49,7 +49,7 @@ class RAM(Entry):
         """Call `free -m` and parse its output to retrieve current used and total RAM"""
         memory_usage = ''.join(
             filter(
-                re.compile('Mem').search,
+                re.compile(r'Mem').search,
                 check_output(
                     ['free', '-m'],
                     env={'LANG': 'C'}, universal_newlines=True

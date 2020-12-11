@@ -53,7 +53,7 @@ class WindowManager(Entry):
 
         try:
             self.value = re.search(
-                '(?<=Name: ).*',
+                r'(?<=Name: ).*',
                 check_output(
                     ['wmctrl', '-m'],
                     stderr=DEVNULL, universal_newlines=True
