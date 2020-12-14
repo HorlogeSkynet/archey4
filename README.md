@@ -230,7 +230,11 @@ Below stand further descriptions for each available (default) option :
 		{ "type": "Hostname" },
 		{ "type": "Model" },
 		{ "type": "Distro" },
-		{ "type": "Kernel" },
+		{
+			"type": "Kernel",
+			// Set to `true` to enable kernel release check against <www.kernel.org>.
+			"check_version": false
+		},
 		{ "type": "Uptime" },
 		{ "type": "Processes" },
 		{ "type": "WindowManager" },

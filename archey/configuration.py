@@ -17,6 +17,8 @@ DEFAULT_CONFIG = {
     'suppress_warnings': False,
     'honor_ansi_color': True,
     'default_strings': {
+        'latest': 'latest',
+        'available': 'available',
         'no_address': 'No Address',
         'not_detected': 'Not detected',
         'virtual_environment': 'Virtual Environment'
