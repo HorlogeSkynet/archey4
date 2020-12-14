@@ -41,10 +41,10 @@ jobs:
           time archey
           time python -m archey
 
-      # Currently disabled against Python 3.9.
+      # Currently disabled against Python >= 3.9.
       # See PyCQA/pylint#3882 & PyCQA/pylint#3890.
       - name: Lint source code against Pylint
-        if: ${{ matrix.python-version != '3.9' }}
+        if: ${{ matrix.python-version != '3.9' && matrix.python-version != '3.10-dev' }}
         run: pylint archey/
 
       # Disabled against Pypy (see python/typed_ast#111).
