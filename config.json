@@ -8,7 +8,10 @@
 		{ "type": "Hostname" },
 		{ "type": "Model" },
 		{ "type": "Distro" },
-		{ "type": "Kernel" },
+		{
+			"type": "Kernel",
+			"check_version": false
+		},
 		{ "type": "Uptime" },
 		{ "type": "Processes" },
 		{ "type": "WindowManager" },
@@ -74,6 +77,8 @@
 		}
 	],
 	"default_strings": {
+		"latest": "latest",
+		"available": "available",
 		"no_address": "No Address",
 		"not_detected": "Not detected",
 		"virtual_environment": "Virtual Environment"
