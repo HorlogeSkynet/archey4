@@ -27,15 +27,15 @@ class API:
         Note: For Python < 3.6, the keys order is not guaranteed.
         """
         document = {
-            'data': {},
+            'data': {
+                entry.name: entry.value for entry in self.entries
+            },
             'meta': {
                 'version': self._version_to_semver_segments(__version__),
                 'date': datetime.now().isoformat(),
                 'count': len(self.entries)
             }
-        }  # type: Dict[str, dict]
-        for entry in self.entries:
-            document['data'][entry.name] = entry.value
+        }
 
         return json.dumps(
             document,
