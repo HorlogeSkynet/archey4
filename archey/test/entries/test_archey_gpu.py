@@ -5,10 +5,10 @@ from unittest.mock import MagicMock, patch
 
 from subprocess import CalledProcessError
 
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.gpu import GPU
 from archey.test import CustomAssertions
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 class TestGPUEntry(unittest.TestCase, CustomAssertions):

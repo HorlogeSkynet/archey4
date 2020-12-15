@@ -1,44 +1,63 @@
 """Test module for `archey.logos`"""
 
+import pkgutil
 import unittest
 
 from archey.colors import Colors
-from archey.distributions import Distributions
-from archey.constants import LOGOS_DICT
-from archey.logos import get_logo_width
+from archey import logos
+from archey.logos import get_logo_width, lazy_load_logo_module
 
 
 class TestLogosModule(unittest.TestCase):
     """Simple tests checking logos consistency and utility function logic"""
-    def test_distribution_logos_width(self):
+    def test_distribution_logos_consistency(self):
         """
-        Check that each distribution logo got a _consistent_ width across its lines.
+        Verify each distribution logo module contain `LOGO` & `COLORS` ("truthy") attributes.
+        Also check they got _consistent_ widths across their respective lines.
+        Additionally verify they don't contain any (useless) empty line.
 
-        For this test, we have to trick the `get_logo_width` call.
-        We actually pass each logos line as if they were a "complete" logo.
+        This test also indirectly checks `lazy_load_logo_module` behavior!
         """
-        for distribution in Distributions:
+        for logo_module_info in pkgutil.iter_modules(logos.__path__):
+            logo_module = lazy_load_logo_module(logo_module_info.name)
+
+            # Attributes checks.
+            self.assertTrue(
+                getattr(logo_module, 'LOGO', []),
+                msg='[{0}] logo module missing `LOGO` attribute'.format(
+                    logo_module_info.name
+                )
+            )
+            self.assertTrue(
+                getattr(logo_module, 'COLORS', []),
+                msg='[{0}] logo module missing `COLORS` attribute'.format(
+                    logo_module_info.name
+                )
+            )
+
             # Make Archey compute the logo width.
-            logo_width = get_logo_width(LOGOS_DICT[distribution])
+            logo_width = get_logo_width(logo_module.LOGO)
+
             # Then, check that each logo line got the same effective width.
-            for i, line in enumerate(LOGOS_DICT[distribution][1:], start=1):
+            for i, line in enumerate(logo_module.LOGO[1:], start=1):
+                # Here we gotta trick the `get_logo_width` call.
+                # We actually pass each logo line as if it was a "complete" logo.
                 line_width = get_logo_width([line])
+
+                # Width check.
                 self.assertEqual(
                     line_width,
                     logo_width,
                     msg='[{0}] line index {1}, got an unexpected width {2} (expected {3})'.format(
-                        distribution, i, line_width, logo_width
+                        logo_module_info.name, i, line_width, logo_width
                     )
                 )
 
-    def test_distribution_logos_no_empty_lines(self):
-        """Check that distribution logos do not contain (useless) empty lines"""
-        for distribution in Distributions:
-            for i, line in enumerate(LOGOS_DICT[distribution]):
+                # Non-empty line check.
                 self.assertTrue(
                     Colors.remove_colors(line).strip(),
-                    msg='[{0}] line index {1}, got a forbidden empty line'.format(
-                        distribution, i
+                    msg='[{0}] line index {1}, got an useless empty line'.format(
+                        logo_module_info.name, i
                     )
                 )
 

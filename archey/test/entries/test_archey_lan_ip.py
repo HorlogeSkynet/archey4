@@ -5,10 +5,10 @@ from unittest.mock import MagicMock, patch
 
 from netifaces import AF_INET, AF_INET6, AF_LINK
 
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.lan_ip import LanIP
 from archey.test import CustomAssertions
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 class TestLanIPEntry(unittest.TestCase, CustomAssertions):

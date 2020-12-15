@@ -1,6 +1,11 @@
 """NixOS logo"""
 
-NIXOS = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.BLUE_NORMAL, Colors.CYAN_NORMAL]
+
+LOGO = [
     """{c[0]}           ::::.    {c[1]}':::::{c[0]}     {c[1]}::::'{c[0]}           """,
     """{c[0]}           ':::::    {c[1]}':::::.{c[0]}  {c[1]}::::'{c[0]}            """,
     """{c[0]}             :::::     {c[1]}'::::.:::::{c[0]}             """,

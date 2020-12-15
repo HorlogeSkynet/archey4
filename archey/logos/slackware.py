@@ -1,7 +1,12 @@
 """Slackware logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [Colors.BLUE_NORMAL, Colors.BLUE_BRIGHT, Colors.CLEAR]
+
 # pylint: disable=line-too-long
-SLACKWARE = [
+LOGO = [
     """{c[0]}                  {c[1]}:::::::{c[0]}                       """,
     """{c[0]}             {c[1]}:::::::::::::::::::{c[0]}                """,
     """{c[0]}          {c[1]}:::::::::::::::::::::::::{c[0]}             """,

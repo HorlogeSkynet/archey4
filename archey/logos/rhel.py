@@ -1,6 +1,11 @@
 """Red Hat logo"""
 
-RED_HAT = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT, Colors.RED_NORMAL]
+
+LOGO = [
     """{c[0]}              {c[2]}\\`.-..........\\`{c[0]}               """,
     """{c[0]}             {c[2]}\\`////////::.\\`-/.{c[0]}              """,
     """{c[0]}             {c[2]}-: ....-////////.{c[0]}               """,

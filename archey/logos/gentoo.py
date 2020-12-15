@@ -1,6 +1,11 @@
 """Gentoo logo"""
 
-GENTOO = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.MAGENTA_BRIGHT, Colors.WHITE_BRIGHT]
+
+LOGO = [
     """{c[0]}          -/oyddmdhs+:.                """,
     """{c[0]}      -o{c[1]}dNMMMMMMMMNNmhy+{c[0]}-`             """,
     """{c[0]}    -y{c[1]}NMMMMMMMMMMMNNNmmdhy{c[0]}+-           """,

@@ -1,6 +1,11 @@
 """Bunsenlabs logo"""
 
-BUNSENLABS = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT, Colors.YELLOW_NORMAL]
+
+LOGO = [
     """{c[0]}           .{c[1]}..{c[0]}+hhy+-`         """,
     """{c[0]}        `+hd{c[1]}-{c[0]}+dddd{c[2]}hyso{c[0]}+//:    """,
     """{c[0]}      `+dddd{c[1]}:-{c[0]}sdh/.           """,

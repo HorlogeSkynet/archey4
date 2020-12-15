@@ -1,33 +1,19 @@
-"""Simple `__init__` file for the `logos` module, to load each distribution logo"""
+"""`__init__` file for the `logos` submodule, containing dedicated utility methods"""
 
-from archey.logos.alpine_linux import ALPINE_LINUX
-from archey.logos.android import ANDROID
-from archey.logos.arch_linux import ARCH_LINUX
-from archey.logos.bunsenlabs import BUNSENLABS
-from archey.logos.centos import CENTOS
-from archey.logos.crunchbang import CRUNCHBANG
-from archey.logos.debian import DEBIAN
-from archey.logos.devuan import DEVUAN
-from archey.logos.elementary import ELEMENTARY
-from archey.logos.fedora import FEDORA
-from archey.logos.freebsd import FREEBSD
-from archey.logos.gentoo import GENTOO
-from archey.logos.kali_linux import KALI_LINUX
-from archey.logos.manjaro import MANJARO
-from archey.logos.nixos import NIXOS
-from archey.logos.linux import LINUX
-from archey.logos.linux_mint import LINUX_MINT
-from archey.logos.pop import POP
-from archey.logos.openbsd import OPENBSD
-from archey.logos.opensuse import OPENSUSE
-from archey.logos.raspbian import RASPBIAN
-from archey.logos.red_hat import RED_HAT
-from archey.logos.slackware import SLACKWARE
-from archey.logos.ubuntu import UBUNTU
-from archey.logos.windows import WINDOWS
+from importlib import import_module
+from types import ModuleType
+from typing import List
 
 
-def get_logo_width(logo, nb_colors=8):
+def lazy_load_logo_module(logo_name: str) -> ModuleType:
+    """
+    Utility function returning a logo (as a Python module) lazily-loaded.
+    It allows us to only load to RAM the distribution logo object that will actually be used.
+    """
+    return import_module(__name__ + '.' + logo_name)
+
+
+def get_logo_width(logo: List[str], nb_colors: int = 8) -> int:
     """
     Utility function computing the real width of a distribution logo.
     Rationale : We use placeholders to dynamically set ANSI colors.

@@ -6,10 +6,10 @@ from unittest.mock import MagicMock, patch
 from socket import timeout as SocketTimeoutError
 from subprocess import TimeoutExpired
 
-from archey.test import CustomAssertions
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.wan_ip import WanIP
+from archey.test import CustomAssertions
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 @patch(

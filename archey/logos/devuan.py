@@ -1,6 +1,11 @@
 """Devuan logo"""
 
-DEVUAN = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.MAGENTA_BRIGHT]
+
+LOGO = [
     """{c[0]}  ..,,.                              """,
     """{c[0]}      .',;:cc;.                      """,
     """{c[0]}             .,lxkkl;.               """,

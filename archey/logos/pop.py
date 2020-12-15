@@ -1,7 +1,12 @@
 """Pop!_OS logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [Colors.CYAN_BRIGHT, Colors.WHITE_BRIGHT]
+
 # pylint: disable=line-too-long
-POP = [
+LOGO = [
     """ {c[0]}             /////////////              """,
     """ {c[0]}         /////////////////////          """,
     """ {c[0]}      ///////{c[1]}*767{c[0]}////////////////       """,

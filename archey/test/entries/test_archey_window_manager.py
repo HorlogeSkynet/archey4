@@ -3,9 +3,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.window_manager import WindowManager
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 class TestWindowManagerEntry(unittest.TestCase):

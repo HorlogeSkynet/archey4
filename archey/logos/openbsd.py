@@ -1,6 +1,11 @@
 """OpenBSD logo"""
 
-OPENBSD = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.YELLOW_BRIGHT, Colors.WHITE_BRIGHT]
+
+LOGO = [
     """{c[0]}                     /\\  __ /\\              """,
     """{c[0]}              ___.;;'````  ``';; ___        """,
     """{c[0]}             `\\.;` /\\     /\\    `;./        """,

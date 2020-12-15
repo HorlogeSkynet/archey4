@@ -1,6 +1,11 @@
 """Alpine Linux logo"""
 
-ALPINE_LINUX = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.BLUE_BRIGHT]
+
+LOGO = [
     """{c[0]}        .hddddddddddddddddddddddh.          """,
     """{c[0]}       :dddddddddddddddddddddddddd:         """,
     """{c[0]}      /dddddddddddddddddddddddddddd/        """,

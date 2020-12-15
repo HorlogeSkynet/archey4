@@ -13,11 +13,10 @@ from typing import Type
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
-from archey.constants import COLORS_DICT, LOGOS_DICT
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
-from archey.logos import get_logo_width
+from archey.logos import get_logo_width, lazy_load_logo_module
 
 
 class Output:
@@ -36,15 +35,15 @@ class Output:
             # If not (or unknown), run distribution detection.
             self._distribution = Distributions.run_detection()
 
-        # Fetch the colors palette related to this distribution.
-        self._colors_palette = COLORS_DICT[self._distribution]
+        # Retrieve distribution's logo module before copying and DRY-ing its attributes.
+        logo_module = lazy_load_logo_module(self._distribution.value)
+        self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
         if ansi_color and Configuration().get('honor_ansi_color'):
             # Replace each Archey integrated colors by `ANSI_COLOR`.
-            self._colors_palette = len(self._colors_palette) * \
-                [Colors.escape_code_from_attrs(ansi_color)]
+            self._colors = len(self._colors) * [Colors.escape_code_from_attrs(ansi_color)]
 
         # Each entry will be added to this list
         self._entries = []
@@ -59,7 +58,7 @@ class Output:
         """Append a pre-formatted entry to the final output content"""
         self._results.append(
             '{color}{key}:{clear} {value}'.format(
-                color=self._colors_palette[0],
+                color=self._colors[0],
                 key=key,
                 clear=Colors.CLEAR,
                 value=value
@@ -83,7 +82,7 @@ class Output:
     def _output_json(self):
         """
         Finally outputs entries data to JSON format.
-        See `archey.api.JSONAPI` for further documentation.
+        See `archey.api` for further documentation.
         """
         print(
             API(self._entries).json_serialization(
@@ -96,19 +95,18 @@ class Output:
         Finally render the output entries.
         It handles text centering additionally to value and colors replacing.
         """
-        # Let's copy the logo (so we don't modify the constant!)
-        logo = LOGOS_DICT[self._distribution].copy()
-        logo_width = get_logo_width(logo, len(self._colors_palette))
+        # Compute the effective logo "width" from the loaded ASCII art.
+        logo_width = get_logo_width(self._logo, len(self._colors))
 
         # Let's center the entries and the logo (handles odd numbers)
-        height_diff = len(logo) - len(self._results)
+        height_diff = len(self._logo) - len(self._results)
         if height_diff >= 0:
             self._results[0:0] = [''] * (height_diff // 2)
-            self._results.extend([''] * (len(logo) - len(self._results)))
+            self._results.extend([''] * (len(self._logo) - len(self._results)))
         else:
-            colored_empty_line = [str(self._colors_palette[0]) + ' ' * logo_width]
-            logo[0:0] = colored_empty_line * (-height_diff // 2)
-            logo.extend(colored_empty_line * (len(self._results) - len(logo)))
+            colored_empty_line = [str(self._colors[0]) + ' ' * logo_width]
+            self._logo[0:0] = colored_empty_line * (-height_diff // 2)
+            self._logo.extend(colored_empty_line * (len(self._results) - len(self._logo)))
 
         text_wrapper = TextWrapper(
             width=(get_terminal_size().columns - logo_width),
@@ -151,13 +149,13 @@ class Output:
         # Merge entry results to the distribution logo.
         logo_with_entries = os.linesep.join([
             logo_part + entry_part
-            for logo_part, entry_part in zip(logo, self._results)
+            for logo_part, entry_part in zip(self._logo, self._results)
         ])
 
         try:
             print(
                 logo_with_entries.format(
-                    c=self._colors_palette
+                    c=self._colors
                 ) + str(Colors.CLEAR)
             )
         except UnicodeError:

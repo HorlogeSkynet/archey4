@@ -1,6 +1,11 @@
 """Kali Linux logo"""
 
-KALI_LINUX = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.BLUE_BRIGHT, Colors.WHITE_BRIGHT]
+
+LOGO = [
     """{c[0]}      ,.....                                        """,
     """{c[0]}  ----`     `..,;:ccc,.                             """,
     """{c[0]}           ......''';lxO.                           """,

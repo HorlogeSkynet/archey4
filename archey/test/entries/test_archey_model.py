@@ -5,9 +5,9 @@ from subprocess import CalledProcessError
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.model import Model
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 class TestModelEntry(unittest.TestCase):

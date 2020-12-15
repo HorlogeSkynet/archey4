@@ -139,7 +139,7 @@ class TestDistributionsUtil(unittest.TestCase):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (second candidate)"""
         self.assertEqual(
             Distributions.run_detection(),
-            Distributions.ARCH_LINUX
+            Distributions.ARCH
         )
 
     @patch(

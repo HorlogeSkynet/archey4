@@ -3,10 +3,10 @@
 import unittest
 from unittest.mock import MagicMock, call, mock_open, patch
 
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.cpu import CPU
 from archey.test import CustomAssertions
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 class TestCPUEntry(unittest.TestCase, CustomAssertions):

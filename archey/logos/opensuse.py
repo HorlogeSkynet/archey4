@@ -1,7 +1,12 @@
 """openSUSE logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [Colors.GREEN_NORMAL, Colors.WHITE_BRIGHT]
+
 # pylint: disable=line-too-long
-OPENSUSE = [
+LOGO = [
     """{c[0]}            {c[1]}.;ldkO0000Okdl;.{c[0]}              """,
     """{c[0]}        {c[1]}.;d00xl:^''''''^:ok00d;.{c[0]}          """,
     """{c[0]}      {c[1]}.d00l'{c[0]}                {c[1]}'o00d.{c[0]}        """,

@@ -1,6 +1,11 @@
 """Raspbian logo"""
 
-RASPBIAN = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.RED_BRIGHT, Colors.GREEN_NORMAL]
+
+LOGO = [
     """{c[0]}   {c[1]}.',;:cc;,'.{c[0]}    {c[1]}.,;::c:,,.{c[0]}    """,
     """{c[0]}  {c[1]},ooolcloooo:{c[0]}  {c[1]}'oooooccloo:{c[0]}    """,
     """{c[0]}  {c[1]}.looooc;;:ol{c[0]}  {c[1]}:oc;;:ooooo'{c[0]}    """,

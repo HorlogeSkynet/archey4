@@ -6,13 +6,26 @@ import json
 import os
 import sys
 
-from archey.constants import DEFAULT_CONFIG
 from archey.singleton import Singleton
+
+
+# Below are default required configuration keys which will be used.
+DEFAULT_CONFIG = {
+    'allow_overriding': True,
+    'parallel_loading': True,
+    'suppress_warnings': False,
+    'honor_ansi_color': True,
+    'default_strings': {
+        'no_address': 'No Address',
+        'not_detected': 'Not detected',
+        'virtual_environment': 'Virtual Environment'
+    }
+}
 
 
 class Configuration(metaclass=Singleton):
     """
-    Values present in `archey.constants.DEFAULT_CONFIG` dictionary are required.
+    Values present in `DEFAULT_CONFIG` dictionary are required.
     New optional values may be added with `update_recursive` method.
 
     If a `config_path` is passed during instantiation, it will be loaded.

@@ -1,6 +1,11 @@
 """Android logo"""
 
-ANDROID = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.GREEN_BRIGHT, Colors.WHITE_BRIGHT]
+
+LOGO = [
     """{c[0]}          -o          o-            """,
     """{c[0]}           +hydNNNNdyh+             """,
     """{c[0]}         +mMMMMMMMMMMMMm+           """,

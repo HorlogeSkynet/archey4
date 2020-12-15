@@ -1,7 +1,12 @@
 """Fedora logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [Colors.BLUE_BRIGHT, Colors.BLUE_NORMAL, Colors.WHITE_BRIGHT]
+
 # pylint: disable=line-too-long
-FEDORA = [
+LOGO = [
     """{c[0]}              {c[1]}........{c[0]}                """,
     """{c[0]}          {c[1]}.::::::::::::::.{c[0]}            """,
     """{c[0]}       {c[1]}.::::::::::::::::::::.{c[0]}         """,

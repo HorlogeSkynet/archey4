@@ -1,7 +1,12 @@
 """Linux Mint logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [Colors.GREEN_BRIGHT, Colors.WHITE_BRIGHT]
+
 # pylint: disable=line-too-long
-LINUX_MINT = [
+LOGO = [
     """{c[0]} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        """,
     """{c[0]} MMm----::-://////////////oymNMd+`     """,
     """{c[0]} MMd      {c[1]}/++{c[0]}                -sNMd:    """,

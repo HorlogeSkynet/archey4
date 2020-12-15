@@ -1,6 +1,11 @@
 """Manjaro logo"""
 
-MANJARO = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.GREEN_BRIGHT]
+
+LOGO = [
     """{c[0]} $$$$$$$$$$$$$$$$  $$$$$$$   """,
     """{c[0]} M77777777777777M  M77777M   """,
     """{c[0]} M77777777777777M  M77777M   """,

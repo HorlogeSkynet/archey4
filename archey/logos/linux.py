@@ -1,6 +1,11 @@
 """Linux logo (tux)"""
 
-LINUX = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.WHITE_BRIGHT, Colors.YELLOW_BRIGHT]
+
+LOGO = [
     """{c[0]}          a8888b.          """,
     """{c[0]}         d888888b.         """,
     """{c[0]}         8P"YP"Y88         """,

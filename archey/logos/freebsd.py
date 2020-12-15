@@ -1,6 +1,11 @@
 """FreeBSD logo"""
 
-FREEBSD = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.RED_BRIGHT, Colors.RED_NORMAL]
+
+LOGO = [
     """{c[0]}  {c[1]}```{c[0]}                        {c[0]}`    """,
     """{c[0]} {c[1]}s`{c[0]} {c[1]}`.....---...{c[0]}....--.```   -/   """,
     """{c[0]} {c[1]}+o{c[0]}   {c[1]}.--`{c[0]}         /y:`      +.   """,

@@ -1,6 +1,11 @@
 """Crunchbang logo"""
 
-CRUNCHBANG = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.WHITE_BRIGHT]
+
+LOGO = [
     """{c[0]}                 ___       ___      _    """,
     """{c[0]}                /  /      /  /     | |   """,
     """{c[0]}               /  /      /  /      | |   """,

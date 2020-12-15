@@ -1,7 +1,12 @@
 """Ubuntu logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT]
+
 # pylint: disable=line-too-long
-UBUNTU = [
+LOGO = [
     """{c[0]}             ..vvAAAvv..               """,
     """{c[0]}        .:s/OOOOOOOOOOOOO\\s:.          """,
     """{c[0]}      .sOOOOOOOOOOOOOO{c[1]}.vv.{c[0]}OOOs.        """,

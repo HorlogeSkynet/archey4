@@ -4,9 +4,9 @@ import unittest
 from unittest.mock import mock_open, patch, MagicMock
 
 from archey.colors import Colors
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.ram import RAM
 from archey.test.entries import HelperMethods
-from archey.constants import DEFAULT_CONFIG
 
 
 class TestRAMEntry(unittest.TestCase):

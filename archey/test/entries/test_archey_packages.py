@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import DEFAULT as DEFAULT_SENTINEL, MagicMock, patch
 
-from archey.constants import DEFAULT_CONFIG
+from archey.configuration import DEFAULT_CONFIG
 from archey.test.entries import HelperMethods
 from archey.entries.packages import Packages
 

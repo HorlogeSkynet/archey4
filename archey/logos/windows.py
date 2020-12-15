@@ -1,6 +1,16 @@
 """Windows logo"""
 
-WINDOWS = [
+from archey.colors import Colors
+
+
+COLORS = [
+    Colors.BLUE_BRIGHT,
+    Colors.RED_BRIGHT,
+    Colors.GREEN_BRIGHT,
+    Colors.YELLOW_NORMAL
+]
+
+LOGO = [
     """{c[0]}         {c[1]},.=:!!t3Z3z.,{c[0]}                  """,
     """{c[0]}        {c[1]}.tt:::tt333EE3{c[0]} {c[2]},{c[0]}                """,
     """{c[0]}        {c[1]}Et:::ztt33EEE;{c[0]} {c[2]}@Ee.,{c[0]}      {c[2]}..,{c[0]}   """,

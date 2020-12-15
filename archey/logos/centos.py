@@ -1,7 +1,18 @@
 """CentOS logo"""
 
+from archey.colors import Colors
+
+
+COLORS = [
+    Colors.WHITE_BRIGHT,
+    Colors.YELLOW_NORMAL,
+    Colors.GREEN_BRIGHT,
+    Colors.BLUE_NORMAL,
+    Colors.MAGENTA_BRIGHT
+]
+
 # pylint: disable=line-too-long
-CENTOS = [
+LOGO = [
     """{c[0]}                  {c[1]}..{c[0]}                    """,
     """{c[0]}                {c[1]}.PLTJ.{c[0]}                  """,
     """{c[0]}               {c[1]}<><><><>{c[0]}                 """,

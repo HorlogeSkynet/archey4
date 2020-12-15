@@ -1,6 +1,11 @@
 """Elementary OS logo"""
 
-ELEMENTARY = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.WHITE_BRIGHT]
+
+LOGO = [
     """{c[0]}          eeeeeeeeeeeeeeeee          """,
     """{c[0]}       eeeeeeeeeeeeeeeeeeeeeee       """,
     """{c[0]}     eeeee  eeeeeeeeeeee   eeeee     """,

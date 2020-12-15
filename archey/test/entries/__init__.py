@@ -7,8 +7,7 @@ from typing import Callable
 import unittest
 from unittest.mock import MagicMock, patch
 
-from archey.configuration import Configuration
-from archey.constants import DEFAULT_CONFIG
+from archey.configuration import Configuration, DEFAULT_CONFIG
 from archey.entry import Entry
 
 

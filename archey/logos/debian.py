@@ -1,6 +1,11 @@
 """Debian logo"""
 
-DEBIAN = [
+from archey.colors import Colors
+
+
+COLORS = [Colors.RED_BRIGHT, Colors.RED_NORMAL]
+
+LOGO = [
     """{c[0]}          _sudZUZ#Z#XZo=_         """,
     """{c[0]}       _jmZZ2!!~---~!!X##wx       """,
     """{c[0]}    .<wdP~~            -!YZL,     """,
