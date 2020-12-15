@@ -35,7 +35,7 @@ NAME="$(python3 setup.py --name)"
 VERSION="$(python3 setup.py --version)"
 AUTHOR="$(python3 setup.py --author)"
 AUTHOR_EMAIL="$(python3 setup.py --author-email)"
-SUPPORTED_PYTHON_VERSIONS="$(python3 setup.py --classifiers | grep 'Programming Language' | grep -Po '\d\.\d')"
+SUPPORTED_PYTHON_VERSIONS="$(python3 setup.py --classifiers | grep 'Programming Language' | grep -Po '\d+\.\d+')"
 
 
 # DRY.
