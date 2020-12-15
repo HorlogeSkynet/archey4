@@ -132,7 +132,7 @@ done
 ## See <https://aur.archlinux.org/packages/archey4/>.
 ## -----------------------------------------------------------------------------------
 # # Build an Arch Linux (.TAR.XZ) package.
-# PYTHON_VERSION='3.8'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
+# PYTHON_VERSION='3.9'  # See <https://www.archlinux.org/packages/extra/x86_64/python/>.
 # echo "Now generating Arch Linux package (Python ${PYTHON_VERSION})..."
 # fpm \
 # 	"${FPM_COMMON_ARGS[@]}" \
