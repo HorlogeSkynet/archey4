@@ -19,20 +19,20 @@ class TestLogosModule(unittest.TestCase):
         This test also indirectly checks `lazy_load_logo_module` behavior!
         """
         for logo_module_info in pkgutil.iter_modules(logos.__path__):
-            logo_module = lazy_load_logo_module(logo_module_info.name)
+            # `iter_modules` yields `pkgutil.ModuleInfo` named tuple starting with Python 3.6.
+            # So we manually extract the module name from `(module_finder, name, ispkg)` tuple.
+            logo_module_name = logo_module_info[1]
+
+            logo_module = lazy_load_logo_module(logo_module_name)
 
             # Attributes checks.
             self.assertTrue(
                 getattr(logo_module, 'LOGO', []),
-                msg='[{0}] logo module missing `LOGO` attribute'.format(
-                    logo_module_info.name
-                )
+                msg='[{0}] logo module missing `LOGO` attribute'.format(logo_module_name)
             )
             self.assertTrue(
                 getattr(logo_module, 'COLORS', []),
-                msg='[{0}] logo module missing `COLORS` attribute'.format(
-                    logo_module_info.name
-                )
+                msg='[{0}] logo module missing `COLORS` attribute'.format(logo_module_name)
             )
 
             # Make Archey compute the logo width.
@@ -49,7 +49,7 @@ class TestLogosModule(unittest.TestCase):
                     line_width,
                     logo_width,
                     msg='[{0}] line index {1}, got an unexpected width {2} (expected {3})'.format(
-                        logo_module_info.name, i, line_width, logo_width
+                        logo_module_name, i, line_width, logo_width
                     )
                 )
 
@@ -57,7 +57,7 @@ class TestLogosModule(unittest.TestCase):
                 self.assertTrue(
                     Colors.remove_colors(line).strip(),
                     msg='[{0}] line index {1}, got an useless empty line'.format(
-                        logo_module_info.name, i
+                        logo_module_name, i
                     )
                 )
 
