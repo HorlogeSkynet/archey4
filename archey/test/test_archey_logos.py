@@ -8,7 +8,7 @@ from archey import logos
 from archey.logos import get_logo_width, lazy_load_logo_module
 
 
-class TestLogosModule(unittest.TestCase):
+class TestLogos(unittest.TestCase):
     """Simple tests checking logos consistency and utility function logic"""
     def test_distribution_logos_consistency(self):
         """

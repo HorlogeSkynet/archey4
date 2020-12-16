@@ -9,7 +9,7 @@ from unittest.mock import Mock
 from archey.api import API
 
 
-class TestApiUtil(unittest.TestCase):
+class TestApi(unittest.TestCase):
     """
     Simple test cases to check `API` formatting behaviors.
     """
@@ -79,19 +79,4 @@ class TestApiUtil(unittest.TestCase):
         self.assertEqual(
             output_json_document['meta']['count'],
             4
-        )
-
-    def test_version_to_semver_segments(self):
-        """Check `_version_to_semver_segments` implementation behavior"""
-        self.assertTupleEqual(
-            API._version_to_semver_segments('v1.2.3'),  # pylint: disable=protected-access
-            (1, 2, 3)
-        )
-        self.assertTupleEqual(
-            API._version_to_semver_segments('1.2.3.4-beta5'),  # pylint: disable=protected-access
-            (1, 2, 3, 4)
-        )
-        self.assertTupleEqual(
-            API._version_to_semver_segments('1'),  # pylint: disable=protected-access
-            (1,)
         )

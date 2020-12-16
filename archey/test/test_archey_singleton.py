@@ -21,7 +21,7 @@ class _SimpleCounter(metaclass=Singleton):
         return self._counter
 
 
-class TestSingletonUtil(unittest.TestCase):
+class TestSingleton(unittest.TestCase):
     """Test cases for our `Singleton` meta-class"""
     def test_singleton_itself(self):
         """Verifies `Singleton` hierarchy"""
