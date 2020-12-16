@@ -49,7 +49,9 @@ class Kernel(Entry):
             return None
 
         try:
-            kernel_releases = json.load(http_request)
+            # `json.load` does not accept binary file before Python 3.6.
+            # We have to manually read and decode the HTTP body before passing it to `json`.
+            kernel_releases = json.loads(http_request.read().decode())
         except json.JSONDecodeError:
             return None
 
