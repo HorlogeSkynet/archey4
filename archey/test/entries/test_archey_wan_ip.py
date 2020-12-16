@@ -1,7 +1,7 @@
 """Test module for Archey's public IP address detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from socket import timeout as SocketTimeoutError
 from subprocess import TimeoutExpired
@@ -13,8 +13,8 @@ from archey.test.entries import HelperMethods
 
 
 @patch(
-    'archey.entries.wan_ip.DO_NOT_TRACK',
-    False  # By default, entry won't be disabled.
+    'archey.entries.wan_ip.Environment',
+    Mock(DO_NOT_TRACK=False)  # By default, entry won't be disabled.
 )
 class TestWanIPEntry(unittest.TestCase, CustomAssertions):
     """
@@ -117,7 +117,7 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
 
     def test_do_not_track(self):
         """Check whether `DO_NOT_TRACK` environment variable is correctly honored"""
-        with patch('archey.entries.wan_ip.DO_NOT_TRACK', True):
+        with patch('archey.entries.wan_ip.Environment', Mock(DO_NOT_TRACK=True)):
             self.wan_ip_mock.value = []
 
             WanIP.output(self.wan_ip_mock, self.output_mock)

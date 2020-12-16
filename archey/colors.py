@@ -3,16 +3,13 @@
 from bisect import bisect
 from enum import Enum
 
-import os
 import re
+
+from archey.environment import Environment
 
 
 # REGEXP compiled pattern matching ANSI/ECMA-48 color escape codes.
 ANSI_ECMA_REGEXP = re.compile(r'\x1b\[\d+(?:(?:;\d+)+)?m')
-
-# Let's honor `NO_COLOR` if set.
-# See <https://no-color.org/>.
-NO_COLOR = ('NO_COLOR' in os.environ)
 
 
 class Colors(Enum):
@@ -48,7 +45,7 @@ class Colors(Enum):
         """
         Build and return an ANSI/ECMA-48 escape code string from passed display attributes.
         """
-        if NO_COLOR:
+        if Environment.NO_COLOR:
             return ''
 
         return '\x1b[{}m'.format(display_attrs)

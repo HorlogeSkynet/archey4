@@ -1,7 +1,5 @@
 """Public IP address detection class"""
 
-import os
-
 from socket import timeout as SocketTimeoutError
 from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
 from typing import Optional
@@ -9,11 +7,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from archey.entry import Entry
-
-
-# Let's honor `DO_NOT_TRACK` if set.
-# See <https://consoledonottrack.com/>.
-DO_NOT_TRACK = (os.getenv('DO_NOT_TRACK') == '1')
+from archey.environment import Environment
 
 
 class WanIP(Entry):
@@ -23,7 +17,7 @@ class WanIP(Entry):
 
         self.value = []
 
-        if DO_NOT_TRACK:
+        if Environment.DO_NOT_TRACK:
             return
 
         ipv4_addr = self._retrieve_ip_address(4)
@@ -115,7 +109,7 @@ class WanIP(Entry):
         # If not, fall-back on the "No address" string.
         if self.value:
             text_output = ', '.join(self.value)
-        elif not DO_NOT_TRACK:
+        elif not Environment.DO_NOT_TRACK:
             text_output = self._default_strings.get('no_address')
         else:
             text_output = self._default_strings.get('not_detected')

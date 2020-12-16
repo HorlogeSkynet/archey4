@@ -11,8 +11,8 @@ from archey.distributions import Distributions
 
 
 @patch(
-    'archey.colors.NO_COLOR',
-    False  # By default, colors won't be disabled.
+    'archey.colors.Environment',
+    Mock(NO_COLOR=False)  # By default, colors won't be disabled.
 )
 class TestOutputUtil(unittest.TestCase):
     """

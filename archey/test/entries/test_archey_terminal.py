@@ -1,7 +1,7 @@
 """Test module for Archey's terminal detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.terminal import Terminal
@@ -9,8 +9,8 @@ from archey.test.entries import HelperMethods
 
 
 @patch(
-    'archey.entries.terminal.NO_COLOR',
-    False  # By default, colors won't be disabled.
+    'archey.entries.terminal.Environment',
+    Mock(NO_COLOR=False)  # By default, colors won't be disabled.
 )
 class TestTerminalEntry(unittest.TestCase):
     """
@@ -106,10 +106,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_no_color(self):
         """Test `Terminal` output behavior when `NO_COLOR` is set (palette should be hidden)"""
-        with patch(
-                'archey.entries.terminal.NO_COLOR',
-                True  # Temporary disable color for this test.
-            ):
+        with patch('archey.entries.terminal.Environment', Mock(NO_COLOR=True)):
             terminal = Terminal()
 
             output_mock = MagicMock()

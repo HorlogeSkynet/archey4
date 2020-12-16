@@ -19,6 +19,7 @@ from archey._version import __version__
 from archey.output import Output
 from archey.configuration import Configuration
 from archey.distributions import Distributions
+from archey.environment import Environment
 from archey.entry import Entry
 from archey.processes import Processes
 from archey.screenshot import take_screenshot
@@ -108,10 +109,9 @@ def main():
     """Simple entry point"""
     args = args_parsing()
 
-    # `Processes` is a singleton, let's populate the internal list here.
+    # Populate our internal singletons once and for all.
     Processes()
-
-    # `Configuration` is a singleton, let's populate the internal object here.
+    Environment()
     configuration = Configuration(config_path=args.config_path)
 
     # From configuration, gather the entries user-configured.
