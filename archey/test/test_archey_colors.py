@@ -10,7 +10,7 @@ from archey.colors import ANSI_ECMA_REGEXP, Colors
     'archey.colors.Environment',
     Mock(NO_COLOR=False)  # By default, colors won't be disabled.
 )
-class TestColorsUtil(unittest.TestCase):
+class TestColors(unittest.TestCase):
     """Test cases for the `Colors` (enumeration / utility) class"""
     def test_constant_values(self):
         """Test enumeration member instantiation from value"""

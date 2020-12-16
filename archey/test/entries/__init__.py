@@ -9,12 +9,12 @@ from unittest.mock import MagicMock, patch
 
 from archey.configuration import Configuration, DEFAULT_CONFIG
 from archey.entry import Entry
+from archey.utility import Utility
 
 
 class HelperMethods:
     """
     This class contains helper methods we commonly use in our entry unit tests.
-    We kindly borrow `update_recursive` class method from `Configuration` to DRY its implementation.
     """
     @staticmethod
     def entry_mock(entry, options: dict = None, configuration: dict = None) -> MagicMock:
@@ -41,7 +41,7 @@ class HelperMethods:
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
         default_configuration = deepcopy(DEFAULT_CONFIG)
         # Then, let's merge in `configuration` recursively.
-        Configuration.update_recursive(default_configuration, (configuration or {}))
+        Utility.update_recursive(default_configuration, (configuration or {}))
         # Finally, replaces the internal (and private!) `_default_strings` attribute by...
         # ... the corresponding object from configuration.
         setattr(instance_mock, '_default_strings', default_configuration.get('default_strings'))
@@ -62,7 +62,7 @@ class HelperMethods:
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
         entry_configuration = deepcopy(DEFAULT_CONFIG)
         # Then, let's merge in `configuration` recursively.
-        Configuration.update_recursive(entry_configuration, (configuration or {}))
+        Utility.update_recursive(entry_configuration, (configuration or {}))
 
         def decorator_patch_clean_configuration(method: Callable) -> Callable:
             @wraps(method)

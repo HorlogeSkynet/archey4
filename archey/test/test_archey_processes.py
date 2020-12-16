@@ -12,7 +12,7 @@ from archey.processes import Processes
     'archey.singleton.Singleton._instances',
     clear=True
 )
-class TestProcessesUtil(unittest.TestCase):
+class TestProcesses(unittest.TestCase):
     """
     Test cases for the `Processes` (singleton) class.
     To work around the singleton, we reset the internal `_instances` dictionary.

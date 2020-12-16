@@ -6,7 +6,7 @@ from unittest.mock import patch
 from archey.distributions import Distributions
 
 
-class TestDistributionsUtil(unittest.TestCase):
+class TestDistributions(unittest.TestCase):
     """
     Test cases for the `Distributions` (enumeration / utility) class.
     """

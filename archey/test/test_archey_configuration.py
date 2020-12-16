@@ -15,7 +15,7 @@ from archey.configuration import Configuration
     'archey.singleton.Singleton._instances',
     clear=True
 )
-class TestConfigurationUtil(unittest.TestCase):
+class TestConfiguration(unittest.TestCase):
     """
     Simple test cases to check the behavior of `Configuration` singleton utility class.
     Values will be manually set in the tests below.
@@ -130,80 +130,6 @@ class TestConfigurationUtil(unittest.TestCase):
                     }
                 }
             )
-
-    def test_update_recursive(self):
-        """Test for the `update_recursive` class method"""
-        test_dict = {
-            'allow_overriding': True,
-            'suppress_warnings': False,
-            'default_strings': {
-                'no_address': 'No Address',
-                'not_detected': 'Not detected'
-            },
-            'colors_palette': {
-                'use_unicode': False
-            },
-            'ip_settings': {
-                'lan_ip_max_count': 2
-            },
-            'temperature': {
-                'use_fahrenheit': False
-            }
-        }
-
-        # We change existing values, add new ones, and omit some others.
-        Configuration.update_recursive(
-            test_dict,
-            {
-                'suppress_warnings': True,
-                'colors_palette': {
-                    'use_unicode': False
-                },
-                'default_strings': {
-                    'no_address': '\xde\xad \xbe\xef',
-                    'not_detected': 'Not detected',
-                    'virtual_environment': 'Virtual Environment'
-                },
-                'temperature': {
-                    'a_weird_new_dict': [
-                        None,
-                        'l33t',
-                        {
-                            'really': 'one_more_?'
-                        }
-                    ]
-                }
-            }
-        )
-
-        self.assertDictEqual(
-            test_dict,
-            {
-                'allow_overriding': True,
-                'suppress_warnings': True,
-                'colors_palette': {
-                    'use_unicode': False
-                },
-                'default_strings': {
-                    'no_address': '\xde\xad \xbe\xef',
-                    'not_detected': 'Not detected',
-                    'virtual_environment': 'Virtual Environment'
-                },
-                'ip_settings': {
-                    'lan_ip_max_count': 2
-                },
-                'temperature': {
-                    'use_fahrenheit': False,
-                    'a_weird_new_dict': [
-                        None,
-                        'l33t',
-                        {
-                            'really': 'one_more_?'
-                        }
-                    ]
-                }
-            }
-        )
 
     def test_instantiation_config_path(self):
         """Test for configuration loading from specific user-defined path"""

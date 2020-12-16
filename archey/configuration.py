@@ -7,6 +7,7 @@ import os
 import sys
 
 from archey.singleton import Singleton
+from archey.utility import Utility
 
 
 # Below are default required configuration keys which will be used.
@@ -26,7 +27,7 @@ DEFAULT_CONFIG = {
 class Configuration(metaclass=Singleton):
     """
     Values present in `DEFAULT_CONFIG` dictionary are required.
-    New optional values may be added with `update_recursive` method.
+    New optional values may be added with `Utility.update_recursive` method.
 
     If a `config_path` is passed during instantiation, it will be loaded.
     """
@@ -68,7 +69,7 @@ class Configuration(metaclass=Singleton):
 
         try:
             with open(path) as f_config:
-                self.update_recursive(self._config, json.load(f_config))
+                Utility.update_recursive(self._config, json.load(f_config))
         except FileNotFoundError:
             return
         except json.JSONDecodeError as json_decode_error:
@@ -82,20 +83,6 @@ class Configuration(metaclass=Singleton):
                 sys.stderr = open(os.devnull, 'w')
         else:
             self._close_and_restore_sys_stderr()
-
-    @classmethod
-    def update_recursive(cls, old_dict: dict, new_dict: dict):
-        """
-        A method for recursively merging dictionaries as `dict.update()` is not able to do this.
-        Original snippet taken from here : <https://gist.github.com/angstwad/bf22d1822c38a92ec0a9>
-        """
-        for key, value in new_dict.items():
-            if key in old_dict \
-                and isinstance(old_dict[key], dict) \
-                and isinstance(value, dict):
-                cls.update_recursive(old_dict[key], value)
-            else:
-                old_dict[key] = value
 
     def _close_and_restore_sys_stderr(self):
         """If modified, close current and restore `sys.stderr` to its original file descriptor"""

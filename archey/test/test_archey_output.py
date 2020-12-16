@@ -14,7 +14,7 @@ from archey.distributions import Distributions
     'archey.colors.Environment',
     Mock(NO_COLOR=False)  # By default, colors won't be disabled.
 )
-class TestOutputUtil(unittest.TestCase):
+class TestOutput(unittest.TestCase):
     """
     Simple test cases to check the behavior of the `Output` class.
     """
