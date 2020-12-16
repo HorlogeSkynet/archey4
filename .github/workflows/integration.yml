@@ -59,12 +59,22 @@ jobs:
           python setup.py -q test
           python -m unittest
 
+      - name: Standalone building (with PEX)
+        run: |
+          pex \
+            -o dist/archey \
+            -m archey \
+            .
+          time ./dist/archey
+          rm dist/archey
+
       - name: Standalone building (with Stickytape)
         run: |
           stickytape \
             --copy-shebang \
             --add-python-path . \
             --output-file dist/archey \
+            --add-python-module archey.logos."$(python -c 'import distro; print(distro.id())')" \
             archey/__main__.py
           chmod +x dist/archey
           time ./dist/archey
@@ -80,16 +90,8 @@ jobs:
             --specpath dist \
             --name archey \
             --onefile archey/__main__.py \
+            --hidden-import archey.logos."$(python -c 'import distro; print(distro.id())')" \
             --log-level WARN
-          time ./dist/archey
-          rm dist/archey
-
-      - name: Standalone building (with PEX)
-        run: |
-          pex \
-            -o dist/archey \
-            -m archey \
-            .
           time ./dist/archey
           rm dist/archey
 

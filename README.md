@@ -134,13 +134,26 @@ cp config.json ~/.config/archey4/config.json
 > Project evolved, and now it's a proper module.  
 > Some procedures below walk you through several ways of building Archey as a standalone program.
 
+
 ```bash
+# Using PEX (recommended) :
+sudo pip3 install pex
+pex \
+	-o dist/archey \
+	-m archey \
+	.
+
+# Since v4.10 logos are dynamically imported for performance purposes.  
+# This means that we have to explicitly make Stickytape and PyInstaller include them.  
+# Please **replace** `debian` identifier below by yours (multiple flags allowed).
+
 # Using Stickytape :
 sudo pip3 install stickytape
 stickytape \
 	--copy-shebang \
 	--add-python-path . \
 	--output-file dist/archey \
+	--add-python-module archey.logos.debian \
 	archey/__main__.py
 chmod +x dist/archey
 
@@ -150,14 +163,9 @@ pyinstaller \
 	--distpath dist \
 	--specpath dist \
 	--name archey \
-	--onefile archey/__main__.py
-
-# Using PEX :
-sudo pip3 install pex
-pex \
-	-o dist/archey \
-	-m archey \
-	.
+	--onefile archey/__main__.py \
+	--hidden-import archey.logos.debian \
+	--log-level WARN
 ```
 
 Resulting program may now be installed system-wide.
