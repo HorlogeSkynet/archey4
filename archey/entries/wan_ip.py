@@ -93,10 +93,7 @@ class WanIP(Entry):
     def _run_http_request(server_url: str, timeout: float) -> Optional[str]:
         """Simple wrapper to `urllib` module to perform HTTP requests"""
         try:
-            http_request = urlopen(
-                server_url,
-                timeout=timeout
-            )
+            http_request = urlopen(server_url, timeout=timeout)
         except (HTTPError, URLError, SocketTimeoutError):
             return None
 
