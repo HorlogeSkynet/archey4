@@ -5,10 +5,10 @@ Interface to `os-release` (through `distro` module).
 """
 
 import os
+import platform
 import sys
 
 from enum import Enum
-from subprocess import check_output
 from typing import List, Optional
 
 import distro
@@ -96,7 +96,7 @@ class Distributions(Enum):
 
         # Is it a Windows Sub-system Linux (WSL) distribution ?
         # If so, kernel release identifier should keep a trace of it.
-        if b'microsoft' in check_output(['uname', '-r']).lower():
+        if 'microsoft' in platform.release().lower():
             return Distributions.WINDOWS
 
         # Is `ID` (from `os-release`) well-known and supported ?

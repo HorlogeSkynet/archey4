@@ -14,19 +14,18 @@ class TestKernelEntry(unittest.TestCase):
       that the output is correct.
     """
     @patch(
-        'archey.entries.kernel.check_output',
-        return_value="""\
-X.Y.Z-R-arch
-""")
+        'archey.entries.kernel.platform.release',
+        return_value='X.Y.Z-R-arch'
+    )
     def test_fetch_kernel_release(self, _):
         """Verify `check_output` mocking"""
         self.assertEqual(
-            Kernel._fetch_kernel_release(),  # pylint: disable=protected-access
+            Kernel().value['release'],
             'X.Y.Z-R-arch'
         )
 
     @patch('archey.entries.kernel.urlopen')
-    def test_fetch_latest_kernel_release(self, urlopen_mock):
+    def test_fetch_latest_linux_release(self, urlopen_mock):
         """Check proper JSON decoding and value gathering"""
         urlopen_mock.return_value.read.return_value = b"""\
 {
@@ -73,12 +72,12 @@ X.Y.Z-R-arch
     ]
 }"""
         self.assertEqual(
-            Kernel._fetch_latest_kernel_release(),  # pylint: disable=protected-access
+            Kernel._fetch_latest_linux_release(),  # pylint: disable=protected-access
             '5.10.1'
         )
 
     @patch(
-        'archey.entries.kernel.Kernel._fetch_kernel_release',
+        'archey.entries.kernel.platform.release',
         return_value='X.Y.Z-R-arch'
     )
     @patch(
@@ -97,7 +96,7 @@ X.Y.Z-R-arch
         self.assertIsNone(kernel.value['is_outdated'])
 
     @patch(
-        'archey.entries.kernel.Kernel._fetch_kernel_release',
+        'archey.entries.kernel.platform.release',
         return_value='X.Y.Z-R-arch'
     )
     @patch(
@@ -112,11 +111,11 @@ X.Y.Z-R-arch
         self.assertIsNone(kernel.value['is_outdated'])
 
     @patch(
-        'archey.entries.kernel.Kernel._fetch_kernel_release',
+        'archey.entries.kernel.platform.release',
         return_value='1.2.3-4-arch'
     )
     @patch(
-        'archey.entries.kernel.Kernel._fetch_latest_kernel_release',
+        'archey.entries.kernel.Kernel._fetch_latest_linux_release',
         side_effect=[
             '1.2.3',
             '1.3.2'

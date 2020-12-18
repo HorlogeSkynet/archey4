@@ -15,7 +15,7 @@ class TestDistroEntry(unittest.TestCase):
         return_value='NAME VERSION (CODENAME)'
     )
     @patch(
-        'archey.entries.distro.Distro._fetch_architecture',
+        'archey.entries.distro.platform.machine',
         return_value='ARCHITECTURE'
     )
     def test_init(self, _, __):
@@ -26,17 +26,6 @@ class TestDistroEntry(unittest.TestCase):
                 'name': 'NAME VERSION (CODENAME)',
                 'arch': 'ARCHITECTURE'
             }
-        )
-
-    @patch(
-        'archey.entries.distro.check_output',
-        return_value='x86_64\n'  # Imitate `uname` output on AMD64.
-    )
-    def test_fetch_architecture(self, _):
-        """Test `_fetch_architecture` static method"""
-        self.assertEqual(
-            Distro._fetch_architecture(),  # pylint: disable=protected-access
-            'x86_64'
         )
 
     @patch(
@@ -55,7 +44,7 @@ class TestDistroEntry(unittest.TestCase):
         return_value=None  # Soft-failing : No _pretty_ distribution name found...
     )
     @patch(
-        'archey.entries.distro.Distro._fetch_architecture',
+        'archey.entries.distro.platform.machine',
         return_value='ARCHITECTURE'
     )
     @patch(

@@ -1,22 +1,20 @@
-"""Host name detection class"""
+"""Host-name detection class"""
 
-from subprocess import check_output
+import platform
+
 from typing import Optional
 
 from archey.entry import Entry
 
 
 class Hostname(Entry):
-    """Simple call to `uname` to retrieve the host name"""
+    """Read system file with fallback on `platform` module to retrieve the system host-name"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.value = self._read_etc_hostname()
         if not self.value:
-            self.value = check_output(
-                ['uname', '-n'],
-                universal_newlines=True
-            ).rstrip()
+            self.value = platform.node()
 
     @staticmethod
     def _read_etc_hostname() -> Optional[str]:

@@ -1,5 +1,7 @@
 """Distribution and architecture detection class"""
 
+import platform
+
 from subprocess import check_output
 from typing import Optional
 
@@ -8,7 +10,7 @@ from archey.entry import Entry
 
 
 class Distro(Entry):
-    """Uses `distro` module and `uname` system program to format `${DISTRO} [${ARCH}]` string"""
+    """Uses `distro` and `platform` modules to retrieve distribution and architecture information"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -18,16 +20,8 @@ class Distro(Entry):
 
         self.value = {
             'name': distro_name,
-            'arch': self._fetch_architecture()
+            'arch': platform.machine()
         }
-
-    @staticmethod
-    def _fetch_architecture() -> str:
-        """Simple wrapper to `uname -m` returning the current system architecture"""
-        return check_output(
-            ['uname', '-m'],
-            universal_newlines=True
-        ).rstrip()
 
     @staticmethod
     def _fetch_android_release() -> Optional[str]:

@@ -7,7 +7,7 @@ from archey.entries.hostname import Hostname
 
 
 class TestHostnameEntry(unittest.TestCase):
-    """Test cases mocking `/etc/hostname` or `check_output` call to `hostname`"""
+    """Test cases mocking for `/etc/hostname` file and `platform.node` call"""
     @patch(
         'archey.entries.hostname.open',
         mock_open(
@@ -23,10 +23,9 @@ MY-COOL-LAPTOP
         side_effect=FileNotFoundError()
     )
     @patch(
-        'archey.entries.hostname.check_output',
-        return_value="""\
-MY-COOL-LAPTOP
-""")
+        'archey.entries.hostname.platform.node',
+        return_value='MY-COOL-LAPTOP'
+    )
     def test_hostname(self, _, __):
         """Mock call to `hostname`"""
         self.assertEqual(Hostname().value, 'MY-COOL-LAPTOP')

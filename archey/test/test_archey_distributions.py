@@ -36,8 +36,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-Microsoft\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-Microsoft'
     )
     def test_run_detection_windows_subsystem(self, _):
         """Test output for Windows Subsystem Linux"""
@@ -51,8 +51,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-ARCH\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-ARCH'
     )
     @patch(
         'archey.distributions.distro.id',
@@ -74,8 +74,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-ARCH\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-ARCH'
     )
     @patch(
         'archey.distributions.distro.id',
@@ -101,8 +101,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-ARCH\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-ARCH'
     )
     @patch(
         'archey.distributions.distro.id',
@@ -124,8 +124,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-ARCH\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-ARCH'
     )
     @patch(
         'archey.distributions.distro.id',
@@ -147,8 +147,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-ARCH\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-ARCH'
     )
     @patch(
         'archey.distributions.distro.id',
@@ -174,8 +174,8 @@ class TestDistributions(unittest.TestCase):
         'linux'
     )
     @patch(
-        'archey.distributions.check_output',
-        return_value=b'X.Y.Z-R-ARCH\n'
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z-R-ARCH'
     )
     @patch(
         'archey.distributions.distro.id',
