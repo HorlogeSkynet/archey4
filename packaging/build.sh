@@ -169,7 +169,7 @@ python3 setup.py -q sdist bdist_wheel
 
 # Check whether packages description will render correctly on PyPI.
 echo 'Now checking PyPI description rendering...'
-if twine check ./dist/*.{tar.gz,whl}; then
+if twine check ./dist/*.{tar.gz,whl} && test -n "$GPG_IDENTITY" ; then
 	echo -n 'Upload source and wheel distribution packages to PyPI ? [y/N] '
 	read -r -n 1 -p '' && echo
 	if [[ "$REPLY" =~ ^[yY]$ ]]; then
