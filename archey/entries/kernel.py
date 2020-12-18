@@ -1,6 +1,7 @@
 """Kernel information detection class"""
 
 import json
+import sys
 
 from socket import timeout as SocketTimeoutError
 from subprocess import check_output
@@ -24,7 +25,11 @@ class Kernel(Entry):
             'is_outdated': None
         }
 
-        if Environment.DO_NOT_TRACK or not self.options.get('check_version'):
+        # On GNU/Linux systems, if `check_version` has been enabled and `DO_NOT_TRACK` isn't set,
+        #  retrieve the latest Linux kernel release in order to compare the current one against it.
+        if not self.options.get('check_version') \
+            or sys.platform != 'linux' \
+            or Environment.DO_NOT_TRACK:
             return
 
         self.value['latest'] = self._fetch_latest_kernel_release()

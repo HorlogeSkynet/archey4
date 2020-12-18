@@ -82,6 +82,25 @@ X.Y.Z-R-arch
         return_value='X.Y.Z-R-arch'
     )
     @patch(
+        'archey.entries.kernel.sys.platform',
+        return_value='freebsd8'
+    )
+    @patch(
+        'archey.entries.kernel.Environment',
+        Mock(DO_NOT_TRACK=False)
+    )
+    def test_non_linux_platform(self, _, __):
+        """Check behavior on non-Linux platforms"""
+        kernel = Kernel(options={'check_version': True})
+
+        self.assertIsNone(kernel.value['latest'])
+        self.assertIsNone(kernel.value['is_outdated'])
+
+    @patch(
+        'archey.entries.kernel.Kernel._fetch_kernel_release',
+        return_value='X.Y.Z-R-arch'
+    )
+    @patch(
         'archey.entries.kernel.Environment',
         Mock(DO_NOT_TRACK=True)
     )
@@ -104,11 +123,15 @@ X.Y.Z-R-arch
         ]
     )
     @patch(
+        'archey.entries.kernel.sys.platform',
+        'linux'
+    )
+    @patch(
         'archey.entries.kernel.Environment',
         Mock(DO_NOT_TRACK=False)
     )
     @HelperMethods.patch_clean_configuration
-    def test_kernel_is_outdated(self, _, __):
+    def test_kernel_comparison(self, _, __):
         """Check kernel releases comparison and output templates"""
         output_mock = MagicMock()
 
