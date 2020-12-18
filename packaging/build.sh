@@ -40,6 +40,7 @@ SUPPORTED_PYTHON_VERSIONS="$(python3 setup.py --classifiers | grep 'Programming 
 
 # DRY.
 REVISION="${1:-1}"
+ARCHITECTURE='all'
 GPG_IDENTITY="${2:-}"
 DIST_OUTPUT='./dist'
 FPM_COMMON_ARGS=(
@@ -52,7 +53,7 @@ FPM_COMMON_ARGS=(
 	--provides 'archey4' \
 	--config-files "etc/archey4/" \
 	--config-files "etc/archey4/config.json" \
-	--architecture all \
+	--architecture "$ARCHITECTURE" \
 	--maintainer "${AUTHOR} <${AUTHOR_EMAIL}>" \
 	--after-install ./packaging/after_install \
 	--after-upgrade ./packaging/after_install \
@@ -90,7 +91,7 @@ echo 'Now generating Debian package...'
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type deb \
-	--package "${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_all.deb" \
+	--package "${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_${ARCHITECTURE}.deb" \
 	--depends 'procps' \
 	--depends 'python3 >= 3.5' \
 	--depends 'python3-distro' \
@@ -107,7 +108,7 @@ if [ -n "$GPG_IDENTITY" ]; then
 	debsigs \
 		--sign=origin \
 		-k "$GPG_IDENTITY" \
-		./dist/*.deb
+		"${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_${ARCHITECTURE}.deb"
 fi
 
 
@@ -169,13 +170,13 @@ python3 setup.py -q sdist bdist_wheel
 
 # Check whether packages description will render correctly on PyPI.
 echo 'Now checking PyPI description rendering...'
-if twine check ./dist/*.{tar.gz,whl} && test -n "$GPG_IDENTITY" ; then
+if twine check "${DIST_OUTPUT}/${NAME}-${VERSION}"*.{tar.gz,whl} && test -n "$GPG_IDENTITY" ; then
 	echo -n 'Upload source and wheel distribution packages to PyPI ? [y/N] '
 	read -r -n 1 -p '' && echo
 	if [[ "$REPLY" =~ ^[yY]$ ]]; then
 		echo 'Now signing & uploading source TAR and WHEEL to PyPI...'
 		twine upload \
 			--sign --identity "$GPG_IDENTITY" \
-			./dist/*.{tar.gz,whl}
+			"${DIST_OUTPUT}/${NAME}-${VERSION}"*.{tar.gz,whl}
 	fi
 fi
