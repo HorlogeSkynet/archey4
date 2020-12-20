@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-	<img alt="Archey4" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.7.0">
+	<img alt="Archey4" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.10.0">
 </p>
 
 ## Why (again) a f\*cking new Archey fork ?
