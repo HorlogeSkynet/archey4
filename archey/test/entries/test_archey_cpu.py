@@ -311,8 +311,7 @@ Model name:          CPU-MODEL-NAME
                         'CPU',
                         '2 x ANOTHER-CPU-MODEL'
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         output_mock.reset_mock()

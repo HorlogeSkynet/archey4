@@ -325,8 +325,7 @@ O \x1b[0;31mshort\x1b[0m
 O \x1b[0;31m\x1b[0m...\x1b[0m\
 """)
         # Check that `print` has been called only once.
-        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
-        self.assertEqual(print_mock.call_count, 1)
+        self.assertTrue(print_mock.assert_called_once)
 
     @patch('archey.output.Distributions.run_detection')
     @patch(

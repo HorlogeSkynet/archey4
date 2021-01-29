@@ -62,25 +62,16 @@ class TestDiskEntry(unittest.TestCase):
             }
         }
 
-        result_disk_dict = Disk._get_local_filesystems(self.disk_instance_mock)  # pylint: disable=protected-access
-        # Python < 3.6 doesn't guarantee dict ordering,
-        # so we can't know which `/dev/sda1` mount point was used.
-        self.assertEqual(
-            len(result_disk_dict),
-            2  # (/dev/sda1 is de-duplicated)
-        )
-        self.assertIn(
-            '/other/acceptable/device/paths',
-            result_disk_dict
-        )
-
-        # If we can now find `/dev/sda1`, then we logically must have the correct result.
-        self.assertTrue(
-            any(
-                disk_data['device_path'] == '/dev/sda1'
-                for disk_data in result_disk_dict.values()
-            ),
-            msg='`/dev/sda1` missing from results dict'
+        self.assertDictEqual(
+            Disk._get_local_filesystems(self.disk_instance_mock),  # pylint: disable=protected-access
+            {
+                '/very/good/mountpoint': {
+                    'device_path': '/dev/sda1'
+                },
+                '/other/acceptable/device/paths': {
+                    'device_path': '/dev/anything-really'
+                }
+            }
         )
 
     def test_disk_get_specified_filesystems(self):
@@ -257,8 +248,7 @@ class TestDiskEntry(unittest.TestCase):
                         'Disk',
                         '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         self.output_mock.reset_mock()
@@ -281,8 +271,7 @@ class TestDiskEntry(unittest.TestCase):
                         'Disk (/dev/my-cooler-disk)',
                         '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         self.output_mock.reset_mock()
@@ -306,8 +295,7 @@ class TestDiskEntry(unittest.TestCase):
                         '(second_mount_point)',
                         '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         self.output_mock.reset_mock()
@@ -332,8 +320,7 @@ class TestDiskEntry(unittest.TestCase):
                         'Disk',
                         '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
 

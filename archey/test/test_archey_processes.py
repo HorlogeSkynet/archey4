@@ -44,8 +44,7 @@ there
         self.assertEqual(processes_1.number, 8)
 
         # The class has been instantiated twice, but `check_output` has been called only once.
-        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
-        self.assertEqual(check_output_mock.call_count, 1)
+        self.assertTrue(check_output_mock.assert_called_once)
 
     @patch(
         'archey.processes.check_output',

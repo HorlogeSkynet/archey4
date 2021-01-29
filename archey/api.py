@@ -24,8 +24,6 @@ class API:
         """
         JSON serialization of entries.
         Set `indent` to the number of wanted output indentation tabs (2-space long).
-
-        Note: For Python < 3.6, the keys order is not guaranteed.
         """
         document = {
             'data': {
