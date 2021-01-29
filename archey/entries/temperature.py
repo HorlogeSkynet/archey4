@@ -1,10 +1,11 @@
 """Temperature detection class"""
 
 import json
+import logging
 import re
 
 from glob import iglob
-from subprocess import check_output, DEVNULL, CalledProcessError
+from subprocess import CalledProcessError, DEVNULL, PIPE, check_output, run
 from typing import List
 
 from archey.entry import Entry
@@ -53,17 +54,29 @@ class Temperature(Entry):
 
 
     def _run_sensors(self, whitelisted_chips: List[str]):
-        # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.
+        # Uses the `sensors` program (from lm-sensors) to interrogate thermal chip-sets.
         try:
-            sensors_output = check_output(
+            sensors_output = run(
                 ['sensors', '-A', '-j'] + whitelisted_chips,
-                universal_newlines=True
+                universal_newlines=True,
+                stdout=PIPE, stderr=PIPE,
+                check=True
             )
-        except (FileNotFoundError, CalledProcessError):
+        except FileNotFoundError:
+            error_message = None
             return
+        except CalledProcessError as called_process_error:
+            error_message = called_process_error.stderr
+            return
+        else:
+            error_message = sensors_output.stderr
+        finally:
+            # Log any `sensors` error messages at warning level.
+            if error_message:
+                logging.warning('[lm-sensors]: %s', error_message.rstrip())
 
         try:
-            sensors_data = json.loads(sensors_output)
+            sensors_data = json.loads(sensors_output.stdout)
         except json.JSONDecodeError:
             return
 
