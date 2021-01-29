@@ -150,7 +150,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertIs(kernel.value['is_outdated'], False)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '1.2.3-4-arch ({})'.format(DEFAULT_CONFIG['default_strings']['latest'])
+            f"1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})"
         )
 
         # Current < latest (outdated).
@@ -161,7 +161,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertIs(kernel.value['is_outdated'], True)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '1.2.3-4-arch (1.3.2 {})'.format(DEFAULT_CONFIG['default_strings']['available'])
+            f"1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})"
         )
 
 

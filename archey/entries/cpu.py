@@ -111,7 +111,7 @@ class CPU(Entry):
         for cpus in self.value:
             for model_name, cpu_count in cpus.items():
                 if cpu_count > 1 and self.options.get('show_cores', True):
-                    entries.append('{} x {}'.format(cpu_count, model_name))
+                    entries.append(f'{cpu_count} x {model_name}')
                 else:
                     entries.append(model_name)
 

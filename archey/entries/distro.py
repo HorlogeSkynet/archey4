@@ -34,14 +34,13 @@ class Distro(Entry):
         except FileNotFoundError:
             return None
 
-        return 'Android {0}'.format(release)
+        return f'Android {release}'
 
 
     def output(self, output):
         output.append(
             self.name,
-            '{0} [{1}]'.format(
-                (self.value['name'] or self._default_strings.get('not_detected')),
-                self.value['arch']
+            f"{{}} [{self.value['arch']}]".format(
+                self.value['name'] or self._default_strings.get('not_detected')
             )
         )

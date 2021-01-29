@@ -30,10 +30,7 @@ Swap:          4095          39        4056
         }).output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '{0}2043 MiB{1} / 15658 MiB'.format(
-                Colors.GREEN_NORMAL,
-                Colors.CLEAR
-            )
+            f'{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB'
         )
 
     @patch(
@@ -52,10 +49,7 @@ Swap:      7607        5    7602
         }).output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '{0}3341 MiB{1} / 7412 MiB'.format(
-                Colors.YELLOW_NORMAL,
-                Colors.CLEAR
-            )
+            f'{Colors.YELLOW_NORMAL}3341 MiB{Colors.CLEAR} / 7412 MiB'
         )
 
     @patch(
@@ -74,10 +68,7 @@ Swap:          4095         160        3935
         }).output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '{0}12341 MiB{1} / 15658 MiB'.format(
-                Colors.RED_NORMAL,
-                Colors.CLEAR
-            )
+            f'{Colors.RED_NORMAL}12341 MiB{Colors.CLEAR} / 15658 MiB'
         )
 
     @patch(

@@ -128,18 +128,9 @@ class Temperature(Entry):
         char_before_unit = self.value['char_before_unit']
         unit = self.value['unit']
 
-        entry_text = '{0}{1}{2}'.format(
-            self.value['temperature'],
-            char_before_unit,
-            unit
-        )
+        entry_text = f"{self.value['temperature']}{char_before_unit}{unit}"
         # When there are multiple input sources, show the hottest value.
         if len(self._temps) > 1:
-            entry_text = '{0} (Max. {1}{2}{3})'.format(
-                entry_text,
-                self.value['max_temperature'],
-                char_before_unit,
-                unit
-            )
+            entry_text += f" (Max. {self.value['max_temperature']}{char_before_unit}{unit})"
 
         output.append(self.name, entry_text)

@@ -70,9 +70,8 @@ class Model(Entry):
             return None
 
         # If we got there with some info, this _should_ be a virtual environment.
-        return '{0} ({1})'.format(
-            product_name or self._default_strings.get('virtual_environment'),
-            environment
+        return f"{{}} ({environment})".format(
+            product_name or self._default_strings.get('virtual_environment')
         )
 
     @staticmethod
@@ -97,7 +96,7 @@ class Model(Entry):
         if not product_version:
             return product_name
 
-        return "{} {}".format(product_name, product_version)
+        return f"{product_name} {product_version}"
 
     @staticmethod
     def _fetch_raspberry_pi_revision() -> Optional[str]:
@@ -113,10 +112,7 @@ class Model(Entry):
         revision = re.search(r'(?<=Revision\t: ).*', cpu_info)
         if hardware and revision:
             # ... let's set a pretty info string with these data
-            return 'Raspberry Pi {0} (Rev. {1})'.format(
-                hardware.group(0),
-                revision.group(0)
-            )
+            return f'Raspberry Pi {hardware.group(0)} (Rev. {revision.group(0)})'
 
         return None
 
@@ -135,4 +131,4 @@ class Model(Entry):
         except FileNotFoundError:
             return None
 
-        return '{0} ({1})'.format(brand, model)
+        return f'{brand} ({model})'

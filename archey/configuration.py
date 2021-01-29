@@ -75,7 +75,7 @@ class Configuration(metaclass=Singleton):
         except FileNotFoundError:
             return
         except json.JSONDecodeError as json_decode_error:
-            print('Warning: {0} ({1})'.format(json_decode_error, path), file=sys.stderr)
+            print(f'Warning: {json_decode_error} ({path})', file=sys.stderr)
             return
 
         # If the user does not want any warning to appear : 2> /dev/null

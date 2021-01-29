@@ -240,7 +240,7 @@ class TestUptimeEntry(unittest.TestCase):
                 self.assertEqual(
                     uptime_inst._parse_uptime_cmd(),  # pylint: disable=protected-access
                     expected_delta,
-                    msg='`uptime` output: "{0}"'.format(
+                    msg='`uptime` output: "{}"'.format(
                         uptime_output.format(
                             time=variations[0],
                             user_loadavg=variations[1]

@@ -56,14 +56,7 @@ class Output:
 
     def append(self, key: str, value):
         """Append a pre-formatted entry to the final output content"""
-        self._results.append(
-            '{color}{key}:{clear} {value}'.format(
-                color=self._colors[0],
-                key=key,
-                clear=Colors.CLEAR,
-                value=value
-            )
-        )
+        self._results.append(f'{self._colors[0]}{key}:{Colors.CLEAR} {value}')
 
     def output(self):
         """
@@ -153,11 +146,7 @@ class Output:
         ])
 
         try:
-            print(
-                logo_with_entries.format(
-                    c=self._colors
-                ) + str(Colors.CLEAR)
-            )
+            print(logo_with_entries.format(c=self._colors) + str(Colors.CLEAR))
         except UnicodeError:
             sys.exit(
                 """\

@@ -59,7 +59,7 @@ def take_screenshot(output_file: str = None):
     # This part purposefully blocks so we wait a little bit before taking the screenshot.
     # It prevents taking a screenshot before Archey's output has appeared.
     for time_remaining in range(3, 0, -1):
-        taking_sc_str = 'Taking screenshot in {:1d}...'.format(time_remaining)
+        taking_sc_str = f'Taking screenshot in {time_remaining:1d}...'
         print(taking_sc_str, end='', flush=True)
         time.sleep(1)
         print('\r' + ' ' * len(taking_sc_str), end='\r', flush=True)
@@ -74,9 +74,7 @@ def take_screenshot(output_file: str = None):
             except CalledProcessError as process_error:
                 defer_stack.callback(partial(
                     print,
-                    'Couldn\'t take a screenshot with {}: \"{}\".'.format(
-                        screenshot_tool, process_error
-                    ),
+                    f'Couldn\'t take a screenshot with {screenshot_tool}: \"{process_error}\".',
                     file=sys.stderr
                 ))
                 continue

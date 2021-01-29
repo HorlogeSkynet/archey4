@@ -71,15 +71,11 @@ class Terminal(Entry):
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
         # Archey >= v4.8.0, Unicode is enabled by default.
-        use_unicode = self.options.get('use_unicode', True)
+        character = ('\u2588' if self.options.get('use_unicode', True) else '#')
 
         return ' '.join([
-            '{normal}{character}{bright}{character}{clear}'.format(
-                normal=Colors((0, i)),
-                bright=Colors((1, i)),
-                character=('\u2588' if use_unicode else '#'),
-                clear=Colors.CLEAR
-            ) for i in range(37, 30, -1)
+            f"{Colors((0, i))}{character}{Colors((1, i))}{character}{Colors.CLEAR}"
+            for i in range(37, 30, -1)
         ])
 
     @staticmethod

@@ -149,7 +149,7 @@ class Disk(Entry):
 
             blocks /= 1024.0
 
-        return '{0:02.1f} {1}{2}'.format(blocks, unit, suffix)
+        return f'{blocks:02.1f} {unit}{suffix}'
 
 
     def output(self, output):
@@ -215,10 +215,8 @@ class Disk(Entry):
             else:
                 disk_label = None
 
-            pretty_filesystem_value = '{0}{1}{2} / {3}'.format(
-                level_color,
+            pretty_filesystem_value = f'{level_color}{{}}{Colors.CLEAR} / {{}}'.format(
                 self._blocks_to_human_readable(filesystem_data['used_blocks']),
-                Colors.CLEAR,
                 self._blocks_to_human_readable(filesystem_data['total_blocks'])
             )
 

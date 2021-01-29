@@ -39,7 +39,7 @@ class TestOutput(unittest.TestCase):
 
         self.assertListEqual(
             output._results,  # pylint: disable=protected-access
-            ['COLOR_0KEY:{clear} VALUE'.format(clear=Colors.CLEAR)]
+            [f'COLOR_0KEY:{Colors.CLEAR} VALUE']
         )
 
     @patch(

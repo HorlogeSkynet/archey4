@@ -135,9 +135,7 @@ def main():
             )
         except KeyError as key_error:
             print(
-                'Warning: One entry (misses or) uses an invalid `type` field ({}).'.format(
-                    key_error
-                ),
+                f'Warning: One entry (misses or) uses an invalid `type` field ({key_error}).',
                 file=sys.stderr
             )
             return None

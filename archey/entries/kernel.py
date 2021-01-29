@@ -62,11 +62,8 @@ class Kernel(Entry):
 
         if self.value['latest']:
             if self.value['is_outdated']:
-                text_output += ' ({} {})'.format(
-                    self.value['latest'],
-                    self._default_strings.get('available')
-                )
+                text_output += f" ({self.value['latest']} {self._default_strings.get('available')})"
             else:
-                text_output += ' ({})'.format(self._default_strings.get('latest'))
+                text_output += f" ({self._default_strings.get('latest')})"
 
         output.append(self.name, text_output)

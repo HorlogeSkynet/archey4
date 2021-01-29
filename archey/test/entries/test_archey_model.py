@@ -50,7 +50,7 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
-                DEFAULT_CONFIG['default_strings']['virtual_environment'] + ' (xen, xen-domU)'
+                f"{DEFAULT_CONFIG['default_strings']['virtual_environment']} (xen, xen-domU)"
             )
 
         with self.subTest('Virtual environment with systemd only.'):
@@ -63,7 +63,7 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
-                DEFAULT_CONFIG['default_strings']['virtual_environment'] + ' (systemd-nspawn)'
+                f"{DEFAULT_CONFIG['default_strings']['virtual_environment']} (systemd-nspawn)"
             )
 
         with self.subTest('Virtual environment with systemd and `dmidecode`.'):

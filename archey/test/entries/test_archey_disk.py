@@ -203,11 +203,7 @@ class TestDiskEntry(unittest.TestCase):
                 Disk.output(self.disk_instance_mock, self.output_mock)
                 self.output_mock.append.assert_called_with(
                     'Disk',
-                    '{color}{used} KiB{clear} / 100.0 KiB'.format(
-                        color=blocks_color_tuple[1],
-                        used=blocks_color_tuple[0],
-                        clear=Colors.CLEAR
-                    )
+                    f'{blocks_color_tuple[1]}{blocks_color_tuple[0]} KiB{Colors.CLEAR} / 100.0 KiB'
                 )
 
     def test_disk_multiline_output(self):
@@ -229,7 +225,7 @@ class TestDiskEntry(unittest.TestCase):
             Disk.output(self.disk_instance_mock, self.output_mock)
             self.output_mock.append.assert_called_once_with(
                 'Disk',
-                '{0}20.0 KiB{1} / 40.0 KiB'.format(Colors.YELLOW_NORMAL, Colors.CLEAR)
+                f'{Colors.YELLOW_NORMAL}20.0 KiB{Colors.CLEAR} / 40.0 KiB'
             )
 
         self.output_mock.reset_mock()
@@ -242,11 +238,11 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
                 ]
             )
@@ -265,11 +261,11 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk (/dev/my-cool-disk)',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         'Disk (/dev/my-cooler-disk)',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
                 ]
             )
@@ -289,11 +285,11 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         '(first_mount_point)',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         '(second_mount_point)',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
                 ]
             )
@@ -314,11 +310,11 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
                 ]
             )

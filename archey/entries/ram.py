@@ -109,11 +109,5 @@ class RAM(Entry):
 
         output.append(
             self.name,
-            '{0}{1} {unit}{2} / {3} {unit}'.format(
-                level_color,
-                int(used),
-                Colors.CLEAR,
-                int(total),
-                unit=unit
-            )
+            f'{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}'
         )
