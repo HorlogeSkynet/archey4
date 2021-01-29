@@ -46,14 +46,15 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ### Required packages
 
-* `python3` (>= 3.5)
+* `python3` (>= 3.6)
 * `python3-distro` (`python-distro` on Arch Linux)
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
 * `procps` (`procps-ng` on Arch Linux)
 
 > PyPy is supported and may replace CPython.
 
-> Looking for Python 3.4 support ? Please refer to the latest v4.9 release.
+> Looking for Python 3.4 support ? Please refer to the latest v4.9 release.  
+> Looking for Python 3.5 support ? Please refer to the latest v4.10 release.
 
 ### Highly recommended packages
 
