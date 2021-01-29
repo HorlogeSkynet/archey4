@@ -50,11 +50,7 @@ there
         'archey.processes.check_output',
         side_effect=FileNotFoundError()
     )
-    @patch(
-        'archey.processes.print',
-        return_value=None  # Let's nastily mute class' outputs.
-    )
-    def test_ps_not_available(self, _, __):
+    def test_ps_not_available(self, _):
         """Verifies that the program stops when `ps` is not available"""
         self.assertRaises(SystemExit, Processes)
 

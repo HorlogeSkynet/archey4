@@ -1,7 +1,11 @@
 """`archey.test` module initialization file"""
 
+import logging
 import unittest
 
+
+# Disable `WARNING` log level (internally used).
+logging.disable(logging.WARNING)
 
 # This global stops `unittest` from printing tracebacks _beyond_ our custom assertion.
 # See <https://stackoverflow.com/a/49929579>.

@@ -1,5 +1,6 @@
 """Simple module doing its best as taking a screenshot of the current screen"""
 
+import logging
 import os
 import sys
 import time
@@ -73,9 +74,8 @@ def take_screenshot(output_file: str = None):
                 continue
             except CalledProcessError as process_error:
                 defer_stack.callback(partial(
-                    print,
-                    f'Couldn\'t take a screenshot with {screenshot_tool}: \"{process_error}\".',
-                    file=sys.stderr
+                    logging.warning,
+                    'Couldn\'t take a screenshot with %s: \"%s\".', screenshot_tool, process_error
                 ))
                 continue
             break

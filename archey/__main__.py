@@ -7,8 +7,8 @@ Logos are stored under the `logos` module.
 """
 
 import argparse
+import logging
 import os
-import sys
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
@@ -109,6 +109,9 @@ def main():
     """Simple entry point"""
     args = args_parsing()
 
+    # Setup logging.
+    logging.basicConfig(format='%(levelname)s: %(message)s')
+
     # Populate our internal singletons once and for all.
     Processes()
     Environment()
@@ -134,9 +137,8 @@ def main():
                 options=entry                  # Remaining fields should be propagated as options.
             )
         except KeyError as key_error:
-            print(
-                f'Warning: One entry (misses or) uses an invalid `type` field ({key_error}).',
-                file=sys.stderr
+            logging.warning(
+                'One entry (misses or) uses an invalid `type` field (%s).', key_error
             )
             return None
 

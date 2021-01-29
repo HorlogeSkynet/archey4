@@ -3,8 +3,8 @@
 from copy import deepcopy
 
 import json
+import logging
 import os
-import sys
 
 from archey.singleton import Singleton
 from archey.utility import Utility
@@ -36,9 +36,6 @@ class Configuration(metaclass=Singleton):
     def __init__(self, config_path=None):
         # Deep-copy `DEFAULT_CONFIG` so we have a local copy to safely mutate.
         self._config = deepcopy(DEFAULT_CONFIG)
-
-        # Let's "save" `STDERR` file descriptor for `suppress_warnings` option
-        self._stderr = sys.stderr
 
         # If a `config_path` has been specified, (try to) load it directly.
         if config_path:
@@ -75,25 +72,13 @@ class Configuration(metaclass=Singleton):
         except FileNotFoundError:
             return
         except json.JSONDecodeError as json_decode_error:
-            print(f'Warning: {json_decode_error} ({path})', file=sys.stderr)
+            logging.error('%s (%s)', json_decode_error, path)
             return
 
-        # If the user does not want any warning to appear : 2> /dev/null
-        if self.get('suppress_warnings'):
-            # One more if statement to avoid multiple `open` calls.
-            if sys.stderr == self._stderr:
-                sys.stderr = open(os.devnull, 'w')
-        else:
-            self._close_and_restore_sys_stderr()
-
-    def _close_and_restore_sys_stderr(self):
-        """If modified, close current and restore `sys.stderr` to its original file descriptor"""
-        if sys.stderr != self._stderr:
-            sys.stderr.close()
-            sys.stderr = self._stderr
-
-    def __del__(self):
-        self._close_and_restore_sys_stderr()
+        # When `suppress_warnings` is set, higher the log level to silence warning messages.
+        logging.getLogger().setLevel(
+            logging.ERROR if self.get('suppress_warnings') else logging.WARN
+        )
 
     def __iter__(self):
         """When used as an iterator, directly yield `_config` elements"""

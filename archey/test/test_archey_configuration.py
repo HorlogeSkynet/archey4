@@ -1,7 +1,7 @@
 """Test module for `archey.configuration`"""
 
+import logging
 import os
-import sys
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
@@ -103,10 +103,10 @@ class TestConfiguration(unittest.TestCase):
                     }
                 }
             )
-            # The `stderr` file descriptor has changed due to the `suppress_warnings` option.
-            self.assertNotEqual(
-                configuration._stderr,  # pylint: disable=protected-access
-                sys.stderr
+            # The logging level has changed due to the `suppress_warnings` option being set.
+            self.assertEqual(
+                logging.getLogger().getEffectiveLevel(),
+                logging.ERROR
             )
 
             # Let's try to load the `config.json` file present in this project.
