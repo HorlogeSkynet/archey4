@@ -60,7 +60,7 @@ class CPU(Entry):
         model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)
         physical_ids = cls._PHYSICAL_ID_REGEXP.findall(cpu_info)
 
-        cpus_list = []  # type: List[Dict[str, int]]
+        cpus_list: List[Dict[str, int]] = []
 
         # Manually de-duplicates CPUs count.
         for model_name, physical_id in zip(model_names, physical_ids):

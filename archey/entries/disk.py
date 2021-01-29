@@ -18,7 +18,7 @@ class Disk(Entry):
         # Populate an output from `df`
         self._disk_dict = self._get_df_output_dict()
 
-        config_filesystems = self.options.get('show_filesystems', ['local'])  # type: List[str]
+        config_filesystems: List[str] = self.options.get('show_filesystems', ['local'])
         # See `Disk._get_df_output_dict` for the format we use in `self.value`.
         if config_filesystems == ['local']:
             self.value = self._get_local_filesystems()
@@ -43,7 +43,7 @@ class Disk(Entry):
         device_path_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
 
         # Build the dictionary
-        local_disk_dict = {}  # type: Dict[str, dict]
+        local_disk_dict: Dict[str, dict] = {}
         for mount_point, disk_data in self._disk_dict.items():
             if (
                     device_path_regexp.match(disk_data['device_path'])
