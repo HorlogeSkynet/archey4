@@ -104,18 +104,16 @@ class TestDiskEntry(unittest.TestCase):
             # pylint: enable=protected-access
 
         with self.subTest('Get only `/dev/sda1` filesystems.'):
-            result_disk_dict = Disk._get_specified_filesystems(  # pylint: disable=protected-access
-                self.disk_instance_mock,
-                ('/dev/sda1',)
-            )
-
-            # With Python < 3.6, dict ordering isn't guaranteed,
-            # so we don't know which disk will be selected.
-            self.assertEqual(len(result_disk_dict), 1)
-            # As long as `device_path` is also correct, this passes.
-            self.assertEqual(
-                result_disk_dict[list(result_disk_dict.keys())[0]]['device_path'],
-                '/dev/sda1'
+            self.assertDictEqual(
+                Disk._get_specified_filesystems(  # pylint: disable=protected-access
+                    self.disk_instance_mock,
+                    ('/dev/sda1',)
+                ),
+                {
+                    '/very/good/mountpoint': {
+                        'device_path': '/dev/sda1'
+                    }
+                }
             )
 
 
