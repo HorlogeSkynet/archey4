@@ -16,6 +16,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
+    {'cmd': ('ls', '-1', '/usr/local/Cellar/')},  # HomeBrew.
     {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
