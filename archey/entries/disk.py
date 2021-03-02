@@ -122,6 +122,10 @@ class Disk(Entry):
 
         df_output_dict = {}
         for df_entry in df_output.splitlines()[1:]:  # Discard the header row here.
+            # Don't crash against BSDs's autofs mount points.
+            if df_entry.startswith('map '):
+                continue
+
             columns = df_entry.split(maxsplit=5)
             df_output_dict[columns[5]] = {  # 6th column === mount point.
                 'device_path': columns[0],

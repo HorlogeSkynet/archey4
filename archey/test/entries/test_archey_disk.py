@@ -126,7 +126,8 @@ class TestDiskEntry(unittest.TestCase):
                 "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
                 "tmpfs                        8127236       292       8126944       1% /tmp",
                 "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
-                "/dev/sda1                       1624        42          1582       1% /what is  this",  # pylint: disable=line-too-long
+                "/dev/sda1                       1624        42          1582       1% /what is  this",             # pylint: disable=line-too-long
+                "map auto_home                      0         0             0     100% /System/Volumes/Data/home",  # pylint: disable=line-too-long
                 ""
             ])
             self.assertDictEqual(
