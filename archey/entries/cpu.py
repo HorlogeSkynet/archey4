@@ -80,7 +80,14 @@ class CPU(Entry):
     @classmethod
     def _parse_lscpu_output(cls) -> List[Dict[str, int]]:
         """Same operation but from `lscpu` output"""
-        cpu_info = check_output('lscpu', env={'LANG': 'C'}, universal_newlines=True)
+        try:
+            cpu_info = check_output(
+                'lscpu',
+                env={'LANG': 'C'},
+                universal_newlines=True
+            )
+        except FileNotFoundError:
+            return []
 
         nb_threads = cls._THREADS_PER_CORE_REGEXP.findall(cpu_info)
         nb_cores = cls._CORES_PER_SOCKET_REGEXP.findall(cpu_info)

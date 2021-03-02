@@ -317,7 +317,7 @@ Model name:          CPU-MODEL-NAME
         output_mock.reset_mock()
 
         with self.subTest('No CPU detected output.'):
-            cpu_instance_mock.value = {}
+            cpu_instance_mock.value = []
 
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
