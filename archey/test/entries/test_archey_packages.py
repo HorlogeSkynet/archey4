@@ -176,6 +176,32 @@ readline-8.0.4                 Library for editing command lines as they are typ
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
+The following ports are currently installed:
+  a52dec @0.7.4_0 (active)
+  adns @1.4_0 (active)
+  apache2 @2.2.27_0+preforkmpm (active)
+  apr @1.5.1_0 (active)
+  apr-util @1.5.3_0 (active)
+  aquaterm @1.1.1_0 (active)
+  asciidoc @8.6.9_1+python27 (active)
+  xz @5.0.5_0 (active)
+  yasm @1.2.0_0 (active)
+  ykpers @1.12.0_0 (active)
+  youtube-dl @2014.07.25.1_0+python27
+  yubico-c-client @2.12_0
+  yubico-pam @2.16_0
+  zlib @1.2.8_0 (active)
+"""
+    )
+    def test_match_with_macports(self, check_output_mock):
+        """Simple test for the MacPorts CLI client (`port`) package manager"""
+        check_output_mock.side_effect = self._check_output_side_effect('port')
+
+        self.assertEqual(Packages().value, 14)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        return_value="""\
 cdrecord-2.01-10.7.el5
 bluez-libs-3.7-1.1
 setarch-2.0-1.1

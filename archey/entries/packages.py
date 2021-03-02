@@ -21,6 +21,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
     {'cmd': ('pkg', '-N', 'info', '-a')},
+    {'cmd': ('port', 'installed'), 'skew': 1},
     {'cmd': ('rpm', '-qa')},
     {'cmd': ('ls', '-1', '/var/log/packages/')},  # SlackWare.
     {'cmd': ('yum', 'list', 'installed'), 'skew': 2},
@@ -55,7 +56,7 @@ class Packages(Entry):
             else:
                 self.value = results.count('\n')
 
-            # If any, deduct output skew present due to the packages tool.
+            # If any, deduct output skew present due to the packages tool itself.
             if 'skew' in packages_tool:
                 self.value -= packages_tool['skew']
 
