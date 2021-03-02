@@ -25,6 +25,7 @@ class Distributions(Enum):
     BUNSENLABS = 'bunsenlabs'
     CENTOS = 'centos'
     CRUNCHBANG = 'crunchbang'
+    DARWIN = 'darwin'
     DEBIAN = 'debian'
     DEVUAN = 'devuan'
     ELEMENTARY = 'elementary'
