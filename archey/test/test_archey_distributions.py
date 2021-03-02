@@ -212,6 +212,39 @@ class TestDistributions(unittest.TestCase):
         )
 
     @patch(
+        'archey.distributions.platform.system',
+        return_value='Darwin'  # Mostly used by our second run.
+    )
+    @patch(
+        'archey.distributions.platform.release',
+        return_value='X.Y.Z'
+    )
+    @patch(
+        'archey.distributions.distro.id',
+        side_effect=[
+            'darwin',  # First detection will succeed.
+            ''         # Second detection will fail.
+        ]
+    )
+    @patch(
+        'archey.distributions.distro.like',
+        return_value=''  # No `ID_LIKE` here.
+    )
+    def test_darwin_detection(self, _, __, ___, ____):
+        """Test OS detection for Darwin"""
+        # Detection based on `distro`.
+        self.assertEqual(
+            Distributions.run_detection(),
+            Distributions.DARWIN
+        )
+
+        # Detection based on `platform`.
+        self.assertEqual(
+            Distributions.run_detection(),
+            Distributions.DARWIN
+        )
+
+    @patch(
         'archey.distributions.distro.name',
         side_effect=[
             'Debian GNU/Linux 10 (buster)',

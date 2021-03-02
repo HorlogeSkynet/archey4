@@ -57,14 +57,19 @@ class Distributions(Enum):
         """Entry point of Archey distribution detection logic"""
         distribution = Distributions._detection_logic()
 
-        # In case nothing got detected the "regular" way, fall-back on the Linux logo.
+        # In case nothing got detected the "regular" way...
         if not distribution:
+            # Are we running on Darwin (somehow not previously detected by `distro`) ?
+            if platform.system() == 'Darwin':
+                return Distributions.DARWIN
+
             # Android systems are currently not being handled by `distro`.
             # We imitate Neofetch behavior to manually "detect" them.
             # See <https://github.com/nir0s/distro/issues/253>.
             if os.path.isdir('/system/app') and os.path.isdir('/system/priv-app'):
                 return Distributions.ANDROID
 
+            # If nothing of the above matched, fall-back on the Linux logo.
             return Distributions.LINUX
 
         # Below are brain-dead cases for distributions not properly handled by `distro`.
