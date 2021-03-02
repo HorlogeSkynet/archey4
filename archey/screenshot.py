@@ -2,6 +2,7 @@
 
 import logging
 import os
+import platform
 import sys
 import time
 
@@ -36,9 +37,9 @@ def take_screenshot(output_file: str = None):
     }
 
     # Extends the original screenshot tools dictionary according to current platform.
-    if sys.platform in ('win32', 'cygwin'):
+    if platform.system() == 'Windows':
         screenshot_tools['SnippingTool'] = ['SnippingTool.exe', '/clip']
-    elif sys.platform == 'darwin':
+    elif platform.system() == 'Darwin':
         screenshot_tools['ScreenCapture'] = [
             'screencapture',
             '-x',

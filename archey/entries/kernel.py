@@ -2,7 +2,6 @@
 
 import json
 import platform
-import sys
 
 from socket import timeout as SocketTimeoutError
 from urllib.error import HTTPError, URLError
@@ -31,7 +30,7 @@ class Kernel(Entry):
         # On GNU/Linux systems, if `check_version` has been enabled and `DO_NOT_TRACK` isn't set,
         #  retrieve the latest Linux kernel release in order to compare the current one against it.
         if not self.options.get('check_version') \
-            or sys.platform != 'linux' \
+            or platform.system() != 'Linux' \
             or Environment.DO_NOT_TRACK:
             return
 

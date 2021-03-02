@@ -81,8 +81,8 @@ class TestKernelEntry(unittest.TestCase):
         return_value='X.Y.Z-R-arch'
     )
     @patch(
-        'archey.entries.kernel.sys.platform',
-        return_value='freebsd8'
+        'archey.entries.kernel.platform.system',
+        return_value='Java'
     )
     @patch(
         'archey.entries.kernel.Environment',
@@ -122,15 +122,15 @@ class TestKernelEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.kernel.sys.platform',
-        'linux'
+        'archey.entries.kernel.platform.system',
+        return_value='Linux'
     )
     @patch(
         'archey.entries.kernel.Environment',
         Mock(DO_NOT_TRACK=False)
     )
     @HelperMethods.patch_clean_configuration
-    def test_kernel_comparison(self, _, __):
+    def test_kernel_comparison(self, _, __, ___):
         """Check kernel releases comparison and output templates"""
         output_mock = MagicMock()
 

@@ -6,7 +6,6 @@ Interface to `os-release` (through `distro` module).
 
 import os
 import platform
-import sys
 
 from enum import Enum
 from typing import List, Optional
@@ -91,7 +90,7 @@ class Distributions(Enum):
     def _detection_logic() -> Optional['Distributions']:
         """Main distribution detection logic, relying on `distro`, handling _common_ cases"""
         # Are we running on Windows ?
-        if sys.platform in ('win32', 'cygwin'):
+        if platform.system() == 'Windows':
             return Distributions.WINDOWS
 
         # Is it a Windows Sub-system Linux (WSL) distribution ?
