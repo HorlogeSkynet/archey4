@@ -18,3 +18,11 @@ class Environment(metaclass=Singleton):
 
     # See <https://consoledonottrack.com/>.
     DO_NOT_TRACK = (os.getenv('DO_NOT_TRACK') == '1')
+
+    def __init__(self):
+        # Makes future `platform.mac_ver` calls not being _trolled_ by Darwin's kernel
+        #   when opening `/System/Library/CoreServices/SystemVersion.plist` file.
+        # "Fortunately" for us, `platform` module does not cache these very results.
+        # See `platform._mac_ver_xml` function and
+        #   <https://eclecticlight.co/2020/08/13/macos-version-numbering-isnt-so-simple/>.
+        os.environ['SYSTEM_VERSION_COMPAT'] = '0'

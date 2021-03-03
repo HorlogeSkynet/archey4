@@ -40,6 +40,37 @@ class TestDistroEntry(unittest.TestCase):
         )
 
     @patch(
+        'archey.entries.distro.platform.system',
+        side_effect=[
+            'Darwin',
+            'Darwin',
+            ''
+        ]
+    )
+    @patch(
+        'archey.entries.distro.platform.mac_ver',
+        side_effect=[
+            ('', ('', '', ''), ''),                    # Darwin case.
+            ('11.1', ('foo', 'bar', 'baz'), 'x86_64')  # macOS case.
+        ]
+    )
+    @patch(
+        'archey.entries.distro.platform.release',
+        return_value='20.2.0'  # Darwin release.
+    )
+    def test_fetch_darwin_release(self, _, __, ___):
+        """Test `_fetch_darwin_release` static method"""
+        self.assertEqual(
+            Distro._fetch_darwin_release(),  # pylint: disable=protected-access
+            'Darwin 20.2.0'
+        )
+        self.assertEqual(
+            Distro._fetch_darwin_release(),  # pylint: disable=protected-access
+            'macOS 11.1'
+        )
+        self.assertIsNone(Distro._fetch_darwin_release())  # pylint: disable=protected-access
+
+    @patch(
         'archey.entries.distro.Distributions.get_distro_name',
         return_value=None  # Soft-failing : No _pretty_ distribution name found...
     )

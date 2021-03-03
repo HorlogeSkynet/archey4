@@ -14,9 +14,9 @@ class Distro(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        distro_name = Distributions.get_distro_name()
-        if not distro_name:
-            distro_name = self._fetch_android_release()
+        distro_name = Distributions.get_distro_name() or \
+            self._fetch_android_release() or \
+            self._fetch_darwin_release()
 
         self.value = {
             'name': distro_name,
@@ -36,6 +36,18 @@ class Distro(Entry):
 
         return f'Android {release}'
 
+    @staticmethod
+    def _fetch_darwin_release() -> Optional[str]:
+        """Simple method to fetch current release on Darwin systems"""
+        if platform.system() != 'Darwin':
+            return None
+
+        # For macOS, let's mimic Python's `platform.platform` internal behavior here.
+        macos_release = platform.mac_ver()[0]
+        if macos_release:
+            return f'macOS {macos_release}'
+
+        return f'Darwin {platform.release()}'
 
     def output(self, output):
         output.append(
