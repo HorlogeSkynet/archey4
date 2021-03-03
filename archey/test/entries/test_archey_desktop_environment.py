@@ -43,6 +43,14 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         self.assertEqual(DesktopEnvironment().value, 'DESKTOP ENVIRONMENT')
 
     @patch(
+        'archey.entries.desktop_environment.platform.system',
+        return_value='Darwin'
+    )
+    def test_darwin_aqua_deduction(self, _):
+        """Test "Aqua" deduction on Darwin systems"""
+        self.assertEqual(DesktopEnvironment().value, 'Aqua')
+
+    @patch(
         'archey.entries.desktop_environment.Processes.list',
         (  # Fake running processes list
             'do',
