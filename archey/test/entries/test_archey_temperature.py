@@ -8,152 +8,23 @@ from subprocess import CalledProcessError
 import unittest
 from unittest.mock import MagicMock, patch
 
-
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.temperature import Temperature
+from archey.test.entries import HelperMethods
+from archey.test import CustomAssertions
 
 
-class TestTemperatureEntry(unittest.TestCase):
+class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
     """
     Based on `sensors`, `vcgencmd` and thermal files, this module verifies temperature computations.
     """
-
     def setUp(self):
-        # We'll store there filenames of some temp files mocking those under
-        #  `/sys/class/thermal/thermal_zone*/temp`
-        self._temp_files = []
-        for temperature in [  # Fake temperatures
-                b'50000',
-                b'0',
-                b'40000',
-                b'50000'
-            ]:
-            file = tempfile.NamedTemporaryFile(delete=False)
-            file.write(temperature)
-            file.seek(0)
-            self._temp_files.append(file)
-
-    def tearDown(self):
-        for file in self._temp_files:
-            file.close()
-            os.remove(file.name)
-
-    @patch(
-        'archey.entries.temperature.run',
-        side_effect=FileNotFoundError()  # No temperature from `sensors` call.
-    )
-    @patch(
-        'archey.entries.temperature.check_output',
-        return_value='temp=42.8\'C\n'
-    )
-    @patch(
-        'archey.entries.temperature.iglob',
-        return_value=[]  # No temperature from file will be retrieved
-    )
-    def test_vcgencmd_only_no_max(self, _, __, ___):
-        """
-        Test for `vcgencmd` output only (no sensor files).
-        Only one value is retrieved, so no maximum should be displayed (see #39).
-        """
-        temperature = Temperature(options={
-            'sensors_chipsets': [],
-            'use_fahrenheit': False,
-            'char_before_unit': ' '
-        })
-
-        output_mock = MagicMock()
-        temperature.output(output_mock)
-
-        self.assertDictEqual(
-            temperature.value,
-            {
-                'temperature': 42.8,
-                'max_temperature': 42.8,
-                'char_before_unit': ' ',
-                'unit': 'C'
-            }
-        )
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '42.8 C'
-        )
-
-    @patch(
-        'archey.entries.temperature.run',
-        side_effect=FileNotFoundError()  # No temperature from `sensors` call.
-    )
-    @patch(
-        'archey.entries.temperature.check_output',
-        return_value='temp=40.0\'C\n'
-    )
-    @patch('archey.entries.temperature.iglob')
-    def test_vcgencmd_and_files(self, iglob_mock, _, __):
-        """Tests `vcgencmd` output AND sensor files"""
-        iglob_mock.return_value = iter([file.name for file in self._temp_files])
-        self.assertDictEqual(
-            Temperature(options={
-                'sensors_chipsets': [],
-                'use_fahrenheit': False,
-                'char_before_unit': ' '
-            }).value,
-            {
-                'temperature': 45.0,
-                'max_temperature': 50.0,
-                'char_before_unit': ' ',
-                'unit': 'C'
-            }
-        )
-
-    @patch(
-        'archey.entries.temperature.run',
-        side_effect=FileNotFoundError()  # No temperature from `sensors` call.
-    )
-    @patch(
-        'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call.
-    )
-    @patch('archey.entries.temperature.iglob')
-    def test_files_only_in_fahrenheit(self, iglob_mock, _, __):
-        """Test sensor files only, Fahrenheit (naive) conversion and special degree character"""
-        iglob_mock.return_value = iter([file.name for file in self._temp_files])
-        self.assertDictEqual(
-            Temperature(options={
-                'sensors_chipsets': [],
-                'use_fahrenheit': True,
-                'char_before_unit': '@'
-            }).value,
-            {
-                'temperature': 116.0,      # 46.7 degrees C in Fahrenheit.
-                'max_temperature': 122.0,  # 50 degrees C in Fahrenheit
-                'char_before_unit': '@',
-                'unit': 'F'
-            }
-        )
-
-    @patch(
-        'archey.entries.temperature.iglob',
-        return_value=[]  # No temperature from file will be retrieved.
-    )
-    @patch(
-        'archey.entries.temperature.run',
-        side_effect=FileNotFoundError()  # No temperature from `sensors` call.
-    )
-    @patch(
-        'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call.
-    )
-    def test_no_output(self, _, __, ___):
-        """Test when no value could be retrieved (anyhow)"""
-        self.assertIsNone(Temperature(options={
-            'sensors_chipsets': []
-        }).value)
+        self.temperature_mock = HelperMethods.entry_mock(Temperature)
+        self.temperature_mock._temps = []  # pylint: disable=protected-access
 
     @patch('archey.entries.temperature.run')  # Mock the `sensors` call.
-    @patch(
-        'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call.
-    )
-    def test_sensors_only_in_fahrenheit(self, _, run_mock):
-        """Test computations around `sensors` output and Fahrenheit (naive) conversion"""
+    def test_run_sensors_ok(self, run_mock):
+        """Test computations around `sensors` output"""
         run_mock.return_value.stdout = """\
 {
    "who-cares-about":{
@@ -209,64 +80,34 @@ class TestTemperatureEntry(unittest.TestCase):
    }
 }
 """
-        self.assertDictEqual(
-            Temperature(options={
-                'sensors_chipsets': [],
-                'use_fahrenheit': True,
-                'char_before_unit': ' '
-            }).value,
-            {
-                'temperature': 126.6,      # (52.6 C in F)
-                'max_temperature': 237.2,  # (114.0 C in F)
-                'char_before_unit': ' ',
-                'unit': 'F'
-            }
+        # pylint: disable=protected-access
+        Temperature._run_sensors(self.temperature_mock, [])
+        self.assertListEqual(
+            self.temperature_mock._temps,
+            [45.0, 38.0, 39.0, 114.0, 45.0, 43.0, 44.0]
         )
+        # pylint: enable=protected-access
 
     @patch(
         'archey.entries.temperature.run',
-        side_effect=CalledProcessError(1, 'sensors')  # `sensors` will hard fail.
+        side_effect=[
+            CalledProcessError(1, 'sensors'),  # `sensors` will hard fail.
+            FileNotFoundError()                # `sensors` won't be available.
+        ]
     )
-    @patch(
-        'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
-    )
-    @patch('archey.entries.temperature.iglob')
-    def test_sensors_error_1(self, iglob_mock, _, __):
-        """Test `sensors` (hard) failure handling and polling from files in Celsius"""
-        iglob_mock.return_value = iter([file.name for file in self._temp_files])
+    def test_run_sensors_ko_exec(self, _):
+        """Test `sensors` (hard) failure handling"""
+        # pylint: disable=protected-access
+        Temperature._run_sensors(self.temperature_mock, [])
+        self.assertListEmpty(self.temperature_mock._temps)
 
-        temperature = Temperature(options={
-            'sensors_chipsets': [],
-            'use_fahrenheit': False,
-            'char_before_unit': 'o'
-        })
-
-        output_mock = MagicMock()
-        temperature.output(output_mock)
-
-        self.assertDictEqual(
-            temperature.value,
-            {
-                'temperature': 46.7,
-                'max_temperature': 50.0,
-                'char_before_unit': 'o',
-                'unit': 'C'
-            }
-        )
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '46.7oC (Max. 50.0oC)'
-        )
+        Temperature._run_sensors(self.temperature_mock, [])
+        self.assertListEmpty(self.temperature_mock._temps)
+        # pylint: enable=protected-access
 
     @patch('archey.entries.temperature.run')
-    @patch(
-        'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call
-    )
-    @patch('archey.entries.temperature.iglob')
-    def test_sensors_error_2(self, iglob_mock, _, run_mock):
-        """Test `sensors` (hard) failure handling and polling from files in Celsius"""
+    def test_run_sensors_ko_output(self, run_mock):
+        """Test `sensors` (soft) failure handling"""
         # JSON decoding from `sensors` will fail...
         run_mock.return_value.stdout = """\
 {
@@ -275,47 +116,121 @@ class TestTemperatureEntry(unittest.TestCase):
     ]
 }
 """
-        iglob_mock.return_value = iter([file.name for file in self._temp_files])
-        self.assertDictEqual(
-            Temperature(options={
-                'sensors_chipsets': [],
-                'use_fahrenheit': False,
-                'char_before_unit': 'o'
-            }).value,
-            {
-                'temperature': 46.7,
-                'max_temperature': 50.0,
-                'char_before_unit': 'o',
-                'unit': 'C'
-            }
+        # pylint: disable=protected-access
+        Temperature._run_sensors(self.temperature_mock, [])
+        self.assertListEmpty(self.temperature_mock._temps)
+        # pylint: enable=protected-access
+
+    @patch('archey.entries.temperature.iglob')
+    def test_poll_thermal_zones(self, iglob_mock):
+        """Tests sensor files handling"""
+
+        ## BEGIN PRELUDE ##
+        # We'll store there filenames of some temp files mocking those under
+        #  `/sys/class/thermal/thermal_zone*/temp`
+        tmp_files = []
+        for temperature in (  # Fake temperatures
+                b'50000',
+                b'0',
+                b'40000',
+                b'50000'
+            ):
+            file = tempfile.NamedTemporaryFile(delete=False)
+            file.write(temperature)
+            file.seek(0)
+            tmp_files.append(file)
+        ## END PRELUDE ##
+
+        iglob_mock.return_value = iter([file.name for file in tmp_files])
+
+        # pylint: disable=protected-access
+        Temperature._poll_thermal_zones(self.temperature_mock)
+        self.assertListEqual(
+            self.temperature_mock._temps,
+            [50.0, 40.0, 50.0]
         )
+        # pylint: enable=protected-access
+
+        ## BEGIN POSTLUDE ##
+        for tmp_file in tmp_files:
+            tmp_file.close()
+            os.remove(tmp_file.name)
+        ## END POSTLUDE ##
 
     @patch(
-        'archey.entries.temperature.run',
-        side_effect=FileNotFoundError()  # No temperature from `sensors` call.
-    )
-    @patch(
         'archey.entries.temperature.check_output',
-        side_effect=FileNotFoundError()  # No temperature from `vcgencmd` call.
+        side_effect=[
+            FileNotFoundError(),
+            'temp=42.8\'C\n'
+        ]
     )
-    @patch(
-        'archey.entries.temperature.iglob',
-        return_value=[]  # No temperature from file will be retrieved.
-    )
-    def test_celsius_to_fahrenheit_conversion(self, _, __, ___):
+    def test_run_vcgencmd(self, _):
+        """Test for `vcgencmd` output only"""
+        # pylint: disable=protected-access
+        Temperature._run_vcgencmd(self.temperature_mock)
+        self.assertListEmpty(self.temperature_mock._temps)
+
+        Temperature._run_vcgencmd(self.temperature_mock)
+        self.assertListEqual(self.temperature_mock._temps, [42.8])
+        # pylint: enable=protected-access
+
+    @HelperMethods.patch_clean_configuration
+    def test_output(self):
+        """Test `output` method"""
+        output_mock = MagicMock()
+
+        # No value --> not detected.
+        Temperature.output(self.temperature_mock, output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            DEFAULT_CONFIG['default_strings']['not_detected']
+        )
+
+        output_mock.reset_mock()
+
+        # Values --> normal behavior.
+        self.temperature_mock._temps = [  # pylint: disable=protected-access
+            50.0, 40.0, 50.0
+        ]
+        self.temperature_mock.value = {
+            'temperature': 46.7,
+            'max_temperature': 50.0,
+            'char_before_unit': 'o',
+            'unit': 'C'
+        }
+        Temperature.output(self.temperature_mock, output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '46.7oC (Max. 50.0oC)'
+        )
+
+        # Only one value --> no maximum.
+        self.temperature_mock._temps = [42.8]  # pylint: disable=protected-access
+        self.temperature_mock.value = {
+            'temperature': 42.8,
+            'max_temperature': 42.8,
+            'char_before_unit': ' ',
+            'unit': 'C'
+        }
+        Temperature.output(self.temperature_mock, output_mock)
+        self.assertEqual(
+            output_mock.append.call_args[0][1],
+            '42.8 C'
+        )
+
+    def test_convert_to_fahrenheit(self):
         """Simple tests for the `_convert_to_fahrenheit` static method"""
-        test_conversion_cases = [
+        test_conversion_cases = (
             (-273.15, -459.67),
             (0.0, 32.0),
             (21.0, 69.8),
             (37.0, 98.6),
             (100.0, 212.0)
-        ]
-
-        for celsius_value, expected_fahrenheit in test_conversion_cases:
+        )
+        for celsius_value, expected_fahrenheit_value in test_conversion_cases:
             self.assertAlmostEqual(
                 Temperature._convert_to_fahrenheit(celsius_value),  # pylint: disable=protected-access
-                expected_fahrenheit
+                expected_fahrenheit_value
             )
 
 
