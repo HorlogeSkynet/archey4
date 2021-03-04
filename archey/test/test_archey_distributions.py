@@ -10,6 +10,10 @@ class TestDistributions(unittest.TestCase):
     """
     Test cases for the `Distributions` (enumeration / utility) class.
     """
+    def setUp(self):
+        # Clear cache filled by `functools.lru_cache` decorator.
+        Distributions.get_local.cache_clear()
+
     def test_constant_values(self):
         """Test enumeration member instantiation from value"""
         self.assertEqual(Distributions('debian'), Distributions.DEBIAN)
@@ -24,10 +28,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.platform.system',
         return_value='Windows'
     )
-    def test_run_detection_windows(self, _):
+    def test_get_local_windows(self, _):
         """Test output for Windows"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.WINDOWS
         )
 
@@ -39,10 +43,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.platform.release',
         return_value='X.Y.Z-R-Microsoft'
     )
-    def test_run_detection_windows_subsystem(self, _, __):
+    def test_get_local_windows_subsystem(self, _, __):
         """Test output for Windows Subsystem Linux"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.WINDOWS
         )
 
@@ -62,10 +66,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.os.path.isfile',  # Emulate a "regular" Debian file-system.
         return_value=False                      # Any additional check will fail.
     )
-    def test_run_detection_known_distro_id(self, _, __, ___, ____):
+    def test_get_local_known_distro_id(self, _, __, ___, ____):
         """Test known distribution output"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.DEBIAN
         )
 
@@ -89,10 +93,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.os.path.isdir',  # Make Android detection fails.
         return_value=False
     )
-    def test_run_detection_unknown_distro_id(self, _, __, ___, ____, _____):
+    def test_get_local_unknown_distro_id(self, _, __, ___, ____, _____):
         """Test unknown distribution output"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.LINUX
         )
 
@@ -112,10 +116,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value='ubuntu'  # Oh, it's actually an Ubuntu-based one !
     )
-    def test_run_detection_known_distro_like(self, _, __, ___, ____):
+    def test_get_local_known_distro_like(self, _, __, ___, ____):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.UBUNTU
         )
 
@@ -135,10 +139,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.distro.like',
         return_value='an-unknown-distro-id arch'  # Hmmm, an unknown Arch-based...
     )
-    def test_run_detection_distro_like_second(self, _, __, ___, ____):
+    def test_get_local_distro_like_second(self, _, __, ___, ____):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (second candidate)"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.ARCH
         )
 
@@ -162,10 +166,10 @@ class TestDistributions(unittest.TestCase):
         'archey.distributions.os.path.isdir',  # Make Android detection fails.
         return_value=False
     )
-    def test_run_detection_both_distro_calls_fail(self, _, __, ___, ____, _____):
+    def test_get_local_both_distro_calls_fail(self, _, __, ___, ____, _____):
         """Test distribution fall-back when `distro` soft-fail two times"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.LINUX
         )
 
@@ -187,15 +191,15 @@ class TestDistributions(unittest.TestCase):
             lambda file_path: file_path == '/etc/lsb-release-crunchbang'
         )
     )
-    def test_run_detection_specific_crunchbang(self, _, __, ___, ____):
+    def test_get_local_specific_crunchbang(self, _, __, ___, ____):
         """Test CrunchBang specific detection"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.CRUNCHBANG
         )
 
     @patch(
-        'archey.distributions.Distributions._detection_logic',
+        'archey.distributions.Distributions._vendor_detection',
         return_value=None  # Base detection logic soft-fails...
     )
     @patch(
@@ -204,10 +208,10 @@ class TestDistributions(unittest.TestCase):
             lambda dir_path: dir_path.startswith('/system/') and dir_path.endswith('app')
         )
     )
-    def test_run_detection_specific_android(self, _, __):
+    def test_get_local_specific_android(self, _, __):
         """Test Android specific detection"""
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.ANDROID
         )
 
@@ -234,13 +238,13 @@ class TestDistributions(unittest.TestCase):
         """Test OS detection for Darwin"""
         # Detection based on `distro`.
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.DARWIN
         )
 
         # Detection based on `platform`.
         self.assertEqual(
-            Distributions.run_detection(),
+            Distributions.get_local(),
             Distributions.DARWIN
         )
 

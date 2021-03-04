@@ -33,7 +33,7 @@ class Output:
             self._distribution = Distributions(kwargs.get('preferred_distribution'))
         except ValueError:
             # If not (or unknown), run distribution detection.
-            self._distribution = Distributions.run_detection()
+            self._distribution = Distributions.get_local()
 
         # Retrieve distribution's logo module before copying and DRY-ing its attributes.
         logo_module = lazy_load_logo_module(self._distribution.value)

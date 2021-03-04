@@ -8,6 +8,7 @@ import os
 import platform
 
 from enum import Enum
+from functools import lru_cache
 from typing import List, Optional
 
 import distro
@@ -53,9 +54,10 @@ class Distributions(Enum):
         return [d.value for d in Distributions.__members__.values()]
 
     @staticmethod
-    def run_detection() -> 'Distributions':
+    @lru_cache(maxsize=None)  # Python < 3.9, `functools.cache` is not yet available.
+    def get_local() -> 'Distributions':
         """Entry point of Archey distribution detection logic"""
-        distribution = Distributions._detection_logic()
+        distribution = Distributions._vendor_detection()
 
         # In case nothing got detected the "regular" way...
         if not distribution:
@@ -93,7 +95,7 @@ class Distributions(Enum):
         return distribution
 
     @staticmethod
-    def _detection_logic() -> Optional['Distributions']:
+    def _vendor_detection() -> Optional['Distributions']:
         """Main distribution detection logic, relying on `distro`, handling _common_ cases"""
         # Are we running on Windows ?
         if platform.system() == 'Windows':
