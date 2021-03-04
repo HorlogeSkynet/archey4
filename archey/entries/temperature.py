@@ -106,12 +106,12 @@ class Temperature(Entry):
         for thermal_file in iglob(r'/sys/class/thermal/thermal_zone*/temp'):
             with open(thermal_file) as file:
                 try:
-                    temp = float(file.read().strip()) / 1000
+                    temp = float(file.read())
                 except OSError:
                     continue
 
                 if temp != 0.0:
-                    self._temps.append(temp)
+                    self._temps.append(temp / 1000)
 
     def _run_sysctl_dev_cpu(self):
         # Tries to get temperatures from each CPU core sensor.
