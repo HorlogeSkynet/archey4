@@ -15,9 +15,7 @@ from archey.test import CustomAssertions
 
 
 class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
-    """
-    Based on `sensors`, `vcgencmd` and thermal files, this module verifies temperature computations.
-    """
+    """This module verifies Archey temperature detection"""
     def setUp(self):
         self.temperature_mock = HelperMethods.entry_mock(Temperature)
         self.temperature_mock._temps = []  # pylint: disable=protected-access
@@ -156,6 +154,60 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             tmp_file.close()
             os.remove(tmp_file.name)
         ## END POSTLUDE ##
+
+    @patch(
+        'archey.entries.temperature.os.cpu_count',
+        return_value=4  # Mocks a quad-cores CPU system.
+    )
+    @patch(
+        'archey.entries.temperature.check_output',
+        side_effect=[
+            # First case (`sysctl` won't be available).
+            FileNotFoundError(),
+            # Second run (`sysctl` will fail).
+            CalledProcessError(1, 'sysctl'),
+            # Third case (OK).
+            """\
+42C
+42C
+45C
+45C
+""",
+            # Fourth case (partially-OK).
+            """\
+42
+40
+0
+38
+"""])
+    def test_run_sysctl_dev_cpu(self, _, __):
+        """Test for `sysctl` output only"""
+        # pylint: disable=protected-access
+        # First case.
+        Temperature._run_sysctl_dev_cpu(self.temperature_mock)
+        self.assertListEmpty(self.temperature_mock._temps)
+
+        # Second case.
+        Temperature._run_sysctl_dev_cpu(self.temperature_mock)
+        self.assertListEmpty(self.temperature_mock._temps)
+
+        # Third case.
+        Temperature._run_sysctl_dev_cpu(self.temperature_mock)
+        self.assertListEqual(
+            self.temperature_mock._temps,
+            [42.0, 42.0, 45.0, 45.0]
+        )
+
+        # Reset internal object here.
+        self.temperature_mock._temps = []
+
+        # Fourth case.
+        Temperature._run_sysctl_dev_cpu(self.temperature_mock)
+        self.assertListEqual(
+            self.temperature_mock._temps,
+            [42.0, 40.0, 38.0]
+        )
+        # pylint: enable=protected-access
 
     @patch(
         'archey.entries.temperature.check_output',
