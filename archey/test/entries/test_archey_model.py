@@ -171,6 +171,50 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
 
+    @patch(
+        'archey.entries.model.platform.system',
+        side_effect=[
+            'Darwin',
+            'Darwin',
+            'OpenBSD',
+            'OpenBSD',
+            'OpenBSD'
+        ]
+    )
+    @patch(
+        'archey.entries.model.check_output',
+        side_effect=[
+            # First case [Darwin] (`sysctl` won't be available).
+            FileNotFoundError(),
+            # Second case [Darwin] OK.
+            'MacBookPro14,2',
+            # Fifth case [BSD] (`sysctl` won't be available).
+            FileNotFoundError(),
+            # Third case [BSD] (OK).
+            'VMware, Inc.\n',
+            'VMware Virtual Platform\n',
+            'None\n',
+            # Fourth case [BSD] (partially-OK).
+            CalledProcessError(1, 'sysctl'),
+            'KALAP10D300EA\n',
+            '1\n'
+        ]
+    )
+    def test_fetch_sysctl_hw(self, _, __):
+        """Test `_fetch_sysctl_hw` static method"""
+        # pylint: disable=protected-access
+        # Dawin cases.
+        self.assertIsNone(Model._fetch_sysctl_hw())
+        self.assertEqual(Model._fetch_sysctl_hw(), 'MacBookPro14.2')
+        # BSD cases.
+        self.assertIsNone(Model._fetch_sysctl_hw())
+        self.assertEqual(
+            Model._fetch_sysctl_hw(),
+            'VMware, Inc. VMware Virtual Platform'
+        )
+        self.assertEqual(Model._fetch_sysctl_hw(), 'KALAP10D300EA 1')
+        # pylint: enable=protected-access
+
     def test_fetch_raspberry_pi_revision(self):
         """Test `_fetch_raspberry_pi_revision` static method"""
         with patch('archey.entries.model.open', mock_open()) as mock:
