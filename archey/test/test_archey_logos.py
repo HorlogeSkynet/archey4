@@ -20,7 +20,7 @@ class TestLogos(unittest.TestCase):
 
         This test also indirectly checks `lazy_load_logo_module` behavior!
         """
-        distributions_identifiers = Distributions.get_distribution_identifiers()
+        distributions_identifiers = Distributions.get_identifiers()
 
         for i, logo_module_info in enumerate(pkgutil.iter_modules(logos.__path__), start=1):
 

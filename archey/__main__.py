@@ -82,7 +82,7 @@ def args_parsing() -> argparse.Namespace:
     parser.add_argument(
         '-d', '--distribution',
         metavar='IDENTIFIER',
-        choices=Distributions.get_distribution_identifiers(),
+        choices=Distributions.get_identifiers(),
         help='supported distribution identifier to show the logo of, pass `unknown` to list them'
     )
     parser.add_argument(

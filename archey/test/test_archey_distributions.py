@@ -19,10 +19,10 @@ class TestDistributions(unittest.TestCase):
         self.assertEqual(Distributions('debian'), Distributions.DEBIAN)
         self.assertRaises(ValueError, Distributions, 'unknown')
 
-        # Check `get_distribution_identifiers` consistency.
-        distribution_identifiers = Distributions.get_distribution_identifiers()
-        self.assertTrue(isinstance(distribution_identifiers, list))
-        self.assertTrue(all(isinstance(i, str) for i in distribution_identifiers))
+        # Check `get_identifiers` consistency.
+        distributions_identifiers = Distributions.get_identifiers()
+        self.assertTrue(isinstance(distributions_identifiers, list))
+        self.assertTrue(all(isinstance(i, str) for i in distributions_identifiers))
 
     @patch(
         'archey.distributions.platform.system',

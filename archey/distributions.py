@@ -49,7 +49,7 @@ class Distributions(Enum):
 
 
     @staticmethod
-    def get_distribution_identifiers() -> List[str]:
+    def get_identifiers() -> List[str]:
         """Simple getter returning current supported distributions identifiers"""
         return [d.value for d in Distributions.__members__.values()]
 
