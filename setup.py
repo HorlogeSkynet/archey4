@@ -22,7 +22,6 @@ setup(
     author_email='dev+archey@samuel.domains',
     license='GPLv3',
     packages=find_packages(exclude=['archey.test*']),
-    test_suite='archey.test',
     python_requires='>=3.6',
     install_requires=[
         'distro~=1.5.0',

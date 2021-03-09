@@ -57,9 +57,7 @@ jobs:
           mypy archey/
 
       - name: Run our test suite
-        run: |
-          python setup.py -q test
-          python -m unittest
+        run: python -m unittest
 
       - name: Standalone building (with PEX)
         run: |
