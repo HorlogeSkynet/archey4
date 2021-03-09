@@ -21,60 +21,13 @@ class TestRAMEntry(unittest.TestCase):
 Mem:          15658        2043       10232          12        3382       13268
 Swap:          4095          39        4056
 """)
-    def test_free_dash_m(self, _):
-        """Test `free -m` output parsing for low RAM use case"""
-        output_mock = MagicMock()
-        RAM(options={
-            'warning': 25,
-            'danger': 45
-        }).output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            f'{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB'
+    def test_run_free_dash_m(self, _):
+        """Test `_run_free_dash_m` output parsing"""
+        self.assertTupleEqual(
+            RAM._run_free_dash_m(),  # pylint: disable=protected-access
+            (2043.0, 15658.0)
         )
 
-    @patch(
-        'archey.entries.ram.check_output',
-        return_value="""\
-          total     used    free    shared  buff/cache   available
-Mem:       7412     3341    1503       761        2567        3011
-Swap:      7607        5    7602
-""")
-    def test_free_dash_m_warning(self, _):
-        """Test `free -m` output parsing for warning RAM use case"""
-        output_mock = MagicMock()
-        RAM(options={
-            'warning': 33.3,
-            'danger': 66.7
-        }).output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            f'{Colors.YELLOW_NORMAL}3341 MiB{Colors.CLEAR} / 7412 MiB'
-        )
-
-    @patch(
-        'archey.entries.ram.check_output',
-        return_value="""\
-              total        used        free      shared  buff/cache   available
-Mem:          15658       12341         624         203        2692        2807
-Swap:          4095         160        3935
-""")
-    def test_free_dash_m_danger(self, _):
-        """Test `free -m` output parsing for danger RAM use case"""
-        output_mock = MagicMock()
-        RAM(options={
-            'warning': 25,
-            'danger': 45
-        }).output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            f'{Colors.RED_NORMAL}12341 MiB{Colors.CLEAR} / 15658 MiB'
-        )
-
-    @patch(
-        'archey.entries.ram.check_output',
-        side_effect=IndexError()  # `free` call will fail
-    )
     @patch(
         'archey.entries.ram.open',
         mock_open(
@@ -104,38 +57,99 @@ Slab:             314100 kB
 SReclaimable:     200792 kB
 SUnreclaim:       113308 kB
 """))  # Some lines have been ignored as they are useless for computations.
-    def test_proc_meminfo(self, _):
-        """Test `/proc/meminfo` parsing (when `free` is not available)"""
-        self.assertDictEqual(
-            RAM().value,
-            {
-                'used': 3739.296875,
-                'total': 7403.3203125,
-                'unit': 'MiB'
-            }
+    def test_read_proc_meminfo(self):
+        """Test `_read_proc_meminfo` content parsing"""
+        self.assertTupleEqual(
+            RAM._read_proc_meminfo(),  # pylint: disable=protected-access
+            (3739.296875, 7403.3203125)
         )
 
     @patch(
         'archey.entries.ram.check_output',
-        side_effect=IndexError()  # `free` call will fail
-    )
-    @patch(
-        'archey.entries.ram.open',
-        side_effect=PermissionError()
-    )
-    @HelperMethods.patch_clean_configuration
-    def test_not_detected(self, _, __):
-        """Check Archey does not crash when `/proc/meminfo` is not readable"""
-        ram = RAM()
-
-        output_mock = MagicMock()
-        ram.output(output_mock)
-
-        self.assertIsNone(ram.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            DEFAULT_CONFIG['default_strings']['not_detected']
+        side_effect=[
+            '8589934592\n',
+            """\
+Mach Virtual Memory Statistics: (page size of 4096 bytes)
+Pages free:                               55114.
+Pages active:                            511198.
+Pages inactive:                          488363.
+Pages speculative:                        22646.
+Pages throttled:                              0.
+Pages wired down:                        666080.
+Pages purgeable:                          56530.
+"Translation faults":                 170435998.
+Pages copy-on-write:                    3496023.
+Pages zero filled:                     96454484.
+Pages reactivated:                     12101726.
+Pages purged:                           6728288.
+File-backed pages:                       445114.
+Anonymous pages:                         577093.
+Pages stored in compressor:             2019211.
+Pages occupied by compressor:            353431.
+Decompressions:                        10535599.
+Compressions:                          19723567.
+Pageins:                                7586286.
+Pageouts:                                388644.
+Swapins:                                2879182.
+Swapouts:                               3456015.
+"""])
+    def test_run_sysctl_and_vmstat(self, _):
+        """Check `sysctl` and `vm_stat` parsing logic"""
+        self.assertTupleEqual(
+            RAM._run_sysctl_and_vmstat(),  # pylint: disable=protected-access
+            (1685.58984375, 8192.0)
         )
+
+    @HelperMethods.patch_clean_configuration
+    def test_various_output_configuration(self):
+        """Test `output` overloading based on user preferences"""
+        ram_instance_mock = HelperMethods.entry_mock(RAM)
+        output_mock = MagicMock()
+
+        with self.subTest('Output in case of non-detection.'):
+            RAM.output(ram_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                DEFAULT_CONFIG['default_strings']['not_detected']
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest('"Normal" output (green).'):
+            ram_instance_mock.value = {
+                'used': 2043.0,
+                'total': 15658.0,
+                'unit': 'MiB'
+            }
+            ram_instance_mock.options = {
+                'warning_use_percent': 33.3,
+                'danger_use_percent': 66.7
+            }
+
+            RAM.output(ram_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                f'{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB'
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest('"Danger" output (red).'):
+            ram_instance_mock.value = {
+                'used': 7830.0,
+                'total': 15658.0,
+                'unit': 'MiB'
+            }
+            ram_instance_mock.options = {
+                'warning_use_percent': 25,
+                'danger_use_percent': 50
+            }
+
+            RAM.output(ram_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                f'{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB'
+            )
 
 
 if __name__ == '__main__':

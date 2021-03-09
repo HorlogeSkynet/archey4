@@ -1,5 +1,6 @@
 """RAM usage detection class"""
 
+import platform
 import re
 
 from subprocess import check_output
@@ -32,10 +33,17 @@ class RAM(Entry):
         Returns a tuple containing used and total RAM values.
         Tries a variety of methods, increasing compatibility for a wide range of systems.
         """
-        try:
-            return self._run_free_dash_m()
-        except (IndexError, FileNotFoundError):
-            pass
+        if platform.system() == 'Linux':
+            try:
+                return self._run_free_dash_m()
+            except (IndexError, FileNotFoundError):
+                pass
+        else:
+            # Darwin or any other BSD-based system.
+            try:
+                return self._run_sysctl_and_vmstat()
+            except FileNotFoundError:
+                pass
 
         try:
             return self._read_proc_meminfo()
@@ -84,6 +92,38 @@ class RAM(Entry):
             used = total - mem_info['MemFree']
 
         return used, total
+
+    @staticmethod
+    def _run_sysctl_and_vmstat() -> Tuple[float, float]:
+        """From `sysctl` and `vm_stat` calls, compute used and total system RAM values"""
+        total = float(
+            check_output(
+                ['sysctl', '-n', 'hw.memsize'],
+                universal_newlines=True
+            )
+        )
+
+        vm_stat_lines = check_output('vm_stat', universal_newlines=True).splitlines()
+
+        # From first heading line, fetch system page size (default to 4096 bytes).
+        page_size_match = re.match(
+            r'^Mach Virtual Memory Statistics: \(page size of (\d+) bytes\)$',
+            vm_stat_lines[0]
+        )
+        page_size = (int(page_size_match.group(1)) if page_size_match else 4096)
+
+        # Store memory information into a dictionary.
+        mem_info = {}
+        for line in vm_stat_lines[1:]:  # We ignore the first heading line.
+            key, value = line.split(':', maxsplit=1)
+            mem_info[key] = int(value.lstrip().rstrip('.'))
+
+        # Here we imitate Ansible behavior to compute used RAM.
+        used = total - (
+            mem_info['Pages wired down'] + mem_info['Pages active'] + mem_info['Pages inactive']
+        ) * page_size
+
+        return (used / 1024**2), (total / 1024**2)
 
 
     def output(self, output):
