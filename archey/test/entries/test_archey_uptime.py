@@ -6,6 +6,7 @@ from datetime import timedelta
 from itertools import product
 
 from archey.entries.uptime import Uptime
+from archey.test.entries import HelperMethods
 
 
 class TestUptimeEntry(unittest.TestCase):
@@ -120,8 +121,9 @@ class TestUptimeEntry(unittest.TestCase):
         create=True                                   # Required for Python < 3.7.
     )
     @patch(
-        'archey.entries.uptime.time.clock_gettime',
-        return_value=1000
+        'archey.entries.uptime.time.clock_gettime',  # Ensure `clock_gettime` call succeeds anyhow.
+        return_value=1000,
+        create=True
     )
     def test_clock_fallback(self, _, __, ___):
         """
@@ -140,7 +142,7 @@ class TestUptimeEntry(unittest.TestCase):
         """Test `uptime` command parsing"""
         # Create an uptime instance to perform testing.
         # It doesn't matter that its `__init__` will be called.
-        uptime_inst = Uptime()
+        uptime_instance_mock = HelperMethods.entry_mock(Uptime)
 
         # Keys: `uptime` outputs; values: expected `timedelta` instances.
         # We will test these with various time formats (and various numbers of users).
@@ -238,7 +240,7 @@ class TestUptimeEntry(unittest.TestCase):
                     user_loadavg=variations[1]
                 ).encode()
                 self.assertEqual(
-                    uptime_inst._parse_uptime_cmd(),  # pylint: disable=protected-access
+                    uptime_instance_mock._parse_uptime_cmd(),  # pylint: disable=protected-access
                     expected_delta,
                     msg='`uptime` output: "{}"'.format(
                         uptime_output.format(

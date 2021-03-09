@@ -249,31 +249,15 @@ class TestModelEntry(unittest.TestCase):
             Model._fetch_android_device_model()  # pylint: disable=protected-access
         )
 
-    @patch(
-        'archey.entries.model.Model._fetch_virtual_env_info',
-        return_value=None  # Not a virtual environment...
-    )
-    @patch(
-        'archey.entries.model.Model._fetch_product_info',
-        return_value=None  # No model name could be retrieved...
-    )
-    @patch(
-        'archey.entries.model.Model._fetch_raspberry_pi_revision',
-        return_value=None  # Not a Raspberry Pi device either...
-    )
-    @patch(
-        'archey.entries.model.Model._fetch_android_device_model',
-        return_value=None  # Not an Android device...
-    )
     @HelperMethods.patch_clean_configuration
-    def test_no_match(self, _, __, ___, ____):
+    def test_no_match(self):
         """Test when no information could be retrieved"""
-        model = Model()
+        model_instance_mock = HelperMethods.entry_mock(Model)
 
         output_mock = MagicMock()
-        model.output(output_mock)
+        Model.output(model_instance_mock, output_mock)
 
-        self.assertIsNone(model.value)
+        self.assertIsNone(model_instance_mock.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             DEFAULT_CONFIG['default_strings']['not_detected']
