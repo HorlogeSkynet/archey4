@@ -50,6 +50,7 @@ class Entries(Enum):
     The string representation of keys will act as entries names.
     Values will be set under the `value` attribute of each obtained objects.
     """
+    # pylint: disable=invalid-name
     User = e_User
     Hostname = e_Hostname
     Model = e_Model
