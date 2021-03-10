@@ -22,14 +22,6 @@ class TestDistroEntry(unittest.TestCase):
         )
 
     @patch(
-        'archey.entries.distro.platform.system',
-        side_effect=[
-            'Darwin',
-            'Darwin',
-            ''
-        ]
-    )
-    @patch(
         'archey.entries.distro.platform.mac_ver',
         side_effect=[
             ('', ('', '', ''), ''),                    # Darwin case.
@@ -40,7 +32,7 @@ class TestDistroEntry(unittest.TestCase):
         'archey.entries.distro.platform.release',
         return_value='20.2.0'  # Darwin release.
     )
-    def test_fetch_darwin_release(self, _, __, ___):
+    def test_fetch_darwin_release(self, _, __):
         """Test `_fetch_darwin_release` static method"""
         self.assertEqual(
             Distro._fetch_darwin_release(),  # pylint: disable=protected-access
@@ -50,7 +42,6 @@ class TestDistroEntry(unittest.TestCase):
             Distro._fetch_darwin_release(),  # pylint: disable=protected-access
             'macOS 11.1'
         )
-        self.assertIsNone(Distro._fetch_darwin_release())  # pylint: disable=protected-access
 
     @HelperMethods.patch_clean_configuration
     def test_unknown_distro_output(self):
