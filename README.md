@@ -62,6 +62,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | :-------------------- | :-------------------------------- | :--------------------------------------------------- | :------------------------------ |
 | All                   | `dnsutils` (maybe `bind-tools`)   | **WAN\_IP** would be detected faster                 | Would provide `dig`             |
 | All                   | `lm-sensors` (maybe `lm_sensors`) | **Temperature** would be more accurate               | N/A                             |
+| macOS (Darwin)        | `iStats` or `osx-cpu-temp`        | **Temperature** wouldn't be detected without it      | N/A                             |
 | Graphical (desktop)   | `pciutils` or `pciconf`           | **GPU** wouldn't be detected without it              | Would provide `lspci`/`pciconf` |
 | Graphical (desktop)   | `wmctrl`                          | **WindowManager** would be more accurate             | N/A                             |
 | Virtual w/o `systemd` | `virt-what` and `dmidecode`       | **Model** would contain details about the hypervisor | **root** privileges required    |

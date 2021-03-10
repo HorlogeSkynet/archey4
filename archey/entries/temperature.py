@@ -33,6 +33,8 @@ class Temperature(Entry):
             if platform.system() == 'Linux':
                 # ... checks for system thermal zones files on GNU/Linux.
                 self._poll_thermal_zones()
+            elif platform.system() == 'Darwin':
+                self._run_istats_or_osxcputemp()
             else:
                 # ... or tries `sysctl` calls (available on BSD and derivatives).
                 self._run_sysctl_dev_cpu()
@@ -112,6 +114,31 @@ class Temperature(Entry):
 
                 if temp != 0.0:
                     self._temps.append(temp / 1000)
+
+    def _run_istats_or_osxcputemp(self):
+        """
+        For Darwin systems, let's rely on `iStats` or `OSX CPU Temp` third-party programs.
+        System's `powermetrics` program is **very** slow to run
+          and requires administrator privileges.
+        """
+        try:
+            istats_output = check_output(
+                ['istats', 'cpu', 'temperature', '--value-only'],
+                universal_newlines=True
+            )
+        except FileNotFoundError:
+            pass
+        else:
+            self._temps.append(float(istats_output))
+            return
+
+        try:
+            osxcputemp_output = check_output('osx-cpu-temp', universal_newlines=True)
+        except FileNotFoundError:
+            pass
+        else:
+            self._temps.append(float(osxcputemp_output.split()[0]))
+            return
 
     def _run_sysctl_dev_cpu(self):
         # Tries to get temperatures from each CPU core sensor.

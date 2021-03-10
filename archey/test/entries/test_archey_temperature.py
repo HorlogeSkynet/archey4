@@ -156,6 +156,38 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
         ## END POSTLUDE ##
 
     @patch(
+        'archey.entries.temperature.check_output',
+        side_effect=[
+            # First case (`iStats` nor `OSX CPU Temp` will be available).
+            FileNotFoundError(),
+            FileNotFoundError(),
+            # Second case (`iStats` OK).
+            '41.125\n',
+            # Third case (`iStats` KO, `OSX CPU Temp` OK).
+            FileNotFoundError(),
+            '61.8 °C\n'
+        ]
+    )
+    def test_run_istats_or_osxcputemp(self, _):
+        """Test for `iStats` and `OSX CPU Temp` third-party programs outputs"""
+        # pylint: disable=protected-access
+        # First case.
+        Temperature._run_istats_or_osxcputemp(self.temperature_mock)
+        self.assertListEmpty(self.temperature_mock._temps)
+
+        # Second case.
+        Temperature._run_istats_or_osxcputemp(self.temperature_mock)
+        self.assertListEqual(self.temperature_mock._temps, [41.125])
+
+        # Reset internal object here.
+        self.temperature_mock._temps = []
+
+        # Third case.
+        Temperature._run_istats_or_osxcputemp(self.temperature_mock)
+        self.assertListEqual(self.temperature_mock._temps, [61.8])
+        # pylint: enable=protected-access
+
+    @patch(
         'archey.entries.temperature.os.cpu_count',
         return_value=4  # Mocks a quad-cores CPU system.
     )
@@ -164,7 +196,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
         side_effect=[
             # First case (`sysctl` won't be available).
             FileNotFoundError(),
-            # Second run (`sysctl` will fail).
+            # Second case (`sysctl` will fail).
             CalledProcessError(1, 'sysctl'),
             # Third case (OK).
             """\
