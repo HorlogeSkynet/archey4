@@ -9,12 +9,12 @@
 # * rpm
 # * bsdtar
 # * debsigs
-# * fpm >= 1.11.0
+# * fpm ~= 1.11.0
 # * twine >= 3.1.1
 #
 # Procedure to install them on Debian :
 # $ sudo apt install ruby rpm build-essential libarchive-tools debsigs rubygems python3-pip
-# $ sudo gem install --no-document fpm
+# $ sudo gem install --no-document fpm -v 1.11.0
 # $ sudo pip3 install setuptools twine
 #
 # Run it as :
