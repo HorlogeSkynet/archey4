@@ -76,6 +76,8 @@ mkdir -p etc/archey4/ && \
 sed -e "s/\${DATE}/$(date +'%B %Y')/1" archey.1 | \
 	sed -e "s/\${VERSION}/${VERSION}/1" | \
 		gzip -c --best - > "${DIST_OUTPUT}/archey.1.gz"
+# Clean any previous Setuptools build output.
+python3 setup.py -q clean --all 2> /dev/null
 
 
 # Prevent Setuptools from generating byte-code files.
