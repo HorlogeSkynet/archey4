@@ -41,6 +41,7 @@ class Distributions(Enum):
     OPENBSD = 'openbsd'
     OPENSUSE = 'opensuse'
     POP = 'pop'
+    PARABOLA = 'parabola'
     RASPBIAN = 'raspbian'
     RHEL = 'rhel'
     SLACKWARE = 'slackware'
