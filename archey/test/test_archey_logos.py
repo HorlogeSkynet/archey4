@@ -43,14 +43,17 @@ class TestLogos(unittest.TestCase):
                 msg=f'[{logo_module_info.name}] logo module missing `COLORS` attribute'
             )
 
-            # Make Archey compute the logo width.
-            logo_width = get_logo_width(logo_module.LOGO)
+            # Compute once and for all the number of defined colors for this logo.
+            nb_colors = len(logo_module.COLORS)
+
+            # Make Archey compute the logo (effective) width.
+            logo_width = get_logo_width(logo_module.LOGO, nb_colors)
 
             # Then, check that each logo line got the same effective width.
             for j, line in enumerate(logo_module.LOGO[1:], start=1):
                 # Here we gotta trick the `get_logo_width` call.
                 # We actually pass each logo line as if it was a "complete" logo.
-                line_width = get_logo_width([line])
+                line_width = get_logo_width([line], nb_colors)
 
                 # Width check.
                 self.assertEqual(
@@ -63,7 +66,7 @@ class TestLogos(unittest.TestCase):
 
                 # Non-empty line check.
                 self.assertTrue(
-                    Colors.remove_colors(line).strip(),
+                    Colors.remove_colors(line.format(c=[''] * nb_colors)).strip(),
                     msg=f'[{logo_module_info.name}] line index {j}, got an useless empty line'
                 )
 
