@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.processes import Processes
-
+from archey.test import CustomAssertions
 
 # To avoid edge-case issues due to singleton, we automatically reset internal `_instances`.
 # This is done at the class-level.
@@ -12,7 +12,7 @@ from archey.processes import Processes
     'archey.singleton.Singleton._instances',
     clear=True
 )
-class TestProcesses(unittest.TestCase):
+class TestProcesses(unittest.TestCase, CustomAssertions):
     """
     Test cases for the `Processes` (singleton) class.
     To work around the singleton, we reset the internal `_instances` dictionary.
@@ -51,8 +51,8 @@ there
         side_effect=FileNotFoundError()
     )
     def test_ps_not_available(self, _):
-        """Verifies that the program stops when `ps` is not available"""
-        self.assertRaises(SystemExit, Processes)
+        """Checks behavior when `ps` is not available"""
+        self.assertTupleEmpty(Processes().list)
 
 
 if __name__ == '__main__':

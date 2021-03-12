@@ -1,8 +1,8 @@
 """Simple class (acting as a singleton) to handle processes listing"""
 
-import sys
+import logging
 
-from subprocess import check_output
+from subprocess import CalledProcessError, PIPE, check_output
 
 from archey.singleton import Singleton
 
@@ -11,12 +11,21 @@ class Processes(metaclass=Singleton):
     """At startup, instantiate this class to populate a list of running processes"""
     def __init__(self):
         try:
-            self._processes = check_output(
+            ps_output = check_output(
                 ['ps', '-eo', 'comm'],
-                universal_newlines=True
-            ).splitlines()[1:]
+                stderr=PIPE, universal_newlines=True
+            )
         except FileNotFoundError:
-            sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
+            self._processes = []
+            logging.warning("`procps` (or `procps-ng`) couldn't be found on your system.")
+        except CalledProcessError as process_error:
+            self._processes = []
+            logging.warning(
+                "This implementation of `ps` might not be supported : %s", process_error.stderr
+            )
+        else:
+            # Discard first heading line here.
+            self._processes = ps_output.splitlines()[1:]
 
     @property
     def list(self) -> tuple:

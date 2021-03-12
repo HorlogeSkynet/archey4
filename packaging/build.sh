@@ -94,7 +94,6 @@ fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type deb \
 	--package "${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_${ARCHITECTURE}.deb" \
-	--depends 'procps' \
 	--depends 'python3 >= 3.6' \
 	--depends 'python3-distro' \
 	--depends 'python3-netifaces' \
@@ -121,7 +120,6 @@ for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 		"${FPM_COMMON_ARGS[@]}" \
 		--output-type rpm \
 		--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.py${python_version//.}.noarch.rpm" \
-		--depends 'procps' \
 		--depends "python3 >= ${python_version}" \
 		--depends 'python3-distro' \
 		--depends 'python3-netifaces' \
@@ -141,7 +139,6 @@ done
 # 	"${FPM_COMMON_ARGS[@]}" \
 # 	--output-type pacman \
 # 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
-# 	--depends 'procps-ng' \
 # 	--depends "python>=${PYTHON_VERSION}" \
 # 	--depends 'python-distro' \
 # 	--depends 'python-netifaces' \

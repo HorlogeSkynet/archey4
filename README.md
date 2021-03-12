@@ -49,7 +49,6 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * `python3` (>= 3.6)
 * `python3-distro` (`python-distro` on Arch Linux)
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
-* `procps` (`procps-ng` on Arch Linux)
 
 > PyPy is supported and may replace CPython.
 
@@ -60,6 +59,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 |     Environments      |             Packages              |                       Reasons                        |              Notes              |
 | :-------------------- | :-------------------------------- | :--------------------------------------------------- | :------------------------------ |
+| All                   | `procps` (maybe `procps-ng`)      | Many entries would not work as expected              | Would provide `ps`              |
 | All                   | `dnsutils` (maybe `bind-tools`)   | **WAN\_IP** would be detected faster                 | Would provide `dig`             |
 | All                   | `lm-sensors` (maybe `lm_sensors`) | **Temperature** would be more accurate               | N/A                             |
 | macOS (Darwin)        | `iStats` or `osx-cpu-temp`        | **Temperature** wouldn't be detected without it      | N/A                             |
