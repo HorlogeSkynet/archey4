@@ -7,6 +7,7 @@ from subprocess import check_output
 from typing import Tuple
 
 from archey.colors import Colors
+from archey.exceptions import ArcheyException
 from archey.entry import Entry
 
 
@@ -105,12 +106,14 @@ class RAM(Entry):
 
         vm_stat_lines = check_output('vm_stat', universal_newlines=True).splitlines()
 
-        # From first heading line, fetch system page size (default to 4096 bytes).
+        # From first heading line, fetch system page size.
         page_size_match = re.match(
             r'^Mach Virtual Memory Statistics: \(page size of (\d+) bytes\)$',
             vm_stat_lines[0]
         )
-        page_size = (int(page_size_match.group(1)) if page_size_match else 4096)
+        if not page_size_match:
+            raise ArcheyException("Couldn't parse `vm_stat` output, please open an issue.")
+        page_size = int(page_size_match.group(1))
 
         # Store memory information into a dictionary.
         mem_info = {}
