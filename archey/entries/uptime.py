@@ -4,11 +4,11 @@ import re
 
 from subprocess import check_output
 
-import sys
 import time
 
 from datetime import timedelta
 
+from archey.exceptions import ArcheyException
 from archey.entry import Entry
 
 
@@ -83,11 +83,8 @@ class Uptime(Entry):
         """Tries to get uptime by parsing the `uptime` command"""
         try:
             uptime_output = check_output('uptime', env={'LANG': 'C'})
-        except FileNotFoundError:
-            # No `uptime` command.
-            # Since `procps` is a dependency (which provides `uptime`) we can just exit here.
-            # Note: We shouldn't get there as `Processes` depends on `procps` beforehand.
-            sys.exit("Please, install first `procps` (or `procps-ng`) on your system.")
+        except FileNotFoundError as error:
+            raise ArcheyException("Couldn't find `uptime` command on this system.") from error
 
         # Unfortunately the output is not designed to be machine-readable...
         uptime_match = re.search(
@@ -144,7 +141,7 @@ class Uptime(Entry):
             re.VERBOSE
         )
         if not uptime_match:
-            sys.exit("Couldn\'t parse `uptime` output, please open an issue.")
+            raise ArcheyException("Couldn't parse `uptime` output, please open an issue.")
 
         # Only `days`, `hours`, `minutes` or `seconds` could have been captured.
         # `timedelta` directly accepts them as arguments.

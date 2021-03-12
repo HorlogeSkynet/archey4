@@ -7,12 +7,12 @@ from textwrap import TextWrapper
 from shutil import get_terminal_size
 
 import os
-import sys
 
 from typing import Type
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
+from archey.exceptions import ArcheyException
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
@@ -147,9 +147,9 @@ class Output:
 
         try:
             print(logo_with_entries.format(c=self._colors) + str(Colors.CLEAR))
-        except UnicodeError:
-            sys.exit(
+        except UnicodeError as unicode_error:
+            raise ArcheyException(
                 """\
 Your locale or TTY does not seem to support UTF-8 encoding.
 Please disable Unicode within your configuration file.\
-""")
+""") from unicode_error

@@ -9,6 +9,7 @@ Logos are stored under the `logos` module.
 import argparse
 import logging
 import os
+import sys
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
@@ -169,9 +170,12 @@ def main():
     if args.screenshot is not None:
         # If so, but still _falsy_, pass `None` as no output file has been specified by the user.
         try:
-            take_screenshot((args.screenshot or None))
+            screenshot_taken = take_screenshot((args.screenshot or None))
         except KeyboardInterrupt:
+            screenshot_taken = False
             print()
+        finally:
+            sys.exit((not screenshot_taken))
 
 
 if __name__ == '__main__':
