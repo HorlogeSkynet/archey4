@@ -48,4 +48,4 @@ class TestCustomAssertions(unittest.TestCase, CustomAssertions):
         self.assertTupleEmpty(())
         self.assertRaises(AssertionError, self.assertTupleEmpty, {})
         self.assertRaises(AssertionError, self.assertTupleEmpty, 'test')
-        self.assertRaises(AssertionError, self.assertTupleEmpty, ['test'])
+        self.assertRaises(AssertionError, self.assertTupleEmpty, ('test',))
