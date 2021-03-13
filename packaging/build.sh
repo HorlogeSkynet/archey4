@@ -99,7 +99,8 @@ fpm \
 	--depends 'python3-netifaces' \
 	--python-install-lib 'usr/lib/python3/dist-packages/' \
 	--deb-priority 'optional' \
-	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what' \
+	--deb-field 'Recommends: procps' \
+	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, virt-what, wmctrl' \
 	--deb-no-default-config-files \
 	setup.py
 
@@ -150,8 +151,9 @@ done
 # 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 # 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 # 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
-# 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
+# 	--pacman-optional-depends 'procps-ng: Many entries wouldn'"'"'t work without it' \
 # 	--pacman-optional-depends 'virt-what: Model would contain details about the hypervisor' \
+# 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
 # 	setup.py
 
 
