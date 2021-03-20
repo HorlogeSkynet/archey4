@@ -165,7 +165,11 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             '41.125\n',
             # Third case (`iStats` KO, `OSX CPU Temp` OK).
             FileNotFoundError(),
-            '61.8 °C\n'
+            '61.8 °C\n',
+            # Fourth case (`OSX CPU Temp` KO, but with <= 1.1.0 output).
+            # See lavoiesl/osx-cpu-temp#22.
+            FileNotFoundError(),
+            '0.0°C\n'
         ]
     )
     def test_run_istats_or_osxcputemp(self, _):
@@ -185,6 +189,13 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
         # Third case.
         Temperature._run_istats_or_osxcputemp(self.temperature_mock)
         self.assertListEqual(self.temperature_mock._temps, [61.8])
+
+        # Reset internal object here.
+        self.temperature_mock._temps = []
+
+        # Fourth case.
+        Temperature._run_istats_or_osxcputemp(self.temperature_mock)
+        self.assertListEmpty(self.temperature_mock._temps)
         # pylint: enable=protected-access
 
     @patch(

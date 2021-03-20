@@ -121,6 +121,7 @@ class Temperature(Entry):
         System's `powermetrics` program is **very** slow to run
           and requires administrator privileges.
         """
+        # Run iStats binary (<https://github.com/Chris911/iStats>).
         try:
             istats_output = check_output(
                 ['istats', 'cpu', 'temperature', '--value-only'],
@@ -132,13 +133,16 @@ class Temperature(Entry):
             self._temps.append(float(istats_output))
             return
 
+        # Run OSX CPU Temp binary (<https://github.com/lavoiesl/osx-cpu-temp>).
         try:
             osxcputemp_output = check_output('osx-cpu-temp', universal_newlines=True)
         except FileNotFoundError:
             pass
         else:
-            self._temps.append(float(osxcputemp_output.split()[0]))
-            return
+            # Parse output across  <= 1.1.0 and above.
+            temp = float(re.search(r'\d+\.\d', osxcputemp_output).group(0))
+            if temp != 0.0:  # (Apple) System Management Control read _may_ fail.
+                self._temps.append(temp)
 
     def _run_sysctl_dev_cpu(self):
         # Tries to get temperatures from each CPU core sensor.
