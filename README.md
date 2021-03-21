@@ -42,6 +42,15 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * JSON output
 * Screen capture ("best effort")
 
+## Supported platforms
+
+* BSD and derivatives
+* Darwin (macOS)
+* GNU/Linux distributions
+* WSL
+
+> Details [here](https://github.com/HorlogeSkynet/archey4/blob/master/archey/distributions.py#L17).
+
 ## Which packages do I need to run this project ?
 
 ### Required packages
