@@ -9,12 +9,12 @@
 # * rpm
 # * bsdtar
 # * debsigs
-# * fpm >= 1.11.0
+# * fpm ~= 1.11.0
 # * twine >= 3.1.1
 #
 # Procedure to install them on Debian :
 # $ sudo apt install ruby rpm build-essential libarchive-tools debsigs rubygems python3-pip
-# $ sudo gem install --no-document fpm
+# $ sudo gem install --no-document fpm -v 1.11.0
 # $ sudo pip3 install setuptools twine
 #
 # Run it as :
@@ -76,6 +76,8 @@ mkdir -p etc/archey4/ && \
 sed -e "s/\${DATE}/$(date +'%B %Y')/1" archey.1 | \
 	sed -e "s/\${VERSION}/${VERSION}/1" | \
 		gzip -c --best - > "${DIST_OUTPUT}/archey.1.gz"
+# Clean any previous Setuptools build output.
+python3 setup.py -q clean --all 2> /dev/null
 
 
 # Prevent Setuptools from generating byte-code files.
@@ -92,13 +94,13 @@ fpm \
 	"${FPM_COMMON_ARGS[@]}" \
 	--output-type deb \
 	--package "${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_${ARCHITECTURE}.deb" \
-	--depends 'procps' \
-	--depends 'python3 >= 3.5' \
+	--depends 'python3 >= 3.6' \
 	--depends 'python3-distro' \
 	--depends 'python3-netifaces' \
 	--python-install-lib 'usr/lib/python3/dist-packages/' \
 	--deb-priority 'optional' \
-	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, wmctrl, virt-what' \
+	--deb-field 'Recommends: procps' \
+	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, virt-what, wmctrl' \
 	--deb-no-default-config-files \
 	setup.py
 
@@ -119,7 +121,6 @@ for python_version in $SUPPORTED_PYTHON_VERSIONS; do
 		"${FPM_COMMON_ARGS[@]}" \
 		--output-type rpm \
 		--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}.py${python_version//.}.noarch.rpm" \
-		--depends 'procps' \
 		--depends "python3 >= ${python_version}" \
 		--depends 'python3-distro' \
 		--depends 'python3-netifaces' \
@@ -139,7 +140,6 @@ done
 # 	"${FPM_COMMON_ARGS[@]}" \
 # 	--output-type pacman \
 # 	--package "${DIST_OUTPUT}/${NAME}-${VERSION}-${REVISION}-any.pkg.tar.xz" \
-# 	--depends 'procps-ng' \
 # 	--depends "python>=${PYTHON_VERSION}" \
 # 	--depends 'python-distro' \
 # 	--depends 'python-netifaces' \
@@ -151,8 +151,9 @@ done
 # 	--pacman-optional-depends 'bind-tools: WAN_IP would be detected faster' \
 # 	--pacman-optional-depends 'lm_sensors: Temperature would be more accurate' \
 # 	--pacman-optional-depends 'pciutils: GPU wouldn'"'"'t be detected without it' \
-# 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
+# 	--pacman-optional-depends 'procps-ng: Many entries wouldn'"'"'t work without it' \
 # 	--pacman-optional-depends 'virt-what: Model would contain details about the hypervisor' \
+# 	--pacman-optional-depends 'wmctrl: WindowManager would be more accurate' \
 # 	setup.py
 
 

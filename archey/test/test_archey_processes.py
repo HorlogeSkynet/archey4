@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from archey.processes import Processes
-
+from archey.test import CustomAssertions
 
 # To avoid edge-case issues due to singleton, we automatically reset internal `_instances`.
 # This is done at the class-level.
@@ -12,7 +12,7 @@ from archey.processes import Processes
     'archey.singleton.Singleton._instances',
     clear=True
 )
-class TestProcesses(unittest.TestCase):
+class TestProcesses(unittest.TestCase, CustomAssertions):
     """
     Test cases for the `Processes` (singleton) class.
     To work around the singleton, we reset the internal `_instances` dictionary.
@@ -44,20 +44,15 @@ there
         self.assertEqual(processes_1.number, 8)
 
         # The class has been instantiated twice, but `check_output` has been called only once.
-        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
-        self.assertEqual(check_output_mock.call_count, 1)
+        self.assertTrue(check_output_mock.assert_called_once)
 
     @patch(
         'archey.processes.check_output',
         side_effect=FileNotFoundError()
     )
-    @patch(
-        'archey.processes.print',
-        return_value=None  # Let's nastily mute class' outputs.
-    )
-    def test_ps_not_available(self, _, __):
-        """Verifies that the program stops when `ps` is not available"""
-        self.assertRaises(SystemExit, Processes)
+    def test_ps_not_available(self, _):
+        """Checks behavior when `ps` is not available"""
+        self.assertTupleEmpty(Processes().list)
 
 
 if __name__ == '__main__':

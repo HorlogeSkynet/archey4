@@ -1,6 +1,7 @@
 """Hardware model information detection class"""
 
 import os
+import platform
 import re
 
 from subprocess import CalledProcessError, DEVNULL, check_output
@@ -17,6 +18,7 @@ class Model(Entry):
         self.value = \
             self._fetch_virtual_env_info() \
             or self._fetch_product_info() \
+            or self._fetch_sysctl_hw() \
             or self._fetch_raspberry_pi_revision() \
             or self._fetch_android_device_model()
 
@@ -70,9 +72,8 @@ class Model(Entry):
             return None
 
         # If we got there with some info, this _should_ be a virtual environment.
-        return '{0} ({1})'.format(
-            product_name or self._default_strings.get('virtual_environment'),
-            environment
+        return f"{{}} ({environment})".format(
+            product_name or self._default_strings.get('virtual_environment')
         )
 
     @staticmethod
@@ -97,7 +98,43 @@ class Model(Entry):
         if not product_version:
             return product_name
 
-        return "{} {}".format(product_name, product_version)
+        return f"{product_name} {product_version}"
+
+    @staticmethod
+    def _fetch_sysctl_hw() -> Optional[str]:
+        # `hw.model` might be populated with CPU info on BSD platforms.
+        # Let's only query this OID on Darwin (macOS).
+        if platform.system() == 'Darwin':
+            try:
+                model = check_output(
+                    ['sysctl', '-n', 'hw.model'],
+                    stderr=DEVNULL, universal_newlines=True
+                )
+            except FileNotFoundError:
+                return None
+            except CalledProcessError:
+                pass
+            else:
+                return model.rstrip().replace(',', '.')
+
+        # Any other BSD (or derivatives).
+        hw_oids = []
+        for hw_oid in ('vendor', 'product', 'version'):
+            try:
+                sysctl_output = check_output(
+                    ['sysctl', '-n', f'hw.{hw_oid}'],
+                    stderr=DEVNULL, universal_newlines=True
+                )
+            except FileNotFoundError:
+                return None
+            except CalledProcessError:
+                pass
+            else:
+                sysctl_output = sysctl_output.rstrip()
+                if sysctl_output != 'None':
+                    hw_oids.append(sysctl_output)
+
+        return ' '.join(hw_oids) or None
 
     @staticmethod
     def _fetch_raspberry_pi_revision() -> Optional[str]:
@@ -113,10 +150,7 @@ class Model(Entry):
         revision = re.search(r'(?<=Revision\t: ).*', cpu_info)
         if hardware and revision:
             # ... let's set a pretty info string with these data
-            return 'Raspberry Pi {0} (Rev. {1})'.format(
-                hardware.group(0),
-                revision.group(0)
-            )
+            return f'Raspberry Pi {hardware.group(0)} (Rev. {revision.group(0)})'
 
         return None
 
@@ -135,4 +169,4 @@ class Model(Entry):
         except FileNotFoundError:
             return None
 
-        return '{0} ({1})'.format(brand, model)
+        return f'{brand} ({model})'

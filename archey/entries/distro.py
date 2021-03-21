@@ -14,9 +14,11 @@ class Distro(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        distro_name = Distributions.get_distro_name()
-        if not distro_name:
-            distro_name = self._fetch_android_release()
+        if platform.system() == 'Darwin':
+            distro_name = self._fetch_darwin_release()
+        else:
+            distro_name = Distributions.get_distro_name() or \
+                self._fetch_android_release()
 
         self.value = {
             'name': distro_name,
@@ -34,14 +36,22 @@ class Distro(Entry):
         except FileNotFoundError:
             return None
 
-        return 'Android {0}'.format(release)
+        return f'Android {release}'
 
+    @staticmethod
+    def _fetch_darwin_release() -> Optional[str]:
+        """Simple method to fetch current release on Darwin systems"""
+        # For macOS, let's mimic Python's `platform.platform` internal behavior here.
+        macos_release = platform.mac_ver()[0]
+        if macos_release:
+            return f'macOS {macos_release}'
+
+        return f'Darwin {platform.release()}'
 
     def output(self, output):
         output.append(
             self.name,
-            '{0} [{1}]'.format(
-                (self.value['name'] or self._default_strings.get('not_detected')),
-                self.value['arch']
+            f"{{}} [{self.value['arch']}]".format(
+                self.value['name'] or self._default_strings.get('not_detected')
             )
         )

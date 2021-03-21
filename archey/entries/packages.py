@@ -16,12 +16,14 @@ PACKAGES_TOOLS = (
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
+    {'cmd': ('ls', '-1', '/usr/local/Cellar/')},  # HomeBrew.
     {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
     {'cmd': ('pkg', '-N', 'info', '-a')},
+    {'cmd': ('port', 'installed'), 'skew': 1},
     {'cmd': ('rpm', '-qa')},
-    {'cmd': ('ls', '-l', '/var/log/packages/')},  # SlackWare.
+    {'cmd': ('ls', '-1', '/var/log/packages/')},  # SlackWare.
     {'cmd': ('yum', 'list', 'installed'), 'skew': 2},
     {'cmd': ('zypper', 'search', '-i'), 'skew': 5}
 )
@@ -48,13 +50,13 @@ class Packages(Entry):
             except (FileNotFoundError, CalledProcessError):
                 continue
 
-            # Here we *may* use `\n` as `universal_newlines` has been set to `True`.
+            # Here we *may* use `\n` as `universal_newlines` has been set.
             if self.value:
                 self.value += results.count('\n')
             else:
                 self.value = results.count('\n')
 
-            # If any, deduct output skew present due to the packages tool.
+            # If any, deduct output skew present due to the packages tool itself.
             if 'skew' in packages_tool:
                 self.value -= packages_tool['skew']
 

@@ -50,7 +50,7 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
-                DEFAULT_CONFIG['default_strings']['virtual_environment'] + ' (xen, xen-domU)'
+                f"{DEFAULT_CONFIG['default_strings']['virtual_environment']} (xen, xen-domU)"
             )
 
         with self.subTest('Virtual environment with systemd only.'):
@@ -63,7 +63,7 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
-                DEFAULT_CONFIG['default_strings']['virtual_environment'] + ' (systemd-nspawn)'
+                f"{DEFAULT_CONFIG['default_strings']['virtual_environment']} (systemd-nspawn)"
             )
 
         with self.subTest('Virtual environment with systemd and `dmidecode`.'):
@@ -171,6 +171,50 @@ class TestModelEntry(unittest.TestCase):
 
             self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
 
+    @patch(
+        'archey.entries.model.platform.system',
+        side_effect=[
+            'Darwin',
+            'Darwin',
+            'OpenBSD',
+            'OpenBSD',
+            'OpenBSD'
+        ]
+    )
+    @patch(
+        'archey.entries.model.check_output',
+        side_effect=[
+            # First case [Darwin] (`sysctl` won't be available).
+            FileNotFoundError(),
+            # Second case [Darwin] OK.
+            'MacBookPro14,2',
+            # Fifth case [BSD] (`sysctl` won't be available).
+            FileNotFoundError(),
+            # Third case [BSD] (OK).
+            'VMware, Inc.\n',
+            'VMware Virtual Platform\n',
+            'None\n',
+            # Fourth case [BSD] (partially-OK).
+            CalledProcessError(1, 'sysctl'),
+            'KALAP10D300EA\n',
+            '1\n'
+        ]
+    )
+    def test_fetch_sysctl_hw(self, _, __):
+        """Test `_fetch_sysctl_hw` static method"""
+        # pylint: disable=protected-access
+        # Dawin cases.
+        self.assertIsNone(Model._fetch_sysctl_hw())
+        self.assertEqual(Model._fetch_sysctl_hw(), 'MacBookPro14.2')
+        # BSD cases.
+        self.assertIsNone(Model._fetch_sysctl_hw())
+        self.assertEqual(
+            Model._fetch_sysctl_hw(),
+            'VMware, Inc. VMware Virtual Platform'
+        )
+        self.assertEqual(Model._fetch_sysctl_hw(), 'KALAP10D300EA 1')
+        # pylint: enable=protected-access
+
     def test_fetch_raspberry_pi_revision(self):
         """Test `_fetch_raspberry_pi_revision` static method"""
         with patch('archey.entries.model.open', mock_open()) as mock:
@@ -205,31 +249,15 @@ class TestModelEntry(unittest.TestCase):
             Model._fetch_android_device_model()  # pylint: disable=protected-access
         )
 
-    @patch(
-        'archey.entries.model.Model._fetch_virtual_env_info',
-        return_value=None  # Not a virtual environment...
-    )
-    @patch(
-        'archey.entries.model.Model._fetch_product_info',
-        return_value=None  # No model name could be retrieved...
-    )
-    @patch(
-        'archey.entries.model.Model._fetch_raspberry_pi_revision',
-        return_value=None  # Not a Raspberry Pi device either...
-    )
-    @patch(
-        'archey.entries.model.Model._fetch_android_device_model',
-        return_value=None  # Not an Android device...
-    )
     @HelperMethods.patch_clean_configuration
-    def test_no_match(self, _, __, ___, ____):
+    def test_no_match(self):
         """Test when no information could be retrieved"""
-        model = Model()
+        model_instance_mock = HelperMethods.entry_mock(Model)
 
         output_mock = MagicMock()
-        model.output(output_mock)
+        Model.output(model_instance_mock, output_mock)
 
-        self.assertIsNone(model.value)
+        self.assertIsNone(model_instance_mock.value)
         self.assertEqual(
             output_mock.append.call_args[0][1],
             DEFAULT_CONFIG['default_strings']['not_detected']

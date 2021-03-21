@@ -1,5 +1,6 @@
 """Windows manager detection class"""
 
+import platform
 import re
 
 from subprocess import check_output, DEVNULL, CalledProcessError
@@ -9,11 +10,13 @@ from archey.processes import Processes
 
 
 WM_DICT = {
+    'Amethyst': 'Amethyst',
     'awesome': 'Awesome',
     'beryl': 'Beryl',
     'blackbox': 'Blackbox',
     'bspwm': 'bspwm',
     'cinnamon': 'Cinnamon',
+    'chunkwm': 'ChunkWM',
     'compiz': 'Compiz',
     'deepin-wm': 'Deepin WM',
     'dwm': 'DWM',
@@ -29,8 +32,10 @@ WM_DICT = {
     'openbox': 'Openbox',
     'pekwm': 'PekWM',
     'qtile': 'QTile',
-    'ratpoison': 'ratpoison',
+    'ratpoison': 'RatPoison',
+    'Rectangle': 'Rectangle',
     'scrotwm': 'ScrotWM',
+    'Spectacle': 'Spectacle',
     'stumpwm': 'StumpWM',
     'subtle': 'Subtle',
     'monsterwm': 'MonsterWM',
@@ -39,7 +44,8 @@ WM_DICT = {
     'wmfs': 'Wmfs',
     'wmii': 'wmii',
     'xfwm4': 'Xfwm',
-    'xmonad': 'xmonad'
+    'xmonad': 'Xmonad',
+    'yabai': 'Yabai'
 }
 
 
@@ -65,3 +71,6 @@ class WindowManager(Entry):
                 if wm_id in processes:
                     self.value = wm_name
                     break
+            else:
+                if platform.system() == 'Darwin':
+                    self.value = 'Quartz Compositor'

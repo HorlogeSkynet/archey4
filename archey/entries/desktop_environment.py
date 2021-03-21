@@ -1,6 +1,7 @@
 """Desktop environment detection class"""
 
 import os
+import platform
 
 from archey.entry import Entry
 from archey.processes import Processes
@@ -27,6 +28,12 @@ class DesktopEnvironment(Entry):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # macOS' desktop environment is called "Aqua",
+        #   and could not be detected from processes list.
+        if platform.system() == 'Darwin':
+            self.value = 'Aqua'
+            return
 
         processes = Processes().list
         for de_id, de_name in DE_DICT.items():

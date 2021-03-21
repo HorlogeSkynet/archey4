@@ -81,8 +81,8 @@ class TestKernelEntry(unittest.TestCase):
         return_value='X.Y.Z-R-arch'
     )
     @patch(
-        'archey.entries.kernel.sys.platform',
-        return_value='freebsd8'
+        'archey.entries.kernel.platform.system',
+        return_value='Java'
     )
     @patch(
         'archey.entries.kernel.Environment',
@@ -122,15 +122,15 @@ class TestKernelEntry(unittest.TestCase):
         ]
     )
     @patch(
-        'archey.entries.kernel.sys.platform',
-        'linux'
+        'archey.entries.kernel.platform.system',
+        return_value='Linux'
     )
     @patch(
         'archey.entries.kernel.Environment',
         Mock(DO_NOT_TRACK=False)
     )
     @HelperMethods.patch_clean_configuration
-    def test_kernel_comparison(self, _, __):
+    def test_kernel_comparison(self, _, __, ___):
         """Check kernel releases comparison and output templates"""
         output_mock = MagicMock()
 
@@ -150,7 +150,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertIs(kernel.value['is_outdated'], False)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '1.2.3-4-arch ({})'.format(DEFAULT_CONFIG['default_strings']['latest'])
+            f"1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})"
         )
 
         # Current < latest (outdated).
@@ -161,7 +161,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertIs(kernel.value['is_outdated'], True)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '1.2.3-4-arch (1.3.2 {})'.format(DEFAULT_CONFIG['default_strings']['available'])
+            f"1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})"
         )
 
 

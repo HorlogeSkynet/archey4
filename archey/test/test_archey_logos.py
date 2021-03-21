@@ -20,56 +20,54 @@ class TestLogos(unittest.TestCase):
 
         This test also indirectly checks `lazy_load_logo_module` behavior!
         """
-        distributions_identifiers = Distributions.get_distribution_identifiers()
+        distributions_identifiers = Distributions.get_identifiers()
 
         for i, logo_module_info in enumerate(pkgutil.iter_modules(logos.__path__), start=1):
-            # `iter_modules` yields `pkgutil.ModuleInfo` named tuple starting with Python 3.6.
-            # So we manually extract the module name from `(module_finder, name, ispkg)` tuple.
-            logo_module_name = logo_module_info[1]
 
             # Check each logo module name corresponds to a distribution identifier.
             self.assertIn(
-                logo_module_name,
+                logo_module_info.name,
                 distributions_identifiers,
-                msg='No distribution identifier for [{0}]'.format(logo_module_name)
+                msg=f'No distribution identifier for [{logo_module_info.name}]'
             )
 
-            logo_module = lazy_load_logo_module(logo_module_name)
+            logo_module = lazy_load_logo_module(logo_module_info.name)
 
             # Attributes checks.
             self.assertTrue(
                 getattr(logo_module, 'LOGO', []),
-                msg='[{0}] logo module missing `LOGO` attribute'.format(logo_module_name)
+                msg=f'[{logo_module_info.name}] logo module missing `LOGO` attribute'
             )
             self.assertTrue(
                 getattr(logo_module, 'COLORS', []),
-                msg='[{0}] logo module missing `COLORS` attribute'.format(logo_module_name)
+                msg=f'[{logo_module_info.name}] logo module missing `COLORS` attribute'
             )
 
-            # Make Archey compute the logo width.
-            logo_width = get_logo_width(logo_module.LOGO)
+            # Compute once and for all the number of defined colors for this logo.
+            nb_colors = len(logo_module.COLORS)
+
+            # Make Archey compute the logo (effective) width.
+            logo_width = get_logo_width(logo_module.LOGO, nb_colors)
 
             # Then, check that each logo line got the same effective width.
             for j, line in enumerate(logo_module.LOGO[1:], start=1):
                 # Here we gotta trick the `get_logo_width` call.
                 # We actually pass each logo line as if it was a "complete" logo.
-                line_width = get_logo_width([line])
+                line_width = get_logo_width([line], nb_colors)
 
                 # Width check.
                 self.assertEqual(
                     line_width,
                     logo_width,
-                    msg='[{0}] line index {1}, got an unexpected width {2} (expected {3})'.format(
-                        logo_module_name, j, line_width, logo_width
+                    msg='[{}] line index {}, got an unexpected width {} (expected {})'.format(
+                        logo_module_info.name, j, line_width, logo_width
                     )
                 )
 
                 # Non-empty line check.
                 self.assertTrue(
-                    Colors.remove_colors(line).strip(),
-                    msg='[{0}] line index {1}, got an useless empty line'.format(
-                        logo_module_name, j
-                    )
+                    Colors.remove_colors(line.format(c=[''] * nb_colors)).strip(),
+                    msg=f'[{logo_module_info.name}] line index {j}, got an useless empty line'
                 )
 
         # Finally, check each distributions identifier got a logo!
@@ -77,8 +75,8 @@ class TestLogos(unittest.TestCase):
         self.assertEqual(
             i,
             len(distributions_identifiers),
-            msg='[{0}] Expected {1} logo modules, got {2}'.format(
-                logo_module_name, len(distributions_identifiers), i
+            msg='[{}] Expected {} logo modules, got {}'.format(
+                logo_module_info.name, len(distributions_identifiers), i
             )
         )
 

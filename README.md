@@ -46,24 +46,26 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ### Required packages
 
-* `python3` (>= 3.5)
+* `python3` (>= 3.6)
 * `python3-distro` (`python-distro` on Arch Linux)
 * `python3-netifaces` (`python-netifaces` on Arch Linux)
-* `procps` (`procps-ng` on Arch Linux)
 
 > PyPy is supported and may replace CPython.
 
-> Looking for Python 3.4 support ? Please refer to the latest v4.9 release.
+> Looking for Python 3.4 support ? Please refer to the latest v4.9 release.  
+> Looking for Python 3.5 support ? Please refer to the latest v4.10 release.
 
 ### Highly recommended packages
 
-|     Environments      |             Packages              |                       Reasons                        |            Notes             |
-| :-------------------- | :-------------------------------- | :--------------------------------------------------- | :--------------------------- |
-| All                   | `dnsutils` (maybe `bind-tools`)   | **WAN\_IP** would be detected faster                 | Would provide `dig`          |
-| All                   | `lm-sensors` (maybe `lm_sensors`) | **Temperature** would be more accurate               | N/A                          |
-| Graphical (desktop)   | `pciutils`                        | **GPU** wouldn't be detected without it              | Would provide `lspci`        |
-| Graphical (desktop)   | `wmctrl`                          | **WindowManager** would be more accurate             | N/A                          |
-| Virtual w/o `systemd` | `virt-what` and `dmidecode`       | **Model** would contain details about the hypervisor | **root** privileges required |
+|     Environments      |             Packages              |                       Reasons                        |              Notes              |
+| :-------------------- | :-------------------------------- | :--------------------------------------------------- | :------------------------------ |
+| All                   | `procps` (maybe `procps-ng`)      | Many entries would not work as expected              | Would provide `ps`              |
+| All                   | `dnsutils` (maybe `bind-tools`)   | **WAN\_IP** would be detected faster                 | Would provide `dig`             |
+| All                   | `lm-sensors` (maybe `lm_sensors`) | **Temperature** would be more accurate               | N/A                             |
+| macOS (Darwin)        | `iStats` or `osx-cpu-temp`        | **Temperature** wouldn't be detected without it      | N/A                             |
+| Graphical (desktop)   | `pciutils` or `pciconf`           | **GPU** wouldn't be detected without it              | Would provide `lspci`/`pciconf` |
+| Graphical (desktop)   | `wmctrl`                          | **WindowManager** would be more accurate             | N/A                             |
+| Virtual w/o `systemd` | `virt-what` and `dmidecode`       | **Model** would contain details about the hypervisor | **root** privileges required    |
 
 ## Installation
 
@@ -364,17 +366,12 @@ Below stand further descriptions for each available (default) option :
 
 ## Test cases
 
-An extensive tests suite is available.  
+An extensive test suite is available.  
 Here is a short procedure to run them (you'll only need `python3`) :
 
 ```bash
 git clone https://github.com/HorlogeSkynet/archey4.git
 cd archey4/
-
-# Run the suite from SetupTools.
-python3 setup.py test
-
-# Run the suite from the unit testing framework itself.
 python3 -m unittest
 ```
 

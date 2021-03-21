@@ -34,7 +34,7 @@ class WanIP(Entry):
         Best effort to retrieve public IP address based on corresponding options.
         We are trying special DNS resolutions first for performance and (system) caching purposes.
         """
-        options = self.options.get('ipv{}'.format(ip_version), {})
+        options = self.options.get(f'ipv{ip_version}', {})
 
         # Is retrieval enabled for this IP version ?
         if not options and options != {}:
@@ -58,7 +58,7 @@ class WanIP(Entry):
                 return ip_address
 
         # Is retrieval via HTTP(S) request enabled ?
-        http_url = options.get('http_url', 'https://v{}.ident.me/'.format(ip_version))
+        http_url = options.get('http_url', f'https://v{ip_version}.ident.me/')
         if not http_url:
             return None
 

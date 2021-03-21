@@ -9,6 +9,9 @@ extension-pkg-whitelist=netifaces
 # Automatically detects the number of CPU available to use.
 jobs=0
 
+# For the time being, disable `similarities` checker due to false positives across tests modules.
+# See PyCQA/pylint#214.
+disable=similarities
 
 [DESIGN]
 # For entries classes, we (often) only use the `__init__` magic method.

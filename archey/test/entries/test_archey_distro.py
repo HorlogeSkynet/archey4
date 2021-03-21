@@ -11,24 +11,6 @@ from archey.test.entries import HelperMethods
 class TestDistroEntry(unittest.TestCase):
     """`Distro` entry simple test cases"""
     @patch(
-        'archey.entries.distro.Distributions.get_distro_name',
-        return_value='NAME VERSION (CODENAME)'
-    )
-    @patch(
-        'archey.entries.distro.platform.machine',
-        return_value='ARCHITECTURE'
-    )
-    def test_init(self, _, __):
-        """Test `Distro` instantiation"""
-        self.assertDictEqual(
-            Distro().value,
-            {
-                'name': 'NAME VERSION (CODENAME)',
-                'arch': 'ARCHITECTURE'
-            }
-        )
-
-    @patch(
         'archey.entries.distro.check_output',
         return_value='10\n'  # Imitate `getprop` output on Android 10.
     )
@@ -40,35 +22,42 @@ class TestDistroEntry(unittest.TestCase):
         )
 
     @patch(
-        'archey.entries.distro.Distributions.get_distro_name',
-        return_value=None  # Soft-failing : No _pretty_ distribution name found...
+        'archey.entries.distro.platform.mac_ver',
+        side_effect=[
+            ('', ('', '', ''), ''),                    # Darwin case.
+            ('11.1', ('foo', 'bar', 'baz'), 'x86_64')  # macOS case.
+        ]
     )
     @patch(
-        'archey.entries.distro.platform.machine',
-        return_value='ARCHITECTURE'
+        'archey.entries.distro.platform.release',
+        return_value='20.2.0'  # Darwin release.
     )
-    @patch(
-        'archey.entries.distro.Distro._fetch_android_release',
-        return_value=None  # Not an Android device either...
-    )
-    @HelperMethods.patch_clean_configuration
-    def test_unknown_distro_output(self, _, __, ___):
-        """Test for `distro` and `uname` outputs concatenation"""
-        distro = Distro()
-
-        output_mock = MagicMock()
-        distro.output(output_mock)
-
-        self.assertDictEqual(
-            distro.value,
-            {
-                'name': None,
-                'arch': 'ARCHITECTURE'
-            }
+    def test_fetch_darwin_release(self, _, __):
+        """Test `_fetch_darwin_release` static method"""
+        self.assertEqual(
+            Distro._fetch_darwin_release(),  # pylint: disable=protected-access
+            'Darwin 20.2.0'
         )
         self.assertEqual(
+            Distro._fetch_darwin_release(),  # pylint: disable=protected-access
+            'macOS 11.1'
+        )
+
+    @HelperMethods.patch_clean_configuration
+    def test_unknown_distro_output(self):
+        """Test for `output` method when distribution name couldn't be found"""
+        distro_intance_mock = HelperMethods.entry_mock(Distro)
+        output_mock = MagicMock()
+
+        distro_intance_mock.value = {
+            'name': None,
+            'arch': 'ARCHITECTURE'
+        }
+
+        Distro.output(distro_intance_mock, output_mock)
+        self.assertEqual(
             output_mock.append.call_args[0][1],
-            DEFAULT_CONFIG['default_strings']['not_detected'] + ' [ARCHITECTURE]'
+            f"{DEFAULT_CONFIG['default_strings']['not_detected']} [ARCHITECTURE]"
         )
 
 

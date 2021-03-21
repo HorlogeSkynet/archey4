@@ -7,6 +7,13 @@ from archey.configuration import Configuration
 
 class Entry(AbstractBaseClass):
     """Module base class"""
+    def __new__(cls, *_, **kwargs):
+        """Hook object instantiation to handle our particular `disabled` config field"""
+        if kwargs.get('options', {}).get('disabled'):
+            return None
+
+        return super().__new__(cls)
+
     @abstractmethod
     def __init__(self, name: str = None, value=None, options: dict = None):
         # Each entry will have always have the following attributes...
@@ -19,10 +26,6 @@ class Entry(AbstractBaseClass):
 
         # Propagates a reference to default strings specified in `Configuration`.
         self._default_strings = Configuration().get('default_strings')
-
-    def __bool__(self):
-        """Makes an `Entry` evaluates to _falsy_ if `disabled` config field is _truthy_"""
-        return not bool(self.options.get('disabled'))
 
     def output(self, output):
         """Output the results to output. Can be overridden by subclasses."""

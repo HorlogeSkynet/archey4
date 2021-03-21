@@ -19,7 +19,7 @@ class TestOutput(unittest.TestCase):
     Simple test cases to check the behavior of the `Output` class.
     """
     @patch(
-        'archey.output.Distributions.run_detection',
+        'archey.output.Distributions.get_local',
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch(
@@ -39,11 +39,11 @@ class TestOutput(unittest.TestCase):
 
         self.assertListEqual(
             output._results,  # pylint: disable=protected-access
-            ['COLOR_0KEY:{clear} VALUE'.format(clear=Colors.CLEAR)]
+            [f'COLOR_0KEY:{Colors.CLEAR} VALUE']
         )
 
     @patch(
-        'archey.output.Distributions.run_detection',
+        'archey.output.Distributions.get_local',
         return_value=Distributions.SLACKWARE  # Make Slackware being selected.
     )
     @patch(
@@ -70,7 +70,7 @@ class TestOutput(unittest.TestCase):
         )
 
     @patch(
-        'archey.output.Distributions.run_detection',
+        'archey.output.Distributions.get_local',
         return_value=Distributions.WINDOWS  # Make WSL detection pass.
     )
     @patch(
@@ -102,7 +102,7 @@ class TestOutput(unittest.TestCase):
         )
 
     @patch(
-        'archey.output.Distributions.run_detection',
+        'archey.output.Distributions.get_local',
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch(
@@ -272,7 +272,7 @@ FAKE_COLOR 22\x1b[0m\
             )
 
     @patch(
-        'archey.output.Distributions.run_detection',
+        'archey.output.Distributions.get_local',
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch(
@@ -325,15 +325,14 @@ O \x1b[0;31mshort\x1b[0m
 O \x1b[0;31m\x1b[0m...\x1b[0m\
 """)
         # Check that `print` has been called only once.
-        # `unittest.mock.Mock.assert_called_once` is not available against Python < 3.6.
-        self.assertEqual(print_mock.call_count, 1)
+        self.assertTrue(print_mock.assert_called_once)
 
-    @patch('archey.output.Distributions.run_detection')
+    @patch('archey.output.Distributions.get_local')
     @patch(
         'archey.output.Distributions.get_ansi_color',
         return_value=None
     )
-    def test_preferred_distribution(self, _, run_detection_mock):
+    def test_preferred_distribution(self, _, get_local_mock):
         """Simple test checking behavior when `preferred_distribution` is passed at instantiation"""
         output = Output(preferred_distribution='rhel')
 
@@ -341,11 +340,11 @@ O \x1b[0;31m\x1b[0m...\x1b[0m\
             output._distribution,  # pylint: disable=protected-access
             Distributions.RHEL
         )
-        # Check `Distributions.run_detection` method has not been called at all.
-        self.assertFalse(run_detection_mock.called)
+        # Check `Distributions.get_local` method has not been called at all.
+        self.assertFalse(get_local_mock.called)
 
     @patch(
-        'archey.output.Distributions.run_detection',
+        'archey.output.Distributions.get_local',
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch(

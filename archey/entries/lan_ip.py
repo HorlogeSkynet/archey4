@@ -1,7 +1,7 @@
 """Local IP addresses detection class"""
 
 import ipaddress
-import sys
+import logging
 
 from itertools import islice
 from typing import Iterator
@@ -20,12 +20,9 @@ class LanIP(Entry):
         super().__init__(*args, **kwargs)
 
         if not netifaces:
-            print(
-                """\
-Warning: `netifaces` Python module couldn\'t be found.
-Please either install it or disable `LAN_IP` entry in configuration.\
-""",
-                file=sys.stderr
+            logging.warning(
+                "`netifaces` Python module couldn\'t be found. "
+                "Please either install it or explicitly disable `LAN_IP` entry in configuration."
             )
             return
 

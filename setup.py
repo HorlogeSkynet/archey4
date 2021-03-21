@@ -22,11 +22,10 @@ setup(
     author_email='dev+archey@samuel.domains',
     license='GPLv3',
     packages=find_packages(exclude=['archey.test*']),
-    test_suite='archey.test',
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=[
-        'distro',
-        'netifaces'
+        'distro~=1.5.0',
+        'netifaces~=0.10.9'
     ],
     entry_points={
         'console_scripts': [
@@ -54,9 +53,11 @@ Remain *maintained*, *community-driven* and *highly-compatible* with yesterday's
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
+        'Operating System :: Android',
+        'Operating System :: MacOS',
+        'Operating System :: POSIX :: BSD',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

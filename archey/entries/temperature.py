@@ -1,10 +1,13 @@
 """Temperature detection class"""
 
 import json
+import logging
+import os
+import platform
 import re
 
 from glob import iglob
-from subprocess import check_output, DEVNULL, CalledProcessError
+from subprocess import CalledProcessError, DEVNULL, PIPE, check_output, run
 from typing import List
 
 from archey.entry import Entry
@@ -13,7 +16,8 @@ from archey.entry import Entry
 class Temperature(Entry):
     """
     Tries to compute an average temperature from `sensors` (LM-Sensors).
-    If not available, falls back on system thermal zones files.
+    If not available, falls back on system thermal zones files (GNU/Linux)
+      or `sysctl` output for BSD and derivatives systems.
     On Raspberry devices, retrieves temperature from the `vcgencmd` binary.
     """
     def __init__(self, *args, **kwargs):
@@ -24,14 +28,21 @@ class Temperature(Entry):
         # Tries `sensors` at first.
         self._run_sensors(self.options.get('sensors_chipsets', []))
 
-        # On error (list still empty), checks for system thermal zones files.
+        # On error (list still empty)...
         if not self._temps:
-            self._poll_thermal_zones()
+            if platform.system() == 'Linux':
+                # ... checks for system thermal zones files on GNU/Linux.
+                self._poll_thermal_zones()
+            elif platform.system() == 'Darwin':
+                self._run_istats_or_osxcputemp()
+            else:
+                # ... or tries `sysctl` calls (available on BSD and derivatives).
+                self._run_sysctl_dev_cpu()
 
         # Tries `vcgencmd` for Raspberry devices.
         self._run_vcgencmd()
 
-        # No value could be fetched...
+        # No value could be fetched, leave `self.value` to `None`.
         if not self._temps:
             return
 
@@ -53,17 +64,29 @@ class Temperature(Entry):
 
 
     def _run_sensors(self, whitelisted_chips: List[str]):
-        # Uses the `sensors` program (from LM-Sensors) to interrogate thermal chip-sets.
+        # Uses the `sensors` program (from lm-sensors) to interrogate thermal chip-sets.
         try:
-            sensors_output = check_output(
+            sensors_output = run(
                 ['sensors', '-A', '-j'] + whitelisted_chips,
-                universal_newlines=True
+                universal_newlines=True,
+                stdout=PIPE, stderr=PIPE,
+                check=True
             )
-        except (FileNotFoundError, CalledProcessError):
+        except FileNotFoundError:
+            error_message = None
             return
+        except CalledProcessError as called_process_error:
+            error_message = called_process_error.stderr
+            return
+        else:
+            error_message = sensors_output.stderr
+        finally:
+            # Log any `sensors` error messages at warning level.
+            if error_message:
+                logging.warning('[lm-sensors]: %s', error_message.rstrip())
 
         try:
-            sensors_data = json.loads(sensors_output)
+            sensors_data = json.loads(sensors_output.stdout)
         except json.JSONDecodeError:
             return
 
@@ -85,12 +108,67 @@ class Temperature(Entry):
         for thermal_file in iglob(r'/sys/class/thermal/thermal_zone*/temp'):
             with open(thermal_file) as file:
                 try:
-                    temp = float(file.read().strip()) / 1000
+                    temp = float(file.read())
                 except OSError:
                     continue
 
                 if temp != 0.0:
-                    self._temps.append(temp)
+                    self._temps.append(temp / 1000)
+
+    def _run_istats_or_osxcputemp(self):
+        """
+        For Darwin systems, let's rely on `iStats` or `OSX CPU Temp` third-party programs.
+        System's `powermetrics` program is **very** slow to run
+          and requires administrator privileges.
+        """
+        # Run iStats binary (<https://github.com/Chris911/iStats>).
+        try:
+            istats_output = check_output(
+                ['istats', 'cpu', 'temperature', '--value-only'],
+                universal_newlines=True
+            )
+        except FileNotFoundError:
+            pass
+        else:
+            self._temps.append(float(istats_output))
+            return
+
+        # Run OSX CPU Temp binary (<https://github.com/lavoiesl/osx-cpu-temp>).
+        try:
+            osxcputemp_output = check_output('osx-cpu-temp', universal_newlines=True)
+        except FileNotFoundError:
+            pass
+        else:
+            # Parse output across  <= 1.1.0 and above.
+            temp = float(re.search(r'\d+\.\d', osxcputemp_output).group(0))
+            if temp != 0.0:  # (Apple) System Management Control read _may_ fail.
+                self._temps.append(temp)
+
+    def _run_sysctl_dev_cpu(self):
+        # Tries to get temperatures from each CPU core sensor.
+        try:
+            sysctl_output = check_output(
+                ['sysctl', '-n'] + \
+                    [f'dev.cpu.{i}.temperature' for i in range(os.cpu_count())],
+                stderr=PIPE, universal_newlines=True
+            )
+        except FileNotFoundError:
+            # `sysctl` does not seem to be available on this system.
+            return
+        except CalledProcessError as error_message:
+            logging.warning(
+                '[sysctl]: Couldn\'t fetch temperature from CPU sensors (%s). '
+                'Please be sure to load the corresponding kernel driver beforehand '
+                '(`kldload coretemp` for Intel or `kldload amdtemp` for AMD`).',
+                (error_message.stderr or 'unknown error').rstrip()
+            )
+            return
+
+        for temp in sysctl_output.splitlines():
+            # Strip any temperature unit from output (some drivers may add it).
+            temp = float(temp.rstrip('C'))
+            if temp != 0.0:
+                self._temps.append(temp)
 
     def _run_vcgencmd(self):
         # Let's try to retrieve a value from the Broadcom chip on Raspberry.
@@ -128,18 +206,9 @@ class Temperature(Entry):
         char_before_unit = self.value['char_before_unit']
         unit = self.value['unit']
 
-        entry_text = '{0}{1}{2}'.format(
-            self.value['temperature'],
-            char_before_unit,
-            unit
-        )
+        entry_text = f"{self.value['temperature']}{char_before_unit}{unit}"
         # When there are multiple input sources, show the hottest value.
         if len(self._temps) > 1:
-            entry_text = '{0} (Max. {1}{2}{3})'.format(
-                entry_text,
-                self.value['max_temperature'],
-                char_before_unit,
-                unit
-            )
+            entry_text += f" (Max. {self.value['max_temperature']}{char_before_unit}{unit})"
 
         output.append(self.name, entry_text)

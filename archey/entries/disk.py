@@ -2,7 +2,6 @@
 
 import re
 
-from csv import reader as csv_reader
 from subprocess import DEVNULL, PIPE, run
 from typing import Dict, List
 
@@ -18,7 +17,7 @@ class Disk(Entry):
         # Populate an output from `df`
         self._disk_dict = self._get_df_output_dict()
 
-        config_filesystems = self.options.get('show_filesystems', ['local'])  # type: List[str]
+        config_filesystems: List[str] = self.options.get('show_filesystems', ['local'])
         # See `Disk._get_df_output_dict` for the format we use in `self.value`.
         if config_filesystems == ['local']:
             self.value = self._get_local_filesystems()
@@ -43,7 +42,7 @@ class Disk(Entry):
         device_path_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
 
         # Build the dictionary
-        local_disk_dict = {}  # type: Dict[str, dict]
+        local_disk_dict: Dict[str, dict] = {}
         for mount_point, disk_data in self._disk_dict.items():
             if (
                     device_path_regexp.match(disk_data['device_path'])
@@ -121,20 +120,20 @@ class Disk(Entry):
             # `df` isn't available on this system.
             return {}
 
-        # Parse this output as a table in SSV (space-separated values) format
-        ssv_reader = csv_reader(
-            df_output.splitlines()[1:],  # Discard the header row here.
-            delimiter=' ',
-            skipinitialspace=True
-        )
+        df_output_dict = {}
+        for df_entry in df_output.splitlines()[1:]:  # Discard the header row here.
+            # Don't crash against BSDs's autofs mount points.
+            if df_entry.startswith('map '):
+                continue
 
-        return {
-            line[5]: {  # 6th column === mount point.
-                'device_path': line[0],
-                'used_blocks': int(line[2]),
-                'total_blocks': int(line[1])
-            } for line in ssv_reader
-        }
+            columns = df_entry.split(maxsplit=5)
+            df_output_dict[columns[5]] = {  # 6th column === mount point.
+                'device_path': columns[0],
+                'used_blocks': int(columns[2]),
+                'total_blocks': int(columns[1])
+            }
+
+        return df_output_dict
 
 
     @staticmethod
@@ -149,7 +148,7 @@ class Disk(Entry):
 
             blocks /= 1024.0
 
-        return '{0:02.1f} {1}{2}'.format(blocks, unit, suffix)
+        return f'{blocks:02.1f} {unit}{suffix}'
 
 
     def output(self, output):
@@ -215,10 +214,8 @@ class Disk(Entry):
             else:
                 disk_label = None
 
-            pretty_filesystem_value = '{0}{1}{2} / {3}'.format(
-                level_color,
+            pretty_filesystem_value = f'{level_color}{{}}{Colors.CLEAR} / {{}}'.format(
                 self._blocks_to_human_readable(filesystem_data['used_blocks']),
-                Colors.CLEAR,
                 self._blocks_to_human_readable(filesystem_data['total_blocks'])
             )
 

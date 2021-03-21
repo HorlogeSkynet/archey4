@@ -170,6 +170,57 @@ physical id\t: 1
     @patch(
         'archey.entries.cpu.check_output',
         side_effect=[
+            FileNotFoundError(),
+            """\
+{
+  "SPHardwareDataType" : [
+    {
+      "_name" : "hardware_overview",
+      "cpu_type" : "Dual-Core Intel Core i5",
+      "current_processor_speed" : "3,1 GHz",
+      "machine_model" : "MacBookPro00OOooOO00",
+      "machine_name" : "MacBook Pro",
+      "number_processors" : 2,
+      "packages" : 1,
+      "platform_cpu_htt" : "htt_enabled",
+      "platform_UUID" : "XXXXXXXX-YYYY-ZZZZ-TTTT-UUUUUUUUUUUU",
+      "provisioning_UDID" : "XXXXXXXX-YYYY-ZZZZ-TTTT-UUUUUUUUUUUU",
+      "serial_number" : "XX00YY11ZZ22"
+    }
+  ]
+}
+"""])
+    def test_parse_system_profiler(self, _):
+        """Check `_parse_system_profiler` behavior"""
+        # pylint: disable=protected-access
+        self.assertListEmpty(CPU._parse_system_profiler())
+        self.assertListEqual(
+            CPU._parse_system_profiler(),
+            [{'Dual-Core Intel Core i5 @ 3.1 GHz': 4}]
+        )
+        # pylint: enable=protected-access
+
+    @patch(
+        'archey.entries.cpu.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            """\
+Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz
+8
+"""])
+    def test_parse_sysctl_machdep(self, _):
+        """Check `_parse_sysctl_machdep` behavior"""
+        # pylint: disable=protected-access
+        self.assertListEmpty(CPU._parse_sysctl_machdep())
+        self.assertListEqual(
+            CPU._parse_sysctl_machdep(),
+            [{'Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz': 8}]
+        )
+        # pylint: enable=protected-access
+
+    @patch(
+        'archey.entries.cpu.check_output',
+        side_effect=[
             """\
 Architecture:        x86_64
 CPU op-mode(s):      32-bit, 64-bit
@@ -311,14 +362,13 @@ Model name:          CPU-MODEL-NAME
                         'CPU',
                         '2 x ANOTHER-CPU-MODEL'
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         output_mock.reset_mock()
 
         with self.subTest('No CPU detected output.'):
-            cpu_instance_mock.value = {}
+            cpu_instance_mock.value = []
 
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(

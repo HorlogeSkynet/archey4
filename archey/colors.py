@@ -48,7 +48,7 @@ class Colors(Enum):
         if Environment.NO_COLOR:
             return ''
 
-        return '\x1b[{}m'.format(display_attrs)
+        return f'\x1b[{display_attrs}m'
 
     @staticmethod
     def get_level_color(value: float, yellow_bpt: float, red_bpt: float) -> 'Colors':

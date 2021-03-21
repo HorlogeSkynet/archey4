@@ -6,6 +6,10 @@ from unittest.mock import patch
 from archey.entries.desktop_environment import DesktopEnvironment
 
 
+@patch(
+    'archey.entries.desktop_environment.platform.system',
+    return_value='Linux'
+)
 class TestDesktopEnvironmentEntry(unittest.TestCase):
     """
     With the help of a fake running processes list, we test the DE matching.
@@ -20,7 +24,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
             'tea'
         )
     )
-    def test_match(self):
+    def test_match(self, _):
         """Simple list matching"""
         self.assertEqual(DesktopEnvironment().value, 'Cinnamon')
 
@@ -38,9 +42,16 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         'archey.entries.desktop_environment.os.getenv',
         return_value='DESKTOP ENVIRONMENT'
     )
-    def test_mismatch(self, _):
+    def test_mismatch(self, _, __):
         """Simple list (mis-)-matching"""
         self.assertEqual(DesktopEnvironment().value, 'DESKTOP ENVIRONMENT')
+
+    @patch('archey.entries.desktop_environment.platform.system')
+    def test_darwin_aqua_deduction(self, _, platform_system_mock):
+        """Test "Aqua" deduction on Darwin systems"""
+        platform_system_mock.return_value = 'Darwin'  # Override module-wide mocked value.
+
+        self.assertEqual(DesktopEnvironment().value, 'Aqua')
 
     @patch(
         'archey.entries.desktop_environment.Processes.list',
@@ -56,7 +67,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
         'archey.entries.desktop_environment.os.getenv',
         return_value=None  # The environment variable is empty...
     )
-    def test_non_detection(self, _):
+    def test_non_detection(self, _, __):
         """Simple global non-detection"""
         self.assertIsNone(DesktopEnvironment().value)
 

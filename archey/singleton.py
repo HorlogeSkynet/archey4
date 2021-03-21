@@ -2,7 +2,7 @@
 
 
 from abc import ABCMeta as AbstractBaseMetaClass
-from typing import Dict, Type  # pylint: disable=unused-import
+from typing import Dict, Type
 
 
 class Singleton(AbstractBaseMetaClass):
@@ -13,7 +13,7 @@ class Singleton(AbstractBaseMetaClass):
     ... whereas it is effectively loaded only once.
     You cannot instantiate this meta-class directly.
     """
-    _instances = {}  # type: Dict[Type['Singleton'], type]
+    _instances: Dict[Type['Singleton'], object] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

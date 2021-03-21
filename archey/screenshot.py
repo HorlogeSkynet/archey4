@@ -1,7 +1,8 @@
-"""Simple module doing its best as taking a screenshot of the current screen"""
+"""Simple module doing its best at taking a screenshot of the current screen"""
 
+import logging
 import os
-import sys
+import platform
 import time
 
 from contextlib import ExitStack
@@ -10,10 +11,11 @@ from functools import partial
 from subprocess import CalledProcessError, DEVNULL, check_call
 
 
-def take_screenshot(output_file: str = None):
+def take_screenshot(output_file: str = None) -> bool:
     """
     Simple function trying to take a screenshot using various famous back-end programs.
-    When supported by the found and available back-end, try to honor `output_file`.
+    When supported by a found and available back-end, **try to** honor `output_file`.
+    Returns a `bool` representing whether or not a screenshot could be taken.
     """
     if not output_file or os.path.isdir(output_file):
         # When a directory is provided, we've to force `output_file` to represent a **file** path.
@@ -35,9 +37,9 @@ def take_screenshot(output_file: str = None):
     }
 
     # Extends the original screenshot tools dictionary according to current platform.
-    if sys.platform in ('win32', 'cygwin'):
+    if platform.system() == 'Windows':
         screenshot_tools['SnippingTool'] = ['SnippingTool.exe', '/clip']
-    elif sys.platform == 'darwin':
+    elif platform.system() == 'Darwin':
         screenshot_tools['ScreenCapture'] = [
             'screencapture',
             '-x',
@@ -59,7 +61,7 @@ def take_screenshot(output_file: str = None):
     # This part purposefully blocks so we wait a little bit before taking the screenshot.
     # It prevents taking a screenshot before Archey's output has appeared.
     for time_remaining in range(3, 0, -1):
-        taking_sc_str = 'Taking screenshot in {:1d}...'.format(time_remaining)
+        taking_sc_str = f'Taking screenshot in {time_remaining:1d}...'
         print(taking_sc_str, end='', flush=True)
         time.sleep(1)
         print('\r' + ' ' * len(taking_sc_str), end='\r', flush=True)
@@ -73,18 +75,17 @@ def take_screenshot(output_file: str = None):
                 continue
             except CalledProcessError as process_error:
                 defer_stack.callback(partial(
-                    print,
-                    'Couldn\'t take a screenshot with {}: \"{}\".'.format(
-                        screenshot_tool, process_error
-                    ),
-                    file=sys.stderr
+                    logging.warning,
+                    'Couldn\'t take a screenshot with %s: \"%s\".', screenshot_tool, process_error
                 ))
                 continue
-            break
-        else:
-            defer_stack.callback(partial(
-                sys.exit,
-                """\
+
+            return True
+
+    logging.error(
+        """\
 Sorry, we couldn\'t find any supported program to take a screenshot on your system.
-Please install one of the following and try again: {}.\
-""".format(', '.join(screenshot_tools.keys()))))
+Please install one of the following and try again: %s.""",
+        ', '.join(screenshot_tools.keys())
+    )
+    return False

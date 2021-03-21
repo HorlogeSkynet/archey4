@@ -7,12 +7,12 @@ from textwrap import TextWrapper
 from shutil import get_terminal_size
 
 import os
-import sys
 
 from typing import Type
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
+from archey.exceptions import ArcheyException
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
@@ -26,14 +26,14 @@ class Output:
     """
     def __init__(self, **kwargs):
         # Fetches passed arguments.
-        self._format_to_json = kwargs.get('format_to_json')  # type: int
+        self._format_to_json = kwargs.get('format_to_json')
 
         try:
             # If set, force the distribution to `preferred_distribution` argument.
             self._distribution = Distributions(kwargs.get('preferred_distribution'))
         except ValueError:
             # If not (or unknown), run distribution detection.
-            self._distribution = Distributions.run_detection()
+            self._distribution = Distributions.get_local()
 
         # Retrieve distribution's logo module before copying and DRY-ing its attributes.
         logo_module = lazy_load_logo_module(self._distribution.value)
@@ -56,14 +56,7 @@ class Output:
 
     def append(self, key: str, value):
         """Append a pre-formatted entry to the final output content"""
-        self._results.append(
-            '{color}{key}:{clear} {value}'.format(
-                color=self._colors[0],
-                key=key,
-                clear=Colors.CLEAR,
-                value=value
-            )
-        )
+        self._results.append(f'{self._colors[0]}{key}:{Colors.CLEAR} {value}')
 
     def output(self):
         """
@@ -153,14 +146,10 @@ class Output:
         ])
 
         try:
-            print(
-                logo_with_entries.format(
-                    c=self._colors
-                ) + str(Colors.CLEAR)
-            )
-        except UnicodeError:
-            sys.exit(
+            print(logo_with_entries.format(c=self._colors) + str(Colors.CLEAR))
+        except UnicodeError as unicode_error:
+            raise ArcheyException(
                 """\
 Your locale or TTY does not seem to support UTF-8 encoding.
 Please disable Unicode within your configuration file.\
-""")
+""") from unicode_error

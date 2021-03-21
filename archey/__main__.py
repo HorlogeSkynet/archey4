@@ -7,6 +7,7 @@ Logos are stored under the `logos` module.
 """
 
 import argparse
+import logging
 import os
 import sys
 
@@ -50,6 +51,7 @@ class Entries(Enum):
     The string representation of keys will act as entries names.
     Values will be set under the `value` attribute of each obtained objects.
     """
+    # pylint: disable=invalid-name
     User = e_User
     Hostname = e_Hostname
     Model = e_Model
@@ -82,7 +84,7 @@ def args_parsing() -> argparse.Namespace:
     parser.add_argument(
         '-d', '--distribution',
         metavar='IDENTIFIER',
-        choices=Distributions.get_distribution_identifiers(),
+        choices=Distributions.get_identifiers(),
         help='supported distribution identifier to show the logo of, pass `unknown` to list them'
     )
     parser.add_argument(
@@ -109,6 +111,9 @@ def main():
     """Simple entry point"""
     args = args_parsing()
 
+    # Setup logging.
+    logging.basicConfig(format='%(levelname)s: %(message)s')
+
     # Populate our internal singletons once and for all.
     Processes()
     Environment()
@@ -134,11 +139,8 @@ def main():
                 options=entry                  # Remaining fields should be propagated as options.
             )
         except KeyError as key_error:
-            print(
-                'Warning: One entry (misses or) uses an invalid `type` field ({}).'.format(
-                    key_error
-                ),
-                file=sys.stderr
+            logging.warning(
+                'One entry (misses or) uses an invalid `type` field (%s).', key_error
             )
             return None
 
@@ -168,9 +170,12 @@ def main():
     if args.screenshot is not None:
         # If so, but still _falsy_, pass `None` as no output file has been specified by the user.
         try:
-            take_screenshot((args.screenshot or None))
+            screenshot_taken = take_screenshot((args.screenshot or None))
         except KeyboardInterrupt:
+            screenshot_taken = False
             print()
+        finally:
+            sys.exit((not screenshot_taken))
 
 
 if __name__ == '__main__':

@@ -6,9 +6,9 @@ Interface to `os-release` (through `distro` module).
 
 import os
 import platform
-import sys
 
 from enum import Enum
+from functools import lru_cache
 from typing import List, Optional
 
 import distro
@@ -26,6 +26,7 @@ class Distributions(Enum):
     BUNSENLABS = 'bunsenlabs'
     CENTOS = 'centos'
     CRUNCHBANG = 'crunchbang'
+    DARWIN = 'darwin'
     DEBIAN = 'debian'
     DEVUAN = 'devuan'
     ELEMENTARY = 'elementary'
@@ -40,6 +41,7 @@ class Distributions(Enum):
     OPENBSD = 'openbsd'
     OPENSUSE = 'opensuse'
     POP = 'pop'
+    PARABOLA = 'parabola'
     RASPBIAN = 'raspbian'
     RHEL = 'rhel'
     SLACKWARE = 'slackware'
@@ -48,23 +50,29 @@ class Distributions(Enum):
 
 
     @staticmethod
-    def get_distribution_identifiers() -> List[str]:
+    def get_identifiers() -> List[str]:
         """Simple getter returning current supported distributions identifiers"""
         return [d.value for d in Distributions.__members__.values()]
 
     @staticmethod
-    def run_detection() -> 'Distributions':
+    @lru_cache(maxsize=None)  # Python < 3.9, `functools.cache` is not yet available.
+    def get_local() -> 'Distributions':
         """Entry point of Archey distribution detection logic"""
-        distribution = Distributions._detection_logic()
+        distribution = Distributions._vendor_detection()
 
-        # In case nothing got detected the "regular" way, fall-back on the Linux logo.
+        # In case nothing got detected the "regular" way...
         if not distribution:
+            # Are we running on Darwin (somehow not previously detected by `distro`) ?
+            if platform.system() == 'Darwin':
+                return Distributions.DARWIN
+
             # Android systems are currently not being handled by `distro`.
             # We imitate Neofetch behavior to manually "detect" them.
             # See <https://github.com/nir0s/distro/issues/253>.
             if os.path.isdir('/system/app') and os.path.isdir('/system/priv-app'):
                 return Distributions.ANDROID
 
+            # If nothing of the above matched, fall-back on the Linux logo.
             return Distributions.LINUX
 
         # Below are brain-dead cases for distributions not properly handled by `distro`.
@@ -88,10 +96,10 @@ class Distributions(Enum):
         return distribution
 
     @staticmethod
-    def _detection_logic() -> Optional['Distributions']:
+    def _vendor_detection() -> Optional['Distributions']:
         """Main distribution detection logic, relying on `distro`, handling _common_ cases"""
         # Are we running on Windows ?
-        if sys.platform in ('win32', 'cygwin'):
+        if platform.system() == 'Windows':
             return Distributions.WINDOWS
 
         # Is it a Windows Sub-system Linux (WSL) distribution ?

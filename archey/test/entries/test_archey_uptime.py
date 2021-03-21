@@ -5,142 +5,49 @@ from unittest.mock import mock_open, patch, MagicMock
 from datetime import timedelta
 from itertools import product
 
+from archey.exceptions import ArcheyException
 from archey.entries.uptime import Uptime
+from archey.test.entries import HelperMethods
 
 
 class TestUptimeEntry(unittest.TestCase):
-    """
-    Here, we mock the `open` call and imitate `/proc/uptime` content.
-    """
+    """Test cases for `Uptime` entry module"""
     @patch(
         'archey.entries.uptime.open',
-        mock_open(
-            read_data="""\
-0.00 XXXX.XX
-"""))
-    def test_warming_up(self):
-        """Test when the device has just been started..."""
-        uptime = Uptime()
-
-        output_mock = MagicMock()
-        uptime.output(output_mock)
-
-        self.assertDictEqual(
-            uptime.value,
-            {
-                'days': 0,
-                'hours': 0,
-                'minutes': 0,
-                'seconds': 0
-            }
-        )
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '< 1 minute'
-        )
-
-    @patch(
-        'archey.entries.uptime.open',
-        mock_open(
-            read_data="""\
-120.25 XXXX.XX
-"""))
-    def test_minutes_only(self):
-        """Test when only minutes should be displayed"""
-        output_mock = MagicMock()
-        Uptime().output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '2 minutes'
-        )
-
-    @patch(
-        'archey.entries.uptime.open',
-        mock_open(
-            read_data="""\
-7260.50 XXXX.XX
-"""))
-    def test_hours_and_minute(self):
-        """Test when only hours AND minutes should be displayed"""
-        output_mock = MagicMock()
-        Uptime().output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '2 hours and 1 minute'
-        )
-
-    @patch(
-        'archey.entries.uptime.open',
-        mock_open(
-            read_data="""\
-90120.75 XXXX.XX
-"""))
-    def test_day_and_hour_and_minutes(self):
-        """Test when only days, hours AND minutes should be displayed"""
-        output_mock = MagicMock()
-        Uptime().output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '1 day, 1 hour and 2 minutes'
-        )
-
-    @patch(
-        'archey.entries.uptime.open',
-        mock_open(
-            read_data="""\
-259381.99 XXXX.XX
-"""))
-    def test_days_and_minutes(self):
-        """Test when only days AND minutes should be displayed"""
-        uptime = Uptime()
-
-        output_mock = MagicMock()
-        uptime.output(output_mock)
-
-        self.assertDictEqual(
-            uptime.value,
-            {
-                'days': 3,
-                'hours': 0,
-                'minutes': 3,
-                'seconds': 1
-            }
-        )
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '3 days and 3 minutes'
-        )
-
-    @patch(
-        'archey.entries.uptime.open',
-        side_effect=PermissionError()
+        mock_open(read_data='90120.75 XXXX.XX\n')
     )
+    def test_proc_file_uptime(self):
+        """Test `_proc_file_uptime` static method"""
+        self.assertEqual(
+            Uptime._proc_file_uptime(),  # pylint: disable=protected-access
+            timedelta(seconds=90120.75)
+        )
+
     @patch(
         'archey.entries.uptime.time.CLOCK_BOOTTIME',  # Ensure first `getattr` call succeeds anyhow.
         create=True                                   # Required for Python < 3.7.
     )
     @patch(
-        'archey.entries.uptime.time.clock_gettime',
-        return_value=1000
+        'archey.entries.uptime.time.clock_gettime',  # Ensure `clock_gettime` call succeeds anyhow.
+        return_value=1000,
+        create=True
     )
-    def test_clock_fallback(self, _, __, ___):
+    def test_clock_uptime(self, _, __):
         """
-        Test when we can't access /proc/uptime on Linux/macOS/BSD.
+        Test `_clock_uptime` static method`.
         We only test one clock as all clocks rely on the same built-in `time.clock_gettime` method.
         """
-        output_mock = MagicMock()
-        Uptime().output(output_mock)
         self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '16 minutes'
+            Uptime._clock_uptime(),  # pylint: disable=protected-access
+            timedelta(seconds=1000)
         )
 
     @patch('archey.entries.uptime.check_output')
-    def test_uptime_fallback(self, check_output_mock):
-        """Test `uptime` command parsing"""
+    def test_parse_uptime_cmd(self, check_output_mock):
+        """Test `_parse_uptime_cmd` static method"""
         # Create an uptime instance to perform testing.
         # It doesn't matter that its `__init__` will be called.
-        uptime_inst = Uptime()
+        uptime_instance_mock = HelperMethods.entry_mock(Uptime)
 
         # Keys: `uptime` outputs; values: expected `timedelta` instances.
         # We will test these with various time formats (and various numbers of users).
@@ -238,9 +145,9 @@ class TestUptimeEntry(unittest.TestCase):
                     user_loadavg=variations[1]
                 ).encode()
                 self.assertEqual(
-                    uptime_inst._parse_uptime_cmd(),  # pylint: disable=protected-access
+                    uptime_instance_mock._parse_uptime_cmd(),  # pylint: disable=protected-access
                     expected_delta,
-                    msg='`uptime` output: "{0}"'.format(
+                    msg='`uptime` output: "{}"'.format(
                         uptime_output.format(
                             time=variations[0],
                             user_loadavg=variations[1]
@@ -248,22 +155,75 @@ class TestUptimeEntry(unittest.TestCase):
                     )
                 )
 
-    @patch(
-        'archey.entries.uptime.open',
-        side_effect=PermissionError()
-    )
-    @patch(
-        'archey.entries.uptime.check_output',
-        side_effect=FileNotFoundError()
-    )
-    @patch.object(
-        Uptime,
-        '_clock_uptime',
-        side_effect=RuntimeError()
-    )
-    def test_procps_missing(self, _, __, ___):
-        """Test `uptime` failure (program exit) when no uptime sources are available"""
-        self.assertRaises(SystemExit, Uptime)
+        # Check that our internal exception is correctly raised when `uptime` is not available.
+        check_output_mock.side_effect = FileNotFoundError()
+        self.assertRaises(
+            ArcheyException,
+            uptime_instance_mock._parse_uptime_cmd  # pylint: disable=protected-access
+        )
+
+    def test_various_output_cases(self):
+        """Test when the device has just been started..."""
+        uptime_instance_mock = HelperMethods.entry_mock(Uptime)
+        output_mock = MagicMock()
+
+        with self.subTest('Output in case of hours and minutes.'):
+            uptime_instance_mock.value = {
+                'days': 0,
+                'hours': 2,
+                'minutes': 1,
+                'seconds': 0
+            }
+            Uptime.output(uptime_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                '2 hours and 1 minute'
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest('Output in case of days, hours and minutes.'):
+            uptime_instance_mock.value = {
+                'days': 1,
+                'hours': 1,
+                'minutes': 2,
+                'seconds': 0
+            }
+            Uptime.output(uptime_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                '1 day, 1 hour and 2 minutes'
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest('Output in case of days and minutes.'):
+            uptime_instance_mock.value = {
+                'days': 3,
+                'hours': 0,
+                'minutes': 3,
+                'seconds': 0
+            }
+            Uptime.output(uptime_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                '3 days and 3 minutes'
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest('Output in case of very early execution.'):
+            uptime_instance_mock.value = {
+                'days': 0,
+                'hours': 0,
+                'minutes': 0,
+                'seconds': 0
+            }
+            Uptime.output(uptime_instance_mock, output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                '< 1 minute'
+            )
 
 
 if __name__ == '__main__':

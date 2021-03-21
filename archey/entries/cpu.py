@@ -1,8 +1,10 @@
 """CPU information detection class"""
 
+import json
+import platform
 import re
 
-from subprocess import check_output
+from subprocess import CalledProcessError, DEVNULL, check_output
 from typing import Dict, List
 
 from archey.entry import Entry
@@ -40,13 +42,18 @@ class CPU(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = self._parse_proc_cpuinfo()
+        if platform.system() == 'Linux':
+            self.value = self._parse_proc_cpuinfo()
+        else:
+            # Darwin or any other BSD-based system.
+            self.value = self._parse_system_profiler() or \
+                self._parse_sysctl_machdep()
+
         if not self.value:
             # This test case has been built for some ARM architectures (see #29).
             # Sometimes, `model name` info is not present within `/proc/cpuinfo`.
             # We use the output of `lscpu` program (util-linux-ng) to retrieve it.
             self.value = self._parse_lscpu_output()
-
 
     @classmethod
     def _parse_proc_cpuinfo(cls) -> List[Dict[str, int]]:
@@ -60,7 +67,7 @@ class CPU(Entry):
         model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)
         physical_ids = cls._PHYSICAL_ID_REGEXP.findall(cpu_info)
 
-        cpus_list = []  # type: List[Dict[str, int]]
+        cpus_list: List[Dict[str, int]] = []
 
         # Manually de-duplicates CPUs count.
         for model_name, physical_id in zip(model_names, physical_ids):
@@ -80,7 +87,14 @@ class CPU(Entry):
     @classmethod
     def _parse_lscpu_output(cls) -> List[Dict[str, int]]:
         """Same operation but from `lscpu` output"""
-        cpu_info = check_output('lscpu', env={'LANG': 'C'}, universal_newlines=True)
+        try:
+            cpu_info = check_output(
+                'lscpu',
+                env={'LANG': 'C'},
+                universal_newlines=True
+            )
+        except FileNotFoundError:
+            return []
 
         nb_threads = cls._THREADS_PER_CORE_REGEXP.findall(cpu_info)
         nb_cores = cls._CORES_PER_SOCKET_REGEXP.findall(cpu_info)
@@ -100,6 +114,60 @@ class CPU(Entry):
 
         return cpus_list
 
+    @staticmethod
+    def _parse_system_profiler() -> List[Dict[str, int]]:
+        # Parse JSON output from Darwin's `system_profiler` binary.
+        try:
+            profiler_output = check_output(
+                ['system_profiler', '-json', 'SPHardwareDataType'],
+                universal_newlines=True
+            )
+        except (FileNotFoundError, CalledProcessError):
+            # `-json` is not available before Catalina.
+            return []
+
+        cpus_list = []
+
+        for hw_overview in json.loads(profiler_output).get('SPHardwareDataType', []):
+            model_name = hw_overview.get('cpu_type')
+            nb_cores = hw_overview.get('number_processors')
+            nb_sockets = hw_overview.get('packages')
+            if not model_name or not nb_cores or not nb_sockets:
+                continue
+
+            # Add processor speed (if available).
+            proc_speed = hw_overview.get('current_processor_speed')
+            if proc_speed:
+                model_name += f" @ {proc_speed.replace(',', '.')}"
+
+            # Intel hyper-threading.
+            if hw_overview.get('platform_cpu_htt') == 'htt_enabled':
+                nb_cores *= 2
+
+            for _ in range(nb_sockets):
+                cpus_list.append({model_name: nb_cores})
+
+        return cpus_list
+
+    @staticmethod
+    def _parse_sysctl_machdep() -> List[Dict[str, int]]:
+        # Runs `sysctl` to fetch some `machdep.cpu.*` keys.
+        try:
+            sysctl_output = check_output(
+                [
+                    'sysctl', '-n',
+                    'machdep.cpu.brand_string', 'machdep.cpu.core_count'
+                ],
+                stderr=DEVNULL, universal_newlines=True
+            )
+        except (FileNotFoundError, CalledProcessError):
+            return []
+
+        # `sysctl_output` should exactly contains two lines.
+        model_name, nb_cores = sysctl_output.splitlines()
+        return [{model_name: int(nb_cores)}]
+
+
     def output(self, output):
         """Writes CPUs to `output` based on preferences"""
         # No CPU could be detected.
@@ -111,7 +179,7 @@ class CPU(Entry):
         for cpus in self.value:
             for model_name, cpu_count in cpus.items():
                 if cpu_count > 1 and self.options.get('show_cores', True):
-                    entries.append('{} x {}'.format(cpu_count, model_name))
+                    entries.append(f'{cpu_count} x {model_name}')
                 else:
                     entries.append(model_name)
 

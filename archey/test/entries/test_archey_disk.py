@@ -62,25 +62,16 @@ class TestDiskEntry(unittest.TestCase):
             }
         }
 
-        result_disk_dict = Disk._get_local_filesystems(self.disk_instance_mock)  # pylint: disable=protected-access
-        # Python < 3.6 doesn't guarantee dict ordering,
-        # so we can't know which `/dev/sda1` mount point was used.
-        self.assertEqual(
-            len(result_disk_dict),
-            2  # (/dev/sda1 is de-duplicated)
-        )
-        self.assertIn(
-            '/other/acceptable/device/paths',
-            result_disk_dict
-        )
-
-        # If we can now find `/dev/sda1`, then we logically must have the correct result.
-        self.assertTrue(
-            any(
-                disk_data['device_path'] == '/dev/sda1'
-                for disk_data in result_disk_dict.values()
-            ),
-            msg='`/dev/sda1` missing from results dict'
+        self.assertDictEqual(
+            Disk._get_local_filesystems(self.disk_instance_mock),  # pylint: disable=protected-access
+            {
+                '/very/good/mountpoint': {
+                    'device_path': '/dev/sda1'
+                },
+                '/other/acceptable/device/paths': {
+                    'device_path': '/dev/anything-really'
+                }
+            }
         )
 
     def test_disk_get_specified_filesystems(self):
@@ -113,18 +104,16 @@ class TestDiskEntry(unittest.TestCase):
             # pylint: enable=protected-access
 
         with self.subTest('Get only `/dev/sda1` filesystems.'):
-            result_disk_dict = Disk._get_specified_filesystems(  # pylint: disable=protected-access
-                self.disk_instance_mock,
-                ('/dev/sda1',)
-            )
-
-            # With Python < 3.6, dict ordering isn't guaranteed,
-            # so we don't know which disk will be selected.
-            self.assertEqual(len(result_disk_dict), 1)
-            # As long as `device_path` is also correct, this passes.
-            self.assertEqual(
-                result_disk_dict[list(result_disk_dict.keys())[0]]['device_path'],
-                '/dev/sda1'
+            self.assertDictEqual(
+                Disk._get_specified_filesystems(  # pylint: disable=protected-access
+                    self.disk_instance_mock,
+                    ('/dev/sda1',)
+                ),
+                {
+                    '/very/good/mountpoint': {
+                        'device_path': '/dev/sda1'
+                    }
+                }
             )
 
 
@@ -137,6 +126,8 @@ class TestDiskEntry(unittest.TestCase):
                 "/dev/nvme0n1p2             499581952 427458276      67779164      87% /",
                 "tmpfs                        8127236       292       8126944       1% /tmp",
                 "/dev/nvme0n1p1                523248     35908        487340       7% /boot",
+                "/dev/sda1                       1624        42          1582       1% /what is  this",             # pylint: disable=line-too-long
+                "map auto_home                      0         0             0     100% /System/Volumes/Data/home",  # pylint: disable=line-too-long
                 ""
             ])
             self.assertDictEqual(
@@ -156,6 +147,11 @@ class TestDiskEntry(unittest.TestCase):
                         'device_path': '/dev/nvme0n1p1',
                         'used_blocks': 35908,
                         'total_blocks': 523248
+                    },
+                    '/what is  this': {
+                        'device_path': '/dev/sda1',
+                        'used_blocks': 42,
+                        'total_blocks': 1624
                     }
                 }
             )
@@ -212,11 +208,7 @@ class TestDiskEntry(unittest.TestCase):
                 Disk.output(self.disk_instance_mock, self.output_mock)
                 self.output_mock.append.assert_called_with(
                     'Disk',
-                    '{color}{used} KiB{clear} / 100.0 KiB'.format(
-                        color=blocks_color_tuple[1],
-                        used=blocks_color_tuple[0],
-                        clear=Colors.CLEAR
-                    )
+                    f'{blocks_color_tuple[1]}{blocks_color_tuple[0]} KiB{Colors.CLEAR} / 100.0 KiB'
                 )
 
     def test_disk_multiline_output(self):
@@ -238,7 +230,7 @@ class TestDiskEntry(unittest.TestCase):
             Disk.output(self.disk_instance_mock, self.output_mock)
             self.output_mock.append.assert_called_once_with(
                 'Disk',
-                '{0}20.0 KiB{1} / 40.0 KiB'.format(Colors.YELLOW_NORMAL, Colors.CLEAR)
+                f'{Colors.YELLOW_NORMAL}20.0 KiB{Colors.CLEAR} / 40.0 KiB'
             )
 
         self.output_mock.reset_mock()
@@ -251,14 +243,13 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         self.output_mock.reset_mock()
@@ -275,14 +266,13 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk (/dev/my-cool-disk)',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         'Disk (/dev/my-cooler-disk)',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         self.output_mock.reset_mock()
@@ -300,14 +290,13 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         '(first_mount_point)',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         '(second_mount_point)',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
         self.output_mock.reset_mock()
@@ -326,14 +315,13 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 10.0 KiB'.format(Colors.RED_NORMAL, Colors.CLEAR)
+                        f'{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB'
                     ),
                     call(
                         'Disk',
-                        '{0}10.0 KiB{1} / 30.0 KiB'.format(Colors.GREEN_NORMAL, Colors.CLEAR)
+                        f'{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB'
                     )
-                ],
-                any_order=True  # Since Python < 3.6 doesn't have definite `dict` ordering.
+                ]
             )
 
 
