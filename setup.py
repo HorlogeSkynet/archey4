@@ -24,8 +24,8 @@ setup(
     packages=find_packages(exclude=['archey.test*']),
     python_requires='>=3.6',
     install_requires=[
-        'distro~=1.5.0',
-        'netifaces~=0.10.9'
+        'distro',
+        'netifaces'
     ],
     entry_points={
         'console_scripts': [
