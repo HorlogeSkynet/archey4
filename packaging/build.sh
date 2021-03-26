@@ -169,15 +169,18 @@ unset PYTHONDONTWRITEBYTECODE
 echo 'Now building source TAR and WHEEL distribution packages...'
 python3 setup.py -q sdist bdist_wheel
 
+sdist_artefact="${DIST_OUTPUT}/${NAME}-${VERSION}.tar.gz"
+wheel_artefact="${DIST_OUTPUT}/${NAME}-${VERSION}-py3-none-any.whl"
+
 # Check whether packages description will render correctly on PyPI.
 echo 'Now checking PyPI description rendering...'
-if twine check "${DIST_OUTPUT}/${NAME}-${VERSION}"*.{tar.gz,whl} && test -n "$GPG_IDENTITY" ; then
+if twine check "$sdist_artefact" "$wheel_artefact" && test -n "$GPG_IDENTITY" ; then
 	echo -n 'Upload source and wheel distribution packages to PyPI ? [y/N] '
 	read -r -n 1 -p '' && echo
 	if [[ "$REPLY" =~ ^[yY]$ ]]; then
 		echo 'Now signing & uploading source TAR and WHEEL to PyPI...'
 		twine upload \
 			--sign --identity "$GPG_IDENTITY" \
-			"${DIST_OUTPUT}/${NAME}-${VERSION}"*.{tar.gz,whl}
+			"$sdist_artefact" "$wheel_artefact"
 	fi
 fi
