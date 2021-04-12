@@ -3,11 +3,11 @@ Output class file.
 It supports entries lazy-insertion, logo detection, and final printing.
 """
 
-from textwrap import TextWrapper
-from shutil import get_terminal_size
-
 import os
+import sys
 
+from shutil import get_terminal_size
+from textwrap import TextWrapper
 from typing import Type
 
 from archey.api import API
@@ -101,8 +101,14 @@ class Output:
             self._logo[0:0] = colored_empty_line * (-height_diff // 2)
             self._logo.extend(colored_empty_line * (len(self._results) - len(self._logo)))
 
+        # When writing to a pipe (for instance), prevent `TextWrapper` from truncating output.
+        if not sys.stdout.isatty():
+            text_width = float('inf')
+        else:
+            text_width = get_terminal_size().columns - logo_width
+
         text_wrapper = TextWrapper(
-            width=(get_terminal_size().columns - logo_width),
+            width=text_width,
             expand_tabs=False,
             replace_whitespace=False,
             drop_whitespace=False,

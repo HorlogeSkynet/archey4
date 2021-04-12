@@ -295,12 +295,16 @@ FAKE_COLOR 22\x1b[0m\
             ]
         )
     )
+    @patch(
+        'archey.output.sys.stdout.isatty',
+        return_value=True
+    )
     @patch('archey.output.get_terminal_size')
     @patch(
         'archey.output.print',
         return_value=None  # Let's nastily mute class' outputs.
     )
-    def test_line_wrapping(self, print_mock, termsize_mock, _, __, ___):
+    def test_line_wrapping(self, print_mock, termsize_mock, _, __, ___, ____):
         """Test how the `output` method handles wrapping lines that are too long"""
         output = Output()
 
