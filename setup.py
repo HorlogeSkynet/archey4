@@ -44,7 +44,7 @@ Remain *maintained*, *community-driven* and *highly-compatible* with yesterday's
         # By filtering on `os.path.exists`, install should succeed even when
         #   the compressed manual page is not available (iterable would be empty).
         ('share/man/man1', filter(os.path.exists, ['dist/archey.1.gz'])),
-        ('share/doc/archey4', ['README.md', 'COPYRIGHT.md'])
+        ('share/doc/archey4', ['CHANGELOG.md', 'COPYRIGHT.md', 'README.md'])
     ],
     zip_safe=False,
     classifiers=[
