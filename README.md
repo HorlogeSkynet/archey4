@@ -3,21 +3,31 @@
 > Archey is a simple system information tool written in Python
 
 <p align="center">
-	<!-- GITHUB -->
-	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/release/HorlogeSkynet/archey4.svg?style=for-the-badge"></a>
-	<a href="https://github.com/HorlogeSkynet/archey4/actions"><img src="https://img.shields.io/github/workflow/status/HorlogeSkynet/archey4/Integration/master.svg?style=for-the-badge"></a>
-	<a href="https://github.com/HorlogeSkynet/archey4/commits"><img src="https://img.shields.io/github/last-commit/HorlogeSkynet/archey4.svg?style=for-the-badge"></a>
+	<a href="https://www.python.org/"><img src="https://forthebadge.com/images/badges/made-with-python.svg"></a>
+	<img src="https://forthebadge.com/images/badges/built-with-love.svg">
 	<br />
-	<!-- AUR -->
-	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/version/archey4.svg?style=for-the-badge"></a>
-	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/license/archey4.svg?style=for-the-badge"></a>
-	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/votes/archey4.svg?style=for-the-badge"></a>
-	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/last-modified/archey4.svg?style=for-the-badge"></a>
 	<br />
-	<!-- PYPI -->
-	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/v/archey4.svg?style=for-the-badge"></a>
+	<!-- PYPI (supported Python versions) -->
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/pyversions/archey4.svg?style=for-the-badge"></a>
+	<br />
+	<br />
+	<!-- GITHUB (latest release) -->
+	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/release/HorlogeSkynet/archey4.svg?style=for-the-badge&label=github"></a>
+	<!-- PYPI (latest version) -->
+	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/v/archey4.svg?style=for-the-badge"></a>
+	<!-- AUR (latest version) -->
+	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/version/archey4.svg?style=for-the-badge"></a>
+	<!-- HOMEBREW (latest version) -->
+	<a href="https://formulae.brew.sh/formula/archey4"><img src="https://img.shields.io/homebrew/v/archey4.svg?style=for-the-badge"></a>
+	<br />
+	<!-- GITHUB (downloads) -->
+	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/downloads/HorlogeSkynet/archey4/latest/total?style=for-the-badge&label=downloads"></a>
+	<!-- PYPI (downloads) -->
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/dm/archey4?style=for-the-badge"></a>
+	<!-- AUR (votes) -->
+	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/votes/archey4.svg?style=for-the-badge"></a>
+	<!-- HOMEBREW (downloads) -->
+	<a href="https://formulae.brew.sh/formula/archey4"><img src="https://img.shields.io/homebrew/installs/dm/archey4.svg?style=for-the-badge"></a>
 </p>
 
 <p align="center">
