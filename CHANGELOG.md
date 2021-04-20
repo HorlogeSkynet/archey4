@@ -8,6 +8,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Added
 - CHANGELOG.md file
+- Homebrew formula in the default tap
 
 ### Changed
 - Prevent text truncation when writing output to a pipe

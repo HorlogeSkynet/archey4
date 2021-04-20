@@ -19,7 +19,7 @@ assignees: ''
 **Environment**
 <!-- Please complete the following information: -->
  - Version used (4.Y.Z) : 
- - Method of installation (distribution package, PyPI, sources) : 
+ - Method of installation (distribution package, PyPI, Homebrew, sources) : 
  - Hardware type (laptop, server, Raspberry, hyper-visor) : 
  - Python version (3.Y.Z) : 
  - Operating system and version : 

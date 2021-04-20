@@ -101,6 +101,12 @@ sudo pip3 install archey4
 sudo yay -S archey4
 ```
 
+### Install from [Homebrew](https://formulae.brew.sh/formula/archey4)
+
+```bash
+brew install archey4
+```
+
 ### Install from source
 
 #### Step 1 : Fetch sources
