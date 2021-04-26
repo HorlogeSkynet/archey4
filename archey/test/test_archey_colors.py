@@ -52,28 +52,30 @@ class TestColors(unittest.TestCase):
 
         Colors.should_color_output.cache_clear()
 
-        with patch('archey.colors.sys.stdout.isatty', return_value=False):
-            with patch('archey.colors.Environment.CLICOLOR', True):
-                self.assertFalse(Colors.should_color_output())
+        with patch('archey.colors.Environment.CLICOLOR_FORCE', False), \
+                patch('archey.colors.Environment.NO_COLOR', False):
+            with patch('archey.colors.sys.stdout.isatty', return_value=False):
+                with patch('archey.colors.Environment.CLICOLOR', True):
+                    self.assertFalse(Colors.should_color_output())
 
-            Colors.should_color_output.cache_clear()
+                Colors.should_color_output.cache_clear()
 
-            with patch('archey.colors.Environment.CLICOLOR', False):
-                self.assertFalse(Colors.should_color_output())
+                with patch('archey.colors.Environment.CLICOLOR', False):
+                    self.assertFalse(Colors.should_color_output())
 
-            Colors.should_color_output.cache_clear()
+                Colors.should_color_output.cache_clear()
 
-        with patch('archey.colors.sys.stdout.isatty', return_value=True):
-            # Default case : STDOUT is a TTY and `CLICOLOR` is (by default) set.
-            with patch('archey.colors.Environment.CLICOLOR', True):
-                self.assertTrue(Colors.should_color_output())
+            with patch('archey.colors.sys.stdout.isatty', return_value=True):
+                # Default case : STDOUT is a TTY and `CLICOLOR` is (by default) set.
+                with patch('archey.colors.Environment.CLICOLOR', True):
+                    self.assertTrue(Colors.should_color_output())
 
-            Colors.should_color_output.cache_clear()
+                Colors.should_color_output.cache_clear()
 
-            with patch('archey.colors.Environment.CLICOLOR', False):
-                self.assertFalse(Colors.should_color_output())
+                with patch('archey.colors.Environment.CLICOLOR', False):
+                    self.assertFalse(Colors.should_color_output())
 
-            Colors.should_color_output.cache_clear()
+                Colors.should_color_output.cache_clear()
 
     def test_escape_code_from_attrs(self):
         """Test for `Colors.escape_code_from_attrs`"""
