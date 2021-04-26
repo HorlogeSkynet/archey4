@@ -12,7 +12,7 @@ class User(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = os.getenv('USER')
+        self.value = os.getenv('USER') or os.getenv('LOGNAME')
         if not self.value:
             try:
                 self.value = check_output(

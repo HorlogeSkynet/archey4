@@ -11,6 +11,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - CHANGELOG.md file
 - Homebrew formula in the default tap
 - `CLICOLOR[_FORCE]` environment variables support
+- `LOGNAME` environment variable support for `User`
 
 ### Changed
 - Prevent text truncation when writing output to a pipe
