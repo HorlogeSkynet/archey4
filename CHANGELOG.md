@@ -7,6 +7,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ## [Unreleased]
 ### Added
+- `Kernel` name
 - CHANGELOG.md file
 - Homebrew formula in the default tap
 

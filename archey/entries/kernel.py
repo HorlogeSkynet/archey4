@@ -15,22 +15,23 @@ from archey.utility import Utility
 
 class Kernel(Entry):
     """
-    Retrieve kernel release.
+    Retrieve kernel identity.
     [GNU/LINUX] If user-enabled, implement a version comparison against upstream data.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.value = {
+            'name': platform.system(),
             'release': platform.release(),
             'latest': None,
             'is_outdated': None
         }
 
         # On GNU/Linux systems, if `check_version` has been enabled and `DO_NOT_TRACK` isn't set,
-        #  retrieve the latest Linux kernel release in order to compare the current one against it.
+        #  retrieve the latest kernel release in order to compare the current one against it.
         if not self.options.get('check_version') \
-            or platform.system() != 'Linux' \
+            or self.value['name'] != 'Linux' \
             or Environment.DO_NOT_TRACK:
             return
 
@@ -57,7 +58,7 @@ class Kernel(Entry):
 
     def output(self, output):
         """Display running kernel and latest kernel if possible"""
-        text_output = self.value['release']
+        text_output = ' '.join((self.value['name'], self.value['release']))
 
         if self.value['latest']:
             if self.value['is_outdated']:

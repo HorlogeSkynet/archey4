@@ -10,15 +10,23 @@ from archey.test.entries import HelperMethods
 
 class TestKernelEntry(unittest.TestCase):
     """
-    Here, we mock the `check_output` call and check afterwards
+    Here, we mock the `platform` module calls and check afterwards
       that the output is correct.
     """
+    @patch(
+        'archey.entries.kernel.platform.system',
+        return_value='Linux'
+    )
     @patch(
         'archey.entries.kernel.platform.release',
         return_value='X.Y.Z-R-arch'
     )
-    def test_fetch_kernel_release(self, _):
-        """Verify `check_output` mocking"""
+    def test_fetch_kernel_release(self, _, __):
+        """Verify `platform` module mocking"""
+        self.assertEqual(
+            Kernel().value['name'],
+            'Linux'
+        )
         self.assertEqual(
             Kernel().value['release'],
             'X.Y.Z-R-arch'
@@ -77,12 +85,12 @@ class TestKernelEntry(unittest.TestCase):
         )
 
     @patch(
-        'archey.entries.kernel.platform.release',
-        return_value='X.Y.Z-R-arch'
-    )
-    @patch(
         'archey.entries.kernel.platform.system',
         return_value='Java'
+    )
+    @patch(
+        'archey.entries.kernel.platform.release',
+        return_value='X.Y.Z-R-arch'
     )
     @patch(
         'archey.entries.kernel.Environment',
@@ -139,7 +147,7 @@ class TestKernelEntry(unittest.TestCase):
         kernel.output(output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            '1.2.3-4-arch'
+            'Linux 1.2.3-4-arch'
         )
 
         # Current = latest (up to date !).
@@ -150,7 +158,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertIs(kernel.value['is_outdated'], False)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            f"1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})"
+            f"Linux 1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})"
         )
 
         # Current < latest (outdated).
@@ -161,7 +169,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertIs(kernel.value['is_outdated'], True)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            f"1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})"
+            f"Linux 1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})"
         )
 
 
