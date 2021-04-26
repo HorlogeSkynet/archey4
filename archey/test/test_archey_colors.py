@@ -47,7 +47,8 @@ class TestColors(unittest.TestCase):
 
         Colors.should_color_output.cache_clear()
 
-        with patch('archey.colors.Environment.NO_COLOR', True):
+        with patch('archey.colors.Environment.CLICOLOR_FORCE', False), \
+                patch('archey.colors.Environment.NO_COLOR', True):
             self.assertFalse(Colors.should_color_output())
 
         Colors.should_color_output.cache_clear()
