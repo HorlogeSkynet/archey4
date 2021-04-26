@@ -45,13 +45,12 @@ class Kernel(Entry):
     @staticmethod
     def _fetch_latest_linux_release() -> Optional[str]:
         try:
-            http_request = urlopen('https://www.kernel.org/releases.json')
+            with urlopen('https://www.kernel.org/releases.json') as http_request:
+                try:
+                    kernel_releases = json.load(http_request)
+                except json.JSONDecodeError:
+                    return None
         except (HTTPError, URLError, SocketTimeoutError):
-            return None
-
-        try:
-            kernel_releases = json.load(http_request)
-        except json.JSONDecodeError:
             return None
 
         return kernel_releases.get('latest_stable', {}).get('version')

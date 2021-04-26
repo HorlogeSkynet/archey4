@@ -93,12 +93,10 @@ class WanIP(Entry):
     def _run_http_request(server_url: str, timeout: float) -> Optional[str]:
         """Simple wrapper to `urllib` module to perform HTTP requests"""
         try:
-            http_request = urlopen(server_url, timeout=timeout)
+            with urlopen(server_url, timeout=timeout) as http_request:
+                return http_request.read().decode().strip()
         except (HTTPError, URLError, SocketTimeoutError):
             return None
-
-        return http_request.read().decode().strip()
-
 
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting our list of IP addresses."""

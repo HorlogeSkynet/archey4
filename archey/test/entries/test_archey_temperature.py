@@ -133,10 +133,10 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
                 b'40000',
                 b'50000'
             ):
-            file = tempfile.NamedTemporaryFile(delete=False)
-            file.write(temperature)
-            file.seek(0)
-            tmp_files.append(file)
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                temp_file.write(temperature)
+                temp_file.seek(0)
+                tmp_files.append(temp_file)
         ## END PRELUDE ##
 
         iglob_mock.return_value = iter([file.name for file in tmp_files])
