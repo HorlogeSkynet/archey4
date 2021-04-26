@@ -27,6 +27,7 @@ class Output:
     def __init__(self, **kwargs):
         # Fetches passed arguments.
         self._format_to_json = kwargs.get('format_to_json')
+        preferred_logo_style = (kwargs.get('preferred_logo_style') or '').upper()
 
         try:
             # If set, force the distribution to `preferred_distribution` argument.
@@ -37,7 +38,13 @@ class Output:
 
         # Retrieve distribution's logo module before copying and DRY-ing its attributes.
         logo_module = lazy_load_logo_module(self._distribution.value)
-        self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
+
+        # If set and available, fetch an alternative logo style from module.
+        if preferred_logo_style and hasattr(logo_module, f"LOGO_{preferred_logo_style}"):
+            self._logo = getattr(logo_module, f"LOGO_{preferred_logo_style}").copy()
+            self._colors = getattr(logo_module, f"COLORS_{preferred_logo_style}").copy()
+        else:
+            self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()

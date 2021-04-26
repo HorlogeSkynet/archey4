@@ -93,6 +93,12 @@ def args_parsing() -> argparse.Namespace:
         help='output entries data to JSON format, use multiple times to increase indentation'
     )
     parser.add_argument(
+        '-l', '--logo-style',
+        metavar='IDENTIFIER',
+        help="alternative logo style identifier to show instead of the distribution default one. "
+             "For instance, you can try 'retro' to prefer old Apple's logo on Darwin platforms"
+    )
+    parser.add_argument(
         '-s', '--screenshot',
         metavar='PATH',
         nargs='?',
@@ -126,6 +132,7 @@ def main():
         available_entries = [{'type': entry_name} for entry_name in Entries.__members__.keys()]
 
     output = Output(
+        preferred_logo_style=args.logo_style,
         preferred_distribution=args.distribution,
         format_to_json=args.json
     )

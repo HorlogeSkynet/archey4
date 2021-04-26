@@ -12,6 +12,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Homebrew formula in the default tap
 - `CLICOLOR[_FORCE]` environment variables support
 - `LOGNAME` environment variable support for `User`
+- Alternative logo style support (see `-l` option with `retro` parameter for Darwin)
 
 ### Changed
 - Prevent text truncation when writing output to a pipe
