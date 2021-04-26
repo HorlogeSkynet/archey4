@@ -36,7 +36,7 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
     def test_ipv4_ko_and_ipv6_ok(self, urlopen_mock, _):
         """Test fallback on HTTP method only when DNS lookup failed"""
         # `urlopen` will hard-fail.
-        urlopen_mock.return_value.read.side_effect = SocketTimeoutError(0)
+        urlopen_mock.return_value.__enter__.return_value.read.side_effect = SocketTimeoutError(0)
 
         # IPv4 retrieval failed.
         self.assertFalse(
@@ -59,7 +59,7 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
     @patch('archey.entries.wan_ip.urlopen')
     def test_proper_http_fallback(self, urlopen_mock, _):
         """Test fallback on HTTP method only when DNS lookup failed"""
-        urlopen_mock.return_value.read.return_value = b'XXX.YY.ZZ.TTT\n'
+        urlopen_mock.return_value.__enter__.return_value.read.return_value = b'XXX.YY.ZZ.TTT\n'
 
         # HTTP back-end was not called, we trust DNS lookup tool which failed.
         self.assertFalse(

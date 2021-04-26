@@ -35,7 +35,7 @@ class TestKernelEntry(unittest.TestCase):
     @patch('archey.entries.kernel.urlopen')
     def test_fetch_latest_linux_release(self, urlopen_mock):
         """Check proper JSON decoding and value gathering"""
-        urlopen_mock.return_value.read.return_value = b"""\
+        urlopen_mock.return_value.__enter__.return_value.read.return_value = b"""\
 {
     "latest_stable": {
         "version": "5.10.1"
