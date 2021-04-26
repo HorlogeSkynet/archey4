@@ -5,9 +5,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  homebrew-bump-formula:
-    - name: Update Homebrew formula
-      uses: dawidd6/action-homebrew-bump-formula@v3
-      with:
-        formula: archey4
-        token: ${{ secrets.HOMEBREW_BUMP_FORMULA_GITHUB_TOKEN }}
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Homebrew formula
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          formula: archey4
+          token: ${{ secrets.HOMEBREW_BUMP_FORMULA_GITHUB_TOKEN }}
