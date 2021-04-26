@@ -260,6 +260,7 @@ Below stand further descriptions for each available (default) option :
 		{
 			"type": "Kernel",
 			// Set to `true` to enable kernel release check against <www.kernel.org>.
+			// /!\ `DO_NOT_TRACK` environment variable may affect this feature behavior ! /!\
 			"check_version": false
 		},
 		{ "type": "Uptime" },
@@ -366,6 +367,8 @@ Below stand further descriptions for each available (default) option :
 			// You may directly set `ipv4` or `ipv6` fields to `false` to completely disable them.
 			//
 			// <https://ident.me/> server sources : <https://github.com/pcarrier/identme>.
+			//
+			// /!\ `DO_NOT_TRACK` environment variable may affect this entry behavior ! /!\
 			"ipv4": {
 				"dns_query": "myip.opendns.com",
 				"dns_resolver": "resolver1.opendns.com",
