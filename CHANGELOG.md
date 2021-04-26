@@ -10,6 +10,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - `Kernel` name
 - CHANGELOG.md file
 - Homebrew formula in the default tap
+- `CLICOLOR[_FORCE]` environment variables support
 
 ### Changed
 - Prevent text truncation when writing output to a pipe

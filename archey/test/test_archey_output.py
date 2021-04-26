@@ -10,14 +10,21 @@ from archey.output import Output
 from archey.distributions import Distributions
 
 
-@patch(
-    'archey.colors.Environment',
-    Mock(NO_COLOR=False)  # By default, colors won't be disabled.
-)
 class TestOutput(unittest.TestCase):
     """
     Simple test cases to check the behavior of the `Output` class.
     """
+    def setUp(self):
+        # By default, colors won't be disabled.
+        self._should_color_output_patch = patch(
+            'archey.colors.Colors.should_color_output',
+            return_value=True
+        )
+        self._should_color_output_patch.start()
+
+    def tearDown(self):
+        self._should_color_output_patch.stop()
+
     @patch(
         'archey.output.Distributions.get_local',
         return_value=Distributions.DEBIAN  # Make Debian being selected.

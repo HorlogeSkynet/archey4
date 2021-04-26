@@ -7,7 +7,6 @@ from typing import Optional
 
 from archey.colors import Colors
 from archey.entry import Entry
-from archey.environment import Environment
 
 
 # We detect a terminal by using the following three constants in the order below:
@@ -118,7 +117,7 @@ class Terminal(Entry):
     def output(self, output):
         """Adds the entry to `output` after pretty-formatting with colors palette"""
         text_output = (self.value or self._default_strings.get('not_detected'))
-        if not Environment.NO_COLOR:
+        if Colors.should_color_output():
             text_output += ' ' + self._get_colors_palette()
 
         output.append(self.name, text_output)

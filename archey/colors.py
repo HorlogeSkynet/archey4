@@ -2,8 +2,10 @@
 
 from bisect import bisect
 from enum import Enum
+from functools import lru_cache
 
 import re
+import sys
 
 from archey.environment import Environment
 
@@ -41,11 +43,28 @@ class Colors(Enum):
         )
 
     @staticmethod
-    def escape_code_from_attrs(display_attrs: str) -> str:
+    @lru_cache(maxsize=None)  # Python < 3.9, `functools.cache` is not yet available.
+    def should_color_output() -> bool:
+        """
+        Returns whether or not output should be colored, according to runtime environment.
+        Current implementation is specific to Archey as it's not standardized (see jcs/no_color#28).
+        """
+        if Environment.CLICOLOR_FORCE:
+            return True
+
+        if Environment.NO_COLOR:
+            return False
+
+        return (
+            sys.stdout.isatty() and Environment.CLICOLOR
+        )
+
+    @classmethod
+    def escape_code_from_attrs(cls, display_attrs: str) -> str:
         """
         Build and return an ANSI/ECMA-48 escape code string from passed display attributes.
         """
-        if Environment.NO_COLOR:
+        if not cls.should_color_output():
             return ''
 
         return f'\x1b[{display_attrs}m'

@@ -1,22 +1,29 @@
 """Test module for Archey's terminal detection module"""
 
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.terminal import Terminal
 from archey.test.entries import HelperMethods
 
 
-@patch(
-    'archey.entries.terminal.Environment',
-    Mock(NO_COLOR=False)  # By default, colors won't be disabled.
-)
 class TestTerminalEntry(unittest.TestCase):
     """
     For this entry, we'll verify that the output contains what the environment
       is supposed to give, plus the right number of "colorized" characters.
     """
+    def setUp(self):
+        # By default, colors won't be disabled.
+        self._should_color_output_patch = patch(
+            'archey.colors.Colors.should_color_output',
+            return_value=True
+        )
+        self._should_color_output_patch.start()
+
+    def tearDown(self):
+        self._should_color_output_patch.stop()
+
     @patch.dict(
         'archey.entries.terminal.os.environ',
         {
@@ -104,9 +111,9 @@ class TestTerminalEntry(unittest.TestCase):
         {'TERM_PROGRAM': 'X-TERMINAL-EMULATOR'},
         clear=True
     )
-    def test_no_color(self):
-        """Test `Terminal` output behavior when `NO_COLOR` is set (palette should be hidden)"""
-        with patch('archey.entries.terminal.Environment', Mock(NO_COLOR=True)):
+    def test_color_disabling(self):
+        """Test `Terminal` output behavior when coloration has been disabled"""
+        with patch('archey.colors.Colors.should_color_output', return_value=False):
             terminal = Terminal()
 
             output_mock = MagicMock()

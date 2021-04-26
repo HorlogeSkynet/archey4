@@ -17,6 +17,10 @@ class Environment(metaclass=Singleton):
     # See <https://no-color.org/>.
     NO_COLOR = ('NO_COLOR' in os.environ)
 
+    # See <https://bixense.com/clicolors/>.
+    CLICOLOR = (os.getenv('CLICOLOR') != '0')
+    CLICOLOR_FORCE = (os.getenv('CLICOLOR_FORCE', '0') != '0')
+
     # See <https://consoledonottrack.com/>.
     DO_NOT_TRACK = (os.getenv('DO_NOT_TRACK') == '1')
 
