@@ -11,7 +11,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - CHANGELOG.md file
 - Homebrew formula in the default tap
 - `CLICOLOR[_FORCE]` environment variables support
-- `LOGNAME` environment variable support for `User`
+- `USER`, `LOGNAME` & `LNAME` environment variables support for `User` entry
 - Alternative logo style support (see `-l` option with `retro` parameter for Darwin)
 
 ### Changed
