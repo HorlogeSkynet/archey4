@@ -72,7 +72,15 @@ class LanIP(Entry):
         # If we found IP addresses, join them together nicely.
         # If not, fall back on default strings according to `netifaces` availability.
         if self.value:
+            if not self.options.get('one_line', True):
+                # One-line output has been disabled, add one IP address per item.
+                for ip_address in self.value:
+                    output.append(self.name, ip_address)
+
+                return
+
             text_output = ', '.join(self.value)
+
         elif netifaces:
             text_output = self._default_strings.get('no_address')
         else:

@@ -105,7 +105,15 @@ class WanIP(Entry):
         # If we found IP addresses, join them together nicely.
         # If not, fall-back on the "No address" string.
         if self.value:
+            if not self.options.get('one_line', True):
+                # One-line output has been disabled, add one IP address per item.
+                for ip_address in self.value:
+                    output.append(self.name, ip_address)
+
+                return
+
             text_output = ', '.join(self.value)
+
         elif not Environment.DO_NOT_TRACK:
             text_output = self._default_strings.get('no_address')
         else:

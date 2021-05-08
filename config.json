@@ -54,12 +54,14 @@
 		},
 		{
 			"type": "LAN_IP",
+			"one_line": true,
 			"max_count": 2,
 			"show_global": false,
 			"ipv6_support": true
 		},
 		{
 			"type": "WAN_IP",
+			"one_line": true,
 			"ipv4": {
 				"dns_query": "myip.opendns.com",
 				"dns_resolver": "resolver1.opendns.com",

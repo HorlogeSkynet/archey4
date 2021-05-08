@@ -1,7 +1,7 @@
 """Test module for Archey's LAN IP addresses detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from netifaces import AF_INET, AF_INET6, AF_LINK
 
@@ -155,16 +155,34 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         lan_ip = LanIP(options={'max_count': 3})
 
         output_mock = MagicMock()
-        lan_ip.output(output_mock)
 
         self.assertListEqual(
             lan_ip.value,
             ['192.168.1.55', '2001::45:6789:abcd:6817', 'fe80::abcd:ef0:abef:dead']
         )
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            '192.168.1.55, 2001::45:6789:abcd:6817, fe80::abcd:ef0:abef:dead'
-        )
+
+        with self.subTest('Single-line combined output.'):
+            lan_ip.output(output_mock)
+            self.assertEqual(
+                output_mock.append.call_args[0][1],
+                '192.168.1.55, 2001::45:6789:abcd:6817, fe80::abcd:ef0:abef:dead'
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest('Multi-lines output.'):
+            lan_ip.options['one_line'] = False
+
+            lan_ip.output(output_mock)
+            self.assertEqual(output_mock.append.call_count, 3)
+            output_mock.append.assert_has_calls(
+                [
+                    call('LAN IP', '192.168.1.55'),
+                    call('LAN IP', '2001::45:6789:abcd:6817'),
+                    call('LAN IP', 'fe80::abcd:ef0:abef:dead')
+                ]
+            )
+
 
     @patch(
         'archey.entries.lan_ip.netifaces.interfaces',

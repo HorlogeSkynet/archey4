@@ -313,16 +313,6 @@ Below stand further descriptions for each available (default) option :
 			"danger_use_percent": 66.7
 		},
 		{
-			"type": "LAN_IP",
-			// The maximum number of local addresses you want to display.
-			// `false` --> Unlimited.
-			"max_count": 2,
-			// Set to `true` if your local network does not honor RFC1918.
-			"show_global": false,
-			// Set to `false` to only display IPv4 LAN addresses.
-			"ipv6_support": true
-		},
-		{
 			"type": "Disk",
 			// Which filesystems to show:
 			// `["local"]` shows only local filesystems.
@@ -355,11 +345,26 @@ Below stand further descriptions for each available (default) option :
 			"danger_use_percent": 75
 		},
 		{
+			"type": "LAN_IP",
+			// Set to `false` not to join all IP addresses on the same line.
+			"one_line": true,
+			// The maximum number of local addresses you want to display.
+			// `false` --> Unlimited.
+			"max_count": 2,
+			// Set to `true` if your local network does not honor RFC1918.
+			"show_global": false,
+			// Set to `false` to only display IPv4 LAN addresses.
+			"ipv6_support": true
+		},
+		{
 			"type": "WAN_IP",
 			//
 			// As explained above, you may temporary hide entries as you wish.
 			// See below example to hide your public IP addresses before posting your configuration on Internet.
 			//"disabled": true,
+			//
+			// Set to `false` not to join all IP addresses on the same line.
+			"one_line": true,
 			//
 			// Below are settings relative to IPv4/IPv6 public addresses retrieval.
 			// I hope options are self-explanatory.
