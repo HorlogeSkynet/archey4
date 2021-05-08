@@ -8,6 +8,8 @@ from archey.entry import Entry
 
 
 class _SimpleEntry(Entry):
+    _PRETTY_NAME = 'Simple Entry'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -34,10 +36,16 @@ class TestEntry(unittest.TestCase):
 
     def test_entry_usage(self):
         """Test `Entry` instantiation and parameters passing"""
+        # No name passed as parameter, let's use internal defined "pretty name".
         simple_entry = _SimpleEntry()
-        self.assertEqual(simple_entry.name, '_SimpleEntry')
+        self.assertEqual(simple_entry.name, 'Simple Entry')
         self.assertIsNone(simple_entry.value)
 
+        # No `_PRETTY_NAME` is defined : proper fall-back on entry internal name.
+        delattr(_SimpleEntry, '_PRETTY_NAME')
+        self.assertEqual(_SimpleEntry().name, '_SimpleEntry')
+
+        # A name is passed as parameter, it has to be chosen.
         simple_entry = _SimpleEntry('T', 'est')
         self.assertEqual(simple_entry.name, 'T')
         self.assertEqual(simple_entry.value, 'est')

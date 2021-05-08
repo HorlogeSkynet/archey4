@@ -32,7 +32,7 @@ class HelperMethods:
         # ...and wrap it, to inherit its methods.
         instance_mock = MagicMock(spec=entry, wraps=entry)
         # These instance-attributes are quite important, so let's mimic them.
-        instance_mock.name = str(entry.__name__)
+        instance_mock.name = getattr(entry, '_PRETTY_NAME') or str(entry.__name__)
         instance_mock.value = None  # (entry default)
         # We don't have default entry options defined outside of entries.
         instance_mock.options = options or {}

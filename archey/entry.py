@@ -1,12 +1,15 @@
 """Entry base class"""
 
 from abc import ABC as AbstractBaseClass, abstractmethod
+from typing import Optional
 
 from archey.configuration import Configuration
 
 
 class Entry(AbstractBaseClass):
     """Module base class"""
+    _PRETTY_NAME: Optional[str] = None
+
     def __new__(cls, *_, **kwargs):
         """Hook object instantiation to handle our particular `disabled` config field"""
         if kwargs.get('options', {}).get('disabled'):
@@ -20,7 +23,7 @@ class Entry(AbstractBaseClass):
         # `name`: key (defaults to the instantiated entry class name);
         # `value`: value of entry as an appropriate object;
         # `options`: configuration options *specific* to an entry instance;
-        self.name = name or self.__class__.__name__
+        self.name = name or self._PRETTY_NAME or self.__class__.__name__
         self.value = value
         self.options = options or {}
 

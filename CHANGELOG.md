@@ -17,6 +17,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ### Changed
 - Prevent text truncation when writing output to a pipe
+- "Pretty names" by default for multiple-words entries (`WanIP` -> `WAN IP`)
 - `distro` & `netifaces` Python dependencies are now "frozen" to allow upstream breakages
 
 ## [v4.11.0] - 2021-03-21

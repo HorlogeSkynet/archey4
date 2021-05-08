@@ -12,6 +12,8 @@ from archey.environment import Environment
 
 class WanIP(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
+    _PRETTY_NAME = 'WAN IP'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

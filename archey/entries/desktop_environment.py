@@ -26,6 +26,8 @@ class DesktopEnvironment(Entry):
     Just iterate over running processes to find a known-entry.
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
+    _PRETTY_NAME = 'Desktop Environment'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
