@@ -34,8 +34,20 @@ class TestTerminalEntry(unittest.TestCase):
         clear=True
     )
     def test_terminal_emulator_term_program(self):
-        """Check that `TERM_PROGRAM` is honored even if `TERM` or `COLORTERM` is defined"""
+        """Check that `TERM_PROGRAM` is honored even if `TERM` or `COLORTERM` are defined"""
         self.assertEqual(Terminal().value, 'A-COOL-TERMINAL-EMULATOR')
+
+    @patch.dict(
+        'archey.entries.terminal.os.environ',
+        {
+            'TERM_PROGRAM': 'A-COOL-TERMINAL-EMULATOR',
+            'TERM_PROGRAM_VERSION': 'vX.Y.Z-beta42'
+        },
+        clear=True
+    )
+    def test_terminal_emulator_term_program_version(self):
+        """Check that `TERM_PROGRAM` and `TERM_PROGRAM_VERSION` are correctly honored"""
+        self.assertEqual(Terminal().value, 'A-COOL-TERMINAL-EMULATOR vX.Y.Z-beta42')
 
     @patch.dict(
         'archey.entries.terminal.os.environ',

@@ -80,10 +80,14 @@ class Terminal(Entry):
     @staticmethod
     def _detect_terminal_emulator() -> Optional[str]:
         """Try to detect current terminal emulator based on various environment variables"""
-        # At first, try to honor `TERM_PROGRAM` environment variable.
+        # At first, try to honor `TERM_PROGRAM*` environment variables.
         # See <https://github.com/Maximus5/ConEmu/issues/1837#issuecomment-469199525>.
         env_term_program = os.getenv('TERM_PROGRAM')
         if env_term_program:
+            env_term_program_version = os.getenv('TERM_PROGRAM_VERSION')
+            if env_term_program_version:
+                env_term_program += f" {env_term_program_version}"
+
             return env_term_program
 
         # Second, check if we have any matches as defined in our `COLORTERM` constant dict.
