@@ -123,7 +123,7 @@ brew install archey4
 
 ```bash
 # If you want the latest release :
-LATEST_VERSION="v4.11.0"
+LATEST_VERSION="v4.12.0"
 wget "https://github.com/HorlogeSkynet/archey4/archive/${LATEST_VERSION}.tar.gz"
 tar xvzf "${LATEST_VERSION}.tar.gz"
 cd "archey4-${LATEST_VERSION}/"

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4.12.0] - 2021-05-08
 ### Added
 - `Kernel` name
 - CHANGELOG.md file
@@ -315,7 +317,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.11.0...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.12.0...HEAD
+[v4.12.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.11.0...v4.12.0
 [v4.11.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.10.0...v4.11.0
 [v4.10.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.9.0...v4.10.0
 [v4.9.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.8.1...v4.9.0
