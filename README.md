@@ -3,13 +3,11 @@
 > Archey is a simple system information tool written in Python
 
 <p align="center">
-	<a href="https://www.python.org/"><img src="https://forthebadge.com/images/badges/made-with-python.svg"></a>
-	<img src="https://forthebadge.com/images/badges/built-with-love.svg">
+	<img src=".github/archey4.png" alt="Archey logo" title="CC-BY Brume Archey logo" longdesc="https://brume.ink/">
 	<br />
 	<br />
 	<!-- PYPI (supported Python versions) -->
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/pyversions/archey4.svg?style=for-the-badge"></a>
-	<br />
 	<br />
 	<!-- GITHUB (latest release) -->
 	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/release/HorlogeSkynet/archey4.svg?style=for-the-badge&label=github"></a>
@@ -28,10 +26,6 @@
 	<a href="https://aur.archlinux.org/packages/archey4/"><img src="https://img.shields.io/aur/votes/archey4.svg?style=for-the-badge"></a>
 	<!-- HOMEBREW (downloads) -->
 	<a href="https://formulae.brew.sh/formula/archey4"><img src="https://img.shields.io/homebrew/installs/dm/archey4.svg?style=for-the-badge"></a>
-</p>
-
-<p align="center">
-	<img alt="Archey4" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.10.0">
 </p>
 
 ## Why (again) a f\*cking new Archey fork ?
@@ -60,6 +54,10 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * WSL
 
 > Details [here](https://github.com/HorlogeSkynet/archey4/blob/master/archey/distributions.py#L17).
+
+## What does it look like ?
+
+<p align="center"><img alt="Archey 4 complete preview" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.10.0"></p>
 
 ## Which packages do I need to run this project ?
 

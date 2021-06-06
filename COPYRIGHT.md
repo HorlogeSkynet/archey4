@@ -27,6 +27,7 @@ See <https://www.gnu.org/licenses/gpl-3.0.txt> for the full license text.
 * BTRFS disk support proper implementation (and much more) by Michael Bromilow (@ingrinder)
 * Elementary OS proper ASCII logo integration by @SomethingGeneric <mcompton2002@gmail.com>
 * Pop!\_OS proper ASCII logo integration by @airvue
+* Project logo by Brume <contact@brume.ink>
 
 ## Maintainers
 
