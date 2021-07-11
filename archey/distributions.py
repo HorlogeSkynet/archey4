@@ -36,6 +36,7 @@ class Distributions(Enum):
     GENTOO = 'gentoo'
     KALI = 'kali'
     MANJARO = 'manjaro'
+    NETBSD = 'netbsd'
     NIXOS = 'nixos'
     LINUX = 'linux'
     LINUXMINT = 'linuxmint'
