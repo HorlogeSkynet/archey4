@@ -10,7 +10,7 @@ def lazy_load_logo_module(logo_name: str) -> ModuleType:
     Utility function returning a logo (as a Python module) lazily-loaded.
     It allows us to only load to RAM the distribution logo object that will actually be used.
     """
-    return import_module(__name__ + '.' + logo_name)
+    return import_module(f"{__name__}.{logo_name}")
 
 
 def get_logo_width(logo: List[str], nb_colors: int = 8) -> int:
