@@ -6,6 +6,7 @@ Interface to `os-release` (through `distro` module).
 
 import os
 import platform
+import sys
 
 from enum import Enum
 from functools import lru_cache
@@ -67,9 +68,13 @@ class Distributions(Enum):
                 return Distributions.DARWIN
 
             # Android systems are currently not being handled by `distro`.
-            # We imitate Neofetch behavior to manually "detect" them.
-            # See <https://github.com/nir0s/distro/issues/253>.
-            if os.path.isdir('/system/app') and os.path.isdir('/system/priv-app'):
+            # At first, we imitate the Python standard library, by checking whether CPython
+            #  has been built for Android.
+            #  See <https://github.com/python/cpython/search?l=Python&q=getandroidapilevel>
+            # As a fallback, we mimic Neofetch behavior, by relying on the file-system.
+            #  See <https://github.com/nir0s/distro/issues/253>
+            if hasattr(sys, 'getandroidapilevel') \
+                or (os.path.isdir('/system/app') and os.path.isdir('/system/priv-app')):
                 return Distributions.ANDROID
 
             # If nothing of the above matched, fall-back on the Linux logo.
