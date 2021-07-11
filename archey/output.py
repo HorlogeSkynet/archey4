@@ -154,7 +154,7 @@ class Output:
 
         # Merge entry results to the distribution logo.
         logo_with_entries = os.linesep.join([
-            logo_part + entry_part
+            f"{logo_part}   {entry_part}"
             for logo_part, entry_part in zip(self._logo, self._results)
         ])
 
