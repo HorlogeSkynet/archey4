@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Official NetBSD support
+- Archey official logo (CC-BY Brume)
+- PEP-561 compliance (Distributing and Packaging Type Information)
+
+### Changed
+- Logos are now right-padding "unaware"
+- Fix Pop!\_OS logo (reverted) coloration
+- Fix potential configuration file encoding issues on Windows platforms
+- Extend Android system auto-detection (as CPython standard library does)
 
 ## [v4.12.0] - 2021-05-08
 ### Added
