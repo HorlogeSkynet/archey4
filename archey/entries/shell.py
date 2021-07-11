@@ -21,7 +21,7 @@ class Shell(Entry):
                 self.value = check_output(
                     ['getent', 'passwd', str(os.getuid())],
                     universal_newlines=True
-                ).rstrip().split(':')[-1]
+                ).rstrip().rsplit(':', maxsplit=1)[-1]
             except CalledProcessError:
                 # Where does this user come from ?
                 pass

@@ -129,7 +129,7 @@ def main():
     available_entries = configuration.get('entries')
     if available_entries is None:
         # If none were specified, lazy-mimic a full-enabled entries list without any configuration.
-        available_entries = [{'type': entry_name} for entry_name in Entries.__members__.keys()]
+        available_entries = [{'type': entry_name} for entry_name in Entries.__members__]
 
     output = Output(
         preferred_logo_style=args.logo_style,
@@ -160,7 +160,7 @@ def main():
             # We use threads (and not processes) since most work done by our entries is IO-bound.
             # `max_workers` is manually computed to mimic Python 3.8+ behaviour, but for our needs.
             #   See <https://github.com/python/cpython/pull/13618>.
-            executor = cm_stack.enter_context(ThreadPoolExecutor(
+            executor = cm_stack.enter_context(ThreadPoolExecutor(  # pylint: disable=consider-using-with
                 max_workers=min(len(available_entries) or 1, (os.cpu_count() or 1) + 4)
             ))
             mapper = executor.map
