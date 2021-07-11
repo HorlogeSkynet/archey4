@@ -67,7 +67,7 @@ class Configuration(metaclass=Singleton):
             path = os.path.join(path, 'config.json')
 
         try:
-            with open(path) as f_config:
+            with open(path, mode='rb') as f_config:
                 Utility.update_recursive(self._config, json.load(f_config))
         except FileNotFoundError:
             return
