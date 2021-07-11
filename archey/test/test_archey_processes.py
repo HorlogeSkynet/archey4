@@ -33,7 +33,7 @@ there
 """)
     def test_ps_ok(self, check_output_mock):
         """Simple test with a plausible `ps` output"""
-        # We'll create two `Processes` instances.
+        # We'll create two `Processes` instances.
         processes_1 = Processes()
         _ = Processes()
 

@@ -2,8 +2,8 @@
 # Required hook as we use absolute imports within the code.
 init-hook='import sys; sys.path.append("archey/")'
 
-# C sources of the `netifaces` module won't be available.
-# Let's ignore it during linting please.
+# C sources of the `netifaces` module won't be available.
+# Let's ignore it during linting please.
 extension-pkg-whitelist=netifaces
 
 # Automatically detects the number of CPU available to use.

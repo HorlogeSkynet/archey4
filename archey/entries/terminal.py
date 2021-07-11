@@ -57,7 +57,7 @@ ENV_DICT = {
 
 class Terminal(Entry):
     """
-    Simple terminal detection based on the `TERM` environment variable.
+    Simple terminal detection based on the `TERM` environment variable.
     It also displays the colors palette afterwards.
     """
     def __init__(self, *args, **kwargs):

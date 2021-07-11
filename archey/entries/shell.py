@@ -9,7 +9,7 @@ from archey.entry import Entry
 
 class Shell(Entry):
     """
-    Simple shell path detection based either on the `SHELL` environment variable or
+    Simple shell path detection based either on the `SHELL` environment variable or
     the local administrative database.
     """
     def __init__(self, *args, **kwargs):

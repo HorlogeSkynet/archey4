@@ -12,7 +12,7 @@ from archey.entry import Entry
 
 class CPU(Entry):
     """
-    Parse `/proc/cpuinfo` file to retrieve model names.
+    Parse `/proc/cpuinfo` file to retrieve model names.
     If no information could be retrieved, call `lscpu`.
 
     `value` attribute is populated as a `list` of `dict`.
