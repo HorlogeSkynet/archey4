@@ -100,13 +100,13 @@ Further information about packaging are available [here](https://github.com/Horl
 ### Install from [PyPI](https://pypi.org/project/archey4/)
 
 ```bash
-sudo pip3 install archey4
+pip3 install archey4
 ```
 
 ### Install from [AUR](https://aur.archlinux.org/packages/archey4/)
 
 ```bash
-sudo yay -S archey4
+yay -S archey4
 ```
 
 ### Install from [Homebrew](https://formulae.brew.sh/formula/archey4)
@@ -135,22 +135,20 @@ cd archey4/
 
 ```bash
 # If you have PIP installed on your system :
-sudo pip3 install .
+pip3 install .
 
 # But if you don't have PIP, no worries :
-sudo python3 setup.py install
+python3 setup.py install
 ```
 
 #### Step 3 (optional) : Configuration
 
 ```bash
-# System-wide configuration file :
-sudo mkdir /etc/archey4
-sudo cp config.json /etc/archey4/config.json
+# System-wide configuration file (privileges required) :
+install -D -m0644 config.json /etc/archey4/config.json
 
 # User-specific configuration file :
-mkdir -p ~/.config/archey4
-cp config.json ~/.config/archey4/config.json
+install -D -m0644 config.json ~/.config/archey4/config.json
 ```
 
 #### Step 4 (optional) : Standalone building
@@ -159,10 +157,9 @@ cp config.json ~/.config/archey4/config.json
 > Project evolved, and now it's a proper module.  
 > Some procedures below walk you through several ways of building Archey as a standalone program.
 
-
 ```bash
 # Using PEX (recommended) :
-sudo pip3 install pex
+pip3 install pex
 pex \
 	-o dist/archey \
 	-m archey \
@@ -173,7 +170,7 @@ pex \
 # Please **replace** `debian` identifier below by yours (multiple flags allowed).
 
 # Using Stickytape :
-sudo pip3 install stickytape
+pip3 install stickytape
 stickytape \
 	--copy-shebang \
 	--add-python-path . \
@@ -183,7 +180,7 @@ stickytape \
 chmod +x dist/archey
 
 # Using PyInstaller :
-sudo pip3 install pyinstaller
+pip3 install pyinstaller
 pyinstaller \
 	--distpath dist \
 	--specpath dist \
@@ -193,14 +190,14 @@ pyinstaller \
 	--log-level WARN
 ```
 
-Resulting program may now be installed system-wide.
+Resulting program may now be installed system-wide (privileges required).
 
 ```bash
-# Execute program resulting from step 4.
+# Standalone execution.
 ./dist/archey
 
-# You can now move this file for a system-wide install :
-sudo mv dist/archey /usr/local/bin/
+# System-wide install.
+install -D -m0755 dist/archey /usr/local/bin/archey
 ```
 
 ## Usage
