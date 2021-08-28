@@ -39,7 +39,7 @@ class WanIP(Entry):
         options = self.options.get(f'ipv{ip_version}', {})
 
         # Is retrieval enabled for this IP version ?
-        if not options and options != {}:
+        if not options and not isinstance(options, dict):
             return None
 
         # Is retrieval via DNS query enabled ?
