@@ -87,7 +87,10 @@ class Temperature(Entry):
 
         try:
             sensors_data = json.loads(sensors_output.stdout)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as json_decode_error:
+            logging.warning(
+                'Couldn\'t decode JSON from sensors output : %s', json_decode_error
+            )
             return
 
         # Iterates over the chip-sets outputs to filter interesting values.
