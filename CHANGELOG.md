@@ -18,6 +18,9 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Fix potential configuration file encoding issues on Windows platforms
 - Extend Android system auto-detection (as CPython standard library does)
 
+### Fixed
+- `sensors_chipsets` option (when containing multiple values)
+
 ## [v4.12.0] - 2021-05-08
 ### Added
 - `Kernel` name

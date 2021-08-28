@@ -7,7 +7,7 @@ import re
 
 from glob import iglob
 from subprocess import CalledProcessError, DEVNULL, PIPE, check_output, run
-from typing import List
+from typing import List, Optional
 
 from archey.entry import Entry
 
@@ -63,48 +63,70 @@ class Temperature(Entry):
 
 
     def _run_sensors(self, whitelisted_chips: List[str]):
-        # Uses the `sensors` program (from lm-sensors) to interrogate thermal chip-sets.
-        try:
-            sensors_output = run(
-                ['sensors', '-A', '-j'] + whitelisted_chips,
-                universal_newlines=True,
-                stdout=PIPE, stderr=PIPE,
-                check=True
-            )
-        except FileNotFoundError:
-            error_message = None
-            return
-        except CalledProcessError as called_process_error:
-            error_message = called_process_error.stderr
-            return
+
+        def _get_sensors_output(whitelisted_chip: Optional[str]) -> Optional[str]:
+            sensors_args = ['sensors', '-A', '-j']
+            if whitelisted_chip is not None:
+                sensors_args.append(whitelisted_chip)
+
+            # Uses the `sensors` program (from lm-sensors) to interrogate thermal chip-sets.
+            try:
+                sensors_output = run(
+                    sensors_args,
+                    universal_newlines=True,
+                    stdout=PIPE, stderr=PIPE,
+                    check=True
+                )
+            except FileNotFoundError:
+                error_message = None
+                return None
+            except CalledProcessError as called_process_error:
+                error_message = called_process_error.stderr
+                return None
+            else:
+                error_message = sensors_output.stderr
+            finally:
+                # Log any `sensors` error messages at warning level.
+                if error_message:
+                    for line in error_message.splitlines():
+                        self._logger.warning('[lm-sensors]: %s', line)
+
+            return sensors_output.stdout
+
+        sensors_outputs = []
+        if whitelisted_chips:
+            # Iterate over each whitelisted chipset and store JSON outputs.
+            for whitelisted_chip in whitelisted_chips:
+                sensors_outputs.append(_get_sensors_output(whitelisted_chip))
         else:
-            error_message = sensors_output.stderr
-        finally:
-            # Log any `sensors` error messages at warning level.
-            if error_message:
-                for line in error_message.splitlines():
-                    self._logger.warning('[lm-sensors]: %s', line)
+            sensors_outputs.append(_get_sensors_output(None))
 
-        try:
-            sensors_data = json.loads(sensors_output.stdout)
-        except json.JSONDecodeError as json_decode_error:
-            self._logger.warning(
-                'Couldn\'t decode JSON from sensors output : %s', json_decode_error
-            )
-            return
+        # Loop over output(s) and parse JSON documents.
+        for sensors_output in sensors_outputs:
+            if sensors_output is None:
+                continue
 
-        # Iterates over the chip-sets outputs to filter interesting values.
-        for features in sensors_data.values():
-            for subfeatures in features.values():
-                for name, value in subfeatures.items():
-                    # These conditions check whether this sub-feature value is a correct
-                    #  temperature, as :
-                    # * It might be an input fan speed (from a control chip) ;
-                    # * Some chips/adapters might return null temperatures.
-                    if value != 0.0 and re.match(r"temp\d_input", name):
-                        self._temps.append(value)
-                        # There is only one `temp*_input` field, let's stop the current iteration.
-                        break
+            try:
+                sensors_data = json.loads(sensors_output)
+            except json.JSONDecodeError as json_decode_error:
+                self._logger.warning(
+                    'Couldn\'t decode JSON from sensors output : %s', json_decode_error
+                )
+                continue
+
+            # Iterate over the chipsets outputs to retrieve interesting values.
+            for features in sensors_data.values():
+                for subfeatures in features.values():
+                    for name, value in subfeatures.items():
+                        # These conditions check whether this sub-feature value is a correct
+                        #  temperature, as :
+                        # * It might be an input fan speed (from a control chip) ;
+                        # * Some chips/adapters might return null temperatures.
+                        if value != 0.0 and re.match(r"temp\d_input", name):
+                            self._temps.append(value)
+                            # As there is only one `temp*_input` field per item,
+                            #  we may stop the current sub-feature iteration now.
+                            break
 
     def _poll_thermal_zones(self):
         # We just check for values within files present in the path below.
