@@ -409,6 +409,12 @@ Any improvement would be appreciated.
 
 * If you experience any trouble during the installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
 
-* If you had to tweak this project to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project ! You should also check [Info for contributors](https://github.com/HorlogeSkynet/archey4/wiki/Info-for-contributors).
+* If you had to tweak this project to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
 
 * If your distribution is not (currently) supported, please check [How do I add a distribution to Archey?](https://github.com/HorlogeSkynet/archey4/wiki/How-do-I-add-a-distribution-to-Archey%3F).
+
+## Notes to developers
+
+* Don't forget to check the [Info for contributors](https://github.com/HorlogeSkynet/archey4/wiki/Info-for-contributors) wiki page.
+
+* Any patch sent by e-mail to [dev+archey@samuel.domains](mailto:dev+archey@samuel.domains) would get properly reviewed.
