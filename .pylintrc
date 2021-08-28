@@ -13,6 +13,10 @@ jobs=0
 # See PyCQA/pylint#214.
 disable=similarities
 
+# Additional plugins to check the code base against.
+load-plugins=
+	pylint_secure_coding_standard
+
 [DESIGN]
 # For entries classes, we (often) only use the `__init__` magic method.
 min-public-methods=0

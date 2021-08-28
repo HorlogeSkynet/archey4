@@ -33,7 +33,7 @@ jobs:
       - name: Install required dependencies
         run: |
           python -m pip install --upgrade pip setuptools
-          pip install pylint stickytape pyinstaller pex
+          pip install pylint pylint-secure-coding-standard stickytape pyinstaller pex
 
       - name: Install module regularly
         run: pip install .
