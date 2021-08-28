@@ -118,7 +118,7 @@ def main():
     args = args_parsing()
 
     # Setup logging.
-    logging.basicConfig(format='%(levelname)s: %(message)s')
+    logging.basicConfig(format='%(levelname)s: [%(name)s] %(message)s')
 
     # Populate our internal singletons once and for all.
     Processes()

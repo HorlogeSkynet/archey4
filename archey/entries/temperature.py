@@ -1,7 +1,6 @@
 """Temperature detection class"""
 
 import json
-import logging
 import os
 import platform
 import re
@@ -84,12 +83,12 @@ class Temperature(Entry):
             # Log any `sensors` error messages at warning level.
             if error_message:
                 for line in error_message.splitlines():
-                    logging.warning('[lm-sensors]: %s', line)
+                    self._logger.warning('[lm-sensors]: %s', line)
 
         try:
             sensors_data = json.loads(sensors_output.stdout)
         except json.JSONDecodeError as json_decode_error:
-            logging.warning(
+            self._logger.warning(
                 'Couldn\'t decode JSON from sensors output : %s', json_decode_error
             )
             return
@@ -160,7 +159,7 @@ class Temperature(Entry):
             # `sysctl` does not seem to be available on this system.
             return
         except CalledProcessError as error_message:
-            logging.warning(
+            self._logger.warning(
                 '[sysctl]: Couldn\'t fetch temperature from CPU sensors (%s). '
                 'Please be sure to load the corresponding kernel driver beforehand '
                 '(`kldload coretemp` for Intel or `kldload amdtemp` for AMD`).',

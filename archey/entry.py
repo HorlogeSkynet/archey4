@@ -1,5 +1,7 @@
 """Entry base class"""
 
+import logging
+
 from abc import ABC as AbstractBaseClass, abstractmethod
 from typing import Optional
 
@@ -29,6 +31,9 @@ class Entry(AbstractBaseClass):
 
         # Propagates a reference to default strings specified in `Configuration`.
         self._default_strings = Configuration().get('default_strings')
+
+        # Provision a logger for each entry.
+        self._logger = logging.getLogger(self.__module__)
 
     def output(self, output):
         """Output the results to output. Can be overridden by subclasses."""

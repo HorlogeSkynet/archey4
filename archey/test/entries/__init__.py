@@ -1,10 +1,11 @@
 """`archey.test.entries` module initialization file"""
 
+import logging
+import unittest
+
 from copy import deepcopy
 from functools import wraps
 from typing import Callable
-
-import unittest
 from unittest.mock import MagicMock, patch
 
 from archey.configuration import Configuration, DEFAULT_CONFIG
@@ -42,9 +43,11 @@ class HelperMethods:
         default_configuration = deepcopy(DEFAULT_CONFIG)
         # Then, let's merge in `configuration` recursively.
         Utility.update_recursive(default_configuration, (configuration or {}))
-        # Finally, replaces the internal (and private!) `_default_strings` attribute by...
+        # Replaces the internal (and protected!) `_default_strings` attribute by...
         # ... the corresponding object from configuration.
         setattr(instance_mock, '_default_strings', default_configuration.get('default_strings'))
+        # Finally provisions a proper `logging.Logger` instance for our mock.
+        setattr(instance_mock, '_logger', logging.getLogger(entry.__module__))
 
         return instance_mock
 

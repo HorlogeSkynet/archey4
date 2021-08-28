@@ -9,6 +9,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ### Added
 - Official NetBSD support
 - Archey official logo (CC-BY Brume)
+- Protected `_logger` attribute for `Entry` objects
 - PEP-561 compliance (Distributing and Packaging Type Information)
 
 ### Changed
