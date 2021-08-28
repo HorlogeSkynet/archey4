@@ -83,7 +83,8 @@ class Temperature(Entry):
         finally:
             # Log any `sensors` error messages at warning level.
             if error_message:
-                logging.warning('[lm-sensors]: %s', error_message.rstrip())
+                for line in error_message.splitlines():
+                    logging.warning('[lm-sensors]: %s', line)
 
         try:
             sensors_data = json.loads(sensors_output.stdout)
