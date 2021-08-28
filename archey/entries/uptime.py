@@ -58,7 +58,7 @@ class Uptime(Entry):
     @staticmethod
     def _proc_file_uptime() -> timedelta:
         """Tries to get uptime using the `/proc/uptime` file"""
-        with open('/proc/uptime') as f_uptime:
+        with open('/proc/uptime', encoding='ASCII') as f_uptime:
             return timedelta(
                 seconds=float(f_uptime.read().split()[0])
             )

@@ -110,7 +110,7 @@ class Temperature(Entry):
     def _poll_thermal_zones(self):
         # We just check for values within files present in the path below.
         for thermal_file in iglob(r'/sys/class/thermal/thermal_zone*/temp'):
-            with open(thermal_file) as file:
+            with open(thermal_file, encoding='ASCII') as file:
                 try:
                     temp = float(file.read())
                 except OSError:

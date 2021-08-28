@@ -71,7 +71,7 @@ class RAM(Entry):
     @staticmethod
     def _read_proc_meminfo() -> Tuple[float, float]:
         """Same behavior but by reading from `/proc/meminfo` directly"""
-        with open('/proc/meminfo') as f_mem_info:
+        with open('/proc/meminfo', encoding='ASCII') as f_mem_info:
             mem_info_lines = f_mem_info.read().splitlines()
 
         # Store memory information into a dictionary.

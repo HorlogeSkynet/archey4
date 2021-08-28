@@ -66,7 +66,9 @@ class TestConfiguration(unittest.TestCase):
             ), \
             tempfile.TemporaryDirectory() as temp_dir:
             # We create a fake temporary configuration file.
-            with open(os.path.join(temp_dir, 'config.json'), 'w') as f_config:
+            with open(
+                os.path.join(temp_dir, 'config.json'), mode='w', encoding='UTF-8'
+            ) as f_config:
                 f_config.write("""\
 {
     "allow_overriding": false,
@@ -136,7 +138,7 @@ class TestConfiguration(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             # We create a fake temporary configuration file.
             config_file = os.path.join(temp_dir, 'user.cfg')  # A pure arbitrary name.
-            with open(config_file, 'w') as f_config:
+            with open(config_file, mode='w', encoding='UTF-8') as f_config:
                 f_config.write("""\
 {
     "allow_overriding": false,

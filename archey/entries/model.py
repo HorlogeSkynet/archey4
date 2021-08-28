@@ -80,7 +80,9 @@ class Model(Entry):
     def _fetch_product_info() -> Optional[str]:
         """Tries to open specific Linux files, looking for hardware product name and version"""
         try:
-            with open('/sys/devices/virtual/dmi/id/product_name') as f_product_name:
+            with open(
+                '/sys/devices/virtual/dmi/id/product_name', encoding='UTF-8'
+            ) as f_product_name:
                 product_name = f_product_name.read().rstrip()
         except FileNotFoundError:
             return None
@@ -90,7 +92,9 @@ class Model(Entry):
             return None
 
         try:
-            with open('/sys/devices/virtual/dmi/id/product_version') as f_product_version:
+            with open(
+                '/sys/devices/virtual/dmi/id/product_version', encoding='UTF-8'
+            ) as f_product_version:
                 product_version = f_product_version.read().rstrip()
         except FileNotFoundError:
             product_version = ''
@@ -140,7 +144,7 @@ class Model(Entry):
     def _fetch_raspberry_pi_revision() -> Optional[str]:
         """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
         try:
-            with open('/proc/cpuinfo') as f_cpu_info:
+            with open('/proc/cpuinfo', encoding='ASCII') as f_cpu_info:
                 cpu_info = f_cpu_info.read()
         except (PermissionError, FileNotFoundError):
             return None

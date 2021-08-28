@@ -59,7 +59,7 @@ class CPU(Entry):
     def _parse_proc_cpuinfo(cls) -> List[Dict[str, int]]:
         """Read `/proc/cpuinfo` and search for CPU model names occurrences"""
         try:
-            with open('/proc/cpuinfo') as f_cpu_info:
+            with open('/proc/cpuinfo', encoding='ASCII') as f_cpu_info:
                 cpu_info = f_cpu_info.read()
         except (PermissionError, FileNotFoundError):
             return []

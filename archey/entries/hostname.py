@@ -19,7 +19,7 @@ class Hostname(Entry):
     @staticmethod
     def _read_etc_hostname() -> Optional[str]:
         try:
-            with open('/etc/hostname') as f_hostname:
+            with open('/etc/hostname', encoding='UTF-8') as f_hostname:
                 return f_hostname.read().rstrip()
         except FileNotFoundError:
             return None
