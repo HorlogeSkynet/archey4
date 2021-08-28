@@ -15,6 +15,11 @@ disable=similarities
 
 # Additional plugins to check the code base against.
 load-plugins=
+	pylint.extensions.check_elif,
+	pylint.extensions.redefined_variable_type,
+	pylint.extensions.overlapping_exceptions,
+	pylint.extensions.empty_comment,
+	pylint.extensions.while_used,
 	pylint_secure_coding_standard
 
 [DESIGN]

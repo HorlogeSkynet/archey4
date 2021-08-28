@@ -3,7 +3,7 @@
 from socket import timeout as SocketTimeoutError
 from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
 from typing import Optional
-from urllib.error import HTTPError, URLError
+from urllib.error import URLError
 from urllib.request import urlopen
 
 from archey.entry import Entry
@@ -97,7 +97,7 @@ class WanIP(Entry):
         try:
             with urlopen(server_url, timeout=timeout) as http_request:
                 return http_request.read().decode().strip()
-        except (HTTPError, URLError, SocketTimeoutError):
+        except (URLError, SocketTimeoutError):
             return None
 
     def output(self, output):

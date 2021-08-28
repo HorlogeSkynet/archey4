@@ -4,7 +4,7 @@ import json
 import platform
 
 from socket import timeout as SocketTimeoutError
-from urllib.error import HTTPError, URLError
+from urllib.error import URLError
 from urllib.request import urlopen
 from typing import Optional
 
@@ -50,7 +50,7 @@ class Kernel(Entry):
                     kernel_releases = json.load(http_request)
                 except json.JSONDecodeError:
                     return None
-        except (HTTPError, URLError, SocketTimeoutError):
+        except (URLError, SocketTimeoutError):
             return None
 
         return kernel_releases.get('latest_stable', {}).get('version')

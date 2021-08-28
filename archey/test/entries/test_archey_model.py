@@ -84,7 +84,9 @@ class TestModelEntry(unittest.TestCase):
         with self.subTest('Not a virtual environment (systemd).'):
             check_output_mock.reset_mock()
             getuid_mock.reset_mock()
-            check_output_mock.side_effect = CalledProcessError(1, 'systemd-detect-virt', 'none\n')
+            check_output_mock.side_effect = CalledProcessError(  # pylint: disable=redefined-variable-type
+                1, 'systemd-detect-virt', 'none\n'
+            )
 
             self.assertIsNone(
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
