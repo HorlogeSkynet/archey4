@@ -166,10 +166,8 @@ def main():
             mapper = executor.map
 
         for entry_instance in mapper(_entry_instantiator, available_entries):
-            if not entry_instance:
-                continue
-
-            output.add_entry(entry_instance)
+            if entry_instance:
+                output.add_entry(entry_instance)
 
     output.output()
 
