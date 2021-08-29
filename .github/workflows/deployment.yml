@@ -1,5 +1,5 @@
 ---
-name: Bump Homebrew formula
+name: Deployment
 
 on:
   # Run when new releases are published.
@@ -7,13 +7,18 @@ on:
     types: [published]
   # Allow manual triggers from GitHub.
   workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: 'Git tag'
 
 jobs:
-  bump:
+  bump_homebrew_formula:
     runs-on: macos-latest
     steps:
-      - name: Update Homebrew formula
+      - name: Bump Homebrew formula
         uses: dawidd6/action-homebrew-bump-formula@v3
         with:
           token: ${{ secrets.HOMEBREW_BUMP_FORMULA_GITHUB_TOKEN }}
           formula: archey4
+          tag: ${{ github.event.release.tag_name || github.event.inputs.tag }}
