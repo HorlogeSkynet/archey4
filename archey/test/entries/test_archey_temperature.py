@@ -6,7 +6,7 @@ import tempfile
 from subprocess import CalledProcessError
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.temperature import Temperature
@@ -86,6 +86,58 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
         )
         # pylint: enable=protected-access
 
+    @patch('archey.entries.temperature.run')
+    def test_run_sensors_ok_multiple_chipsets(self, run_mock):
+        """Test `sensors` when multiple chipsets names have been passed"""
+        run_mock.side_effect = [
+            Mock(
+                stdout="""\
+{
+   "who-cares-about":{
+      "temp1":{
+         "temp1_input": 45.000,
+         "temp1_crit": 128.000
+      },
+      "temp2":{
+         "temp2_input": 0.000,
+         "temp2_crit": 128.000
+      },
+      "temp3":{
+         "temp3_input": 38.000,
+         "temp3_crit": 128.000
+      }
+   }
+}
+""",
+                stderr=None
+            ),
+            Mock(
+                stdout="""\
+{
+   "the-chipsets-names":{
+      "what-are":{
+         "temp1_input": 45.000,
+         "temp1_max": 100.000,
+         "temp1_crit": 100.000,
+         "temp1_crit_alarm": 0.000
+      }
+    }
+}
+""",
+                stderr=None
+            )
+        ]
+
+        sensors_chipsets = ['who-cares-about', 'the-chipsets-names']
+
+        # pylint: disable=protected-access
+        Temperature._run_sensors(self.temperature_mock, sensors_chipsets)
+        self.assertListEqual(self.temperature_mock._temps, [45.0, 38.0, 45.0])
+        # pylint: enable=protected-access
+
+        # Check that our `run` mock has been called up to the number of passed chipsets.
+        self.assertEqual(run_mock.call_count, len(sensors_chipsets))
+
     @patch(
         'archey.entries.temperature.run',
         side_effect=[
@@ -158,7 +210,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
     @patch(
         'archey.entries.temperature.check_output',
         side_effect=[
-            # First case (`iStats` nor `OSX CPU Temp` will be available).
+            # First case (`iStats` nor `OSX CPU Temp` won't be available).
             FileNotFoundError(),
             FileNotFoundError(),
             # Second case (`iStats` OK).
