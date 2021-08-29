@@ -2,8 +2,11 @@
 name: Bump Homebrew formula
 
 on:
-  repository_dispatch:
-    types: [release]
+  # Run when new releases are published.
+  release:
+    types: [published]
+  # Allow manual triggers from GitHub.
+  workflow_dispatch:
 
 jobs:
   bump:
@@ -14,4 +17,3 @@ jobs:
         with:
           token: ${{ secrets.HOMEBREW_BUMP_FORMULA_GITHUB_TOKEN }}
           formula: archey4
-          tag: ${{ github.event.client_payload.ref }}
