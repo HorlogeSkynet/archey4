@@ -6,20 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4.13.0] - 2021-08-29
 ### Added
 - Official NetBSD support
-- Archey official logo (CC-BY Brume)
+- Archey official project logo (CC-BY Brume)
 - Protected `_logger` attribute for `Entry` objects
 - PEP-561 compliance (Distributing and Packaging Type Information)
 
 ### Changed
 - Logos are now right-padding "unaware"
 - Fix Pop!\_OS logo (reverted) coloration
+- Fix `sensors_chipsets` option (when containing multiple values)
 - Fix potential configuration file encoding issues on Windows platforms
+- Improve logging style of multiple lines `sensors` error messages
 - Extend Android system auto-detection (as CPython standard library does)
-
-### Fixed
-- `sensors_chipsets` option (when containing multiple values)
 
 ## [v4.12.0] - 2021-05-08
 ### Added
@@ -331,7 +332,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.12.0...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.0...HEAD
+[v4.13.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.12.0...v4.13.0
 [v4.12.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.11.0...v4.12.0
 [v4.11.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.10.0...v4.11.0
 [v4.10.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.9.0...v4.10.0
