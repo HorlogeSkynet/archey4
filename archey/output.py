@@ -24,6 +24,9 @@ class Output:
     This is the object handling output entries populating.
     It also handles the logo choice based on some system detections.
     """
+
+    __LOGO_RIGHT_PADDING = '   '
+
     def __init__(self, **kwargs):
         # Fetches passed arguments.
         self._format_to_json = kwargs.get('format_to_json')
@@ -112,7 +115,7 @@ class Output:
         if not sys.stdout.isatty():
             text_width = float('inf')
         else:
-            text_width = get_terminal_size().columns - logo_width
+            text_width = get_terminal_size().columns - logo_width - len(self.__LOGO_RIGHT_PADDING)
 
         text_wrapper = TextWrapper(
             width=text_width,
@@ -154,7 +157,7 @@ class Output:
 
         # Merge entry results to the distribution logo.
         logo_with_entries = os.linesep.join([
-            f"{logo_part}   {entry_part}"
+            f"{logo_part}{self.__LOGO_RIGHT_PADDING}{entry_part}"
             for logo_part, entry_part in zip(self._logo, self._results)
         ])
 
