@@ -9,7 +9,7 @@ from archey.distributions import Distributions
 
 
 def get_homebrew_cellar_path() -> str:
-    """Return HomeBrew Cellar path (if available)"""
+    """Return Homebrew Cellar path (if available)"""
     try:
         return check_output(
             ['brew', '--cellar'],
@@ -31,7 +31,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
-    {'cmd': ('ls', '-1', get_homebrew_cellar_path())},  # HomeBrew.
+    {'cmd': ('ls', '-1', get_homebrew_cellar_path())},  # Homebrew.
     {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
