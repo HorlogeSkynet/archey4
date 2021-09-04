@@ -71,7 +71,7 @@ def take_screenshot(output_file: str = None) -> bool:
         for screenshot_tool, screenshot_cmd in screenshot_tools.items():
             try:
                 check_call(screenshot_cmd, stderr=DEVNULL)
-            except FileNotFoundError:
+            except (FileNotFoundError, PermissionError):
                 continue
             except CalledProcessError as process_error:
                 defer_stack.callback(partial(

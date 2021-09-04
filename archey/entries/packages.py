@@ -16,7 +16,7 @@ def get_homebrew_cellar_path() -> str:
             stderr=DEVNULL,
             universal_newlines=True
         ).rstrip()
-    except (FileNotFoundError, CalledProcessError):
+    except (FileNotFoundError, PermissionError, CalledProcessError):
         pass
 
     return '/usr/local/Cellar/'
@@ -70,7 +70,7 @@ class Packages(Entry):
                     },
                     universal_newlines=True
                 )
-            except (FileNotFoundError, CalledProcessError):
+            except (FileNotFoundError, PermissionError, CalledProcessError):
                 continue
 
             # Here we *may* use `\n` as `universal_newlines` has been set.
