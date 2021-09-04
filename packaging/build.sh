@@ -73,9 +73,8 @@ echo ">>> Packages generation for ${NAME}_v${VERSION}-${REVISION} <<<"
 mkdir -p etc/archey4/ && \
 	cp config.json etc/archey4/config.json
 # Prepare and compress the manual page.
-sed -e "s/\${DATE}/$(date +'%B %Y')/1" archey.1 | \
-	sed -e "s/\${VERSION}/${VERSION}/1" | \
-		gzip -c --best - > "${DIST_OUTPUT}/archey.1.gz"
+sed -e "s/\${DATE}/$(date +'%B %Y')/1" -e "s/\${VERSION}/${VERSION}/1" archey.1 | \
+	gzip -c --best - > "${DIST_OUTPUT}/archey.1.gz"
 # Clean any previous Setuptools build output.
 python3 setup.py -q clean --all 2> /dev/null
 
