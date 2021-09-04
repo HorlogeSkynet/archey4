@@ -157,8 +157,9 @@ done
 # 	setup.py
 
 
-# Remove the fake `etc/` directory.
-rm -rf etc/
+# Remove the fake `etc/archey4/` tree.
+rm etc/archey4/config.json && \
+	rmdir --ignore-fail-on-non-empty -p etc/archey4/
 
 
 # Silence some Setuptools warnings by re-enabling byte-code generation.
