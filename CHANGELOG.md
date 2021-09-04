@@ -8,6 +8,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Changed
 - Fix text width overlap regression introduced in v4.13.0
+- Prevent entries `disabled` special field from being propagated in `options`
 
 ## [v4.13.0] - 2021-08-29
 ### Added

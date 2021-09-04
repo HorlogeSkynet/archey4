@@ -34,6 +34,9 @@ class TestEntry(unittest.TestCase):
         simple_entry = _SimpleEntry(options={'disabled': True})
         self.assertIsNone(simple_entry)
 
+        simple_entry = _SimpleEntry(options={'disabled': False})
+        self.assertNotIn('disabled', simple_entry.options)
+
     def test_entry_usage(self):
         """Test `Entry` instantiation and parameters passing"""
         # No name passed as parameter, let's use internal defined "pretty name".

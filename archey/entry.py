@@ -14,7 +14,7 @@ class Entry(AbstractBaseClass):
 
     def __new__(cls, *_, **kwargs):
         """Hook object instantiation to handle our particular `disabled` config field"""
-        if kwargs.get('options', {}).get('disabled'):
+        if kwargs.get('options', {}).pop('disabled', False):
             return None
 
         return super().__new__(cls)
