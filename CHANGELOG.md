@@ -8,6 +8,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Changed
 - Only run `pkg` on \*BSD systems
+- Improve Darwin (Apple) logo design
 - Fix text width overlap regression introduced in v4.13.0
 - Fix `brew` `Packages` count on Apple Silicon and GNU/Linux
 - Prevent entries `disabled` special field from being propagated in `options`
