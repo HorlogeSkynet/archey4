@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import DEFAULT as DEFAULT_SENTINEL, MagicMock, patch
 
 from archey.configuration import DEFAULT_CONFIG
+from archey.distributions import Distributions
 from archey.test.entries import HelperMethods
 from archey.entries.packages import Packages
 
@@ -17,6 +18,10 @@ class TestPackagesEntry(unittest.TestCase):
     Note: Due to the presence of trailing spaces, we may have to manually
             "inject" the OS line separator in some mocked outputs.
     """
+    def setUp(self):
+        # Clear cache filled by `functools.lru_cache` decorator.
+        Distributions.get_local.cache_clear()
+
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
@@ -155,6 +160,10 @@ xz-5.2.4            LZMA compression and decompression tools
         self.assertEqual(Packages().value, 9)
 
     @patch(
+        'archey.entries.packages.Distributions.get_local',
+        return_value=Distributions.FREEBSD
+    )
+    @patch(
         'archey.entries.packages.check_output',
         return_value="""\
 gettext-runtime-0.20.1         GNU gettext runtime libraries and programs
@@ -167,7 +176,7 @@ python37-3.7.7                 Interpreted object-oriented programming language
 readline-8.0.4                 Library for editing command lines as they are typed
 """
     )
-    def test_match_with_pkg(self, check_output_mock):
+    def test_match_with_pkg(self, check_output_mock, _):
         """Simple test for the FreeBSD `pkg` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect('pkg')
 

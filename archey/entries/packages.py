@@ -5,6 +5,7 @@ import os
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.entry import Entry
+from archey.distributions import Distributions
 
 
 def get_homebrew_cellar_path() -> str:
@@ -34,7 +35,11 @@ PACKAGES_TOOLS = (
     {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
-    {'cmd': ('pkg', '-N', 'info', '-a')},
+    {
+        'cmd': ('pkg', '-N', 'info', '-a'),
+        # Query `pkg` only on *BSD systems to avoid inconsistencies.
+        'only_on': (Distributions.FREEBSD, Distributions.NETBSD, Distributions.OPENBSD)
+    },
     {'cmd': ('port', 'installed'), 'skew': 1},
     {'cmd': ('rpm', '-qa')},
     {'cmd': ('ls', '-1', '/var/log/packages/')},  # SlackWare.
@@ -49,6 +54,10 @@ class Packages(Entry):
         super().__init__(*args, **kwargs)
 
         for packages_tool in PACKAGES_TOOLS:
+            if 'only_on' in packages_tool \
+                and Distributions.get_local() not in packages_tool['only_on']:
+                continue
+
             try:
                 results = check_output(
                     packages_tool['cmd'],
