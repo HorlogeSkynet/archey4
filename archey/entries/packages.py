@@ -7,6 +7,20 @@ from subprocess import check_output, DEVNULL, CalledProcessError
 from archey.entry import Entry
 
 
+def get_homebrew_cellar_path() -> str:
+    """Return HomeBrew Cellar path (if available)"""
+    try:
+        return check_output(
+            ['brew', '--cellar'],
+            stderr=DEVNULL,
+            universal_newlines=True
+        ).rstrip()
+    except (FileNotFoundError, CalledProcessError):
+        pass
+
+    return '/usr/local/Cellar/'
+
+
 PACKAGES_TOOLS = (
     {'cmd': ('apk', 'list', '--installed')},
     # As of 2020, `apt` is _very_ slow compared to `dpkg` on Debian-based distributions.
@@ -16,7 +30,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('dnf', 'list', 'installed'), 'skew': 1},
     {'cmd': ('dpkg', '--get-selections')},
     {'cmd': ('emerge', '-ep', 'world'), 'skew': 5},
-    {'cmd': ('ls', '-1', '/usr/local/Cellar/')},  # HomeBrew.
+    {'cmd': ('ls', '-1', get_homebrew_cellar_path())},  # HomeBrew.
     {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
     {'cmd': ('pkg_info', '-a')},
