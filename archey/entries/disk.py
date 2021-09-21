@@ -121,16 +121,24 @@ class Disk(Entry):
             return {}
 
         df_output_dict = {}
-        for df_entry in df_output.splitlines()[1:]:  # Discard the header row here.
-            # Don't crash against BSDs's autofs mount points.
-            if df_entry.startswith('map '):
+        for df_entry_match in re.findall(
+            #  device_path
+            #          total_blocks
+            #                  used_blocks
+            #                                       mount point
+            r"^(.+?)\s+(\d+)\s+(\d+)\s+\d+\s+\d+%\s+(.*)$",
+            df_output,
+            flags=re.MULTILINE
+        ):
+            total_blocks = int(df_entry_match[1])
+            # Skip entries missing the number of blocks.
+            if total_blocks == 0:
                 continue
 
-            columns = df_entry.split(maxsplit=5)
-            df_output_dict[columns[5]] = {  # 6th column === mount point.
-                'device_path': columns[0],
-                'used_blocks': int(columns[2]),
-                'total_blocks': int(columns[1])
+            df_output_dict[df_entry_match[3]] = {
+                'device_path': df_entry_match[0],
+                'used_blocks': int(df_entry_match[2]),
+                'total_blocks': total_blocks
             }
 
         return df_output_dict
