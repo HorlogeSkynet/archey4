@@ -152,7 +152,7 @@ class Temperature(Entry):
                 ['istats', 'cpu', 'temperature', '--value-only'],
                 universal_newlines=True
             )
-        except (FileNotFoundError, PermissionError):
+        except OSError:
             pass
         else:
             self._temps.append(float(istats_output))
@@ -161,7 +161,7 @@ class Temperature(Entry):
         # Run OSX CPU Temp binary (<https://github.com/lavoiesl/osx-cpu-temp>).
         try:
             osxcputemp_output = check_output('osx-cpu-temp', universal_newlines=True)
-        except (FileNotFoundError, PermissionError):
+        except OSError:
             pass
         else:
             # Parse output across  <= 1.1.0 and above.

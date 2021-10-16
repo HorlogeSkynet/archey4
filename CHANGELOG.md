@@ -7,7 +7,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ## [Unreleased]
 ### Changed
-- (`Disk`) Fix `df` output parsing when file-systems column containing whitespaces
+- Fix `df` output parsing when file-systems column contain white-spaces in `Disk`
+- Prevent program crash when calling external programs raise `PermissionError` exception
 
 ## [v4.13.1] - 2021-09-04
 ### Changed

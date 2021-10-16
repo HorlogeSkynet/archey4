@@ -61,7 +61,7 @@ class CPU(Entry):
         try:
             with open('/proc/cpuinfo', encoding='ASCII') as f_cpu_info:
                 cpu_info = f_cpu_info.read()
-        except (PermissionError, FileNotFoundError):
+        except OSError:
             return []
 
         model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)

@@ -38,7 +38,7 @@ class Uptime(Entry):
         # Try the /proc/uptime file
         try:
             return self._proc_file_uptime()
-        except (PermissionError, FileNotFoundError):
+        except OSError:
             # Can't read /proc/uptime.
             # Not GNU/Linux ? Limited permissions ?
             pass

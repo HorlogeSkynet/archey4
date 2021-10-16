@@ -48,7 +48,7 @@ class RAM(Entry):
 
         try:
             return self._read_proc_meminfo()
-        except (PermissionError, FileNotFoundError):
+        except OSError:
             pass
 
         return 0, 0

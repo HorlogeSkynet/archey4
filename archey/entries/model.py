@@ -52,7 +52,7 @@ class Model(Entry):
                             stderr=DEVNULL, universal_newlines=True
                         ).splitlines()
                     )
-                except (FileNotFoundError, CalledProcessError):
+                except (OSError, CalledProcessError):
                     pass
 
                 # Definitely not a virtual environment.
@@ -146,7 +146,7 @@ class Model(Entry):
         try:
             with open('/proc/cpuinfo', encoding='ASCII') as f_cpu_info:
                 cpu_info = f_cpu_info.read()
-        except (PermissionError, FileNotFoundError):
+        except OSError:
             return None
 
         # If the output contains 'Hardware' and 'Revision'...
