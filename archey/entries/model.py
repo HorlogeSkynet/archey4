@@ -84,7 +84,7 @@ class Model(Entry):
                 '/sys/devices/virtual/dmi/id/product_name', encoding='UTF-8'
             ) as f_product_name:
                 product_name = f_product_name.read().rstrip()
-        except FileNotFoundError:
+        except OSError:
             return None
 
         # Stop `/sys/devices/virtual/dmi/id/*` parsing on fuzzy data.
@@ -96,7 +96,7 @@ class Model(Entry):
                 '/sys/devices/virtual/dmi/id/product_version', encoding='UTF-8'
             ) as f_product_version:
                 product_version = f_product_version.read().rstrip()
-        except FileNotFoundError:
+        except OSError:
             product_version = ''
 
         if not product_version:

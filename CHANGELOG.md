@@ -9,6 +9,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ### Changed
 - Fix `df` output parsing when file-systems column contain white-spaces in `Disk`
 - Prevent program crash when calling external programs raise `PermissionError` exception
+- Prevent program crash when reading from `/sys/` file system is not allowed
 
 ## [v4.13.1] - 2021-09-04
 ### Changed

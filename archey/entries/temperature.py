@@ -131,14 +131,14 @@ class Temperature(Entry):
     def _poll_thermal_zones(self):
         # We just check for values within files present in the path below.
         for thermal_file in iglob(r'/sys/class/thermal/thermal_zone*/temp'):
-            with open(thermal_file, encoding='ASCII') as file:
-                try:
+            try:
+                with open(thermal_file, encoding='ASCII') as file:
                     temp = float(file.read())
-                except OSError:
-                    continue
+            except OSError:
+                continue
 
-                if temp != 0.0:
-                    self._temps.append(temp / 1000)
+            if temp != 0.0:
+                self._temps.append(temp / 1000)
 
     def _run_istats_or_osxcputemp(self):
         """
