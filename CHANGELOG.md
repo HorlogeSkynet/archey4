@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Support for `maim` ("Make image") screenshot back-end
+
 ### Changed
 - Fix `df` output parsing when file-systems column contain white-spaces in `Disk`
 - Prevent program crash when calling external programs raise `PermissionError` exception

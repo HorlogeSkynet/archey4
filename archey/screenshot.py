@@ -32,6 +32,7 @@ def take_screenshot(output_file: str = None) -> bool:
     screenshot_tools = {
         'Flameshot': ['flameshot', 'full', '-p', output_dir],
         'ImageMagick': ['import', '-window', 'root', output_file],
+        'maim': ['maim', output_file],
         'scrot': ['scrot', '-z', output_file],
         'Shutter': ['shutter', '-f', '-o', output_file, '-e']
     }
