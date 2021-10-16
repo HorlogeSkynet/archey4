@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v4.13.2] - 2021-10-16
 ### Added
 - Support for `maim` ("Make image") screenshot back-end
 
@@ -347,7 +347,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.1...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.2...HEAD
+[v4.13.2]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.1...v4.13.2
 [v4.13.1]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.0...v4.13.1
 [v4.13.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.12.0...v4.13.0
 [v4.12.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.11.0...v4.12.0
