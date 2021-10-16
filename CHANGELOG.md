@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- (`Disk`) Fix `df` output parsing when file-systems column containing whitespaces
 
 ## [v4.13.1] - 2021-09-04
 ### Changed

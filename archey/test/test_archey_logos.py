@@ -59,8 +59,9 @@ class TestLogos(unittest.TestCase):
                 self.assertEqual(
                     line_width,
                     logo_width,
-                    msg='[{}] line index {}, got an unexpected width {} (expected {})'.format(
-                        logo_module_info.name, j, line_width, logo_width
+                    msg=(
+                        f"[{logo_module_info.name}] line index {j}, "
+                        f"got an unexpected width {line_width} (expected {logo_width})"
                     )
                 )
 
@@ -75,8 +76,9 @@ class TestLogos(unittest.TestCase):
         self.assertEqual(
             i,
             len(distributions_identifiers),
-            msg='[{}] Expected {} logo modules, got {}'.format(
-                logo_module_info.name, len(distributions_identifiers), i
+            msg=(
+                f"[{logo_module_info.name}] Expected {len(distributions_identifiers)} "
+                f"logo modules, got {i}"
             )
         )
 
