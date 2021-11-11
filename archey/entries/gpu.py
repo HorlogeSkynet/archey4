@@ -54,7 +54,7 @@ class GPU(Entry):
         try:
             profiler_output = check_output(
                 ['system_profiler', 'SPDisplaysDataType'],
-                universal_newlines=True
+                stderr=DEVNULL, universal_newlines=True
             )
         except FileNotFoundError:
             return []

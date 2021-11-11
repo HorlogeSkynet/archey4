@@ -120,7 +120,7 @@ class CPU(Entry):
         try:
             profiler_output = check_output(
                 ['system_profiler', '-json', 'SPHardwareDataType'],
-                universal_newlines=True
+                stderr=DEVNULL, universal_newlines=True
             )
         except (FileNotFoundError, CalledProcessError):
             # `-json` is not available before Catalina.
