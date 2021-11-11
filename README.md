@@ -19,7 +19,7 @@
 	<a href="https://formulae.brew.sh/formula/archey4"><img src="https://img.shields.io/homebrew/v/archey4.svg?style=for-the-badge"></a>
 	<br />
 	<!-- GITHUB (downloads) -->
-	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/downloads/HorlogeSkynet/archey4/latest/total?style=for-the-badge&label=downloads"></a>
+	<a href="https://github.com/HorlogeSkynet/archey4/releases/latest"><img src="https://img.shields.io/github/downloads/HorlogeSkynet/archey4/total?style=for-the-badge&label=downloads"></a>
 	<!-- PYPI (downloads) -->
 	<a href="https://pypi.org/project/archey4/"><img src="https://img.shields.io/pypi/dm/archey4?style=for-the-badge"></a>
 	<!-- AUR (votes) -->
