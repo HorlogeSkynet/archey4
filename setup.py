@@ -66,6 +66,7 @@ Remain *maintained*, *community-driven* and *highly-compatible* with yesterday's
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3 :: Only',
         'Topic :: System'
     ]
 )
