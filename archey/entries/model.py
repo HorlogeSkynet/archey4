@@ -88,7 +88,7 @@ class Model(Entry):
             return None
 
         # Stop `/sys/devices/virtual/dmi/id/*` parsing on fuzzy data.
-        if re.search(r'To Be Filled', product_name, re.IGNORECASE):
+        if "to be filled" in product_name.lower():
             return None
 
         try:
