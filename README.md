@@ -407,6 +407,8 @@ Any improvement would be appreciated.
 
 ## Notes to users
 
+* For a good ASCII art display, a terminal monospaced font is recommended (see <https://en.wikipedia.org/wiki/Monospaced_font>).
+
 * If you experience any trouble during the installation or usage, please do **[open an issue](https://github.com/HorlogeSkynet/archey4/issues/new)**.
 
 * If you had to tweak this project to make it work on your system, please **[open a pull request](https://github.com/HorlogeSkynet/archey4/pulls)** so as to share your modifications with the rest of the world and participate in this project !
