@@ -113,60 +113,62 @@ class TestModelEntry(unittest.TestCase):
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
             )
 
-    def test_fetch_product_info(self):
-        """Test `_fetch_product_info` static method"""
-        # Product name and version available.
+    def test_fetch_dmi_info(self):
+        """Test `_fetch_dmi_info` static method"""
+        # `/sys` could not be read from.
+        with patch('archey.entries.model.open', mock_open()) as mock:
+            mock.return_value.read.side_effect = [PermissionError(), PermissionError()]
+
+            self.assertIsNone(Model._fetch_dmi_info())  # pylint: disable=protected-access
+
+        # All product information are available.
         with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
-                'MY-LAPTOP-NAME\n',
-                'MY-LAPTOP-VERSION\n'
+                'PRODUCT-NAME\n',
+                'PRODCT-VENDOR\n',
+                'PRODUCT-VERSION\n'
             ]
 
             self.assertEqual(
-                Model._fetch_product_info(),  # pylint: disable=protected-access
-                'MY-LAPTOP-NAME MY-LAPTOP-VERSION'
+                Model._fetch_dmi_info(),  # pylint: disable=protected-access
+                'PRODCT-VENDOR PRODUCT-NAME PRODUCT-VERSION'
             )
 
-        # Only product name is available.
+        # Only product name and version are available.
         with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
-                'MY-LAPTOP-NAME\n',
-                FileNotFoundError()
+                'PRODUCT-NAME\n',
+                FileNotFoundError(),
+                'PRODUCT-VERSION\n'
             ]
 
             self.assertEqual(
-                Model._fetch_product_info(),  # pylint: disable=protected-access
-                'MY-LAPTOP-NAME'
+                Model._fetch_dmi_info(),  # pylint: disable=protected-access
+                'PRODUCT-NAME PRODUCT-VERSION'
             )
 
-        # Product name is available but product version is empty.
+        # Product name is not available but some board information are.
         with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
-                'MY-LAPTOP-NAME\n',
-                '\n'
+                FileNotFoundError(),
+                'BOARD-NAME\n',
+                'To Be Filled By O.E.M.\n',
+                'BOARD-VERSION\n'
             ]
 
             self.assertEqual(
-                Model._fetch_product_info(),  # pylint: disable=protected-access
-                'MY-LAPTOP-NAME'
+                Model._fetch_dmi_info(),  # pylint: disable=protected-access
+                'BOARD-NAME BOARD-VERSION'
             )
 
-        # Neither product name nor version are available.
+        # Product name nor board name are available.
         with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 FileNotFoundError(),
                 FileNotFoundError()
             ]
 
-            self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
-
-        # Product information are really weird...
-        with patch('archey.entries.model.open', mock_open()) as mock:
-            mock.return_value.read.side_effect = [
-                'To Be Filled By O.E.M.\n'  # Only `product_name` will be read.
-            ]
-
-            self.assertIsNone(Model._fetch_product_info())  # pylint: disable=protected-access
+            self.assertIsNone(Model._fetch_dmi_info())  # pylint: disable=protected-access
 
     @patch(
         'archey.entries.model.platform.system',
