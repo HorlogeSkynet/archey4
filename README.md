@@ -395,7 +395,7 @@ Below stand further descriptions for each available (default) option :
 ## Test cases
 
 An extensive test suite is available.  
-Here is a short procedure to run it (you'll only need Python) :
+Here is a short procedure to run them (you'll only need `python3`) :
 
 ```bash
 git clone https://github.com/HorlogeSkynet/archey4.git
