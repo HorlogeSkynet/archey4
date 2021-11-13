@@ -15,13 +15,23 @@ class Shell(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = os.getenv('SHELL')
-        if not self.value:
-            try:
-                self.value = check_output(
-                    ['getent', 'passwd', str(os.getuid())],
-                    universal_newlines=True
-                ).rstrip().rsplit(':', maxsplit=1)[-1]
-            except CalledProcessError:
-                # Where does this user come from ?
-                pass
+        self.value = os.getenv("SHELL") or self._query_name_service_switch()
+
+    @staticmethod
+    def _query_name_service_switch():
+        try:
+            user_id = os.getuid()
+        except AttributeError:
+            # Not UNIX...
+            return None
+
+        try:
+            shell = check_output(
+                ["getent", "passwd", str(user_id)],
+                universal_newlines=True
+            ).rstrip().rsplit(":", maxsplit=1)[-1]
+        except CalledProcessError:
+            # Ghost user...
+            return None
+
+        return shell

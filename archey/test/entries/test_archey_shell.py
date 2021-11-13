@@ -27,8 +27,9 @@ class TestShellEntry(unittest.TestCase):
         return_value=None
     )
     @patch(
-        'archey.entries.shell.os.getuid',  # We DO NOT HAVE TO mock this call.
-        return_value=1000
+        'archey.entries.shell.os.getuid',
+        return_value=1000,
+        create=True  # Only available on UNIX platforms...
     )
     @patch(
         'archey.entries.shell.check_output',
@@ -37,6 +38,14 @@ class TestShellEntry(unittest.TestCase):
     def test_getent_call(self, _, __, ___):
         """Mock `getent` returned value and check the correct assignment"""
         self.assertEqual(Shell().value, '/bin/bash')
+
+    @patch(
+        'archey.entries.shell.os.getuid',
+        side_effect=AttributeError()
+    )
+    def test_os_getuid_missing(self, _):
+        """Check behavior when `os.getuid` is not available"""
+        self.assertIsNone(Shell._query_name_service_switch())  # pylint: disable=protected-access
 
     @patch(
         'archey.entries.shell.os.getenv',
