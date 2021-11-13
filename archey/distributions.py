@@ -45,6 +45,7 @@ class Distributions(Enum):
     POP = 'pop'
     PARABOLA = 'parabola'
     RASPBIAN = 'raspbian'
+    ROCKY = 'rocky'
     RHEL = 'rhel'
     SLACKWARE = 'slackware'
     UBUNTU = 'ubuntu'
