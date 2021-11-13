@@ -185,6 +185,30 @@ readline-8.0.4                 Library for editing command lines as they are typ
     @patch(
         'archey.entries.packages.check_output',
         return_value="""\
+desktop-file-utils-0.26 Utilities to manage desktop entries
+glib2-2.68.2         Some useful routines for C programming (glib2)
+hicolor-icon-theme-0.17nb1 Standard icon theme called hicolor
+htop-3.0.5           Enhanced version of top utility
+libffi-3.3nb5        Foreign function interface
+libslang2-2.2.4nb3   Routines for rapid alpha-numeric terminal applications development
+mc-4.8.26nb1         User-friendly file manager and visual shell
+nano-5.7             Small and friendly text editor (a free replacement for Pico)
+ncurses-6.2nb3       CRT screen handling and optimization package
+ncursesw-6.2         Wide character CRT screen handling and optimization package
+pcre-8.44            Perl Compatible Regular Expressions library
+pkg_install-20210410 Package management and administration tools for pkgsrc
+pkgin-20.12.1nb1     Apt / yum like tool for managing pkgsrc binary packages
+"""
+    )
+    def test_match_with_pkgin(self, check_output_mock):
+        """Simple test for the (NetBSD) `pkgin` package manager"""
+        check_output_mock.side_effect = self._check_output_side_effect('pkgin')
+
+        self.assertEqual(Packages().value, 13)
+
+    @patch(
+        'archey.entries.packages.check_output',
+        return_value="""\
 The following ports are currently installed:
   a52dec @0.7.4_0 (active)
   adns @1.4_0 (active)

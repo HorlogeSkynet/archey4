@@ -40,6 +40,7 @@ PACKAGES_TOOLS = (
         # Query `pkg` only on *BSD systems to avoid inconsistencies.
         'only_on': (Distributions.FREEBSD, Distributions.NETBSD, Distributions.OPENBSD)
     },
+    {'cmd': ('pkgin', 'list')},
     {'cmd': ('port', 'installed'), 'skew': 1},
     {'cmd': ('rpm', '-qa')},
     {'cmd': ('ls', '-1', '/var/log/packages/')},  # SlackWare.
