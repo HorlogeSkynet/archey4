@@ -161,33 +161,33 @@ install -D -m0644 config.json ~/.config/archey4/config.json
 # Using PEX (recommended) :
 pip3 install pex
 pex \
-	-o dist/archey \
-	-m archey \
-	.
+    -o dist/archey \
+    -m archey \
+    .
 
-# Since v4.10 logos are dynamically imported for performance purposes.  
-# This means that we have to explicitly make Stickytape and PyInstaller include them.  
+# Since v4.10 logos are dynamically imported for performance purposes.
+# This means that we have to explicitly make Stickytape and PyInstaller include them.
 # Please **replace** `debian` identifier below by yours (multiple flags allowed).
 
 # Using Stickytape :
 pip3 install stickytape
 stickytape \
-	--copy-shebang \
-	--add-python-path . \
-	--output-file dist/archey \
-	--add-python-module archey.logos.debian \
-	archey/__main__.py
+    --copy-shebang \
+    --add-python-path . \
+    --output-file dist/archey \
+    --add-python-module archey.logos.debian \
+    archey/__main__.py
 chmod +x dist/archey
 
 # Using PyInstaller :
 pip3 install pyinstaller
 pyinstaller \
-	--distpath dist \
-	--specpath dist \
-	--name archey \
-	--onefile archey/__main__.py \
-	--hidden-import archey.logos.debian \
-	--log-level WARN
+    --distpath dist \
+    --specpath dist \
+    --name archey \
+    --onefile archey/__main__.py \
+    --hidden-import archey.logos.debian \
+    --log-level WARN
 ```
 
 Resulting program may now be installed system-wide (privileges required).
