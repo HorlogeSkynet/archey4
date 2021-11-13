@@ -1,6 +1,5 @@
 """Hardware model information detection class"""
 
-import os
 import platform
 import re
 
@@ -26,10 +25,8 @@ class Model(Entry):
         """
         Relying on some system tools, tries to gather some details about hypervisor.
         When available, relies on systemd.
-        When run as root, `virt-what` and/or `dmidecode` may be called.
+        If running with enough privileges, `virt-what` and/or `dmidecode` may be called.
         """
-        environment, product_name = None, None
-
         try:
             environment = check_output(
                 'systemd-detect-virt',
@@ -37,44 +34,34 @@ class Model(Entry):
             ).rstrip()
         except CalledProcessError:
             # Not a virtual environment.
-            return None
+            environment = ""
         except FileNotFoundError:
-            pass
-
-        # When run as root, let's ask `virt-what` and/or `dmidecode`.
-        if os.getuid() == 0:
-            # We couldn't retrieve any information from `systemd-detect-virt`.
-            if not environment:
-                try:
-                    environment = ', '.join(
-                        check_output(
-                            'virt-what',
-                            stderr=DEVNULL, universal_newlines=True
-                        ).splitlines()
-                    )
-                except (OSError, CalledProcessError):
-                    pass
-
-                # Definitely not a virtual environment.
-                if not environment:
-                    return None
-
+            # If not available, let's query `virt-what` (privileges usually required).
             try:
-                # Sometimes we may gather info added by hosting service provider this way.
-                product_name = check_output(
-                    ['dmidecode', '-s', 'system-product-name'],
-                    stderr=DEVNULL, universal_newlines=True
-                ).rstrip()
-            except (FileNotFoundError, CalledProcessError):
-                pass
-        elif not environment:
-            # No detection tool is available...
+                environment = ", ".join(
+                    check_output(
+                        "virt-what",
+                        stderr=DEVNULL, universal_newlines=True
+                    ).splitlines()
+                )
+            except (OSError, CalledProcessError):
+                environment = ""
+
+        # We couldn't retrieve any information from `systemd-detect-virt`, nor `virt-what`.
+        if not environment:
             return None
+
+        # Sometimes we may gather info added by hosting service provider by relying on `dmidecode`.
+        try:
+            product_name = check_output(
+                ["dmidecode", "-s", "system-product-name"],
+                stderr=DEVNULL, universal_newlines=True
+            ).rstrip()
+        except (OSError, CalledProcessError):
+            product_name = self._default_strings.get("virtual_environment")
 
         # If we got there with some info, this _should_ be a virtual environment.
-        return f"{{}} ({environment})".format(
-            product_name or self._default_strings.get('virtual_environment')
-        )
+        return f"{product_name} ({environment})"
 
     @staticmethod
     def _fetch_product_info() -> Optional[str]:

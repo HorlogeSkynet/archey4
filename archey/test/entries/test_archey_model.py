@@ -18,10 +18,9 @@ class TestModelEntry(unittest.TestCase):
     * Virtual environment (as a VM or a container)
     * Android devices
     """
-    @patch('archey.entries.model.os.getuid')
     @patch('archey.entries.model.check_output')
     @HelperMethods.patch_clean_configuration
-    def test_fetch_virtual_env_info(self, check_output_mock, getuid_mock):
+    def test_fetch_virtual_env_info(self, check_output_mock):
         """Test `_fetch_virtual_env_info` method"""
         model_mock = HelperMethods.entry_mock(Model)
 
@@ -31,59 +30,56 @@ class TestModelEntry(unittest.TestCase):
                 'xen\nxen-domU\n',    # `virt-what` example output.
                 'HYPERVISOR-NAME\n'   # `dmidecode` example output.
             ]
-            getuid_mock.return_value = 0
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
                 'HYPERVISOR-NAME (xen, xen-domU)'
             )
 
+        check_output_mock.reset_mock()
+
         with self.subTest('Virtual environment without `dmidecode`.'):
-            check_output_mock.reset_mock()
-            getuid_mock.reset_mock()
             check_output_mock.side_effect = [
                 FileNotFoundError(),  # `systemd-detect-virt` is not available.
                 'xen\nxen-domU\n',    # `virt-what` example output.
                 FileNotFoundError()   # `dmidecode` will fail.
             ]
-            getuid_mock.return_value = 0
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
                 f"{DEFAULT_CONFIG['default_strings']['virtual_environment']} (xen, xen-domU)"
             )
 
+        check_output_mock.reset_mock()
+
         with self.subTest('Virtual environment with systemd only.'):
-            check_output_mock.reset_mock()
-            getuid_mock.reset_mock()
             check_output_mock.side_effect = [
-                'systemd-nspawn\n'  # `systemd-detect-virt` output.
+                'systemd-nspawn\n',  # `systemd-detect-virt` output.
+                PermissionError()    # `dmidecode` will fail.
             ]
-            getuid_mock.return_value = 1000  # `virt-what` and `dmidecode` won't be called.
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
                 f"{DEFAULT_CONFIG['default_strings']['virtual_environment']} (systemd-nspawn)"
             )
 
+        check_output_mock.reset_mock()
+
         with self.subTest('Virtual environment with systemd and `dmidecode`.'):
-            check_output_mock.reset_mock()
-            getuid_mock.reset_mock()
             check_output_mock.side_effect = [
                 'systemd-nspawn\n',  # `systemd-detect-virt` example output.
                                      # `virt-what` won't be called (systemd call succeeded).
                 'HYPERVISOR-NAME\n'  # `dmidecode` example output.
             ]
-            getuid_mock.return_value = 0
 
             self.assertEqual(
                 Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
                 'HYPERVISOR-NAME (systemd-nspawn)'
             )
 
+        check_output_mock.reset_mock()
+
         with self.subTest('Not a virtual environment (systemd).'):
-            check_output_mock.reset_mock()
-            getuid_mock.reset_mock()
             check_output_mock.side_effect = CalledProcessError(  # pylint: disable=redefined-variable-type
                 1, 'systemd-detect-virt', 'none\n'
             )
@@ -92,27 +88,26 @@ class TestModelEntry(unittest.TestCase):
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
             )
 
+        check_output_mock.reset_mock()
+
         with self.subTest('Not a virtual environment (virt-what).'):
-            check_output_mock.reset_mock()
-            getuid_mock.reset_mock()
             check_output_mock.side_effect = [
                 FileNotFoundError(),  # `systemd-detect-virt` won't be available.
                 '\n'                  # `virt-what` won't detect anything.
                                       # `dmidecode` won't even be called.
             ]
-            getuid_mock.return_value = 0
 
             self.assertIsNone(
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
             )
 
-        with self.subTest('Not a virtual environment (no tools, no root)'):
-            check_output_mock.reset_mock()
-            getuid_mock.reset_mock()
+        check_output_mock.reset_mock()
+
+        with self.subTest('Not a virtual environment (no tools or not enough privileges)'):
             check_output_mock.side_effect = [
-                FileNotFoundError()  # `systemd-detect-virt` won't be available.
+                FileNotFoundError(),  # `systemd-detect-virt` won't be available.
+                PermissionError()     # `virt-what` will fail.
             ]
-            getuid_mock.return_value = 1000  # `virt-what` and `dmidecode` won't be called.
 
             self.assertIsNone(
                 Model._fetch_virtual_env_info(model_mock)  # pylint: disable=protected-access
