@@ -38,7 +38,7 @@ jobs:
       - name: Install module regularly
         run: pip install .
 
-      - name: Simple module execution
+      - name: Simple module executions
         run: |
           time archey
           time python -m archey
@@ -90,10 +90,11 @@ jobs:
 
       - uses: actions/setup-python@v2
 
-      - name: Install lint tools
+      - name: Install lint tools and project (for its dependencies)
         run: |
           python -m pip install --upgrade pip
           pip install pylint pylint-secure-coding-standard mypy
+          pip install .
 
       - name: Lint sources against Pylint
         run: pylint archey/
