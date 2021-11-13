@@ -21,6 +21,7 @@ jobs:
           # - '3.8'
           - '3.9'
           - '3.10'
+          - '3.11-dev'
           - 'pypy3'
 
     steps:
@@ -46,7 +47,9 @@ jobs:
       - name: Run our test suite
         run: python -m unittest
 
+      # Currently disabled against Python 3.11.
       - name: Standalone building (with PEX)
+        if: ${{ matrix.python-version != '3.11-dev' }}
         run: |
           pex \
             -o dist/archey \
@@ -68,8 +71,9 @@ jobs:
           rm dist/archey
 
       # Disabled against PyPy (see <https://stackoverflow.com/a/22245203>).
+      # Currently disabled against Python 3.11.
       - name: Standalone building (with PyInstaller)
-        if: ${{ matrix.python-version != 'pypy3' }}
+        if: ${{ matrix.python-version != 'pypy3' && matrix.python-version != '3.11-dev' }}
         run: |
           pyinstaller \
             --distpath dist \
