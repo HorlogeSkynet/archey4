@@ -66,8 +66,8 @@ class Uptime(Entry):
     @staticmethod
     def _clock_uptime() -> timedelta:
         """Tries to get uptime using the clocks from the Python `time` module"""
-        # Try: Linux uptime clock, macOS uptime clock, BSD uptime clock.
-        for clock in ('CLOCK_BOOTTIME', 'CLOCK_UPTIME_RAW', 'CLOCK_UPTIME'):
+        # Try: Linux and BSD uptime clocks.
+        for clock in ('CLOCK_BOOTTIME', 'CLOCK_UPTIME'):
             try:
                 return timedelta(
                     seconds=time.clock_gettime(getattr(time, clock))
