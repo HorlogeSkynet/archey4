@@ -51,7 +51,7 @@ class Distro(Entry):
     def output(self, output):
         output.append(
             self.name,
-            f"{{}} [{self.value['arch']}]".format(
+            f"{{}} {self.value['arch']}".format(
                 self.value['name'] or self._default_strings.get('not_detected')
             )
         )

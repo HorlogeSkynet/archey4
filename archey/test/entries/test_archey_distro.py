@@ -57,7 +57,7 @@ class TestDistroEntry(unittest.TestCase):
         Distro.output(distro_intance_mock, output_mock)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            f"{DEFAULT_CONFIG['default_strings']['not_detected']} [ARCHITECTURE]"
+            f"{DEFAULT_CONFIG['default_strings']['not_detected']} ARCHITECTURE"
         )
 
 
