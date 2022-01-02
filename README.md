@@ -274,10 +274,14 @@ Below stand further descriptions for each available (default) option :
 			// The character to display between the temperature value and the unit (as '°' in 53.2°C).
 			"char_before_unit": " ",
 			"sensors_chipsets": [
-				// White-list of chipset identifiers (strings) passed to LM-SENSORS when computing the average temperature.
-				// Use `sensors -A` to list the available chipsets on your system (e.g. `coretemp-isa-0000`, `acpitz-acpi-0`, ...).
-				// Leaving empty (default) would make Archey process input data from **all** available chipsets.
-				// Use this option if a sensor happens to return irrelevant values, or if you want to process only a subset of them.
+				// Whitelist of chipset identifiers (strings) passed to LM-SENSORS when computing the average temperature.
+				// Leaving empty (the default) would make Archey process input data from **all** available chipsets.
+				// Use this option if one of your sensors happens to return irrelevant values, or if you want to process only a subset of them.
+				//
+				// You may want to run `sensors -A` to list the available chipsets on your system (e.g. `coretemp-isa-0000`, `acpitz-acpi-0`, ...).
+				// Then, you will be able to add them once double-quoted in this list, for instance :
+				//"coretemp-isa-0000",
+				//"acpitz-acpi-0"
 			],
 			// Display temperature values in Fahrenheit instead of Celsius.
 			"use_fahrenheit": false
