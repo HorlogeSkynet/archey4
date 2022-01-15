@@ -122,7 +122,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: sudo apt install -y groff
+      - run: sudo apt update && sudo apt install -y groff
 
       - run: |
           groff -man -Tascii -z archey.1 2&>1 | tee errors
