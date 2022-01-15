@@ -26,6 +26,7 @@
 			"type": "Temperature",
 			"char_before_unit": " ",
 			"sensors_chipsets": [],
+			"sensors_excluded_subfeatures": [],
 			"use_fahrenheit": false
 		},
 		{

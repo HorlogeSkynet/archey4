@@ -79,7 +79,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
 }
 """
         # pylint: disable=protected-access
-        Temperature._run_sensors(self.temperature_mock, [])
+        Temperature._run_sensors(self.temperature_mock)
         self.assertListEqual(
             self.temperature_mock._temps,
             [45.0, 38.0, 39.0, 114.0, 45.0, 43.0, 44.0]
@@ -138,6 +138,32 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
         # Check that our `run` mock has been called up to the number of passed chipsets.
         self.assertEqual(run_mock.call_count, len(sensors_chipsets))
 
+    @patch('archey.entries.temperature.run')
+    def test_run_sensors_ok_excluded_subfeatures(self, run_mock):
+        """Test `sensors` when chipset subfeatures have been excluded"""
+        run_mock.side_effect = [
+            Mock(
+                stdout="""\
+{
+   "k10temp-pci-00c3":{
+      "Tctl":{
+         "temp1_input": 42.000
+      },
+      "Tdie":{
+         "temp2_input": 32.000
+      }
+   }
+}
+""",
+                stderr=None
+            )
+        ]
+
+        # pylint: disable=protected-access
+        Temperature._run_sensors(self.temperature_mock, excluded_subfeatures=["Tctl"])
+        self.assertListEqual(self.temperature_mock._temps, [32.0])
+        # pylint: enable=protected-access
+
     @patch(
         'archey.entries.temperature.run',
         side_effect=[
@@ -148,10 +174,10 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
     def test_run_sensors_ko_exec(self, _):
         """Test `sensors` (hard) failure handling"""
         # pylint: disable=protected-access
-        Temperature._run_sensors(self.temperature_mock, [])
+        Temperature._run_sensors(self.temperature_mock)
         self.assertListEmpty(self.temperature_mock._temps)
 
-        Temperature._run_sensors(self.temperature_mock, [])
+        Temperature._run_sensors(self.temperature_mock)
         self.assertListEmpty(self.temperature_mock._temps)
         # pylint: enable=protected-access
 
@@ -167,7 +193,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
 }
 """
         # pylint: disable=protected-access
-        Temperature._run_sensors(self.temperature_mock, [])
+        Temperature._run_sensors(self.temperature_mock)
         self.assertListEmpty(self.temperature_mock._temps)
         # pylint: enable=protected-access
 
