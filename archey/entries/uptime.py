@@ -2,6 +2,7 @@
 
 import re
 
+from contextlib import suppress
 from subprocess import check_output
 
 import time
@@ -68,12 +69,10 @@ class Uptime(Entry):
         """Tries to get uptime using the clocks from the Python `time` module"""
         # Try: Linux and BSD uptime clocks.
         for clock in ('CLOCK_BOOTTIME', 'CLOCK_UPTIME'):
-            try:
+            with suppress(AttributeError):
                 return timedelta(
                     seconds=time.clock_gettime(getattr(time, clock))
                 )
-            except AttributeError:
-                pass
 
         # Probably Python <3.7, or just not one of the above OSes
         raise RuntimeError

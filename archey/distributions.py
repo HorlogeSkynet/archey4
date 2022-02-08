@@ -8,6 +8,7 @@ import os
 import platform
 import sys
 
+from contextlib import suppress
 from enum import Enum
 from functools import lru_cache
 from typing import List, Optional
@@ -115,18 +116,14 @@ class Distributions(Enum):
             return Distributions.WINDOWS
 
         # Is `ID` (from `os-release`) well-known and supported ?
-        try:
+        with suppress(ValueError):
             return Distributions(distro.id())
-        except ValueError:
-            pass
 
         # Is any of `ID_LIKE` (from `os-release`) well-known and supported ?
         # See <https://www.freedesktop.org/software/systemd/man/os-release.html#ID_LIKE=>.
         for id_like in distro.like().split(' '):
-            try:
+            with suppress(ValueError):
                 return Distributions(id_like)
-            except ValueError:
-                pass
 
         # Nothing of the above matched, let's return `None` and let the caller handle it.
         return None

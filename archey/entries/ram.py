@@ -3,6 +3,7 @@
 import platform
 import re
 
+from contextlib import suppress
 from subprocess import check_output
 from typing import Tuple
 
@@ -35,21 +36,15 @@ class RAM(Entry):
         Tries a variety of methods, increasing compatibility for a wide range of systems.
         """
         if platform.system() == 'Linux':
-            try:
+            with suppress(IndexError, FileNotFoundError):
                 return self._run_free_dash_m()
-            except (IndexError, FileNotFoundError):
-                pass
         else:
             # Darwin or any other BSD-based system.
-            try:
+            with suppress(FileNotFoundError):
                 return self._run_sysctl_and_vmstat()
-            except FileNotFoundError:
-                pass
 
-        try:
+        with suppress(OSError):
             return self._read_proc_meminfo()
-        except OSError:
-            pass
 
         return 0, 0
 

@@ -2,6 +2,7 @@
 
 import os
 
+from contextlib import suppress
 from subprocess import check_output, DEVNULL, CalledProcessError
 
 from archey.entry import Entry
@@ -10,14 +11,12 @@ from archey.distributions import Distributions
 
 def get_homebrew_cellar_path() -> str:
     """Return Homebrew Cellar path (if available)"""
-    try:
+    with suppress(OSError, CalledProcessError):
         return check_output(
             ['brew', '--cellar'],
             stderr=DEVNULL,
             universal_newlines=True
         ).rstrip()
-    except (OSError, CalledProcessError):
-        pass
 
     return '/usr/local/Cellar/'
 
