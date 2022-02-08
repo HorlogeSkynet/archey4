@@ -283,6 +283,14 @@ Below stand further descriptions for each available (default) option :
 				//"coretemp-isa-0000",
 				//"acpitz-acpi-0"
 			],
+			"sensors_excluded_subfeatures": [
+				// Blacklist of chipset "subfeature" (in LM-SENSORS terms) identifiers (strings) to exclude from average computation.
+				// Leaving empty (the default) would make Archey process input data from **all** available subfeatures providing valid temperatures.
+				//
+				// For instance, AMD Ryzen X series CPUs include a thermal bias sensor, appearing as a subfeature named `Tctl`.
+				// Excluding it can be achieved this way :
+				//"Tctl"
+			],
 			// Display temperature values in Fahrenheit instead of Celsius.
 			"use_fahrenheit": false
 		},

@@ -25,7 +25,9 @@ class Temperature(Entry):
         self._temps = []
 
         # Tries `sensors` at first.
-        self._run_sensors(self.options.get('sensors_chipsets', []))
+        self._run_sensors(
+            self.options.get("sensors_chipsets"), self.options.get("sensors_excluded_subfeatures")
+        )
 
         # On error (list still empty)...
         if not self._temps:
@@ -62,7 +64,11 @@ class Temperature(Entry):
         }
 
 
-    def _run_sensors(self, whitelisted_chips: List[str]):
+    def _run_sensors(
+        self,
+        whitelisted_chips: Optional[List[str]] = None,
+        excluded_subfeatures: Optional[List[str]] = None,
+    ):
 
         def _get_sensors_output(whitelisted_chip: Optional[str]) -> Optional[str]:
             sensors_args = ['sensors', '-A', '-j']
@@ -116,8 +122,12 @@ class Temperature(Entry):
 
             # Iterate over the chipsets outputs to retrieve interesting values.
             for features in sensors_data.values():
-                for subfeatures in features.values():
-                    for name, value in subfeatures.items():
+                for subfeature_name, subfeature_value in features.items():
+                    # Has this subfeature been explicitly excluded in configuration ?
+                    if excluded_subfeatures and subfeature_name in excluded_subfeatures:
+                        continue
+
+                    for name, value in subfeature_value.items():
                         # These conditions check whether this sub-feature value is a correct
                         #  temperature, as :
                         # * It might be an input fan speed (from a control chip) ;
@@ -164,7 +174,7 @@ class Temperature(Entry):
         except OSError:
             pass
         else:
-            # Parse output across  <= 1.1.0 and above.
+            # Parse output across <= 1.1.0 versions and above.
             temp = float(re.search(r'\d+\.\d', osxcputemp_output).group(0))
             if temp != 0.0:  # (Apple) System Management Control read _may_ fail.
                 self._temps.append(temp)
