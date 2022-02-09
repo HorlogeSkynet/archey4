@@ -239,6 +239,12 @@ Below stand further descriptions for each available (default) option :
 	// If set to `true`, any execution warning or error would be hidden.
 	// Configuration parsing warnings **would** still be shown.
 	"suppress_warnings": false,
+	// Use this option to specify a custom color for entries (logo won't be affected).
+	// Value should be a string suitable for inclusion in the ANSI/ECMA-48 escape code for setting graphical rendition
+	//
+	// For instance "5;31;47" would result in yellow text blinking on white background.
+	// See <https://wiki.bash-hackers.org/scripting/terminalcodes> for more information.
+	"entries_color": "",
 	// Set this option to `false` to force Archey to use its own colors palettes.
 	// `true` by default to honor os-release(5) `ANSI_COLOR` option.
 	"honor_ansi_color": true,

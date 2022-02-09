@@ -8,6 +8,7 @@ from collections import namedtuple
 from archey.colors import Colors
 from archey.output import Output
 from archey.distributions import Distributions
+from archey.test.entries import HelperMethods
 
 
 class TestOutput(unittest.TestCase):
@@ -33,13 +34,8 @@ class TestOutput(unittest.TestCase):
         'archey.output.lazy_load_logo_module',
         return_value=Mock(COLORS=['COLOR_0'])
     )
-    @patch(
-        'archey.output.Configuration.get',  # Disable `honor_ansi_color` option.
-        side_effect=(
-            lambda config_key: not (config_key == 'honor_ansi_color')
-        )
-    )
-    def test_append_regular(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration(configuration={"honor_ansi_color": False})
+    def test_append_regular(self, _, __):
         """Test the `append` method, for new entries"""
         output = Output()
         output.append('KEY', 'VALUE')
@@ -57,15 +53,11 @@ class TestOutput(unittest.TestCase):
         'archey.output.Distributions.get_ansi_color',
         return_value='ANSI_COLOR'
     )
-    @patch(
-        'archey.output.Configuration.get',  # Enable `honor_ansi_color` option.
-        side_effect=(
-            lambda config_key: config_key == 'honor_ansi_color'
-        )
-    )
-    def test_append_ansi_color(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration
+    def test_append_ansi_color(self, _, __):
         """Check that `Output` honor `ANSI_COLOR` as required"""
         output = Output()
+        output.append("key", "value")
 
         # Slackware logo got three colors, so let's check they have been correctly replaced.
         self.assertTrue(
@@ -74,6 +66,10 @@ class TestOutput(unittest.TestCase):
         self.assertEqual(
             len(output._colors),  # pylint: disable=protected-access
             3  # Slackware's logo got 3 defined colors.
+        )
+        self.assertListEqual(
+            output._results,  # pylint: disable=protected-access
+            [f"\x1b[ANSI_COLORmkey:{Colors.CLEAR} value"]
         )
 
     @patch(
@@ -84,15 +80,11 @@ class TestOutput(unittest.TestCase):
         'archey.output.Distributions.get_ansi_color',
         return_value='ANSI_COLOR'
     )
-    @patch(
-        'archey.output.Configuration.get',  # Disable `honor_ansi_color` option.
-        side_effect=(
-            lambda config_key: not (config_key == 'honor_ansi_color')
-        )
-    )
-    def test_append_no_ansi_color(self, _, __, ___):
+    @HelperMethods.patch_clean_configuration(configuration={"honor_ansi_color": False})
+    def test_append_no_ansi_color(self, _, __):
         """Check that `Output` DOES NOT honor `ANSI_COLOR` when specified"""
         output = Output()
+        output.append("key", "value")
 
         # Check that NO colors have been replaced (actually, that the list is the same as before).
         self.assertFalse(
@@ -106,6 +98,29 @@ class TestOutput(unittest.TestCase):
                 Colors.GREEN_BRIGHT,
                 Colors.YELLOW_NORMAL
             ]
+        )
+        self.assertListEqual(
+            output._results,  # pylint: disable=protected-access
+            [f"{Colors.BLUE_BRIGHT}key:{Colors.CLEAR} value"]
+        )
+
+    @patch(
+        'archey.output.Distributions.get_local',
+        return_value=Distributions.DEBIAN  # Make Debian being selected.
+    )
+    @patch(
+        'archey.output.Distributions.get_ansi_color',
+        return_value="ANSI_COLOR"
+    )
+    @HelperMethods.patch_clean_configuration(configuration={"entries_color": "5;31;47"})
+    def test_append_custom_entries_color(self, _, __):
+        """Check that `Output` honor `ANSI_COLOR` as required"""
+        output = Output()
+        output.append("key", "value")
+
+        self.assertListEqual(
+            output._results,  # pylint: disable=protected-access
+            [f"\x1b[5;31;47mkey:{Colors.CLEAR} value"]
         )
 
     @patch(
@@ -359,16 +374,10 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
         return_value=Distributions.DEBIAN  # Make Debian being selected.
     )
     @patch(
-        'archey.output.Configuration.get',  # Disable `honor_ansi_color` option.
-        side_effect=(
-            lambda config_key: not (config_key == 'honor_ansi_color')
-        )
-    )
-    @patch(
         'archey.output.print',
         return_value=None  # Let's nastily mute class' outputs.
     )
-    def test_format_to_json(self, print_mock, _, __):
+    def test_format_to_json(self, print_mock, _):
         """Test how the `output` method handles JSON preferred formatting of entries"""
         output = Output(format_to_json=True)
         # We can't set the `name` attribute of a mock on its creation,
