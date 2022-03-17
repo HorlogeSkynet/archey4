@@ -49,11 +49,18 @@ class Output:
         else:
             self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
 
+        configuration = Configuration()
+
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
-        if ansi_color and Configuration().get('honor_ansi_color'):
+        if ansi_color and configuration.get("honor_ansi_color"):
             # Replace each Archey integrated colors by `ANSI_COLOR`.
             self._colors = len(self._colors) * [Colors.escape_code_from_attrs(ansi_color)]
+
+        entries_color = configuration.get("entries_color")
+        self._entries_color = (
+            Colors.escape_code_from_attrs(entries_color) if entries_color else self._colors[0]
+        )
 
         # Each entry will be added to this list
         self._entries = []
@@ -66,7 +73,7 @@ class Output:
 
     def append(self, key: str, value):
         """Append a pre-formatted entry to the final output content"""
-        self._results.append(f'{self._colors[0]}{key}:{Colors.CLEAR} {value}')
+        self._results.append(f"{self._entries_color}{key}:{Colors.CLEAR} {value}")
 
     def output(self):
         """

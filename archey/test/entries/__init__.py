@@ -61,19 +61,28 @@ class HelperMethods:
         Decorator for an entry test definition, which sets the entry's `_default_strings` attribute
         to the Archey defaults, optionally updated with `configuration`.
         """
-        # Let's initially give the entry configuration the defaults.
+        # Let's initially give defaults to configuration objects.
         # We deep-copy `DEFAULT_CONFIG` to prevent its mutation.
-        entry_configuration = deepcopy(DEFAULT_CONFIG)
-        # Then, let's merge in `configuration` recursively.
-        Utility.update_recursive(entry_configuration, (configuration or {}))
+        default_config = deepcopy(DEFAULT_CONFIG)
+        # Then we recursively merge in passed `configuration`.
+        Utility.update_recursive(default_config, (configuration or {}))
 
         def decorator_patch_clean_configuration(method: Callable) -> Callable:
             @wraps(method)
             def wrapper_patch_clean_configuration(*args, **kwargs):
-                with patch('archey.entry.Configuration', autospec=True) as config_instance_mock:
+                # `Configuration` singleton is used in `Entry` and `Output` unit-tested modules.
+                with patch(
+                    "archey.entry.Configuration", autospec=True
+                ) as entry_config_instance_mock, patch(
+                    "archey.output.Configuration", autospec=True
+                ) as output_config_instance_mock:
                     # Mock "publicly" used methods.
-                    config_instance_mock().get = entry_configuration.get
-                    config_instance_mock().__iter__ = iter(entry_configuration.items())
+                    entry_config_instance_mock().get = default_config.get
+                    entry_config_instance_mock().__iter__ = iter(default_config.items())
+
+                    output_config_instance_mock().get = default_config.get
+                    output_config_instance_mock().__iter__ = iter(default_config.items())
+
                     return method(*args, **kwargs)
 
             return wrapper_patch_clean_configuration

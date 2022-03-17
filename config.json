@@ -2,6 +2,7 @@
 	"allow_overriding": true,
 	"parallel_loading": true,
 	"suppress_warnings": false,
+	"entries_color": "",
 	"honor_ansi_color": true,
 	"entries": [
 		{ "type": "User" },

@@ -15,6 +15,7 @@ DEFAULT_CONFIG = {
     'allow_overriding': True,
     'parallel_loading': True,
     'suppress_warnings': False,
+    'entries_color': '',
     'honor_ansi_color': True,
     'default_strings': {
         'latest': 'latest',

@@ -19,7 +19,8 @@ class Colors(Enum):
     ANSI terminal colors enumeration.
     Supports an arbitrary number of display attributes.
 
-    See <http://www.termsys.demon.co.uk/vtansi.htm#colors>.
+    See <https://web.archive.org/web/20200627145120/http://www.termsys.demon.co.uk/vtansi.htm>
+      or <https://en.wikipedia.org/wiki/ANSI_escape_code>.
     """
     CLEAR = (0,)
     RED_NORMAL = (0, 31)
