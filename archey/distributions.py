@@ -25,6 +25,7 @@ class Distributions(Enum):
     ALPINE = 'alpine'
     ANDROID = 'android'
     ARCH = 'arch'
+    BUILDROOT = 'buildroot'
     BUNSENLABS = 'bunsenlabs'
     CENTOS = 'centos'
     CRUNCHBANG = 'crunchbang'
