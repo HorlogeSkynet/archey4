@@ -33,6 +33,7 @@ PACKAGES_TOOLS = (
     {'cmd': ('ls', '-1', get_homebrew_cellar_path())},  # Homebrew.
     {'cmd': ('nix-env', '-q')},
     {'cmd': ('pacman', '-Q')},
+    {'cmd': ('pacstall', '-L')},
     {'cmd': ('pkg_info', '-a')},
     {
         'cmd': ('pkg', '-N', 'info', '-a'),
