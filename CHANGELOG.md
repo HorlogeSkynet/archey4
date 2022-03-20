@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v4.13.4] - 2022-03-20
+### Added
+- Support for `pacstall` package manager
+- Official Buildroot distribution support
+- New `entries_color` config option to tune entries color
+- New `sensors_excluded_subfeatures` temperature config option to exclude specific sub-features
+
+### Changed
+- Update fpm to v1.14.1 for .DEB and .RPM packages building
+- Improve `sensors_chipsets` temperature config option documentation
+
 ## [v4.13.3] - 2021-11-13
 ### Added
 - Official Rocky Linux distribution support
@@ -361,7 +372,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.3...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.4...HEAD
+[v4.13.3]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.3...v4.13.4
 [v4.13.3]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.2...v4.13.3
 [v4.13.2]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.1...v4.13.2
 [v4.13.1]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.0...v4.13.1
