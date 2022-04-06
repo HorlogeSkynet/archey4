@@ -173,11 +173,11 @@ def main():
 
     # Has the screenshot flag been specified ?
     if args.screenshot is not None:
-        # If so, but still _falsy_, pass `None` as no output file has been specified by the user.
+        screenshot_taken = False
         try:
+            # If so, but still _falsy_, pass `None` as there is no user-defined output file.
             screenshot_taken = take_screenshot((args.screenshot or None))
         except KeyboardInterrupt:
-            screenshot_taken = False
             print()
         finally:
             sys.exit((not screenshot_taken))

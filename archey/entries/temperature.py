@@ -75,7 +75,8 @@ class Temperature(Entry):
             if whitelisted_chip is not None:
                 sensors_args.append(whitelisted_chip)
 
-            # Uses the `sensors` program (from lm-sensors) to interrogate thermal chip-sets.
+            # Uses the `sensors` program (from lm-sensors) to query thermal chipsets.
+            error_message = None
             try:
                 sensors_output = run(
                     sensors_args,
@@ -84,7 +85,6 @@ class Temperature(Entry):
                     check=True
                 )
             except FileNotFoundError:
-                error_message = None
                 return None
             except CalledProcessError as called_process_error:
                 error_message = called_process_error.stderr
