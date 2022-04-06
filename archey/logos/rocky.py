@@ -17,7 +17,7 @@ LOGO = [
     """{c[0]} iiiliiiiliiiiiiili>`      ~liililii""",
     """{c[0]} liliiiliiilililii`         -9liiiil""",
     """{c[0]} iiiiiliiliiiiii~             "4lili""",
-    """{c[0]} 4ililiiiiilil~|      -w,       )4lf""",
+    """{c[0]} 4ililiiiiilil~       -w,       )4lf""",
     """{c[0]} -liiiiililiF'       _liig,       )'""",
     """{c[0]}  )iiiliii@`       _QIililig,       """,
     """{c[0]}   )iiii>`       .Qliliiiililw      """,
