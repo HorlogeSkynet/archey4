@@ -1,17 +1,17 @@
 """Archey configuration module"""
 
-from copy import deepcopy
-
 import json
 import logging
 import os
+from copy import deepcopy
+from typing import Any, Dict
 
 from archey.singleton import Singleton
 from archey.utility import Utility
 
 
 # Below are default required configuration keys which will be used.
-DEFAULT_CONFIG = {
+DEFAULT_CONFIG: Dict[str, Any] = {
     'allow_overriding': True,
     'parallel_loading': True,
     'suppress_warnings': False,

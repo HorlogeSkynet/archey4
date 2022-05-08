@@ -43,6 +43,7 @@ from archey.entries.ram import RAM as e_RAM
 from archey.entries.disk import Disk as e_Disk
 from archey.entries.lan_ip import LanIP as e_LanIP
 from archey.entries.wan_ip import WanIP as e_WanIP
+from archey.entries.custom import Custom as e_Custom
 
 
 class Entries(Enum):
@@ -71,6 +72,7 @@ class Entries(Enum):
     Disk = e_Disk
     LAN_IP = e_LanIP
     WAN_IP = e_WanIP
+    Custom = e_Custom
 
 
 def args_parsing() -> argparse.Namespace:
@@ -129,7 +131,11 @@ def main():
     available_entries = configuration.get('entries')
     if available_entries is None:
         # If none were specified, lazy-mimic a full-enabled entries list without any configuration.
-        available_entries = [{'type': entry_name} for entry_name in Entries.__members__]
+        available_entries = [
+            {"type": entry_name}
+            for entry_name in Entries.__members__
+            if entry_name != Entries.Custom
+        ]
 
     output = Output(
         preferred_logo_style=args.logo_style,

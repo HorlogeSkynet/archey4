@@ -45,6 +45,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 * General temperature detection
 * JSON output
 * Screen capture ("best effort")
+* Custom entries
 
 ## Supported platforms
 
@@ -400,6 +401,24 @@ Below stand further descriptions for each available (default) option :
 				"http_url": "https://v6.ident.me/",
 				"http_timeout": 1
 			}
+		},
+		{
+			"type": "Custom",
+			// `command` option is mandatory. `shell` option defaults to `false`.
+			// Don't forget to set a `name` !
+			"name": "GPU",
+			// The custom shell command to execute.
+			"shell": true,
+			"command": "lshw -C display 2> /dev/null | rg product | cut -d ':' -f 2",
+			// A custom program and its arguments to execute.
+			"shell": false,
+			"command": ["echo", "My super GPU model !"],
+			// Whether or not command exit status code should be ignored (defaults to `true`).
+			"check": true,
+			// Whether or not STDERR should be silenced instead of logged (defaults to `true`).
+			"log_stderr": true,
+			// Set to `false` not to join all output content on the same line.
+			"one_line": true
 		}
 	],
 	"default_strings": {
