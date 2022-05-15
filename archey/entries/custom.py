@@ -1,14 +1,37 @@
 """Custom entry class"""
 
+import logging
+import os
+import stat
 from contextlib import suppress
 from subprocess import CalledProcessError, DEVNULL, PIPE, run
 from typing import List
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class Custom(Entry):
     """Custom entry gathering info based on configuration options"""
+
+    def __new__(cls, *_, **kwargs):
+        # Don't load this entry if a configuration file has too broad permissions.
+        # We want to mitigate LPE attacks, as arbitrary commands could be run from a configuration
+        # file under another user's control (with write permissions).
+        geteuid = getattr(os, "geteuid", None)
+        for config_path, stat_info in Configuration().get_config_files_info().items():
+            if (
+                stat_info.st_uid != 0 and geteuid is not None and stat_info.st_uid != geteuid()
+            ) or stat_info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+                logging.getLogger(cls.__module__).warning(
+                    "Not loading %s entry as %s config file has too broad permissions (%s).",
+                    cls.__name__,
+                    config_path,
+                    stat.filemode(stat_info.st_mode),
+                )
+                return None
+
+        return super().__new__(cls, **kwargs)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,9 +1,11 @@
 """Test module for Archey custom entry module"""
 
+import os
+import stat
 import unittest
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock, call, patch
 
-from archey.configuration import DEFAULT_CONFIG
+from archey.configuration import Configuration, DEFAULT_CONFIG
 from archey.entries.custom import Custom
 
 
@@ -107,6 +109,68 @@ class TestCustomEntry(unittest.TestCase):
             )
 
         output_mock.reset_mock()
+
+    def test_unsafe_config_files(self):
+        """Check unsafe configuration files lead to Custom entry loading prevention"""
+        configuration = Configuration()
+        with self.subTest("System-wide, owned by root with strict permissions."), patch.dict(
+            configuration._config_files_info,  # pylint: disable=protected-access
+            {
+                "/etc/archey4/config.json": os.stat_result(
+                    (stat.S_IFREG | 0o644, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                ),
+            },
+        ):
+            self.assertIsNotNone(Custom(options={"command": ["true"]}))
+
+        with self.subTest("System-wide, owned by root with broad permissions."), patch.dict(
+            configuration._config_files_info,  # pylint: disable=protected-access
+            {
+                "/etc/archey4/config.json": os.stat_result(
+                    (stat.S_IFREG | 0o666, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                ),
+            },
+        ):
+            self.assertIsNone(Custom(options={"command": ["true"]}))
+
+        with self.subTest("User preferences, owned by user with broad permissions."), patch(
+            "archey.entries.custom.os.geteuid", return_value=1000
+        ), patch.dict(
+            configuration._config_files_info,  # pylint: disable=protected-access
+            {
+                "/etc/archey4/config.json": os.stat_result(
+                    (stat.S_IFREG | 0o644, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                ),
+                "/home/user/.config/archey4/config.json": os.stat_result(
+                    (stat.S_IFREG | 0o664, 0, 0, 0, 1000, 1000, 0, 0, 0, 0)
+                ),
+            },
+        ):
+            self.assertIsNone(Custom(options={"command": ["true"]}))
+
+        with self.subTest(
+            "Specific preferences, owned by another user with strict permissions."
+        ), patch("archey.entries.custom.os.geteuid", return_value=1000), patch.dict(
+            configuration._config_files_info,  # pylint: disable=protected-access
+            {
+                "/tmp/archey4/config.json": os.stat_result(
+                    (stat.S_IFREG | 0o644, 0, 0, 0, 1001, 1001, 0, 0, 0, 0)
+                ),
+            },
+        ):
+            self.assertIsNone(Custom(options={"command": ["true"]}))
+
+        with self.subTest(
+            "Specific preferences, owned by another user on a platform without GETEUID."
+        ), patch("archey.entries.custom.os.geteuid", None), patch.dict(
+            configuration._config_files_info,  # pylint: disable=protected-access
+            {
+                "/tmp/archey4/config.json": os.stat_result(
+                    (stat.S_IFREG | 0o644, 0, 0, 0, 1001, 1001, 0, 0, 0, 0)
+                ),
+            },
+        ):
+            self.assertIsNotNone(Custom(options={"command": ["true"]}))
 
 
 if __name__ == "__main__":
