@@ -1,17 +1,17 @@
 """Archey configuration module"""
 
-from copy import deepcopy
-
 import json
 import logging
 import os
+from copy import deepcopy
+from typing import Any, Dict
 
 from archey.singleton import Singleton
 from archey.utility import Utility
 
 
 # Below are default required configuration keys which will be used.
-DEFAULT_CONFIG = {
+DEFAULT_CONFIG: Dict[str, Any] = {
     'allow_overriding': True,
     'parallel_loading': True,
     'suppress_warnings': False,
@@ -38,6 +38,9 @@ class Configuration(metaclass=Singleton):
         # Deep-copy `DEFAULT_CONFIG` so we have a local copy to safely mutate.
         self._config = deepcopy(DEFAULT_CONFIG)
 
+        # We will track successfully loaded configuration files stat info.
+        self._config_files_info = {}
+
         # If a `config_path` has been specified, (try to) load it directly.
         if config_path:
             self._load_configuration(config_path)
@@ -52,6 +55,10 @@ class Configuration(metaclass=Singleton):
         A binding method to imitate the `dict.get()` behavior.
         """
         return self._config.get(key, default)
+
+    def get_config_files_info(self) -> Dict[str, os.stat_result]:
+        """Return a copy of loaded files stat info data"""
+        return self._config_files_info.copy()
 
     def _load_configuration(self, path: str):
         """
@@ -70,6 +77,7 @@ class Configuration(metaclass=Singleton):
         try:
             with open(path, mode='rb') as f_config:
                 Utility.update_recursive(self._config, json.load(f_config))
+                self._config_files_info[path] = os.fstat(f_config.fileno())
         except FileNotFoundError:
             return
         except json.JSONDecodeError as json_decode_error:
