@@ -36,6 +36,7 @@ class Distributions(Enum):
     FEDORA = 'fedora'
     FREEBSD = 'freebsd'
     GENTOO = 'gentoo'
+    GUIX = 'guix'
     KALI = 'kali'
     MANJARO = 'manjaro'
     NETBSD = 'netbsd'

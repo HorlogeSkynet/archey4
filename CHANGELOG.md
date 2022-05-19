@@ -8,6 +8,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Added
 - Custom entry
+- Official Guix System distribution support
 
 ## [v4.13.4] - 2022-03-20
 ### Added
