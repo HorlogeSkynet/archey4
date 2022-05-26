@@ -35,7 +35,7 @@ class Entry(AbstractBaseClass):
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Output the results to output. Can be overridden by subclasses."""
         if self.value:
             # Let's assume we can just use `__str__` on the object in value,

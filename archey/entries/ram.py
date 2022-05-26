@@ -124,7 +124,7 @@ class RAM(Entry):
         return (used / 1024**2), (total / 1024**2)
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """
         Adds the entry to `output` after pretty-formatting the RAM usage with color and units.
         """

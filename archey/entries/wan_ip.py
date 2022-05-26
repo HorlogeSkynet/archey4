@@ -100,7 +100,7 @@ class WanIP(Entry):
         except (URLError, SocketTimeoutError):
             return None
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Adds the entry to `output` after pretty-formatting our list of IP addresses."""
         # If we found IP addresses, join them together nicely.
         # If not, fall-back on the "No address" string.

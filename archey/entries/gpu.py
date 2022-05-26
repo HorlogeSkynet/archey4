@@ -88,7 +88,7 @@ class GPU(Entry):
         return gpus_list
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Writes GPUs to `output` based on preferences"""
         # No GPU could be detected.
         if not self.value:

@@ -59,7 +59,7 @@ class Custom(Entry):
             if log_stderr and proc.stderr:
                 self._logger.warning("%s", proc.stderr.rstrip())
 
-    def output(self, output):
+    def output(self, output) -> None:
         if not self.value:
             output.append(self.name, self._default_strings.get("not_detected"))
             return

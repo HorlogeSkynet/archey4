@@ -153,7 +153,7 @@ class Uptime(Entry):
         )
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Adds the entry to `output` after pretty-formatting the uptime to a string."""
         days = self.value['days']
         hours = self.value['hours']

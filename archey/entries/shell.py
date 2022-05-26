@@ -1,8 +1,8 @@
 """Shell detection class"""
 
 import os
-
 from subprocess import CalledProcessError, check_output
+from typing import Optional
 
 from archey.entry import Entry
 
@@ -18,7 +18,7 @@ class Shell(Entry):
         self.value = os.getenv("SHELL") or self._query_name_service_switch()
 
     @staticmethod
-    def _query_name_service_switch():
+    def _query_name_service_switch() -> Optional[str]:
         try:
             user_id = os.getuid()
         except AttributeError:

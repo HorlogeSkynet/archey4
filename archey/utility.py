@@ -8,7 +8,7 @@ from archey.singleton import Singleton
 class Utility(metaclass=Singleton):
     """Miscellaneous logic used in Archey internals"""
     @classmethod
-    def update_recursive(cls, old_dict: dict, new_dict: dict):
+    def update_recursive(cls, old_dict: dict, new_dict: dict) -> None:
         """
         A method for recursively merging dictionaries as `dict.update()` is not able to do this.
         Original snippet taken from here : <https://gist.github.com/angstwad/bf22d1822c38a92ec0a9>

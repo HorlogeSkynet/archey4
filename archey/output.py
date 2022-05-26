@@ -8,7 +8,7 @@ import sys
 
 from shutil import get_terminal_size
 from textwrap import TextWrapper
-from typing import Type
+from typing import Type, cast
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
@@ -67,15 +67,15 @@ class Output:
         # Each class output will be added in the list below afterwards
         self._results = []
 
-    def add_entry(self, module: Type[Entry]):
+    def add_entry(self, module: Type[Entry]) -> None:
         """Append an entry to the list of entries to output"""
         self._entries.append(module)
 
-    def append(self, key: str, value):
+    def append(self, key: str, value) -> None:
         """Append a pre-formatted entry to the final output content"""
         self._results.append(f"{self._entries_color}{key}:{Colors.CLEAR} {value}")
 
-    def output(self):
+    def output(self) -> None:
         """
         Main `Output`'s `output` method.
         First we get entries to add their outputs to the results and then
@@ -89,7 +89,7 @@ class Output:
                 entry.output(self)
             self._output_text()
 
-    def _output_json(self):
+    def _output_json(self) -> None:
         """
         Finally outputs entries data to JSON format.
         See `archey.api` for further documentation.
@@ -100,7 +100,7 @@ class Output:
             )
         )
 
-    def _output_text(self):
+    def _output_text(self) -> None:
         """
         Finally render the output entries.
         It handles text centering additionally to value and colors replacing.
@@ -120,7 +120,7 @@ class Output:
 
         # When writing to a pipe (for instance), prevent `TextWrapper` from truncating output.
         if not sys.stdout.isatty():
-            text_width = float('inf')
+            text_width = cast(int, float("inf"))
         else:
             text_width = get_terminal_size().columns - logo_width - len(self.__LOGO_RIGHT_PADDING)
 

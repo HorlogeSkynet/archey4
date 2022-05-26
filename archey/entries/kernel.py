@@ -55,7 +55,7 @@ class Kernel(Entry):
 
         return kernel_releases.get('latest_stable', {}).get('version')
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Display running kernel and latest kernel if possible"""
         text_output = ' '.join((self.value['name'], self.value['release']))
 

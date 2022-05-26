@@ -13,7 +13,7 @@ class _SimpleEntry(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Reverse order!"""
         output.append((self.value, self.name))
 

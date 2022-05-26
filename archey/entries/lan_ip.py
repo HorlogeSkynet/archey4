@@ -66,7 +66,7 @@ class LanIP(Entry):
                         yield ip_addr.compressed
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Adds the entry to `output` after pretty-formatting the IP address list."""
         # If we found IP addresses, join them together nicely.
         # If not, fall back on default strings according to `netifaces` availability.

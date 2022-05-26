@@ -138,7 +138,7 @@ class Temperature(Entry):
                             #  we may stop the current sub-feature iteration now.
                             break
 
-    def _poll_thermal_zones(self):
+    def _poll_thermal_zones(self) -> None:
         # We just check for values within files present in the path below.
         for thermal_file in iglob(r'/sys/class/thermal/thermal_zone*/temp'):
             try:
@@ -150,7 +150,7 @@ class Temperature(Entry):
             if temp != 0.0:
                 self._temps.append(temp / 1000)
 
-    def _run_istats_or_osxcputemp(self):
+    def _run_istats_or_osxcputemp(self) -> None:
         """
         For Darwin systems, let's rely on `iStats` or `OSX CPU Temp` third-party programs.
         System's `powermetrics` program is **very** slow to run
@@ -175,16 +175,18 @@ class Temperature(Entry):
             pass
         else:
             # Parse output across <= 1.1.0 versions and above.
-            temp = float(re.search(r'\d+\.\d', osxcputemp_output).group(0))
+            temp_match = re.search(r"\d+\.\d", osxcputemp_output)
+            if temp_match is None:
+                return
+            temp = float(temp_match.group(0))
             if temp != 0.0:  # (Apple) System Management Control read _may_ fail.
                 self._temps.append(temp)
 
-    def _run_sysctl_dev_cpu(self):
+    def _run_sysctl_dev_cpu(self) -> None:
         # Tries to get temperatures from each CPU core sensor.
         try:
             sysctl_output = check_output(
-                ['sysctl', '-n'] + \
-                    [f'dev.cpu.{i}.temperature' for i in range(os.cpu_count())],
+                ["sysctl", "-n"] + [f"dev.cpu.{i}.temperature" for i in range(os.cpu_count() or 1)],
                 stderr=PIPE, universal_newlines=True
             )
         except FileNotFoundError:
@@ -199,13 +201,13 @@ class Temperature(Entry):
             )
             return
 
-        for temp in sysctl_output.splitlines():
+        for temp_output in sysctl_output.splitlines():
             # Strip any temperature unit from output (some drivers may add it).
-            temp = float(temp.rstrip('C'))
+            temp = float(temp_output.rstrip('C'))
             if temp != 0.0:
                 self._temps.append(temp)
 
-    def _run_vcgencmd(self):
+    def _run_vcgencmd(self) -> None:
         # Let's try to retrieve a value from the Broadcom chip on Raspberry.
         try:
             vcgencmd_output = check_output(
@@ -215,14 +217,9 @@ class Temperature(Entry):
         except (FileNotFoundError, CalledProcessError):
             return
 
-        self._temps.append(
-            float(
-                re.search(
-                    r'\d+\.\d+',
-                    vcgencmd_output
-                ).group(0)
-            )
-        )
+        temp_match = re.search(r"\d+\.\d+", vcgencmd_output)
+        if temp_match is not None:
+            self._temps.append(float(temp_match.group(0)))
 
     @staticmethod
     def _convert_to_fahrenheit(temp: float) -> float:
@@ -230,7 +227,7 @@ class Temperature(Entry):
         return temp * (9 / 5) + 32
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Adds the entry to `output` after pretty-formatting with units."""
         if not self.value:
             # Fall back on the default behavior if no temperatures were detected.

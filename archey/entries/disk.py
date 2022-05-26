@@ -159,7 +159,7 @@ class Disk(Entry):
         return f'{blocks:02.1f} {unit}{suffix}'
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """
         Adds the entry to `output` after formatting with color and units.
         Follows the user configuration supplied for formatting.

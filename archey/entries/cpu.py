@@ -168,7 +168,7 @@ class CPU(Entry):
         return [{model_name: int(nb_cores)}]
 
 
-    def output(self, output):
+    def output(self, output) -> None:
         """Writes CPUs to `output` based on preferences"""
         # No CPU could be detected.
         if not self.value:

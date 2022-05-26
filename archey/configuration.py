@@ -50,7 +50,7 @@ class Configuration(metaclass=Singleton):
             self._load_configuration(os.path.expanduser('~/.config/archey4/'))
             self._load_configuration(os.getcwd())
 
-    def get(self, key: str, default=None):
+    def get(self, key: str, default=None) -> Any:
         """
         A binding method to imitate the `dict.get()` behavior.
         """
@@ -60,7 +60,7 @@ class Configuration(metaclass=Singleton):
         """Return a copy of loaded files stat info data"""
         return self._config_files_info.copy()
 
-    def _load_configuration(self, path: str):
+    def _load_configuration(self, path: str) -> None:
         """
         A method handling configuration loading from a JSON file.
         It will try to load any `config.json` present under `path`.
