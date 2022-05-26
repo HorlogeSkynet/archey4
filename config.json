@@ -14,6 +14,11 @@
 			"check_version": false
 		},
 		{ "type": "Uptime" },
+		{
+			"type": "LoadAverage",
+			"warning_threshold": 1.0,
+			"danger_threshold": 2.0
+		},
 		{ "type": "Processes" },
 		{ "type": "WindowManager" },
 		{ "type": "DesktopEnvironment" },

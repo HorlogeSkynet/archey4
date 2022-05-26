@@ -265,6 +265,12 @@ Below stand further descriptions for each available (default) option :
 			"check_version": false
 		},
 		{ "type": "Uptime" },
+		{
+			"type": "LoadAverage",
+			// Some thresholds you can adjust to customize warning/danger colors.
+			"warning_threshold": 1.0,
+			"danger_threshold": 2.0
+		},
 		{ "type": "Processes" },
 		{ "type": "WindowManager" },
 		{ "type": "DesktopEnvironment" },
