@@ -184,14 +184,14 @@ class Disk(Entry):
             filesystems = {
                 None: {
                     'device_path': None,
-                    'used_blocks': sum([
+                    'used_blocks': sum(
                         filesystem_data['used_blocks']
                         for filesystem_data in filesystems.values()
-                    ]),
-                    'total_blocks': sum([
+                    ),
+                    'total_blocks': sum(
                         filesystem_data['total_blocks']
                         for filesystem_data in filesystems.values()
-                    ])
+                    )
                 }
             }
         else:
