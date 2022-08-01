@@ -100,6 +100,22 @@ Swapouts:                               3456015.
             (1685.58984375, 8192.0)
         )
 
+    @patch(
+        'archey.entries.ram.check_output',
+        side_effect=[
+            """\
+3992309
+3050620
+297854
+"""])
+    def test_run_sysctl_mem(self, _):
+        """Test _run_sysctl_mem() """
+        self.assertTupleEqual(
+            RAM._run_sysctl_mem(),  # pylint: disable=protected-access
+            (2514.98046875, 15594.95703125)
+        )
+
+
     @HelperMethods.patch_clean_configuration
     def test_various_output_configuration(self):
         """Test `output` overloading based on user preferences"""
