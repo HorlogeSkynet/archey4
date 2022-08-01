@@ -376,6 +376,24 @@ Model name:          CPU-MODEL-NAME
                 DEFAULT_CONFIG['default_strings']['not_detected']
             )
 
+    @patch(
+        'archey.entries.cpu.check_output',
+        side_effect=[
+            FileNotFoundError(),
+            """\
+Intel(R) Core(TM) i5-5300U CPU @ 2.30GHz
+4
+"""])
+    def test_parse_sysctl_cpu_model(self, _):
+        """Check `_parse_sysctl_cpu_model` behavior"""
+        # pylint: disable=protected-access
+        self.assertListEmpty(CPU._parse_sysctl_cpu_model())
+        self.assertListEqual(
+            CPU._parse_sysctl_machdep(),
+            [{'Intel(R) Core(TM) i5-5300U CPU @ 2.30GHz': 4}]
+        )
+        # pylint: enable=protected-access
+
 
 if __name__ == '__main__':
     unittest.main()
