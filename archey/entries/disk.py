@@ -121,23 +121,24 @@ class Disk(Entry):
             return {}
 
         df_output_dict = {}
-        for df_entry_match in re.findall(
-            #  device_path
-            #          total_blocks
-            #                  used_blocks
-            #                                       mount point
-            r"^(.+?)\s+(\d+)\s+(\d+)\s+\d+\s+\d+%\s+(.*)$",
+        for df_entry_match in re.finditer(
+            r"""^(?P<device_path>.+?)\s+
+                 (?P<total_blocks>\d+)\s+
+                 (?P<used_blocks>\d+)\s+
+                 \d+\s+ # avail blocks
+                 \d+%\s+ # capacity
+                 (?P<mount_point>.*)$""",
             df_output,
-            flags=re.MULTILINE
+            flags=re.MULTILINE | re.VERBOSE
         ):
-            total_blocks = int(df_entry_match[1])
+            total_blocks = int(df_entry_match.group('total_blocks'))
             # Skip entries missing the number of blocks.
             if total_blocks == 0:
                 continue
 
-            df_output_dict[df_entry_match[3]] = {
-                'device_path': df_entry_match[0],
-                'used_blocks': int(df_entry_match[2]),
+            df_output_dict[df_entry_match.group('mount_point')] = {
+                'device_path': df_entry_match.group('device_path'),
+                'used_blocks': int(df_entry_match.group('used_blocks')),
                 'total_blocks': total_blocks
             }
 
