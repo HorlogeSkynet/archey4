@@ -1,8 +1,10 @@
 """Disk usage detection class"""
 
 import re
+import platform
+import plistlib
 
-from subprocess import DEVNULL, PIPE, run
+from subprocess import DEVNULL, PIPE, run, check_output
 from typing import Dict, List
 
 from archey.colors import Colors
@@ -30,20 +32,28 @@ class Disk(Entry):
         Extracts local (i.e. /dev/xxx) filesystems for any *NIX from `self._disk_dict`,
         returning a copy with those filesystems only.
 
-        We specifically ignore...
+        Ignored device paths are...
         Loop devices:-
             /dev(/...)/loop filesystems (Linux)
             /dev(/...)/*vnd filesystems (BSD)
             /dev(/...)/lofi filesystems (Solaris)
         Device mappers:- (since their partitions are already included!)
             /dev(/...)/dm filesystems (Linux)
+        (macOS only) any APFS volumes, only APFS containers are counted
         """
         # Compile a REGEXP pattern to match the device paths we will accept.
         device_path_regexp = re.compile(r'^\/dev\/(?:(?!loop|[rs]?vnd|lofi|dm).)+$')
 
+        # If we are on macOS, then remove APFS volumes from our disk dict
+        # and replace them with their respective containers.
+        if platform.system() == 'Darwin':
+            disk_dict = self._replace_apfs_volumes_by_their_containers()
+        else:
+            disk_dict = self._disk_dict
+
         # Build the dictionary
         local_disk_dict: Dict[str, dict] = {}
-        for mount_point, disk_data in self._disk_dict.items():
+        for mount_point, disk_data in disk_dict.items():
             if (
                     device_path_regexp.match(disk_data['device_path'])
                     # De-duplication based on `device_path`s:
@@ -55,6 +65,64 @@ class Disk(Entry):
                 local_disk_dict[mount_point] = disk_data
 
         return local_disk_dict
+
+
+    def _replace_apfs_volumes_by_their_containers(self) -> Dict[str, dict]:
+        # Call `diskutil` to generate a property list (PList) of all APFS containers
+        try:
+            property_list = plistlib.loads(check_output(['diskutil', 'apfs', 'list', '-plist']))
+        except FileNotFoundError:
+            self._logger.warning(
+                "APFS volumes cannot be deduplicated as diskutil program could not be found."
+            )
+            return self._disk_dict
+        except plistlib.InvalidFileException:
+            self._logger.error(
+                "APFS volumes cannot be deduplicated as diskutil output could not be parsed."
+            )
+            return self._disk_dict
+
+        # Local (shallow) copy of `_disk_dict`
+        disk_dict = self._disk_dict.copy()
+
+        # Generate an inverted disk_dict: from device_path -> mount_point
+        inverted_disk_dict = {
+            value['device_path']: mount_point for mount_point, value in disk_dict.items()
+        }
+
+        # Remove volumes from disk_dict and replace with their aggregated containers
+        for plist_container in property_list['Containers']:
+            # Temporary dict for each container
+            container_dict = {
+                # the container's "real" location:
+                'device_path': f"/dev/{plist_container['DesignatedPhysicalStore']}",
+                'used_blocks': 0,
+                'total_blocks': 0
+            }
+            for plist_volume in plist_container['Volumes']:
+                # Get volumes which start with this volume's device path, i.e. include snapshots
+                volume_paths = [
+                    device_path for device_path in inverted_disk_dict.keys()
+                    if device_path.startswith(f"/dev/{plist_volume['DeviceIdentifier']}")
+                ]
+                for volume_path in volume_paths:
+                    try:
+                        # Get this volume from disk_dict (removing it)
+                        volume = disk_dict.pop(inverted_disk_dict[volume_path])
+                    except KeyError:
+                        # skip this volume as it misses from  `disk_dict`
+                        continue
+
+                    # Now add it to the container entry
+                    container_dict['used_blocks'] += volume['used_blocks']
+                    # Total is always the container total
+                    container_dict['total_blocks'] = volume['total_blocks']
+
+            # Use the "reference" (virtual disk) as the mountpoint, since APFS containers
+            # cannot be directly mounted
+            disk_dict[plist_container['ContainerReference']] = container_dict
+
+        return disk_dict
 
 
     def _get_specified_filesystems(self, specified_filesystems: List[str]) -> Dict[str, dict]:

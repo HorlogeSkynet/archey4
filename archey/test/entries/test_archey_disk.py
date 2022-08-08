@@ -7,7 +7,6 @@ from archey.colors import Colors
 from archey.entries.disk import Disk
 from archey.test.entries import HelperMethods
 
-
 class TestDiskEntry(unittest.TestCase):
     """
     Here, we mock `subprocess.run` calls to disk utility tools.
@@ -17,62 +16,253 @@ class TestDiskEntry(unittest.TestCase):
         self.disk_instance_mock = HelperMethods.entry_mock(Disk)
         self.output_mock = MagicMock()
 
-    def test_disk_get_local_filesystems(self):
+    # Used to make `_replace_apfs_volumes_by_their_containers` call void (see below).
+    @patch.object(
+        Disk,
+        "_replace_apfs_volumes_by_their_containers",
+    )
+    def test_disk_get_local_filesystems(self, apfs_disk_dict_mock):
         """Tests `Disk._get_local_filesystems`."""
-        # This minimal `_disk_dict` contains everything this method touches.
-        self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
-            '/very/good/mountpoint': {
-                'device_path': '/dev/sda1'
-            },
-            '/mounted/here/too': {
-                'device_path': '/dev/sda1'
-            },
-            '/other/acceptable/device/paths': {
-                'device_path': '/dev/anything-really'
-            },
-            '/a/samba/share': {
-                'device_path': '//server.local/cool_share'  # ignored - not `/dev/...`
-            },
-            '/linux/loop/device/one': {
-                'device_path': '/dev/loop0'  # ignored - loop device
-            },
-            '/linux/loop/device/two': {
-                'device_path': '/dev/blah/loop0'  # ignored - loop device
-            },
-            '/bsd/s/loop/device/one': {
-                'device_path': '/dev/svnd'  # ignored - loop device
-            },
-            '/bsd/s/loop/device/two': {
-                'device_path': '/dev/blah/svnd1'  # ignored - loop device
-            },
-            '/bsd/r/loop/device/one': {
-                'device_path': '/dev/rvnd'  # ignored - loop device
-            },
-            '/bsd/r/loop/device/two': {
-                'device_path': '/dev/blah/rvnd1'  # ignored - loop device
-            },
-            '/solaris/loop/device/one': {
-                'device_path': '/dev/lofi1'  # ignored - loop device
-            },
-            '/solaris/loop/device/two': {
-                'device_path': '/dev/blah/lofi'  # ignored - loop device
-            },
-            '/linux/device/mapper': {
-                'device_path': '/dev/dm-1'  # ignored - device mapper
-            }
-        }
-
-        self.assertDictEqual(
-            Disk._get_local_filesystems(self.disk_instance_mock),  # pylint: disable=protected-access
-            {
+        with self.subTest('Ignoring loop devs, dev mappers & network shares.'):
+            # This minimal `_disk_dict` is sufficient for this test.
+            self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
                 '/very/good/mountpoint': {
+                    'device_path': '/dev/sda1'
+                },
+                '/mounted/here/too': {
                     'device_path': '/dev/sda1'
                 },
                 '/other/acceptable/device/paths': {
                     'device_path': '/dev/anything-really'
+                },
+                '/a/samba/share': {
+                    'device_path': '//server.local/cool_share'  # ignored - not `/dev/...`
+                },
+                '/linux/loop/device/one': {
+                    'device_path': '/dev/loop0'  # ignored - loop device
+                },
+                '/linux/loop/device/two': {
+                    'device_path': '/dev/blah/loop0'  # ignored - loop device
+                },
+                '/bsd/s/loop/device/one': {
+                    'device_path': '/dev/svnd'  # ignored - loop device
+                },
+                '/bsd/s/loop/device/two': {
+                    'device_path': '/dev/blah/svnd1'  # ignored - loop device
+                },
+                '/bsd/r/loop/device/one': {
+                    'device_path': '/dev/rvnd'  # ignored - loop device
+                },
+                '/bsd/r/loop/device/two': {
+                    'device_path': '/dev/blah/rvnd1'  # ignored - loop device
+                },
+                '/solaris/loop/device/one': {
+                    'device_path': '/dev/lofi1'  # ignored - loop device
+                },
+                '/solaris/loop/device/two': {
+                    'device_path': '/dev/blah/lofi'  # ignored - loop device
+                },
+                '/linux/device/mapper': {
+                    'device_path': '/dev/dm-1'  # ignored - device mapper
                 }
             }
-        )
+
+            apfs_disk_dict_mock.return_value = (
+                self.disk_instance_mock._disk_dict  # pylint: disable=protected-access
+            )
+
+            self.assertDictEqual(
+                Disk._get_local_filesystems(self.disk_instance_mock),  # pylint: disable=protected-access
+                {
+                    '/very/good/mountpoint': {
+                        'device_path': '/dev/sda1'
+                    },
+                    '/other/acceptable/device/paths': {
+                        'device_path': '/dev/anything-really'
+                    }
+                }
+            )
+
+    @patch(
+        'archey.entries.disk.check_output',
+        # This diskutil output is greatly simplified for brevity
+        return_value=b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Containers</key>
+	<array>
+		<dict>
+			<key>ContainerReference</key>
+			<string>disk1</string>
+			<key>DesignatedPhysicalStore</key>
+			<string>disk0s1</string>
+			<key>Volumes</key>
+			<array>
+				<dict>
+					<key>DeviceIdentifier</key>
+					<string>disk1s1</string>
+				</dict>
+				<dict>
+					<key>DeviceIdentifier</key>
+					<string>disk1s2</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>ContainerReference</key>
+			<string>disk2</string>
+			<key>DesignatedPhysicalStore</key>
+			<string>disk0s3</string>
+			<key>Volumes</key>
+			<array>
+				<dict>
+					<key>DeviceIdentifier</key>
+					<string>disk2s1</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>ContainerReference</key>
+			<string>disk3</string>
+			<key>DesignatedPhysicalStore</key>
+			<string>disk0s2</string>
+			<key>Volumes</key>
+			<array>
+				<dict>
+					<key>DeviceIdentifier</key>
+					<string>disk3s1</string>
+				</dict>
+				<dict>
+					<key>DeviceIdentifier</key>
+					<string>disk3s5</string>
+				</dict>
+				<dict>
+					<key>DeviceIdentifier</key>
+					<string>disk3s6</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
+""")
+    def test_replace_apfs_volumes_by_their_containers(self, _):
+        """Tests `Disk._replace_apfs_volumes_by_their_containers` for APFS volumes deduplication."""
+        with self.subTest('Ignoring APFS volumes on macOS'):
+            # Shortened example from issue #115, ie standard macOS 12.4 install on M1
+            # see https://eclecticlight.co/2021/01/14/m1-macs-radically-change-boot-and-recovery/
+            self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
+                '/': {
+                    'device_path': '/dev/disk3s1s1', # in apfs container (disk0s2)
+                    'used_blocks': 0,
+                    'total_blocks': 0,
+                },
+                '/System/Volumes/VM': {
+                    'device_path': '/dev/disk3s6',  # in apfs container (disk0s2)
+                    'used_blocks': 0,
+                    'total_blocks': 0,
+                },
+                '/System/Volumes/xarts': {
+                    'device_path': '/dev/disk1s2',  # in iboot system container (disk0s1)
+                    'used_blocks': 0,
+                    'total_blocks': 0,
+                },
+                '/System/Volumes/iSCPreboot': {
+                    'device_path': '/dev/disk1s1',  # in iboot system container (disk0s1)
+                    'used_blocks': 0,
+                    'total_blocks': 0,
+                },
+                '/System/Volumes/Data': {
+                    'device_path': '/dev/disk3s5',  # in apfs container (disk0s2)
+                    'used_blocks': 0,
+                    'total_blocks': 0,
+                },
+                '/System/Volumes/Update/SFR/mnt1': {
+                    'device_path': '/dev/disk2s1',  # in recovery container (disk0s3)
+                    'used_blocks': 0,
+                    'total_blocks': 0,
+                }
+            }
+            # We should end up with the 3 container device paths
+            self.assertDictEqual(
+                Disk._replace_apfs_volumes_by_their_containers(self.disk_instance_mock),  # pylint: disable=protected-access
+                {
+                    'disk3': {
+                        'device_path': '/dev/disk0s2',
+                        'used_blocks': 0,
+                        'total_blocks': 0,
+                    },
+                    'disk1': {
+                        'device_path': '/dev/disk0s1',
+                        'used_blocks': 0,
+                        'total_blocks': 0,
+                    },
+                    'disk2': {
+                        'device_path': '/dev/disk0s3',
+                        'used_blocks': 0,
+                        'total_blocks': 0,
+                    }
+                }
+            )
+
+        with self.subTest('Adding usage of ignored APFS volumes on macOS'):
+            # As above test, but checking for correct usage and total figures once combined
+            self.disk_instance_mock._disk_dict = {  # pylint: disable=protected-access
+                '/': {
+                    'device_path': '/dev/disk3s1s1',  # in apfs container (disk0s2)
+                    'used_blocks': 23068672,
+                    'total_blocks': 970981376
+                },
+                '/System/Volumes/VM': {
+                    'device_path': '/dev/disk3s6',  # in apfs container (disk0s2)
+                    'used_blocks': 1048576,
+                    'total_blocks': 970981376
+                },
+                '/System/Volumes/xarts': {
+                    'device_path': '/dev/disk1s2',  # in iboot system container (disk0s1)
+                    'used_blocks': 6144,
+                    'total_blocks': 512000
+                },
+                '/System/Volumes/iSCPreboot': {
+                    'device_path': '/dev/disk1s1',  # in iboot system container (disk0s1)
+                    'used_blocks': 7578,
+                    'total_blocks': 512000
+                },
+                '/System/Volumes/Data': {
+                    'device_path': '/dev/disk3s5',  # in apfs container (disk0s2)
+                    'used_blocks': 266338304,
+                    'total_blocks': 970981376
+                },
+                '/System/Volumes/Update/SFR/mnt1': {
+                    'device_path': '/dev/disk2s1',  # in recovery container (disk0s3)
+                    'used_blocks': 1677722,
+                    'total_blocks': 5242880
+                }
+            }
+            # We should end up with the 3 container device paths
+            self.assertDictEqual(
+                Disk._replace_apfs_volumes_by_their_containers(self.disk_instance_mock),  # pylint: disable=protected-access
+                {
+                    'disk3': {
+                        'device_path': '/dev/disk0s2',
+                        'used_blocks': 290455552,
+                        'total_blocks': 970981376
+                    },
+                    'disk1': {
+                        'device_path': '/dev/disk0s1',
+                        'used_blocks': 13722,
+                        'total_blocks': 512000
+                    },
+                    'disk2': {
+                        'device_path': '/dev/disk0s3',
+                        'used_blocks': 1677722,
+                        'total_blocks': 5242880
+                    }
+                }
+            )
+
 
     def test_disk_get_specified_filesystems(self):
         """Tests `Disk._get_specified_filesystems`."""
