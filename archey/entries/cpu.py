@@ -169,7 +169,7 @@ class CPU(Entry):
 
     @staticmethod
     def _parse_sysctl_cpu_model() -> List[Dict[str, int]]:
-        # Runs `sysctl` to fetch some `hw.model and hw.ncpu` keys.
+        # Runs `sysctl` to fetch `hw.model` and `hw.ncpu` keys.
         try:
             sysctl_output = check_output(
                 [

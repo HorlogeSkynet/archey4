@@ -193,7 +193,7 @@ class Model(Entry):
                 ['kenv', 'smbios.system.version'],
                 universal_newlines=True
             ).rstrip()
-        except FileNotFoundError:
+        except (FileNotFoundError, CalledProcessError):
             return None
 
         return f'{vendor} ({product})'
