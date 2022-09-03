@@ -262,6 +262,24 @@ class TestModelEntry(unittest.TestCase):
             DEFAULT_CONFIG['default_strings']['not_detected']
         )
 
+    @patch(
+        'archey.entries.model.check_output',
+        side_effect=[
+            'VENDOR\n',     # First `kenv` call.
+            'VERSION\n',    # Second `kenv` call.
+            FileNotFoundError()  # Second test will fail.
+        ]
+    )
+    def test_fetch_freebsd_model(self, _):
+        """Test `_fetch_freebsd_model` static method"""
+        self.assertEqual(
+            Model._fetch_freebsd_model(),  # pylint: disable=protected-access
+            'VENDOR (VERSION)'
+        )
+        self.assertIsNone(
+            Model._fetch_freebsd_model()  # pylint: disable=protected-access
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
