@@ -27,6 +27,7 @@ WM_DICT = {
     'i3': 'i3',
     'icewm': 'IceWM',
     'kwin_x11': 'KWin',
+    'kwin_wayland': 'KWin',
     'metacity': 'Metacity',
     'musca': 'Musca',
     'openbox': 'Openbox',
