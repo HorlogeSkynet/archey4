@@ -16,6 +16,7 @@
 		{ "type": "Uptime" },
 		{
 			"type": "LoadAverage",
+			"decimal_places": 2,
 			"warning_threshold": 1.0,
 			"danger_threshold": 2.0
 		},
