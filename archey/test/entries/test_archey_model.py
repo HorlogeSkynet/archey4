@@ -125,13 +125,26 @@ class TestModelEntry(unittest.TestCase):
         with patch('archey.entries.model.open', mock_open()) as mock:
             mock.return_value.read.side_effect = [
                 'PRODUCT-NAME\n',
-                'PRODCT-VENDOR\n',
+                'PRODUCT-VENDOR\n',
                 'PRODUCT-VERSION\n'
             ]
 
             self.assertEqual(
                 Model._fetch_dmi_info(),  # pylint: disable=protected-access
-                'PRODCT-VENDOR PRODUCT-NAME PRODUCT-VERSION'
+                'PRODUCT-VENDOR PRODUCT-NAME PRODUCT-VERSION'
+            )
+
+        # Product vendor is included in product name
+        with patch('archey.entries.model.open', mock_open()) as mock:
+            mock.return_value.read.side_effect = [
+                'PRODUCT-VENDOR PRODUCT-NAME\n',
+                'PRODUCT-VENDOR\n',
+                'PRODUCT-VERSION\n'
+            ]
+
+            self.assertEqual(
+                Model._fetch_dmi_info(),  # pylint: disable=protected-access
+                'PRODUCT-VENDOR PRODUCT-NAME PRODUCT-VERSION'
             )
 
         # Only product name and version are available.

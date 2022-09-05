@@ -90,8 +90,10 @@ class Model(Entry):
         product_name = _read_dmi_file("product_name")
         if product_name:
             product_info = [product_name]
-            # Prepend product vendor name (if available).
-            product_info.insert(0, _read_dmi_file("sys_vendor"))
+            # Prepend product vendor name (if available and not already included).
+            sys_vendor = _read_dmi_file("sys_vendor")
+            if sys_vendor and not product_name.startswith(sys_vendor):
+                product_info.insert(0, sys_vendor)
             # Append product version (if available).
             product_info.append(_read_dmi_file("product_version"))
 
