@@ -25,6 +25,7 @@ class LoadAverage(Entry):
             return
 
         # DRY constant thresholds.
+        decimal_places = self.options.get("decimal_places", 2)
         warning_threshold = self.options.get("warning_threshold", 1.0)
         danger_threshold = self.options.get("danger_threshold", 2.0)
 
@@ -33,7 +34,7 @@ class LoadAverage(Entry):
             " ".join(
                 [
                     str(Colors.get_level_color(load_avg, warning_threshold, danger_threshold))
-                    + str(load_avg)
+                    + str(round(load_avg, decimal_places))
                     + str(Colors.CLEAR)
                     for load_avg in self.value
                 ]

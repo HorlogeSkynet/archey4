@@ -267,6 +267,8 @@ Below stand further descriptions for each available (default) option :
 		{ "type": "Uptime" },
 		{
 			"type": "LoadAverage",
+			// Number of decimal places to display for the load average.
+			"decimal_places": 2,
 			// Some thresholds you can adjust to customize warning/danger colors.
 			"warning_threshold": 1.0,
 			"danger_threshold": 2.0
