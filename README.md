@@ -116,6 +116,12 @@ yay -S archey4
 brew install archey4
 ```
 
+### Install from [FreeBSD ports](https://cgit.freebsd.org/ports/tree/sysutils/archey4)
+
+```bash
+pkg install archey4
+```
+
 ### Install from source
 
 #### Step 1 : Fetch sources
