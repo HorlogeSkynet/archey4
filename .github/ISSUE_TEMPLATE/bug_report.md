@@ -28,3 +28,16 @@ assignees: ''
 
 **Additional context**
 <!-- If applicable, add any other context about the problem here. -->
+
+**Custom configuration**
+<!-- If applicable, insert your custom configuration in the below code block. -->
+
+<details><summary>Custom configuration</summary>
+<p>
+
+```json
+{}
+```
+
+</p>
+</details>
