@@ -378,7 +378,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Project officially forked from djmelik/archey
 
 [Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.4...HEAD
-[v4.13.3]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.3...v4.13.4
+[v4.13.4]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.3...v4.13.4
 [v4.13.3]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.2...v4.13.3
 [v4.13.2]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.1...v4.13.2
 [v4.13.1]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.0...v4.13.1
