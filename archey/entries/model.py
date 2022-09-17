@@ -25,11 +25,16 @@ class Model(Entry):
         elif distribution == Distributions.FREEBSD:
             self.value = self._fetch_freebsd_model()
         elif platform.system() == "Linux":
-            self.value = (
-                self._fetch_virtual_env_info()
-                or self._fetch_dmi_info()
-                or self._fetch_raspberry_pi_revision()
-            )
+            virtual_env_info = self._fetch_virtual_env_info()
+            model_name = self._fetch_dmi_info()
+            if virtual_env_info is not None:
+                model_name = model_name or self._default_strings.get("virtual_environment")
+                self.value = f"{model_name} ({virtual_env_info})"
+            elif model_name:
+                self.value = model_name
+            else:
+                # Raspberry Pi specific case (Linux kernel only)
+                self.value = self._fetch_raspberry_pi_revision()
         else:
             # Darwin or any other BSD-based system.
             self.value = self._fetch_sysctl_hw()
@@ -38,43 +43,28 @@ class Model(Entry):
         """
         Relying on some system tools, tries to gather some details about hypervisor.
         When available, relies on systemd.
-        If running with enough privileges, `virt-what` and/or `dmidecode` may be called.
+        If running with enough privileges, `virt-what` may be called as fallback.
         """
         try:
-            environment = check_output(
+            return check_output(
                 'systemd-detect-virt',
                 stderr=DEVNULL, universal_newlines=True
             ).rstrip()
         except CalledProcessError:
             # Not a virtual environment.
-            environment = ""
+            return None
         except FileNotFoundError:
             # If not available, let's query `virt-what` (privileges usually required).
             try:
-                environment = ", ".join(
+                return ", ".join(
                     check_output(
                         "virt-what",
-                        stderr=DEVNULL, universal_newlines=True
+                        stderr=DEVNULL,
+                        universal_newlines=True,
                     ).splitlines()
-                )
+                ) or None
             except (OSError, CalledProcessError):
-                environment = ""
-
-        # We couldn't retrieve any information from `systemd-detect-virt`, nor `virt-what`.
-        if not environment:
-            return None
-
-        # Sometimes we may gather info added by hosting service provider by relying on `dmidecode`.
-        try:
-            product_name = check_output(
-                ["dmidecode", "-s", "system-product-name"],
-                stderr=DEVNULL, universal_newlines=True
-            ).rstrip()
-        except (OSError, CalledProcessError):
-            product_name = self._default_strings.get("virtual_environment")
-
-        # If we got there with some info, this _should_ be a virtual environment.
-        return f"{product_name} ({environment})"
+                return None
 
     @classmethod
     def _fetch_dmi_info(cls) -> Optional[str]:
