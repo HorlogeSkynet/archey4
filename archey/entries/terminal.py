@@ -52,6 +52,7 @@ ENV_DICT = {
     'KONSOLE_VERSION': 'Konsole',
     'MLTERM': 'MLTERM',
     'TERMINATOR_UUID': 'Terminator',
+    'WT_SESSION': 'Windows Terminal',
 }
 
 
