@@ -50,6 +50,7 @@ class Distributions(Enum):
     RASPBIAN = 'raspbian'
     ROCKY = 'rocky'
     RHEL = 'rhel'
+    SIDUCTION = 'siduction'
     SLACKWARE = 'slackware'
     UBUNTU = 'ubuntu'
     WINDOWS = 'windows'
