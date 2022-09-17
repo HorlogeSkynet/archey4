@@ -7,6 +7,7 @@ import re
 from subprocess import CalledProcessError, DEVNULL, check_output
 from typing import Dict, List
 
+from archey.distributions import Distributions
 from archey.entry import Entry
 
 
@@ -44,10 +45,11 @@ class CPU(Entry):
 
         if platform.system() == 'Linux':
             self.value = self._parse_proc_cpuinfo()
+        elif Distributions.get_local() == Distributions.FREEBSD:
+            self._parse_sysctl_cpu_model()
         else:
             # Darwin or any other BSD-based system.
-            self.value = self._parse_system_profiler() or \
-                self._parse_sysctl_machdep() or self._parse_sysctl_cpu_model()
+            self.value = self._parse_system_profiler() or self._parse_sysctl_machdep()
 
         if not self.value:
             # This test case has been built for some ARM architectures (see #29).

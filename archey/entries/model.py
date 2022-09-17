@@ -7,6 +7,7 @@ import re
 from subprocess import CalledProcessError, DEVNULL, check_output
 from typing import Optional
 
+from archey.distributions import Distributions
 from archey.entry import Entry
 
 
@@ -18,13 +19,20 @@ class Model(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.value = \
-            self._fetch_virtual_env_info() \
-            or self._fetch_dmi_info() \
-            or self._fetch_sysctl_hw() \
-            or self._fetch_raspberry_pi_revision() \
-            or self._fetch_android_device_model() \
-            or self._fetch_freebsd_model()
+        distribution = Distributions.get_local()
+        if distribution == Distributions.ANDROID:
+            self.value = self._fetch_android_device_model()
+        elif distribution == Distributions.FREEBSD:
+            self.value = self._fetch_freebsd_model()
+        elif platform.system() == "Linux":
+            self.value = (
+                self._fetch_virtual_env_info()
+                or self._fetch_dmi_info()
+                or self._fetch_raspberry_pi_revision()
+            )
+        else:
+            # Darwin or any other BSD-based system.
+            self.value = self._fetch_sysctl_hw()
 
     def _fetch_virtual_env_info(self) -> Optional[str]:
         """
