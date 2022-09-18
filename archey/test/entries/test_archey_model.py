@@ -19,10 +19,27 @@ class TestModelEntry(unittest.TestCase):
     """
 
     @patch("archey.entries.model.check_output")
+    @patch("archey.entries.model.platform.release")
     @HelperMethods.patch_clean_configuration
-    def test_fetch_virtual_env_info(self, check_output_mock):
+    def test_fetch_virtual_env_info(self, platform_release_mock, check_output_mock):
         """Test `_fetch_virtual_env_info` method"""
         model_mock = HelperMethods.entry_mock(Model)
+
+        with self.subTest("Detected virtual environment."):
+            # WSL mark on the kernel release string.
+            platform_release_mock.return_value = "X.Y.Z-R-Microsoft"
+            check_output_mock.side_effect = []  # No external calls.
+
+            self.assertEqual(
+                Model._fetch_virtual_env_info(model_mock),  # pylint: disable=protected-access
+                "wsl",
+            )
+
+        # No WSL mark for the next cases.
+        platform_release_mock.reset_mock()
+        platform_release_mock.return_value = "X.Y.Z-R-ARCH"
+
+        check_output_mock.reset_mock()
 
         with self.subTest("Detected virtual environment."):
             check_output_mock.side_effect = [

@@ -31,52 +31,42 @@ class TestDistributions(unittest.TestCase):
         self.assertEqual(Distributions.get_local(), Distributions.WINDOWS)
 
     @patch("archey.distributions.platform.system", return_value="Linux")
-    @patch("archey.distributions.platform.release", return_value="X.Y.Z-R-Microsoft")
-    def test_get_local_windows_subsystem(self, _, __):
-        """Test output for Windows Subsystem Linux"""
-        self.assertEqual(Distributions.get_local(), Distributions.WINDOWS)
-
-    @patch("archey.distributions.platform.system", return_value="Linux")
-    @patch("archey.distributions.platform.release", return_value="X.Y.Z-R-ARCH")
     @patch("archey.distributions.distro.id", return_value="debian")
     @patch(
         "archey.distributions.os.path.isfile",  # Emulate a "regular" Debian file-system.
         return_value=False,  # Any additional check will fail.
     )
-    def test_get_local_known_distro_id(self, _, __, ___, ____):
+    def test_get_local_known_distro_id(self, _, __, ___):
         """Test known distribution output"""
         self.assertEqual(Distributions.get_local(), Distributions.DEBIAN)
 
     @patch("archey.distributions.platform.system", return_value="Linux")
-    @patch("archey.distributions.platform.release", return_value="X.Y.Z-R-ARCH")
     @patch("archey.distributions.distro.id", return_value="an-unknown-distro-id")
     @patch("archey.distributions.distro.like", return_value="")  # No `ID_LIKE` specified.
     @patch(
         "archey.distributions.os.path.isdir", return_value=False  # Make Android detection fails.
     )
-    def test_get_local_unknown_distro_id(self, _, __, ___, ____, _____):
+    def test_get_local_unknown_distro_id(self, _, __, ___, ____):
         """Test unknown distribution output"""
         self.assertEqual(Distributions.get_local(), Distributions.LINUX)
 
     @patch("archey.distributions.platform.system", return_value="Linux")
-    @patch("archey.distributions.platform.release", return_value="X.Y.Z-R-ARCH")
     @patch("archey.distributions.distro.id", return_value="")  # Unknown distribution.
     @patch(
         "archey.distributions.distro.like",
         return_value="ubuntu",  # Oh, it's actually an Ubuntu-based one !
     )
-    def test_get_local_known_distro_like(self, _, __, ___, ____):
+    def test_get_local_known_distro_like(self, _, __, ___):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option"""
         self.assertEqual(Distributions.get_local(), Distributions.UBUNTU)
 
     @patch("archey.distributions.platform.system", return_value="Linux")
-    @patch("archey.distributions.platform.release", return_value="X.Y.Z-R-ARCH")
     @patch("archey.distributions.distro.id", return_value="")  # Unknown distribution.
     @patch(
         "archey.distributions.distro.like",
         return_value="an-unknown-distro-id arch",  # Hmmm, an unknown Arch-based...
     )
-    def test_get_local_distro_like_second(self, _, __, ___, ____):
+    def test_get_local_distro_like_second(self, _, __, ___):
         """Test distribution matching from the `os-release`'s `ID_LIKE` option (second candidate)"""
         self.assertEqual(Distributions.get_local(), Distributions.ARCH)
 
@@ -84,7 +74,6 @@ class TestDistributions(unittest.TestCase):
         "archey.distributions.platform.system",
         return_value="Darwin",  # Mostly used by our second run.
     )
-    @patch("archey.distributions.platform.release", return_value="X.Y.Z")
     @patch(
         "archey.distributions.distro.id",
         side_effect=[
@@ -93,7 +82,7 @@ class TestDistributions(unittest.TestCase):
         ],
     )
     @patch("archey.distributions.distro.like", return_value="")  # No `ID_LIKE` here.
-    def test_darwin_detection(self, _, __, ___, ____):
+    def test_darwin_detection(self, _, __, ___):
         """Test OS detection for Darwin"""
         # Detection based on `distro`.
         self.assertEqual(Distributions.get_local(), Distributions.DARWIN)

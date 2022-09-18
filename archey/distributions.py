@@ -114,11 +114,6 @@ class Distributions(Enum):
         if platform.system() == "Windows":
             return Distributions.WINDOWS
 
-        # Is it a Windows Sub-system Linux (WSL) distribution ?
-        # If so, kernel release identifier should keep a trace of it.
-        if "microsoft" in platform.release().lower():
-            return Distributions.WINDOWS
-
         # Is `ID` (from `os-release`) well-known and supported ?
         with suppress(ValueError):
             return Distributions(distro.id())

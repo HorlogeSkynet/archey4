@@ -44,6 +44,12 @@ class Model(Entry):
         When available, relies on systemd.
         If running with enough privileges, `virt-what` may be called as fallback.
         """
+        # Is it a "Windows subsystem for Linux" (WSL) kernel ?
+        # This check is trivial and faster than executing a third program.
+        # Note : virt-what actually does not detect "wsl" fact.
+        if "microsoft" in platform.release().casefold():
+            return "wsl"
+
         try:
             return check_output(
                 "systemd-detect-virt", stderr=DEVNULL, universal_newlines=True
