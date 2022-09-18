@@ -33,3 +33,14 @@ min-public-methods = 0
 ## netifaces is not typed and does not provide any stub
 module = "netifaces"
 ignore_missing_imports = true
+
+# Black
+[tool.black]
+line-length = 100
+target-version = ["py36"]
+
+# isort
+[tool.isort]
+profile = "black"
+line_length = 100
+py_version = 36

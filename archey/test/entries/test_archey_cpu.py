@@ -14,8 +14,9 @@ class TestCPUEntry(unittest.TestCase, CustomAssertions):
     Here, we mock the `open` call on `/proc/cpuinfo` with fake content.
     In some cases, `lscpu` output is being mocked too.
     """
+
     @patch(
-        'archey.entries.cpu.open',
+        "archey.entries.cpu.open",
         mock_open(
             read_data="""\
 processor\t: 0
@@ -24,16 +25,18 @@ cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
 physical id\t: 0
-"""))
+"""
+        ),
+    )
     def test_parse_proc_cpuinfo_one_entry(self):
         """Test `/proc/cpuinfo` parsing"""
         self.assertListEqual(
             CPU._parse_proc_cpuinfo(),  # pylint: disable=protected-access
-            [{'CPU-MODEL-NAME': 1}]
+            [{"CPU-MODEL-NAME": 1}],
         )
 
     @patch(
-        'archey.entries.cpu.open',
+        "archey.entries.cpu.open",
         mock_open(
             read_data="""\
 processor\t: 0
@@ -56,19 +59,18 @@ cpu family\t: X
 model\t\t: YY
 model name\t: ANOTHER-CPU-MODEL
 physical id\t: 1
-"""))
+"""
+        ),
+    )
     def test_parse_proc_cpuinfo_multiple_entries(self):
         """Test `/proc/cpuinfo` parsing"""
         self.assertListEqual(
             CPU._parse_proc_cpuinfo(),  # pylint: disable=protected-access
-            [
-                {'CPU-MODEL-NAME': 1},
-                {'ANOTHER-CPU-MODEL': 2}
-            ]
+            [{"CPU-MODEL-NAME": 1}, {"ANOTHER-CPU-MODEL": 2}],
         )
 
     @patch(
-        'archey.entries.cpu.open',
+        "archey.entries.cpu.open",
         mock_open(
             read_data="""\
 processor\t: 0
@@ -98,19 +100,18 @@ cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
 physical id\t: 1
-"""))
+"""
+        ),
+    )
     def test_parse_proc_cpuinfo_one_cpu_dual_socket(self):
         """Test `/proc/cpuinfo` parsing for same CPU model across two sockets"""
         self.assertListEqual(
             CPU._parse_proc_cpuinfo(),  # pylint: disable=protected-access
-            [
-                {'CPU-MODEL-NAME': 2},
-                {'CPU-MODEL-NAME': 2}
-            ]
+            [{"CPU-MODEL-NAME": 2}, {"CPU-MODEL-NAME": 2}],
         )
 
     @patch(
-        'archey.entries.cpu.open',
+        "archey.entries.cpu.open",
         mock_open(
             read_data="""\
 processor\t: 0
@@ -140,7 +141,9 @@ cpu family\t: X
 model\t\t: YY
 model name\t: ANOTHER\tCPU   MODEL WITH STRANGE S P  A   C     E     S
 physical id\t: 1
-"""))
+"""
+        ),
+    )
     def test_parse_proc_cpuinfo_multiple_inconsistent_entries(self):
         """
         Test `/proc/cpuinfo` parsing with multiple CPUs sharing same physical ids (unlikely).
@@ -149,26 +152,18 @@ physical id\t: 1
         self.assertListEqual(
             CPU._parse_proc_cpuinfo(),  # pylint: disable=protected-access
             [
-                {
-                    'CPU-MODEL-NAME': 1,
-                    'ANOTHER-CPU-MODEL': 1
-                },
-                {
-                    'ANOTHER CPU MODEL WITH STRANGE S P A C E S': 2
-                }
-            ]
+                {"CPU-MODEL-NAME": 1, "ANOTHER-CPU-MODEL": 1},
+                {"ANOTHER CPU MODEL WITH STRANGE S P A C E S": 2},
+            ],
         )
 
-    @patch(
-        'archey.entries.cpu.open',
-        side_effect=PermissionError()
-    )
+    @patch("archey.entries.cpu.open", side_effect=PermissionError())
     def test_parse_proc_cpuinfo_unreadable_file(self, _):
         """Check behavior when `/proc/cpuinfo` could not be read from disk"""
         self.assertListEmpty(CPU._parse_proc_cpuinfo())  # pylint: disable=protected-access
 
     @patch(
-        'archey.entries.cpu.check_output',
+        "archey.entries.cpu.check_output",
         side_effect=[
             FileNotFoundError(),
             """\
@@ -189,37 +184,41 @@ physical id\t: 1
     }
   ]
 }
-"""])
+""",
+        ],
+    )
     def test_parse_system_profiler(self, _):
         """Check `_parse_system_profiler` behavior"""
         # pylint: disable=protected-access
         self.assertListEmpty(CPU._parse_system_profiler())
         self.assertListEqual(
             CPU._parse_system_profiler(),
-            [{'Dual-Core Intel Core i5 @ 3.1 GHz': 4}]
+            [{"Dual-Core Intel Core i5 @ 3.1 GHz": 4}],
         )
         # pylint: enable=protected-access
 
     @patch(
-        'archey.entries.cpu.check_output',
+        "archey.entries.cpu.check_output",
         side_effect=[
             FileNotFoundError(),
             """\
 Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz
 8
-"""])
+""",
+        ],
+    )
     def test_parse_sysctl_machdep(self, _):
         """Check `_parse_sysctl_machdep` behavior"""
         # pylint: disable=protected-access
         self.assertListEmpty(CPU._parse_sysctl_machdep())
         self.assertListEqual(
             CPU._parse_sysctl_machdep(),
-            [{'Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz': 8}]
+            [{"Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz": 8}],
         )
         # pylint: enable=protected-access
 
     @patch(
-        'archey.entries.cpu.check_output',
+        "archey.entries.cpu.check_output",
         side_effect=[
             """\
 Architecture:        x86_64
@@ -279,7 +278,9 @@ Vendor ID:           CPU-VENDOR-NAME
 CPU family:          Z
 Model:               \xde\xad\xbe\xef
 Model name:          CPU-MODEL-NAME
-"""])
+""",
+        ],
+    )
     def test_parse_lscpu_output(self, _):
         """
         Test model name parsing from `lscpu` output.
@@ -288,28 +289,22 @@ Model name:          CPU-MODEL-NAME
         `/proc/cpuinfo` will not contain `model name` info.
         `lscpu` output will be used instead.
         """
-        with self.subTest('Simple unique CPU.'):
+        with self.subTest("Simple unique CPU."):
             self.assertListEqual(
                 CPU._parse_lscpu_output(),  # pylint: disable=protected-access
-                [{'CPU-MODEL-NAME': 4}]
+                [{"CPU-MODEL-NAME": 4}],
             )
 
-        with self.subTest('Two CPUs, 1 socket.'):
+        with self.subTest("Two CPUs, 1 socket."):
             self.assertListEqual(
                 CPU._parse_lscpu_output(),  # pylint: disable=protected-access
-                [
-                    {'CPU-MODEL-NAME': 2},
-                    {'ANOTHER-CPU-MODEL': 4}
-                ]
+                [{"CPU-MODEL-NAME": 2}, {"ANOTHER-CPU-MODEL": 4}],
             )
 
-        with self.subTest('1 CPU, 2 sockets.'):
+        with self.subTest("1 CPU, 2 sockets."):
             self.assertListEqual(
                 CPU._parse_lscpu_output(),  # pylint: disable=protected-access
-                [
-                    {'CPU-MODEL-NAME': 8},
-                    {'CPU-MODEL-NAME': 8}
-                ]
+                [{"CPU-MODEL-NAME": 8}, {"CPU-MODEL-NAME": 8}],
             )
 
     @HelperMethods.patch_clean_configuration
@@ -318,82 +313,67 @@ Model name:          CPU-MODEL-NAME
         cpu_instance_mock = HelperMethods.entry_mock(CPU)
         output_mock = MagicMock()
 
-        cpu_instance_mock.value = [
-            {'CPU-MODEL-NAME': 1},
-            {'ANOTHER-CPU-MODEL': 2}
-        ]
+        cpu_instance_mock.value = [{"CPU-MODEL-NAME": 1}, {"ANOTHER-CPU-MODEL": 2}]
 
-        with self.subTest('Single-line combined output.'):
-            cpu_instance_mock.options['one_line'] = True
+        with self.subTest("Single-line combined output."):
+            cpu_instance_mock.options["one_line"] = True
 
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
-                'CPU',
-                'CPU-MODEL-NAME, 2 x ANOTHER-CPU-MODEL'
+                "CPU", "CPU-MODEL-NAME, 2 x ANOTHER-CPU-MODEL"
             )
 
         output_mock.reset_mock()
 
-        with self.subTest('Single-line combined output (no count).'):
-            cpu_instance_mock.options['show_cores'] = False
-            cpu_instance_mock.options['one_line'] = True
+        with self.subTest("Single-line combined output (no count)."):
+            cpu_instance_mock.options["show_cores"] = False
+            cpu_instance_mock.options["one_line"] = True
 
             CPU.output(cpu_instance_mock, output_mock)
-            output_mock.append.assert_called_once_with(
-                'CPU',
-                'CPU-MODEL-NAME, ANOTHER-CPU-MODEL'
-            )
+            output_mock.append.assert_called_once_with("CPU", "CPU-MODEL-NAME, ANOTHER-CPU-MODEL")
 
         output_mock.reset_mock()
 
-        with self.subTest('Multi-lines output (with counts).'):
-            cpu_instance_mock.options['show_cores'] = True
-            cpu_instance_mock.options['one_line'] = False
+        with self.subTest("Multi-lines output (with counts)."):
+            cpu_instance_mock.options["show_cores"] = True
+            cpu_instance_mock.options["one_line"] = False
 
             CPU.output(cpu_instance_mock, output_mock)
             self.assertEqual(output_mock.append.call_count, 2)
             output_mock.append.assert_has_calls(
-                [
-                    call(
-                        'CPU',
-                        'CPU-MODEL-NAME'
-                    ),
-                    call(
-                        'CPU',
-                        '2 x ANOTHER-CPU-MODEL'
-                    )
-                ]
+                [call("CPU", "CPU-MODEL-NAME"), call("CPU", "2 x ANOTHER-CPU-MODEL")]
             )
 
         output_mock.reset_mock()
 
-        with self.subTest('No CPU detected output.'):
+        with self.subTest("No CPU detected output."):
             cpu_instance_mock.value = []
 
             CPU.output(cpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
-                'CPU',
-                DEFAULT_CONFIG['default_strings']['not_detected']
+                "CPU", DEFAULT_CONFIG["default_strings"]["not_detected"]
             )
 
     @patch(
-        'archey.entries.cpu.check_output',
+        "archey.entries.cpu.check_output",
         side_effect=[
             FileNotFoundError(),
             """\
 Intel(R) Core(TM) i5-5300U CPU @ 2.30GHz
 4
-"""])
+""",
+        ],
+    )
     def test_parse_sysctl_cpu_model(self, _):
         """Check `_parse_sysctl_cpu_model` behavior"""
         # pylint: disable=protected-access
         self.assertListEmpty(CPU._parse_sysctl_cpu_model())
         self.assertListEqual(
             CPU._parse_sysctl_machdep(),
-            [{'Intel(R) Core(TM) i5-5300U CPU @ 2.30GHz': 4}]
+            [{"Intel(R) Core(TM) i5-5300U CPU @ 2.30GHz": 4}],
         )
         # pylint: enable=protected-access
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

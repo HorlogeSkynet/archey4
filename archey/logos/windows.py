@@ -2,13 +2,7 @@
 
 from archey.colors import Colors
 
-
-COLORS = [
-    Colors.BLUE_BRIGHT,
-    Colors.RED_BRIGHT,
-    Colors.GREEN_BRIGHT,
-    Colors.YELLOW_NORMAL
-]
+COLORS = [Colors.BLUE_BRIGHT, Colors.RED_BRIGHT, Colors.GREEN_BRIGHT, Colors.YELLOW_NORMAL]
 
 LOGO = [
     """{c[0]}         {c[1]},.=:!!t3Z3z.,{c[0]}               """,
@@ -26,5 +20,5 @@ LOGO = [
     """{c[0]} ,E;:::::::zt33:{c[0]} {c[3]}@EEEtttt::::z3;{c[0]}     """,
     """{c[0]} {{3=*^```'*4E3P{c[0]} {c[3]};EEEtttt:::::tZ{c[0]}      """,
     """{c[0]}             `{c[0]} {c[3]}`:EEEEttt:::::z`{c[0]}      """,
-    """{c[0]}                 {c[3]}'VEzjt:;;z>*`{c[0]}       """
+    """{c[0]}                 {c[3]}'VEzjt:;;z>*`{c[0]}       """,
 ]

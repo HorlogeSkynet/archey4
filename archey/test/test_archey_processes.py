@@ -6,11 +6,12 @@ from unittest.mock import patch
 from archey.processes import Processes
 from archey.test import CustomAssertions
 
+
 # To avoid edge-case issues due to singleton, we automatically reset internal `_instances`.
 # This is done at the class-level.
 @patch.dict(
-    'archey.singleton.Singleton._instances',
-    clear=True
+    "archey.singleton.Singleton._instances",
+    clear=True,
 )
 class TestProcesses(unittest.TestCase, CustomAssertions):
     """
@@ -18,8 +19,9 @@ class TestProcesses(unittest.TestCase, CustomAssertions):
     To work around the singleton, we reset the internal `_instances` dictionary.
     This way, `check_output` can be mocked here.
     """
+
     @patch(
-        'archey.processes.check_output',
+        "archey.processes.check_output",
         return_value="""\
 COMMAND
 what
@@ -30,7 +32,8 @@ list
 you
 got
 there
-""")
+""",
+    )
     def test_ps_ok(self, check_output_mock):
         """Simple test with a plausible `ps` output"""
         # We'll create two `Processes` instances.
@@ -39,21 +42,27 @@ there
 
         self.assertTupleEqual(
             processes_1.list,
-            ('what', 'an', 'awesome', 'processes', 'list', 'you', 'got', 'there')
+            (
+                "what",
+                "an",
+                "awesome",
+                "processes",
+                "list",
+                "you",
+                "got",
+                "there",
+            ),
         )
         self.assertEqual(processes_1.number, 8)
 
         # The class has been instantiated twice, but `check_output` has been called only once.
         self.assertTrue(check_output_mock.assert_called_once)
 
-    @patch(
-        'archey.processes.check_output',
-        side_effect=FileNotFoundError()
-    )
+    @patch("archey.processes.check_output", side_effect=FileNotFoundError())
     def test_ps_not_available(self, _):
         """Checks behavior when `ps` is not available"""
         self.assertTupleEmpty(Processes().list)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

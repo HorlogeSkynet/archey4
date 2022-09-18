@@ -26,4 +26,4 @@ def get_logo_width(logo: List[str], nb_colors: int = 8) -> int:
     `nb_colors` must be greater than or equal to the number of colors used by the logo.
     """
     # We replace each placeholder by a 0-character string.
-    return len(logo[0].format(c=[''] * nb_colors))
+    return len(logo[0].format(c=[""] * nb_colors))

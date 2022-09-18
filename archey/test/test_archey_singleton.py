@@ -1,7 +1,6 @@
 """Test module for `archey.singleton`"""
 
 import unittest
-
 from abc import ABCMeta
 
 from archey.singleton import Singleton
@@ -23,6 +22,7 @@ class _SimpleCounter(metaclass=Singleton):
 
 class TestSingleton(unittest.TestCase):
     """Test cases for our `Singleton` meta-class"""
+
     def test_singleton_itself(self):
         """Verifies `Singleton` hierarchy"""
         self.assertTrue(issubclass(Singleton, type))
@@ -49,5 +49,5 @@ class TestSingleton(unittest.TestCase):
         self.assertRaises(TypeError, Singleton)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

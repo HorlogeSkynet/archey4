@@ -5,7 +5,7 @@ import stat
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from archey.configuration import Configuration, DEFAULT_CONFIG
+from archey.configuration import DEFAULT_CONFIG, Configuration
 from archey.entries.custom import Custom
 
 

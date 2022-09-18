@@ -2,7 +2,6 @@
 
 from archey.colors import Colors
 
-
 COLORS = [Colors.YELLOW_BRIGHT, Colors.RED_NORMAL, Colors.YELLOW_NORMAL]
 
 LOGO = [

@@ -7,6 +7,7 @@ from archey.entry import Entry
 
 class User(Entry):
     """Retrieves the session name of the current logged in user"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

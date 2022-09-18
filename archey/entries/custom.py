@@ -4,7 +4,7 @@ import logging
 import os
 import stat
 from contextlib import suppress
-from subprocess import CalledProcessError, DEVNULL, PIPE, run
+from subprocess import DEVNULL, PIPE, CalledProcessError, run
 from typing import List
 
 from archey.configuration import Configuration

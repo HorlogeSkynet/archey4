@@ -2,7 +2,6 @@
 
 from archey.colors import Colors
 
-
 COLORS = [Colors.GREEN_BRIGHT]
 
 LOGO = [
@@ -24,5 +23,5 @@ LOGO = [
     """{c[0]}    )<>~       .mliiiiiliiiiiil,    """,
     """{c[0]}             _gllilililiililii~     """,
     """{c[0]}            giliiiiiiiiiiiiT`       """,
-    """{c[0]}           -^~$ililili@~~'          """
+    """{c[0]}           -^~$ililili@~~'          """,
 ]

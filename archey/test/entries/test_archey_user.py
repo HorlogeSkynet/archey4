@@ -13,16 +13,17 @@ class TestUserEntry(unittest.TestCase):
     For this entry, we'll simply mock `getpass.getuser` call.
     If internals happen to fail, `ImportError` might be raised.
     """
+
     @patch(
-        'archey.entries.user.getpass.getuser',
+        "archey.entries.user.getpass.getuser",
         side_effect=[
-            'USERNAME',
-            ImportError('pwd', "Sure, you got a good reason...")
-        ]
+            "USERNAME",
+            ImportError("pwd", "Sure, you got a good reason..."),
+        ],
     )
     def test_getenv(self, _):
         """Simple mock, simple test"""
-        self.assertEqual(User().value, 'USERNAME')
+        self.assertEqual(User().value, "USERNAME")
         self.assertIsNone(User().value)
 
     @HelperMethods.patch_clean_configuration
@@ -34,10 +35,9 @@ class TestUserEntry(unittest.TestCase):
         User.output(user_instance_mock, output_mock)
 
         self.assertEqual(
-            output_mock.append.call_args[0][1],
-            DEFAULT_CONFIG['default_strings']['not_detected']
+            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

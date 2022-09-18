@@ -2,12 +2,10 @@
 
 import os
 import re
-
 from typing import Optional
 
 from archey.colors import Colors
 from archey.entry import Entry
-
 
 # We detect a terminal by using the following three constants in the order below:
 # First, we try using the value in the `TERM_PROGRAM` environment variable.
@@ -26,8 +24,8 @@ from archey.entry import Entry
 #   value (i.e. the respective terminal emulator).
 # If the variable does not match any keys in this dictionary, it is ignored.
 COLORTERM_DICT = {
-    r'kmscon': 'KMSCON',
-    r'rxvt': 'rxvt',
+    r"kmscon": "KMSCON",
+    r"rxvt": "rxvt",
 }
 
 # This dictionary contains values for the `TERM` environment variable for terminal emulators
@@ -38,21 +36,21 @@ COLORTERM_DICT = {
 #   UNLESS it does not begin with `xterm`, at which point its value is taken as the terminal in use.
 #   This behavior can be overridden by specifying its exact match here.
 TERM_DICT = {
-    r'xterm-termite': 'Termite',
+    r"xterm-termite": "Termite",
 }
 
 # This dictionary contains environment variables used to detect terminal emulators...
 #   which do not propagate any usable `COLORTERM`, `TERM`, or `TERM_PROGRAM`.
 # When a key is found in environment, a normalization is performed with its corresponding value.
 ENV_DICT = {
-    'ALACRITTY_LOG': 'Alacritty',
-    'GNOME_TERMINAL_SCREEN': 'GNOME Terminal',
-    'GUAKE_TAB_UUID': 'Guake',
-    'KITTY_WINDOW_ID': 'Kitty',
-    'KONSOLE_VERSION': 'Konsole',
-    'MLTERM': 'MLTERM',
-    'TERMINATOR_UUID': 'Terminator',
-    'WT_SESSION': 'Windows Terminal',
+    "ALACRITTY_LOG": "Alacritty",
+    "GNOME_TERMINAL_SCREEN": "GNOME Terminal",
+    "GUAKE_TAB_UUID": "Guake",
+    "KITTY_WINDOW_ID": "Kitty",
+    "KONSOLE_VERSION": "Konsole",
+    "MLTERM": "MLTERM",
+    "TERMINATOR_UUID": "Terminator",
+    "WT_SESSION": "Windows Terminal",
 }
 
 
@@ -61,6 +59,7 @@ class Terminal(Entry):
     Simple terminal detection based on the `TERM` environment variable.
     It also displays the colors palette afterwards.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -71,42 +70,44 @@ class Terminal(Entry):
         # On systems with non-Unicode locales, we imitate '\u2588' character
         # ... with '#' to display the terminal colors palette.
         # Archey >= v4.8.0, Unicode is enabled by default.
-        character = ('\u2588' if self.options.get('use_unicode', True) else '#')
+        character = "\u2588" if self.options.get("use_unicode", True) else "#"
 
-        return ' '.join([
-            f"{Colors((0, i))}{character}{Colors((1, i))}{character}{Colors.CLEAR}"
-            for i in range(37, 30, -1)
-        ])
+        return " ".join(
+            [
+                f"{Colors((0, i))}{character}{Colors((1, i))}{character}{Colors.CLEAR}"
+                for i in range(37, 30, -1)
+            ]
+        )
 
     @staticmethod
     def _detect_terminal_emulator() -> Optional[str]:
         """Try to detect current terminal emulator based on various environment variables"""
         # At first, try to honor `TERM_PROGRAM*` environment variables.
         # See <https://github.com/Maximus5/ConEmu/issues/1837#issuecomment-469199525>.
-        env_term_program = os.getenv('TERM_PROGRAM')
+        env_term_program = os.getenv("TERM_PROGRAM")
         if env_term_program:
-            env_term_program_version = os.getenv('TERM_PROGRAM_VERSION')
+            env_term_program_version = os.getenv("TERM_PROGRAM_VERSION")
             if env_term_program_version:
                 env_term_program += f" {env_term_program_version}"
 
             return env_term_program
 
         # Second, check if we have any matches as defined in our `COLORTERM` constant dict.
-        env_colorterm = os.getenv('COLORTERM')
+        env_colorterm = os.getenv("COLORTERM")
         if env_colorterm:
             for env_value_re, normalized_name in COLORTERM_DICT.items():
                 if re.match(env_value_re, env_colorterm):
                     return normalized_name
 
         # Third, check if we have any matches defined in our `TERM` constant dict.
-        env_term = os.getenv('TERM')
+        env_term = os.getenv("TERM")
         if env_term:
             for env_value_re, normalized_name in TERM_DICT.items():
                 if re.match(env_value_re, env_term):
                     return normalized_name
 
             # If we didn't find any match and `TERM` is set to "something special", honor it.
-            if not env_term.startswith('xterm'):
+            if not env_term.startswith("xterm"):
                 return env_term
 
         # If not, try to find a "known identifier" and perform name normalization...
@@ -118,11 +119,10 @@ class Terminal(Entry):
         # Note : It _might_ be `None` in very specific environments.
         return env_term
 
-
     def output(self, output) -> None:
         """Adds the entry to `output` after pretty-formatting with colors palette"""
-        text_output = (self.value or self._default_strings.get('not_detected'))
+        text_output = self.value or self._default_strings.get("not_detected")
         if Colors.should_color_output():
-            text_output += ' ' + self._get_colors_palette()
+            text_output += " " + self._get_colors_palette()
 
         output.append(self.name, text_output)

@@ -11,8 +11,9 @@ from archey.test.entries import HelperMethods
 
 class TestGPUEntry(unittest.TestCase, CustomAssertions):
     """Here, we mock the `check_output` call to `lspci` to test the logic"""
+
     @patch(
-        'archey.entries.gpu.check_output',
+        "archey.entries.gpu.check_output",
         side_effect=[
             FileNotFoundError(),
             """\
@@ -28,24 +29,26 @@ XX:YY.H VGA compatible controller: GPU-MODEL-NAME
 XX:YY.H Display controller: ANOTHER-MATCHING-VIDEO-CONTROLLER
 XX:YY.H Audio device: DDDDDDDDDDDDDDDD
 XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
-"""])
+""",
+        ],
+    )
     def test_parse_lspci_output(self, _):
         """Check `_parse_lspci_output` behavior"""
         # pylint: disable=protected-access
         self.assertListEmpty(GPU._parse_lspci_output())
-        self.assertListEqual(GPU._parse_lspci_output(), ['GPU-MODEL-NAME'])
+        self.assertListEqual(GPU._parse_lspci_output(), ["GPU-MODEL-NAME"])
         self.assertListEqual(
             GPU._parse_lspci_output(),
             [
-                '3D GPU-MODEL-NAME TAKES ADVANTAGE',
-                'GPU-MODEL-NAME',
-                'ANOTHER-MATCHING-VIDEO-CONTROLLER'
-            ]
+                "3D GPU-MODEL-NAME TAKES ADVANTAGE",
+                "GPU-MODEL-NAME",
+                "ANOTHER-MATCHING-VIDEO-CONTROLLER",
+            ],
         )
         # pylint: enable=protected-access
 
     @patch(
-        'archey.entries.gpu.check_output',
+        "archey.entries.gpu.check_output",
         side_effect=[
             FileNotFoundError(),
             """\
@@ -88,19 +91,21 @@ Radeon Pro 450:
   Automatic Graphics Switching: Supported
   gMux Version: 4.0.29 [3.2.8]
   Metal: Supported, feature set macOS GPUFamily2 v1
-"""])
+""",
+        ],
+    )
     def test_parse_system_profiler(self, _):
         """Check `_parse_system_profiler` behavior"""
         # pylint: disable=protected-access
         self.assertListEmpty(GPU._parse_system_profiler())
         self.assertListEqual(
             GPU._parse_system_profiler(),
-            ['Intel HD Graphics 530', 'AMD Radeon Pro 450']
+            ["Intel HD Graphics 530", "AMD Radeon Pro 450"],
         )
         # pylint: enable=protected-access
 
     @patch(
-        'archey.entries.gpu.check_output',
+        "archey.entries.gpu.check_output",
         side_effect=[
             FileNotFoundError(),
             """\
@@ -143,7 +148,9 @@ vgapci0@pci0:16:0:0:  class=0x030000 card=0x3381103c chip=0x0533102b rev=0x00 hd
     device     = 'MGA G200EH'
     class      = display
     subclass   = VGA
-"""])
+""",
+        ],
+    )
     def test_parse_pciconf_output(self, _):
         """Check `_parse_pciconf_output` behavior"""
         # pylint: disable=protected-access
@@ -151,10 +158,10 @@ vgapci0@pci0:16:0:0:  class=0x030000 card=0x3381103c chip=0x0533102b rev=0x00 hd
         self.assertListEqual(
             GPU._parse_pciconf_output(),
             [
-                'Intel Corporation 3rd Gen Core processor Graphics Controller',
-                'NVIDIA Corporation GK107 [GeForce GTX 650]',
-                'Matrox Graphics, Inc. MGA G200EH'
-            ]
+                "Intel Corporation 3rd Gen Core processor Graphics Controller",
+                "NVIDIA Corporation GK107 [GeForce GTX 650]",
+                "Matrox Graphics, Inc. MGA G200EH",
+            ],
         )
         # pylint: enable=protected-access
 
@@ -165,55 +172,44 @@ vgapci0@pci0:16:0:0:  class=0x030000 card=0x3381103c chip=0x0533102b rev=0x00 hd
         output_mock = MagicMock()
 
         gpu_instance_mock.value = [
-            '3D GPU-MODEL-NAME TAKES ADVANTAGE',
-            'GPU-MODEL-NAME',
-            'ANOTHER-MATCHING-VIDEO'
+            "3D GPU-MODEL-NAME TAKES ADVANTAGE",
+            "GPU-MODEL-NAME",
+            "ANOTHER-MATCHING-VIDEO",
         ]
 
-        with self.subTest('Single-line combined output.'):
-            gpu_instance_mock.options['one_line'] = True
+        with self.subTest("Single-line combined output."):
+            gpu_instance_mock.options["one_line"] = True
 
             GPU.output(gpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
-                'GPU',
-                '3D GPU-MODEL-NAME TAKES ADVANTAGE, GPU-MODEL-NAME, ANOTHER-MATCHING-VIDEO'
+                "GPU", "3D GPU-MODEL-NAME TAKES ADVANTAGE, GPU-MODEL-NAME, ANOTHER-MATCHING-VIDEO"
             )
 
         output_mock.reset_mock()
 
-        with self.subTest('Multi-lines output.'):
-            gpu_instance_mock.options['one_line'] = False
+        with self.subTest("Multi-lines output."):
+            gpu_instance_mock.options["one_line"] = False
 
             GPU.output(gpu_instance_mock, output_mock)
             self.assertEqual(output_mock.append.call_count, 3)
             output_mock.append.assert_has_calls(
                 [
-                    call(
-                        'GPU',
-                        '3D GPU-MODEL-NAME TAKES ADVANTAGE'
-                    ),
-                    call(
-                        'GPU',
-                        'GPU-MODEL-NAME'
-                    ),
-                    call(
-                        'GPU',
-                        'ANOTHER-MATCHING-VIDEO'
-                    )
+                    call("GPU", "3D GPU-MODEL-NAME TAKES ADVANTAGE"),
+                    call("GPU", "GPU-MODEL-NAME"),
+                    call("GPU", "ANOTHER-MATCHING-VIDEO"),
                 ]
             )
 
         output_mock.reset_mock()
 
-        with self.subTest('No GPU detected output.'):
+        with self.subTest("No GPU detected output."):
             gpu_instance_mock.value = []
 
             GPU.output(gpu_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
-                'GPU',
-                DEFAULT_CONFIG['default_strings']['not_detected']
+                "GPU", DEFAULT_CONFIG["default_strings"]["not_detected"]
             )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

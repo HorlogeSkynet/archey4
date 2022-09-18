@@ -1,8 +1,8 @@
 """Entry base class"""
 
 import logging
-
-from abc import ABC as AbstractBaseClass, abstractmethod
+from abc import ABC as AbstractBaseClass
+from abc import abstractmethod
 from typing import Optional
 
 from archey.configuration import Configuration
@@ -10,11 +10,12 @@ from archey.configuration import Configuration
 
 class Entry(AbstractBaseClass):
     """Module base class"""
+
     _PRETTY_NAME: Optional[str] = None
 
     def __new__(cls, *_, **kwargs):
         """Hook object instantiation to handle our particular `disabled` config field"""
-        if kwargs.get('options', {}).pop('disabled', False):
+        if kwargs.get("options", {}).pop("disabled", False):
             return None
 
         return super().__new__(cls)
@@ -30,7 +31,7 @@ class Entry(AbstractBaseClass):
         self.options = options or {}
 
         # Propagates a reference to default strings specified in `Configuration`.
-        self._default_strings = Configuration().get('default_strings')
+        self._default_strings = Configuration().get("default_strings")
 
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)
@@ -43,7 +44,4 @@ class Entry(AbstractBaseClass):
             output.append(self.name, str(self.value))
         else:
             # If the value is "falsy" leave a generic "Not detected" message for this entry.
-            output.append(
-                self.name,
-                self._default_strings.get('not_detected')
-            )
+            output.append(self.name, self._default_strings.get("not_detected"))

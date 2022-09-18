@@ -10,6 +10,7 @@ from archey.test.entries import HelperMethods
 
 class TestLoadAverageEntry(unittest.TestCase):
     """LoadAverage `output` configuration-based coloration test class"""
+
     def setUp(self):
         """Define mocked entry before each test"""
         self.load_average_mock = HelperMethods.entry_mock(LoadAverage)
@@ -37,7 +38,7 @@ class TestLoadAverageEntry(unittest.TestCase):
         """Test `output` rounding based on user preferences"""
         self.load_average_mock.value = (0.33333, 1.25, 2.0)
 
-        with self.subTest('No decimal places'):
+        with self.subTest("No decimal places"):
             self.load_average_mock.options = {
                 "decimal_places": 0,
                 "warning_threshold": 5,
@@ -51,7 +52,7 @@ class TestLoadAverageEntry(unittest.TestCase):
                 f"{Colors.GREEN_NORMAL}2.0{Colors.CLEAR}",
             )
 
-        with self.subTest('1 decimal place'):
+        with self.subTest("1 decimal place"):
             self.load_average_mock.options = {
                 "decimal_places": 1,
                 "warning_threshold": 5,
@@ -65,7 +66,7 @@ class TestLoadAverageEntry(unittest.TestCase):
                 f"{Colors.GREEN_NORMAL}2.0{Colors.CLEAR}",
             )
 
-        with self.subTest('2 decimal places'):
+        with self.subTest("2 decimal places"):
             self.load_average_mock.options = {
                 "decimal_places": 2,
                 "warning_threshold": 5,

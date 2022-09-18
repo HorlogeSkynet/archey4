@@ -11,6 +11,7 @@ from archey.logos import get_logo_width, lazy_load_logo_module
 
 class TestLogos(unittest.TestCase):
     """Simple tests checking logos consistency and utility function logic"""
+
     def test_distribution_logos_consistency(self):
         """
         Verify each distribution identifier got a logo module.
@@ -28,19 +29,19 @@ class TestLogos(unittest.TestCase):
             self.assertIn(
                 logo_module_info.name,
                 distributions_identifiers,
-                msg=f'No distribution identifier for [{logo_module_info.name}]'
+                msg=f"No distribution identifier for [{logo_module_info.name}]",
             )
 
             logo_module = lazy_load_logo_module(logo_module_info.name)
 
             # Attributes checks.
             self.assertTrue(
-                getattr(logo_module, 'LOGO', []),
-                msg=f'[{logo_module_info.name}] logo module missing `LOGO` attribute'
+                getattr(logo_module, "LOGO", []),
+                msg=f"[{logo_module_info.name}] logo module missing `LOGO` attribute",
             )
             self.assertTrue(
-                getattr(logo_module, 'COLORS', []),
-                msg=f'[{logo_module_info.name}] logo module missing `COLORS` attribute'
+                getattr(logo_module, "COLORS", []),
+                msg=f"[{logo_module_info.name}] logo module missing `COLORS` attribute",
             )
 
             # Compute once and for all the number of defined colors for this logo.
@@ -62,13 +63,13 @@ class TestLogos(unittest.TestCase):
                     msg=(
                         f"[{logo_module_info.name}] line index {j}, "
                         f"got an unexpected width {line_width} (expected {logo_width})"
-                    )
+                    ),
                 )
 
                 # Non-empty line check.
                 self.assertTrue(
-                    Colors.remove_colors(line.format(c=[''] * nb_colors)).strip(),
-                    msg=f'[{logo_module_info.name}] line index {j}, got an useless empty line'
+                    Colors.remove_colors(line.format(c=[""] * nb_colors)).strip(),
+                    msg=f"[{logo_module_info.name}] line index {j}, got an useless empty line",
                 )
 
         # Finally, check each distributions identifier got a logo!
@@ -79,25 +80,19 @@ class TestLogos(unittest.TestCase):
             msg=(
                 f"[{logo_module_info.name}] Expected {len(distributions_identifiers)} "
                 f"logo modules, got {i}"
-            )
+            ),
         )
 
     def test_get_logo_width(self):
         """Test `logos.get_logo_width` behavior"""
-        self.assertEqual(
-            get_logo_width(['{c[0]}   {c[1]}'], 2),
-            3
-        )
-        self.assertEqual(
-            get_logo_width(['{c[0]} {{ {c[1]}']),
-            3
-        )
+        self.assertEqual(get_logo_width(["{c[0]}   {c[1]}"], 2), 3)
+        self.assertEqual(get_logo_width(["{c[0]} {{ {c[1]}"]), 3)
         self.assertEqual(
             get_logo_width(
                 [
-                    '{c[0]}   {c[1]}>>>>{c[2]}<<<<{c[3]}',
-                    '{c[0]}   {c[1]}>>>>{c[2]}<<<<<{c[3]}'  # Ignored from computation...
+                    "{c[0]}   {c[1]}>>>>{c[2]}<<<<{c[3]}",
+                    "{c[0]}   {c[1]}>>>>{c[2]}<<<<<{c[3]}",  # Ignored from computation...
                 ]
             ),
-            11
+            11,
         )

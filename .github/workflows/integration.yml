@@ -99,7 +99,7 @@ jobs:
       - name: Install lint tools and project (for its dependencies)
         run: |
           python -m pip install --upgrade pip
-          pip install pylint pylint-secure-coding-standard mypy
+          pip install pylint pylint-secure-coding-standard mypy black isort
           pip install .
 
       - name: Lint sources against Pylint
@@ -107,6 +107,12 @@ jobs:
 
       - name: Lint sources against Mypy
         run: mypy archey/
+
+      - name: Run isort
+        run: isort --check --diff archey/
+
+      - name: Run Black
+        run: black --check --diff archey/
 
   shell:
     name: Lint packaging shell scripts

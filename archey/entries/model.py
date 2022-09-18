@@ -3,8 +3,7 @@
 import os
 import platform
 import re
-
-from subprocess import CalledProcessError, DEVNULL, check_output
+from subprocess import DEVNULL, CalledProcessError, check_output
 from typing import Optional
 
 from archey.distributions import Distributions
@@ -47,8 +46,7 @@ class Model(Entry):
         """
         try:
             return check_output(
-                'systemd-detect-virt',
-                stderr=DEVNULL, universal_newlines=True
+                "systemd-detect-virt", stderr=DEVNULL, universal_newlines=True
             ).rstrip()
         except CalledProcessError:
             # Not a virtual environment.
@@ -56,23 +54,27 @@ class Model(Entry):
         except FileNotFoundError:
             # If not available, let's query `virt-what` (privileges usually required).
             try:
-                return ", ".join(
-                    check_output(
-                        "virt-what",
-                        stderr=DEVNULL,
-                        universal_newlines=True,
-                    ).splitlines()
-                ) or None
+                return (
+                    ", ".join(
+                        check_output(
+                            "virt-what",
+                            stderr=DEVNULL,
+                            universal_newlines=True,
+                        ).splitlines()
+                    )
+                    or None
+                )
             except (OSError, CalledProcessError):
                 return None
 
     @classmethod
     def _fetch_dmi_info(cls) -> Optional[str]:
         """Tries to open DMI Linux files, looking for hardware information"""
+
         def _read_dmi_file(file_name: str) -> str:
             try:
                 with open(
-                    os.path.join(cls.LINUX_DMI_SYS_PATH, file_name), encoding='UTF-8'
+                    os.path.join(cls.LINUX_DMI_SYS_PATH, file_name), encoding="UTF-8"
                 ) as f_dmi_file:
                     dmi_info = f_dmi_file.read().rstrip()
             except OSError:
@@ -114,26 +116,24 @@ class Model(Entry):
     def _fetch_sysctl_hw() -> Optional[str]:
         # `hw.model` might be populated with CPU info on BSD platforms.
         # Let's only query this OID on Darwin (macOS).
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             try:
                 model = check_output(
-                    ['sysctl', '-n', 'hw.model'],
-                    stderr=DEVNULL, universal_newlines=True
+                    ["sysctl", "-n", "hw.model"], stderr=DEVNULL, universal_newlines=True
                 )
             except FileNotFoundError:
                 return None
             except CalledProcessError:
                 pass
             else:
-                return model.rstrip().replace(',', '.')
+                return model.rstrip().replace(",", ".")
 
         # Any other BSD (or derivatives).
         hw_oids = []
-        for hw_oid in ('vendor', 'product', 'version'):
+        for hw_oid in ("vendor", "product", "version"):
             try:
                 sysctl_output = check_output(
-                    ['sysctl', '-n', f'hw.{hw_oid}'],
-                    stderr=DEVNULL, universal_newlines=True
+                    ["sysctl", "-n", f"hw.{hw_oid}"], stderr=DEVNULL, universal_newlines=True
                 )
             except FileNotFoundError:
                 return None
@@ -141,26 +141,26 @@ class Model(Entry):
                 pass
             else:
                 sysctl_output = sysctl_output.rstrip()
-                if sysctl_output != 'None':
+                if sysctl_output != "None":
                     hw_oids.append(sysctl_output)
 
-        return ' '.join(hw_oids) or None
+        return " ".join(hw_oids) or None
 
     @staticmethod
     def _fetch_raspberry_pi_revision() -> Optional[str]:
         """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
         try:
-            with open('/proc/cpuinfo', encoding='ASCII') as f_cpu_info:
+            with open("/proc/cpuinfo", encoding="ASCII") as f_cpu_info:
                 cpu_info = f_cpu_info.read()
         except OSError:
             return None
 
         # If the output contains 'Hardware' and 'Revision'...
-        hardware = re.search(r'(?<=Hardware\t: ).*', cpu_info)
-        revision = re.search(r'(?<=Revision\t: ).*', cpu_info)
+        hardware = re.search(r"(?<=Hardware\t: ).*", cpu_info)
+        revision = re.search(r"(?<=Revision\t: ).*", cpu_info)
         if hardware and revision:
             # ... let's set a pretty info string with these data
-            return f'Raspberry Pi {hardware.group(0)} (Rev. {revision.group(0)})'
+            return f"Raspberry Pi {hardware.group(0)} (Rev. {revision.group(0)})"
 
         return None
 
@@ -168,32 +168,22 @@ class Model(Entry):
     def _fetch_android_device_model() -> Optional[str]:
         """Tries to retrieve `brand` and `model` device properties on Android platforms"""
         try:
-            brand = check_output(
-                ['getprop', 'ro.product.brand'],
-                universal_newlines=True
-            ).rstrip()
-            model = check_output(
-                ['getprop', 'ro.product.model'],
-                universal_newlines=True
-            ).rstrip()
+            brand = check_output(["getprop", "ro.product.brand"], universal_newlines=True).rstrip()
+            model = check_output(["getprop", "ro.product.model"], universal_newlines=True).rstrip()
         except FileNotFoundError:
             return None
 
-        return f'{brand} ({model})'
+        return f"{brand} ({model})"
 
     @staticmethod
     def _fetch_freebsd_model() -> Optional[str]:
         """Retrieve `vendor` and `version` properties on FreeBSD"""
         try:
-            vendor = check_output(
-                ['kenv', 'smbios.bios.vendor'],
-                universal_newlines=True
-            ).rstrip()
+            vendor = check_output(["kenv", "smbios.bios.vendor"], universal_newlines=True).rstrip()
             product = check_output(
-                ['kenv', 'smbios.system.version'],
-                universal_newlines=True
+                ["kenv", "smbios.system.version"], universal_newlines=True
             ).rstrip()
         except (FileNotFoundError, CalledProcessError):
             return None
 
-        return f'{vendor} ({product})'
+        return f"{vendor} ({product})"

@@ -2,7 +2,6 @@
 
 from archey.colors import Colors
 
-
 COLORS = [Colors.RED_BRIGHT, Colors.WHITE_BRIGHT]
 
 # pylint: disable=line-too-long
@@ -23,5 +22,5 @@ LOGO = [
     """{c[0]}    'QOOOOOOOO{c[1]}'"YYYYK{c[0]}O{c[1]}aMMM:{c[0]}OOOOP'   """,
     """{c[0]}      'QOOOOOOOOOOOOOO{c[1]}`YY'{c[0]}OOOP'     """,
     """{c[0]}        ':QOOOOOOOOOOOOOOOQ:'       """,
-    """{c[0]}            '"":YOOOY:""'           """
+    """{c[0]}            '"":YOOOY:""'           """,
 ]

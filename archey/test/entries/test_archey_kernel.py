@@ -13,26 +13,21 @@ class TestKernelEntry(unittest.TestCase):
     Here, we mock the `platform` module calls and check afterwards
       that the output is correct.
     """
+
     @patch(
-        'archey.entries.kernel.platform.system',
-        return_value='Linux'
+        "archey.entries.kernel.platform.system",
+        return_value="Linux",
     )
     @patch(
-        'archey.entries.kernel.platform.release',
-        return_value='X.Y.Z-R-arch'
+        "archey.entries.kernel.platform.release",
+        return_value="X.Y.Z-R-arch",
     )
     def test_fetch_kernel_release(self, _, __):
         """Verify `platform` module mocking"""
-        self.assertEqual(
-            Kernel().value['name'],
-            'Linux'
-        )
-        self.assertEqual(
-            Kernel().value['release'],
-            'X.Y.Z-R-arch'
-        )
+        self.assertEqual(Kernel().value["name"], "Linux")
+        self.assertEqual(Kernel().value["release"], "X.Y.Z-R-arch")
 
-    @patch('archey.entries.kernel.urlopen')
+    @patch("archey.entries.kernel.urlopen")
     def test_fetch_latest_linux_release(self, urlopen_mock):
         """Check proper JSON decoding and value gathering"""
         urlopen_mock.return_value.__enter__.return_value.read.return_value = b"""\
@@ -80,62 +75,58 @@ class TestKernelEntry(unittest.TestCase):
     ]
 }"""
         self.assertEqual(
-            Kernel._fetch_latest_linux_release(),  # pylint: disable=protected-access
-            '5.10.1'
+            Kernel._fetch_latest_linux_release(), "5.10.1"  # pylint: disable=protected-access
         )
 
     @patch(
-        'archey.entries.kernel.platform.system',
-        return_value='Java'
+        "archey.entries.kernel.platform.system",
+        return_value="Java",
     )
     @patch(
-        'archey.entries.kernel.platform.release',
-        return_value='X.Y.Z-R-arch'
+        "archey.entries.kernel.platform.release",
+        return_value="X.Y.Z-R-arch",
     )
     @patch(
-        'archey.entries.kernel.Environment',
-        Mock(DO_NOT_TRACK=False)
+        "archey.entries.kernel.Environment",
+        Mock(DO_NOT_TRACK=False),
     )
     def test_non_linux_platform(self, _, __):
         """Check behavior on non-Linux platforms"""
-        kernel = Kernel(options={'check_version': True})
+        kernel = Kernel(options={"check_version": True})
 
-        self.assertIsNone(kernel.value['latest'])
-        self.assertIsNone(kernel.value['is_outdated'])
+        self.assertIsNone(kernel.value["latest"])
+        self.assertIsNone(kernel.value["is_outdated"])
 
     @patch(
-        'archey.entries.kernel.platform.release',
-        return_value='X.Y.Z-R-arch'
+        "archey.entries.kernel.platform.release",
+        return_value="X.Y.Z-R-arch",
     )
     @patch(
-        'archey.entries.kernel.Environment',
-        Mock(DO_NOT_TRACK=True)
+        "archey.entries.kernel.Environment",
+        Mock(DO_NOT_TRACK=True),
     )
     def test_do_not_track(self, _):
         """Check `DO_NOT_TRACK` is correctly honored"""
-        kernel = Kernel(options={'check_version': True})
+        kernel = Kernel(options={"check_version": True})
 
-        self.assertIsNone(kernel.value['latest'])
-        self.assertIsNone(kernel.value['is_outdated'])
+        self.assertIsNone(kernel.value["latest"])
+        self.assertIsNone(kernel.value["is_outdated"])
 
     @patch(
-        'archey.entries.kernel.platform.release',
-        return_value='1.2.3-4-arch'
+        "archey.entries.kernel.platform.release",
+        return_value="1.2.3-4-arch",
     )
     @patch(
-        'archey.entries.kernel.Kernel._fetch_latest_linux_release',
-        side_effect=[
-            '1.2.3',
-            '1.3.2'
-        ]
+        "archey.entries.kernel.Kernel._fetch_latest_linux_release",
+        side_effect=["1.2.3", "1.3.2"],
     )
     @patch(
-        'archey.entries.kernel.platform.system',
-        return_value='Linux'
+        "archey.entries.kernel.platform.system",
+        return_value="Linux",
     )
     @patch(
-        'archey.entries.kernel.Environment',
-        Mock(DO_NOT_TRACK=False)
+        "archey.entries.kernel.Environment",
+        Mock(DO_NOT_TRACK=False),
     )
     @HelperMethods.patch_clean_configuration
     def test_kernel_comparison(self, _, __, ___):
@@ -145,33 +136,30 @@ class TestKernelEntry(unittest.TestCase):
         # Only current release (`check_version` disabled by default).
         kernel = Kernel()
         kernel.output(output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            'Linux 1.2.3-4-arch'
-        )
+        self.assertEqual(output_mock.append.call_args[0][1], "Linux 1.2.3-4-arch")
 
         # Current = latest (up to date !).
-        kernel = Kernel(options={'check_version': True})
+        kernel = Kernel(options={"check_version": True})
         kernel.output(output_mock)
 
-        self.assertTrue(kernel.value['latest'])
-        self.assertIs(kernel.value['is_outdated'], False)
+        self.assertTrue(kernel.value["latest"])
+        self.assertIs(kernel.value["is_outdated"], False)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            f"Linux 1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})"
+            f"Linux 1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})",
         )
 
         # Current < latest (outdated).
-        kernel = Kernel(options={'check_version': True})
+        kernel = Kernel(options={"check_version": True})
         kernel.output(output_mock)
 
-        self.assertTrue(kernel.value['latest'])
-        self.assertIs(kernel.value['is_outdated'], True)
+        self.assertTrue(kernel.value["latest"])
+        self.assertIs(kernel.value["is_outdated"], True)
         self.assertEqual(
             output_mock.append.call_args[0][1],
-            f"Linux 1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})"
+            f"Linux 1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})",
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

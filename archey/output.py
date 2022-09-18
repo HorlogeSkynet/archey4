@@ -5,17 +5,16 @@ It supports entries lazy-insertion, logo detection, and final printing.
 
 import os
 import sys
-
 from shutil import get_terminal_size
 from textwrap import TextWrapper
 from typing import Type, cast
 
 from archey.api import API
 from archey.colors import ANSI_ECMA_REGEXP, Colors
-from archey.exceptions import ArcheyException
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
+from archey.exceptions import ArcheyException
 from archey.logos import get_logo_width, lazy_load_logo_module
 
 
@@ -25,16 +24,16 @@ class Output:
     It also handles the logo choice based on some system detections.
     """
 
-    __LOGO_RIGHT_PADDING = '   '
+    __LOGO_RIGHT_PADDING = "   "
 
     def __init__(self, **kwargs):
         # Fetches passed arguments.
-        self._format_to_json = kwargs.get('format_to_json')
-        preferred_logo_style = (kwargs.get('preferred_logo_style') or '').upper()
+        self._format_to_json = kwargs.get("format_to_json")
+        preferred_logo_style = (kwargs.get("preferred_logo_style") or "").upper()
 
         try:
             # If set, force the distribution to `preferred_distribution` argument.
-            self._distribution = Distributions(kwargs.get('preferred_distribution'))
+            self._distribution = Distributions(kwargs.get("preferred_distribution"))
         except ValueError:
             # If not (or unknown), run distribution detection.
             self._distribution = Distributions.get_local()
@@ -94,11 +93,7 @@ class Output:
         Finally outputs entries data to JSON format.
         See `archey.api` for further documentation.
         """
-        print(
-            API(self._entries).json_serialization(
-                indent=(self._format_to_json - 1)
-            )
-        )
+        print(API(self._entries).json_serialization(indent=(self._format_to_json - 1)))
 
     def _output_text(self) -> None:
         """
@@ -111,10 +106,10 @@ class Output:
         # Let's center the entries and the logo (handles odd numbers)
         height_diff = len(self._logo) - len(self._results)
         if height_diff >= 0:
-            self._results[0:0] = [''] * (height_diff // 2)
-            self._results.extend([''] * (len(self._logo) - len(self._results)))
+            self._results[0:0] = [""] * (height_diff // 2)
+            self._results.extend([""] * (len(self._logo) - len(self._results)))
         else:
-            colored_empty_line = [str(self._colors[0]) + ' ' * logo_width]
+            colored_empty_line = [str(self._colors[0]) + " " * logo_width]
             self._logo[0:0] = colored_empty_line * (-height_diff // 2)
             self._logo.extend(colored_empty_line * (len(self._results) - len(self._logo)))
 
@@ -131,7 +126,7 @@ class Output:
             drop_whitespace=False,
             break_on_hyphens=False,
             max_lines=1,
-            placeholder='...'
+            placeholder="...",
         )
         placeholder_length = len(text_wrapper.placeholder)
 
@@ -148,25 +143,31 @@ class Output:
             for color_match in ANSI_ECMA_REGEXP.finditer(entry):
                 match_index = color_match.start()
                 if match_index <= len(wrapped_entry) - placeholder_offset:
-                    wrapped_entry = (wrapped_entry[:match_index]
-                                     + color_match.group()
-                                     + wrapped_entry[match_index:])
+                    wrapped_entry = (
+                        wrapped_entry[:match_index]
+                        + color_match.group()
+                        + wrapped_entry[match_index:]
+                    )
 
             # Add a color reset character before the placeholder (if any).
             # Rationale :
             # We cannot set `Colors.CLEAR` in the placeholder as it would skew its internals.
             if placeholder_offset:
-                wrapped_entry = (wrapped_entry[:-placeholder_length]
-                                 + str(Colors.CLEAR)
-                                 + wrapped_entry[-placeholder_length:])
+                wrapped_entry = (
+                    wrapped_entry[:-placeholder_length]
+                    + str(Colors.CLEAR)
+                    + wrapped_entry[-placeholder_length:]
+                )
 
             self._results[i] = wrapped_entry
 
         # Merge entry results to the distribution logo.
-        logo_with_entries = os.linesep.join([
-            f"{logo_part}{self.__LOGO_RIGHT_PADDING}{entry_part}"
-            for logo_part, entry_part in zip(self._logo, self._results)
-        ])
+        logo_with_entries = os.linesep.join(
+            [
+                f"{logo_part}{self.__LOGO_RIGHT_PADDING}{entry_part}"
+                for logo_part, entry_part in zip(self._logo, self._results)
+            ]
+        )
 
         try:
             print(logo_with_entries.format(c=self._colors) + str(Colors.CLEAR))
@@ -175,4 +176,5 @@ class Output:
                 """\
 Your locale or TTY does not seem to support UTF-8 encoding.
 Please disable Unicode within your configuration file.\
-""") from unicode_error
+"""
+            ) from unicode_error

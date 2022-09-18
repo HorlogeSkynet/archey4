@@ -2,7 +2,6 @@
 
 from archey.colors import Colors
 
-
 COLORS = [Colors.MAGENTA_BRIGHT, Colors.WHITE_BRIGHT]
 
 LOGO = [
@@ -23,5 +22,5 @@ LOGO = [
     """{c[0]} yM{c[1]}MNNNNNNNmmmmmNNMmhs+/{c[0]}-`          """,
     """{c[0]} /h{c[1]}MMNNNNNNNNMNdhs++/{c[0]}-`             """,
     """{c[0]} `/{c[1]}ohdmmddhys+++/:{c[0]}.`                """,
-    """{c[0]} `-//////:--.                       """
+    """{c[0]} `-//////:--.                       """,
 ]

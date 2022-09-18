@@ -1,17 +1,15 @@
 """Colors enumeration definition"""
 
+import re
+import sys
 from bisect import bisect
 from enum import Enum
 from functools import lru_cache
 
-import re
-import sys
-
 from archey.environment import Environment
 
-
 # REGEXP compiled pattern matching ANSI/ECMA-48 color escape codes.
-ANSI_ECMA_REGEXP = re.compile(r'\x1b\[\d+(?:(?:;\d+)+)?m')
+ANSI_ECMA_REGEXP = re.compile(r"\x1b\[\d+(?:(?:;\d+)+)?m")
 
 
 class Colors(Enum):
@@ -22,6 +20,7 @@ class Colors(Enum):
     See <https://web.archive.org/web/20200627145120/http://www.termsys.demon.co.uk/vtansi.htm>
       or <https://en.wikipedia.org/wiki/ANSI_escape_code>.
     """
+
     CLEAR = (0,)
     RED_NORMAL = (0, 31)
     RED_BRIGHT = (1, 31)
@@ -39,9 +38,7 @@ class Colors(Enum):
     WHITE_BRIGHT = (1, 37)
 
     def __str__(self):
-        return self.escape_code_from_attrs(
-            ';'.join(map(str, self.value))
-        )
+        return self.escape_code_from_attrs(";".join(map(str, self.value)))
 
     @staticmethod
     @lru_cache(maxsize=None)  # Python < 3.9, `functools.cache` is not yet available.
@@ -56,9 +53,7 @@ class Colors(Enum):
         if Environment.NO_COLOR:
             return False
 
-        return (
-            sys.stdout.isatty() and Environment.CLICOLOR
-        )
+        return sys.stdout.isatty() and Environment.CLICOLOR
 
     @classmethod
     def escape_code_from_attrs(cls, display_attrs: str) -> str:
@@ -66,12 +61,12 @@ class Colors(Enum):
         Build and return an ANSI/ECMA-48 escape code string from passed display attributes.
         """
         if not cls.should_color_output():
-            return ''
+            return ""
 
-        return f'\x1b[{display_attrs}m'
+        return f"\x1b[{display_attrs}m"
 
     @staticmethod
-    def get_level_color(value: float, yellow_bpt: float, red_bpt: float) -> 'Colors':
+    def get_level_color(value: float, yellow_bpt: float, red_bpt: float) -> "Colors":
         """Returns the best level color according to `value` compared to `{yellow,red}_bpt`"""
         level_colors = (Colors.GREEN_NORMAL, Colors.YELLOW_NORMAL, Colors.RED_NORMAL)
 
@@ -80,4 +75,4 @@ class Colors(Enum):
     @staticmethod
     def remove_colors(string: str) -> str:
         """Simple DRY method to remove any ANSI/ECMA-48 color escape code from passed `string`"""
-        return ANSI_ECMA_REGEXP.sub('', string)
+        return ANSI_ECMA_REGEXP.sub("", string)

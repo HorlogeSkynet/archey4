@@ -1,7 +1,7 @@
 """Test module for Archey's RAM usage detection module"""
 
 import unittest
-from unittest.mock import mock_open, patch, MagicMock
+from unittest.mock import MagicMock, mock_open, patch
 
 from archey.colors import Colors
 from archey.configuration import DEFAULT_CONFIG
@@ -14,22 +14,24 @@ class TestRAMEntry(unittest.TestCase):
     Here, we mock the `check_output` call to `free` using all three levels of available ram.
     In the last test, mock with `/proc/meminfo` file opening during the manual way.
     """
+
     @patch(
-        'archey.entries.ram.check_output',
+        "archey.entries.ram.check_output",
         return_value="""\
               total        used        free      shared  buff/cache   available
 Mem:          15658        2043       10232          12        3382       13268
 Swap:          4095          39        4056
-""")
+""",
+    )
     def test_run_free_dash_m(self, _):
         """Test `_run_free_dash_m` output parsing"""
         self.assertTupleEqual(
             RAM._run_free_dash_m(),  # pylint: disable=protected-access
-            (2043.0, 15658.0)
+            (2043.0, 15658.0),
         )
 
     @patch(
-        'archey.entries.ram.open',
+        "archey.entries.ram.open",
         mock_open(
             read_data="""\
 MemTotal:        7581000 kB
@@ -56,18 +58,20 @@ Shmem:            451056 kB
 Slab:             314100 kB
 SReclaimable:     200792 kB
 SUnreclaim:       113308 kB
-"""))  # Some lines have been ignored as they are useless for computations.
+"""
+        ),
+    )  # Some lines have been ignored as they are useless for computations.
     def test_read_proc_meminfo(self):
         """Test `_read_proc_meminfo` content parsing"""
         self.assertTupleEqual(
             RAM._read_proc_meminfo(),  # pylint: disable=protected-access
-            (3739.296875, 7403.3203125)
+            (3739.296875, 7403.3203125),
         )
 
     @patch(
-        'archey.entries.ram.check_output',
+        "archey.entries.ram.check_output",
         side_effect=[
-            '8589934592\n',
+            "8589934592\n",
             """\
 Mach Virtual Memory Statistics: (page size of 4096 bytes)
 Pages free:                               55114.
@@ -92,29 +96,32 @@ Pageins:                                7586286.
 Pageouts:                                388644.
 Swapins:                                2879182.
 Swapouts:                               3456015.
-"""])
+""",
+        ],
+    )
     def test_run_sysctl_and_vmstat(self, _):
         """Check `sysctl` and `vm_stat` parsing logic"""
         self.assertTupleEqual(
             RAM._run_sysctl_and_vmstat(),  # pylint: disable=protected-access
-            (1685.58984375, 8192.0)
+            (1685.58984375, 8192.0),
         )
 
     @patch(
-        'archey.entries.ram.check_output',
+        "archey.entries.ram.check_output",
         side_effect=[
             """\
 3992309
 3050620
 297854
-"""])
+"""
+        ],
+    )
     def test_run_sysctl_mem(self, _):
         """Test _run_sysctl_mem()"""
         self.assertTupleEqual(
             RAM._run_sysctl_mem(),  # pylint: disable=protected-access
-            (2514.98046875, 15594.95703125)
+            (2514.98046875, 15594.95703125),
         )
-
 
     @HelperMethods.patch_clean_configuration
     def test_various_output_configuration(self):
@@ -122,51 +129,51 @@ Swapouts:                               3456015.
         ram_instance_mock = HelperMethods.entry_mock(RAM)
         output_mock = MagicMock()
 
-        with self.subTest('Output in case of non-detection.'):
+        with self.subTest("Output in case of non-detection."):
             RAM.output(ram_instance_mock, output_mock)
             self.assertEqual(
                 output_mock.append.call_args[0][1],
-                DEFAULT_CONFIG['default_strings']['not_detected']
+                DEFAULT_CONFIG["default_strings"]["not_detected"],
             )
 
         output_mock.reset_mock()
 
         with self.subTest('"Normal" output (green).'):
             ram_instance_mock.value = {
-                'used': 2043.0,
-                'total': 15658.0,
-                'unit': 'MiB'
+                "used": 2043.0,
+                "total": 15658.0,
+                "unit": "MiB",
             }
             ram_instance_mock.options = {
-                'warning_use_percent': 33.3,
-                'danger_use_percent': 66.7
+                "warning_use_percent": 33.3,
+                "danger_use_percent": 66.7,
             }
 
             RAM.output(ram_instance_mock, output_mock)
             self.assertEqual(
                 output_mock.append.call_args[0][1],
-                f'{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB'
+                f"{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB",
             )
 
         output_mock.reset_mock()
 
         with self.subTest('"Danger" output (red).'):
             ram_instance_mock.value = {
-                'used': 7830.0,
-                'total': 15658.0,
-                'unit': 'MiB'
+                "used": 7830.0,
+                "total": 15658.0,
+                "unit": "MiB",
             }
             ram_instance_mock.options = {
-                'warning_use_percent': 25,
-                'danger_use_percent': 50
+                "warning_use_percent": 25,
+                "danger_use_percent": 50,
             }
 
             RAM.output(ram_instance_mock, output_mock)
             self.assertEqual(
                 output_mock.append.call_args[0][1],
-                f'{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB'
+                f"{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB",
             )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

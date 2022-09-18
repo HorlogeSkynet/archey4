@@ -3,8 +3,8 @@
 import os
 from contextlib import suppress
 
-from archey.entry import Entry
 from archey.colors import Colors
+from archey.entry import Entry
 
 
 class LoadAverage(Entry):

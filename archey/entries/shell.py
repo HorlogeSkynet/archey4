@@ -12,6 +12,7 @@ class Shell(Entry):
     Simple shell path detection based either on the `SHELL` environment variable or
     the local administrative database.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -26,10 +27,11 @@ class Shell(Entry):
             return None
 
         try:
-            shell = check_output(
-                ["getent", "passwd", str(user_id)],
-                universal_newlines=True
-            ).rstrip().rsplit(":", maxsplit=1)[-1]
+            shell = (
+                check_output(["getent", "passwd", str(user_id)], universal_newlines=True)
+                .rstrip()
+                .rsplit(":", maxsplit=1)[-1]
+            )
         except CalledProcessError:
             # Ghost user...
             return None

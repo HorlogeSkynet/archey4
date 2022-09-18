@@ -1,20 +1,18 @@
 """Uptime detection class"""
 
 import re
-
+import time
 from contextlib import suppress
+from datetime import timedelta
 from subprocess import check_output
 
-import time
-
-from datetime import timedelta
-
-from archey.exceptions import ArcheyException
 from archey.entry import Entry
+from archey.exceptions import ArcheyException
 
 
 class Uptime(Entry):
     """Returns a pretty-formatted string representing the host uptime"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -24,12 +22,7 @@ class Uptime(Entry):
         hours, uptime_seconds = divmod(uptime_seconds, 3600)
         minutes, seconds = divmod(uptime_seconds, 60)
 
-        self.value = {
-            'days': days,
-            'hours': hours,
-            'minutes': minutes,
-            'seconds': seconds
-        }
+        self.value = {"days": days, "hours": hours, "minutes": minutes, "seconds": seconds}
 
     def _get_uptime_delta(self) -> timedelta:
         """
@@ -59,20 +52,16 @@ class Uptime(Entry):
     @staticmethod
     def _proc_file_uptime() -> timedelta:
         """Tries to get uptime using the `/proc/uptime` file"""
-        with open('/proc/uptime', encoding='ASCII') as f_uptime:
-            return timedelta(
-                seconds=float(f_uptime.read().split()[0])
-            )
+        with open("/proc/uptime", encoding="ASCII") as f_uptime:
+            return timedelta(seconds=float(f_uptime.read().split()[0]))
 
     @staticmethod
     def _clock_uptime() -> timedelta:
         """Tries to get uptime using the clocks from the Python `time` module"""
         # Try: Linux and BSD uptime clocks.
-        for clock in ('CLOCK_BOOTTIME', 'CLOCK_UPTIME'):
+        for clock in ("CLOCK_BOOTTIME", "CLOCK_UPTIME"):
             with suppress(AttributeError):
-                return timedelta(
-                    seconds=time.clock_gettime(getattr(time, clock))
-                )
+                return timedelta(seconds=time.clock_gettime(getattr(time, clock)))
 
         # Probably Python <3.7, or just not one of the above OSes
         raise RuntimeError
@@ -81,7 +70,7 @@ class Uptime(Entry):
     def _parse_uptime_cmd() -> timedelta:
         """Tries to get uptime by parsing the `uptime` command"""
         try:
-            uptime_output = check_output('uptime', env={'LANG': 'C'})
+            uptime_output = check_output("uptime", env={"LANG": "C"})
         except FileNotFoundError as error:
             raise ArcheyException("Couldn't find `uptime` command on this system.") from error
 
@@ -137,7 +126,7 @@ class Uptime(Entry):
             user               #   and the text 'user' (to anchor the end of the expression).
             """,
             uptime_output,
-            re.VERBOSE
+            re.VERBOSE,
         )
         if not uptime_match:
             raise ArcheyException("Couldn't parse `uptime` output, please open an issue.")
@@ -146,44 +135,43 @@ class Uptime(Entry):
         # `timedelta` directly accepts them as arguments.
         uptime_args = uptime_match.groupdict()
         return timedelta(
-            days=int(uptime_args.get('days') or 0),
-            hours=int(uptime_args.get('hours') or 0),
-            minutes=int(uptime_args.get('minutes') or 0),
-            seconds=int(uptime_args.get('seconds') or 0)
+            days=int(uptime_args.get("days") or 0),
+            hours=int(uptime_args.get("hours") or 0),
+            minutes=int(uptime_args.get("minutes") or 0),
+            seconds=int(uptime_args.get("seconds") or 0),
         )
-
 
     def output(self, output) -> None:
         """Adds the entry to `output` after pretty-formatting the uptime to a string."""
-        days = self.value['days']
-        hours = self.value['hours']
-        minutes = self.value['minutes']
+        days = self.value["days"]
+        hours = self.value["hours"]
+        minutes = self.value["minutes"]
 
-        uptime = ''
+        uptime = ""
         if days:
-            uptime += str(days) + ' day'
+            uptime += str(days) + " day"
             if days > 1:
-                uptime += 's'
+                uptime += "s"
 
             if hours or minutes:
                 if bool(hours) != bool(minutes):
-                    uptime += ' and '
+                    uptime += " and "
                 else:
-                    uptime += ', '
+                    uptime += ", "
 
         if hours:
-            uptime += str(hours) + ' hour'
+            uptime += str(hours) + " hour"
             if hours > 1:
-                uptime += 's'
+                uptime += "s"
 
             if minutes:
-                uptime += ' and '
+                uptime += " and "
 
         if minutes:
-            uptime += str(minutes) + ' minute'
+            uptime += str(minutes) + " minute"
             if minutes > 1:
-                uptime += 's'
+                uptime += "s"
         elif not days and not hours:
-            uptime = '< 1 minute'
+            uptime = "< 1 minute"
 
         output.append(self.name, uptime)

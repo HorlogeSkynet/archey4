@@ -1,7 +1,7 @@
 """Public IP address detection class"""
 
 from socket import timeout as SocketTimeoutError
-from subprocess import check_output, DEVNULL, TimeoutExpired, CalledProcessError
+from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_output
 from typing import Optional
 from urllib.error import URLError
 from urllib.request import urlopen
@@ -12,7 +12,8 @@ from archey.environment import Environment
 
 class WanIP(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
-    _PRETTY_NAME = 'WAN IP'
+
+    _PRETTY_NAME = "WAN IP"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,28 +31,27 @@ class WanIP(Entry):
         if ipv6_addr:
             self.value.append(ipv6_addr)
 
-
     def _retrieve_ip_address(self, ip_version: int) -> Optional[str]:
         """
         Best effort to retrieve public IP address based on corresponding options.
         We are trying special DNS resolutions first for performance and (system) caching purposes.
         """
-        options = self.options.get(f'ipv{ip_version}', {})
+        options = self.options.get(f"ipv{ip_version}", {})
 
         # Is retrieval enabled for this IP version ?
         if not options and not isinstance(options, dict):
             return None
 
         # Is retrieval via DNS query enabled ?
-        dns_query = options.get('dns_query', 'myip.opendns.com')
+        dns_query = options.get("dns_query", "myip.opendns.com")
         if dns_query:
             # Run the DNS query.
             try:
                 ip_address = self._run_dns_query(
                     dns_query,
-                    options.get('dns_resolver', 'resolver1.opendns.com'),
+                    options.get("dns_resolver", "resolver1.opendns.com"),
                     ip_version,
-                    options.get('dns_timeout', 1)
+                    options.get("dns_timeout", 1),
                 )
             except FileNotFoundError:
                 # DNS lookup tool does not seem to be available.
@@ -60,16 +60,12 @@ class WanIP(Entry):
                 return ip_address
 
         # Is retrieval via HTTP(S) request enabled ?
-        http_url = options.get('http_url', f'https://v{ip_version}.ident.me/')
+        http_url = options.get("http_url", f"https://v{ip_version}.ident.me/")
         if not http_url:
             return None
 
         # Run the HTTP(S) request.
-        return self._run_http_request(
-            http_url,
-            options.get('http_timeout', 1)
-        )
-
+        return self._run_http_request(http_url, options.get("http_timeout", 1))
 
     @staticmethod
     def _run_dns_query(query: str, resolver: str, ip_version: int, timeout: float) -> Optional[str]:
@@ -77,13 +73,16 @@ class WanIP(Entry):
         try:
             ip_address = check_output(
                 [
-                    'dig', '+short',
-                    ('-' + str(ip_version)),
-                    ('AAAA' if ip_version == 6 else 'A'),
-                    query, '@' + resolver
+                    "dig",
+                    "+short",
+                    ("-" + str(ip_version)),
+                    ("AAAA" if ip_version == 6 else "A"),
+                    query,
+                    "@" + resolver,
                 ],
                 timeout=timeout,
-                stderr=DEVNULL, universal_newlines=True
+                stderr=DEVNULL,
+                universal_newlines=True,
             ).rstrip()
         except (TimeoutExpired, CalledProcessError):
             return None
@@ -105,18 +104,18 @@ class WanIP(Entry):
         # If we found IP addresses, join them together nicely.
         # If not, fall-back on the "No address" string.
         if self.value:
-            if not self.options.get('one_line', True):
+            if not self.options.get("one_line", True):
                 # One-line output has been disabled, add one IP address per item.
                 for ip_address in self.value:
                     output.append(self.name, ip_address)
 
                 return
 
-            text_output = ', '.join(self.value)
+            text_output = ", ".join(self.value)
 
         elif not Environment.DO_NOT_TRACK:
-            text_output = self._default_strings.get('no_address')
+            text_output = self._default_strings.get("no_address")
         else:
-            text_output = self._default_strings.get('not_detected')
+            text_output = self._default_strings.get("not_detected")
 
         output.append(self.name, text_output)

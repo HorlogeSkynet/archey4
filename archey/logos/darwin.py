@@ -2,7 +2,6 @@
 
 from archey.colors import Colors
 
-
 COLORS = [Colors.WHITE_NORMAL]
 
 LOGO = [
@@ -22,7 +21,7 @@ LOGO = [
     """{c[0]}   'XMMMMMMMMMMMMMMMMMMMMMMMMK.""",
     """{c[0]}     kMMMMMMMMMMMMMMMMMMMMMMd  """,
     """{c[0]}      ;KMMMMMMMWXXWMMMMMMMk.   """,
-    """{c[0]}        "cooc*"    "*coo'"     """
+    """{c[0]}        "cooc*"    "*coo'"     """,
 ]
 
 # Alternative logo : Apple's "retro" logo.
@@ -34,7 +33,7 @@ COLORS_RETRO = [
     Colors.YELLOW_NORMAL,
     Colors.RED_BRIGHT,
     Colors.MAGENTA_BRIGHT,
-    Colors.BLUE_BRIGHT
+    Colors.BLUE_BRIGHT,
 ]
 
 LOGO_RETRO = [
@@ -50,5 +49,5 @@ LOGO_RETRO = [
     """{c[0]}   {c[5]}######################{c[0]}""",
     """{c[0]}    {c[5]}####################{c[0]} """,
     """{c[0]}      {c[6]}################{c[0]}   """,
-    """{c[0]}       {c[6]}####{c[0]}     {c[6]}#####{c[0]}    """
+    """{c[0]}       {c[6]}####{c[0]}     {c[6]}#####{c[0]}    """,
 ]

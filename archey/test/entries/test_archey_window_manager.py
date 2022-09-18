@@ -9,8 +9,8 @@ from archey.test.entries import HelperMethods
 
 
 @patch(
-    'archey.entries.desktop_environment.platform.system',
-    return_value='Linux'
+    "archey.entries.desktop_environment.platform.system",
+    return_value="Linux",
 )
 class TestWindowManagerEntry(unittest.TestCase):
     """
@@ -18,49 +18,51 @@ class TestWindowManagerEntry(unittest.TestCase):
       that the output is correct.
     We've to test the case where `wmctrl` is not installed too.
     """
+
     @patch(
-        'archey.entries.window_manager.check_output',
+        "archey.entries.window_manager.check_output",
         return_value="""\
 Name: WINDOW MANAGER
 Class: N/A
 PID: N/A
 Window manager's "showing the desktop" mode: OFF
-""")
+""",
+    )
     def test_wmctrl(self, _, __):
         """Test `wmctrl` output parsing"""
-        self.assertEqual(WindowManager().value, 'WINDOW MANAGER')
+        self.assertEqual(WindowManager().value, "WINDOW MANAGER")
 
     @patch(
-        'archey.entries.window_manager.check_output',
-        side_effect=FileNotFoundError()  # `wmctrl` call will fail
+        "archey.entries.window_manager.check_output",
+        side_effect=FileNotFoundError(),  # `wmctrl` call will fail
     )
     @patch(
-        'archey.entries.window_manager.Processes.list',
+        "archey.entries.window_manager.Processes.list",
         (  # Fake running processes list
-            'some',
-            'awesome',  # Match !
-            'programs',
-            'running',
-            'here'
-        )
+            "some",
+            "awesome",  # Match !
+            "programs",
+            "running",
+            "here",
+        ),
     )
     def test_no_wmctrl_match(self, _, __):
         """Test basic detection based on a (fake) processes list"""
-        self.assertEqual(WindowManager().value, 'Awesome')
+        self.assertEqual(WindowManager().value, "Awesome")
 
     @patch(
-        'archey.entries.window_manager.check_output',
-        side_effect=FileNotFoundError()  # `wmctrl` call will fail
+        "archey.entries.window_manager.check_output",
+        side_effect=FileNotFoundError(),  # `wmctrl` call will fail
     )
     @patch(
-        'archey.entries.window_manager.Processes.list',
+        "archey.entries.window_manager.Processes.list",
         (  # Fake running processes list
-            'some',
-            'weird',  # Mismatch !
-            'programs',
-            'running',
-            'here'
-        )
+            "some",
+            "weird",  # Mismatch !
+            "programs",
+            "running",
+            "here",
+        ),
     )
     @HelperMethods.patch_clean_configuration
     def test_no_wmctrl_mismatch(self, _, __):
@@ -72,10 +74,9 @@ Window manager's "showing the desktop" mode: OFF
 
         self.assertIsNone(window_manager.value)
         self.assertEqual(
-            output_mock.append.call_args[0][1],
-            DEFAULT_CONFIG['default_strings']['not_detected']
+            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

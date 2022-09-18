@@ -8,6 +8,7 @@ class Processes(Entry):
     """
     Simple wrapper to `archey.processes` to provide the number of running processes as an entry.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
