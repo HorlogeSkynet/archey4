@@ -62,10 +62,10 @@ class Packages(Entry):
                     packages_tool["cmd"],
                     stderr=DEVNULL,
                     env={
+                        # Honor current process environment variables as some package managers
+                        #  require an extended `PATH`.
+                        **os.environ,
                         "LANG": "C",
-                        # Alpine Linux: We have to manually propagate `PATH`.
-                        #               `apk` wouldn't be found otherwise.
-                        "PATH": os.getenv("PATH"),
                     },
                     universal_newlines=True,
                 )
