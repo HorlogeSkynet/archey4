@@ -23,4 +23,4 @@ class Utility(metaclass=Singleton):
     @staticmethod
     def version_to_semver_segments(version: str) -> Tuple[int, ...]:
         """Transforms string `version` to a tuple containing SemVer segments"""
-        return tuple(map(int, version.lstrip("v").partition("-")[0].split(".")))
+        return tuple(map(int, version.partition("-")[0].split(".")))

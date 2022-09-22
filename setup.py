@@ -14,7 +14,7 @@ from archey._version import __version__
 
 setup(
     name='archey4',
-    version=__version__.lstrip('v'),
+    version=__version__,
     description='Archey is a simple system information tool written in Python',
     keywords='archey python3 linux system-information monitoring screenshot',
     url='https://github.com/HorlogeSkynet/archey4',

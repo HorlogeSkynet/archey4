@@ -6,9 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4.14.0.0] - 2022-09-22
+### Breaking
+- Project internal versioning update (v4.Y.Z -> 4.X.Y.Z)
+- Distributions logo preference over Windows' one in WSL environments
+
+### Removed
+- `dmidecode` usage in `Model` for virtual environments info gathering
+
 ### Added
-- Custom entry
+- `Custom` entry
+- `Load Average` entry
+- KWin Wayland WM detection
+- Windows Terminal detection
+- Missing method static types
+- `CPU`, `RAM` and `Model` FreeBSD support
 - Official Guix System distribution support
+- Official Siduction Linux distribution support
+
+### Changed
+- Improve Rocky Linux logo
+- Fix macOS APFS volumes duplication
+- `CPU` and `Model` entries initialization
+- Prevent vendor name duplication in `Model`
+- Fix WSL virtual environment detection (without systemd) in `Model`
+- Project code base formatted using Black and isort
 
 ## [v4.13.4] - 2022-03-20
 ### Added
@@ -377,7 +400,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.4...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.0...HEAD
+[v4.14.0.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.4...v4.14.0.0
 [v4.13.4]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.3...v4.13.4
 [v4.13.3]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.2...v4.13.3
 [v4.13.2]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.1...v4.13.2

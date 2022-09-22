@@ -58,7 +58,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ## What does it look like ?
 
-<p align="center"><img alt="Archey 4 complete preview" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.10.0"></p>
+<p align="center"><img alt="Archey 4 complete preview" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.14.0.0"></p>
 
 ## Which packages do I need to run this project ?
 
@@ -92,9 +92,9 @@ The answer is [here](https://blog.samuel.domains/archey4).
 First, grab a package for your distribution from the latest release [here](https://github.com/HorlogeSkynet/archey4/releases/latest).  
 Now, it's time to use your favorite package manager. Some examples :
 
-* Arch-based distributions : `pacman -U ./archey4-4.Y.Z-R-any.pkg.tar.zst`
-* Debian-based distributions : `apt install ./archey4_4.Y.Z-R_all.deb`
-* RPM-based distributions : `dnf install ./archey4-4.Y.Z-R.py??.noarch.rpm`
+* Arch-based distributions : `pacman -U ./archey4-4.X.Y.Z-R-any.pkg.tar.zst`
+* Debian-based distributions : `apt install ./archey4_4.X.Y.Z-R_all.deb`
+* RPM-based distributions : `dnf install ./archey4-4.X.Y.Z-R.py??.noarch.rpm`
 
 Further information about packaging are available [here](https://github.com/HorlogeSkynet/archey4/wiki/Packaging).
 
@@ -128,7 +128,7 @@ pkg install archey4
 
 ```bash
 # If you want the latest release :
-wget -qO archey4.tar.gz "https://github.com/HorlogeSkynet/archey4/archive/v4.13.4.tar.gz"
+wget -qO archey4.tar.gz "https://github.com/HorlogeSkynet/archey4/archive/v4.14.0.0.tar.gz"
 tar xvzf archey4.tar.gz
 cd archey4-*/
 
