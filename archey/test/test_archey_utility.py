@@ -87,6 +87,6 @@ class TestUtility(unittest.TestCase):
 
     def test_version_to_semver_segments(self):
         """Check `version_to_semver_segments` implementation"""
-        self.assertTupleEqual(Utility.version_to_semver_segments("v1.2.3"), (1, 2, 3))
+        self.assertTupleEqual(Utility.version_to_semver_segments("1.2.3"), (1, 2, 3))
         self.assertTupleEqual(Utility.version_to_semver_segments("1.2.3.4-beta5"), (1, 2, 3, 4))
         self.assertTupleEqual(Utility.version_to_semver_segments("1"), (1,))
