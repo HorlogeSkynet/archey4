@@ -142,7 +142,7 @@ def main():
         available_entries = [
             {"type": entry_name}
             for entry_name in Entries.__members__
-            if entry_name != Entries.Custom
+            if entry_name != Entries.Custom.name
         ]
 
     output = Output(
