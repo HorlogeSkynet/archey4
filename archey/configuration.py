@@ -80,8 +80,8 @@ class Configuration(metaclass=Singleton):
                 self._config_files_info[path] = os.fstat(f_config.fileno())
         except FileNotFoundError:
             return
-        except json.JSONDecodeError as json_decode_error:
-            logging.error("%s (%s)", json_decode_error, path)
+        except (PermissionError, json.JSONDecodeError) as error:
+            logging.error("%s (%s)", error, path)
             return
 
         # When `suppress_warnings` is set, higher the log level to silence warning messages.
