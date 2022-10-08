@@ -7,6 +7,12 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ## [Unreleased]
 
+## [v4.14.0.1] - 2022-10-08
+### Changed
+- Fix warning related to "broken" `Custom` entry
+- Fix `PermissionError` when opening restricted configuration files
+- Prefer `macOS-latest` for unit tests in integration jobs matrix
+
 ## [v4.14.0.0] - 2022-09-22
 ### Breaking
 - Project internal versioning update (v4.Y.Z -> 4.X.Y.Z)
@@ -400,7 +406,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.0...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.1...HEAD
+[v4.14.0.1]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.0...v4.14.0.1
 [v4.14.0.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.4...v4.14.0.0
 [v4.13.4]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.3...v4.13.4
 [v4.13.3]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.2...v4.13.3

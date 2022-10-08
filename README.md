@@ -128,7 +128,7 @@ pkg install archey4
 
 ```bash
 # If you want the latest release :
-wget -qO archey4.tar.gz "https://github.com/HorlogeSkynet/archey4/archive/v4.14.0.0.tar.gz"
+wget -qO archey4.tar.gz "https://github.com/HorlogeSkynet/archey4/archive/v4.14.0.1.tar.gz"
 tar xvzf archey4.tar.gz
 cd archey4-*/
 
