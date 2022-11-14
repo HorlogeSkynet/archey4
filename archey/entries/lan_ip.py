@@ -38,7 +38,7 @@ class LanIP(Entry):
             max_count = None
 
         # Global IP addresses (in RFC1918 terms) will be hidden by default.
-        show_global = self.options.get("show_global")
+        show_global = bool(self.options.get("show_global"))
 
         self.value = list(
             islice(self._lan_ip_addresses_generator(addr_families, show_global), max_count)

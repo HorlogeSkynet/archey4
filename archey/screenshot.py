@@ -4,19 +4,20 @@ import logging
 import os
 import platform
 import time
+import typing
 from contextlib import ExitStack
 from datetime import datetime
 from functools import partial
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 
-def take_screenshot(output_file: str = None) -> bool:
+def take_screenshot(output_file: typing.Optional[str] = None) -> bool:
     """
     Simple function trying to take a screenshot using various famous back-end programs.
     When supported by a found and available back-end, **try to** honor `output_file`.
     Returns a `bool` representing whether or not a screenshot could be taken.
     """
-    if not output_file or os.path.isdir(output_file):
+    if output_file is None or os.path.isdir(output_file):
         # When a directory is provided, we've to force `output_file` to represent a **file** path.
         output_file = os.path.join(
             (output_file or os.getcwd()),

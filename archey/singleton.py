@@ -2,7 +2,7 @@
 
 
 from abc import ABCMeta as AbstractBaseMetaClass
-from typing import Dict, Type
+from typing import Dict
 
 
 class Singleton(AbstractBaseMetaClass):
@@ -14,7 +14,7 @@ class Singleton(AbstractBaseMetaClass):
     You cannot instantiate this meta-class directly.
     """
 
-    _instances: Dict[Type["Singleton"], object] = {}
+    _instances: Dict["Singleton", object] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

@@ -21,7 +21,7 @@ class Entry(AbstractBaseClass):
         return super().__new__(cls)
 
     @abstractmethod
-    def __init__(self, name: str = None, value=None, options: dict = None):
+    def __init__(self, name: Optional[str] = None, value=None, options: Optional[dict] = None):
         # Each entry will have always have the following attributes...
         # `name`: key (defaults to the instantiated entry class name);
         # `value`: value of entry as an appropriate object;

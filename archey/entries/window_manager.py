@@ -2,6 +2,7 @@
 
 import platform
 import re
+import typing
 from subprocess import DEVNULL, CalledProcessError, check_output
 
 from archey.entry import Entry
@@ -60,9 +61,12 @@ class WindowManager(Entry):
         super().__init__(*args, **kwargs)
 
         try:
-            self.value = re.search(
-                r"(?<=Name: ).*",
-                check_output(["wmctrl", "-m"], stderr=DEVNULL, universal_newlines=True),
+            self.value = typing.cast(
+                re.Match[str],
+                re.search(
+                    r"(?<=Name: ).*",
+                    check_output(["wmctrl", "-m"], stderr=DEVNULL, universal_newlines=True),
+                ),
             ).group(0)
         except (FileNotFoundError, CalledProcessError):
             processes = Processes().list

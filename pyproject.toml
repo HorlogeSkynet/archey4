@@ -29,6 +29,9 @@ load-plugins = [
 min-public-methods = 0
 
 # Mypy
+[tool.mypy]
+check_untyped_defs = true
+
 [[tool.mypy.overrides]]
 ## netifaces is not typed and does not provide any stub
 module = "netifaces"

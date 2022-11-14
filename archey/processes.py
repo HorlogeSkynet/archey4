@@ -1,6 +1,7 @@
 """Simple class (acting as a singleton) to handle processes listing"""
 
 import logging
+import typing
 from subprocess import PIPE, CalledProcessError, check_output
 
 from archey.singleton import Singleton
@@ -10,6 +11,8 @@ class Processes(metaclass=Singleton):
     """At startup, instantiate this class to populate a list of running processes"""
 
     def __init__(self):
+        self._processes: typing.List[str]
+
         try:
             ps_output = check_output(["ps", "-eo", "comm"], stderr=PIPE, universal_newlines=True)
         except FileNotFoundError:

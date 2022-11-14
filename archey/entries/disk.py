@@ -4,7 +4,7 @@ import platform
 import plistlib
 import re
 from subprocess import DEVNULL, PIPE, check_output, run
-from typing import Dict, List
+from typing import Dict, List, Iterable
 
 from archey.colors import Colors
 from archey.entry import Entry
@@ -123,7 +123,7 @@ class Disk(Entry):
 
         return disk_dict
 
-    def _get_specified_filesystems(self, specified_filesystems: List[str]) -> Dict[str, dict]:
+    def _get_specified_filesystems(self, specified_filesystems: Iterable[str]) -> Dict[str, dict]:
         """
         Extracts the specified filesystems (if found) from `self._disk_dict`,
         returning a copy with those filesystems only, preserving specified mount point names.

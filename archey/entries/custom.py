@@ -5,7 +5,7 @@ import os
 import stat
 from contextlib import suppress
 from subprocess import DEVNULL, PIPE, CalledProcessError, run
-from typing import List
+from typing import List, Union
 
 from archey.configuration import Configuration
 from archey.entry import Entry
@@ -36,11 +36,13 @@ class Custom(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        command: Union[str, List[str]]
+
         shell = self.options.get("shell", False)
         if shell:
-            command: str = self.options["command"]
+            command = self.options["command"]
         else:
-            command: List[str] = self.options["command"]
+            command = self.options["command"]
 
         log_stderr = self.options.get("log_stderr", True)
 

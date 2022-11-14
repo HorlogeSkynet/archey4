@@ -2,9 +2,9 @@
 
 import logging
 import unittest
+import typing
 from copy import deepcopy
 from functools import wraps
-from typing import Callable
 from unittest.mock import MagicMock, patch
 
 from archey.configuration import DEFAULT_CONFIG, Configuration
@@ -18,7 +18,9 @@ class HelperMethods:
     """
 
     @staticmethod
-    def entry_mock(entry, options: dict = None, configuration: dict = None) -> MagicMock:
+    def entry_mock(
+        entry, options: typing.Optional[dict] = None, configuration: typing.Optional[dict] = None
+    ) -> MagicMock:
         """
         Creates a placeholder "instance" of the entry class passed, with a clean default
         `_default_strings` which is optionally updated by `configuration`.
@@ -53,8 +55,10 @@ class HelperMethods:
 
     @staticmethod
     def patch_clean_configuration(
-        method_definition: Callable = None, *, configuration: dict = None
-    ) -> Callable:
+        method_definition: typing.Optional[typing.Callable] = None,
+        *,
+        configuration: typing.Optional[dict] = None,
+    ) -> typing.Callable:
         """
         Decorator for an entry test definition, which sets the entry's `_default_strings` attribute
         to the Archey defaults, optionally updated with `configuration`.
@@ -65,7 +69,7 @@ class HelperMethods:
         # Then we recursively merge in passed `configuration`.
         Utility.update_recursive(default_config, (configuration or {}))
 
-        def decorator_patch_clean_configuration(method: Callable) -> Callable:
+        def decorator_patch_clean_configuration(method: typing.Callable) -> typing.Callable:
             @wraps(method)
             def wrapper_patch_clean_configuration(*args, **kwargs):
                 # `Configuration` singleton is used in `Entry` and `Output` unit-tested modules.
@@ -118,7 +122,7 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
         self.assertIsNone(simple_mock_instance.value)
         self.assertDictEqual(
             simple_mock_instance._default_strings,  # pylint: disable=protected-access
-            DEFAULT_CONFIG.get("default_strings"),
+            DEFAULT_CONFIG.get("default_strings"),  # type: ignore
         )
 
     def test_entry_mock_spec(self):
@@ -160,7 +164,7 @@ class TestHelperMethods(unittest.TestCase, HelperMethods):
         )
         self.assertDictEqual(
             simple_mock_instance._default_strings,  # pylint: disable=protected-access
-            DEFAULT_CONFIG.get("default_strings"),
+            DEFAULT_CONFIG.get("default_strings"),  # type: ignore
         )
 
     def test_patch_clean_configuration_defaults(self):

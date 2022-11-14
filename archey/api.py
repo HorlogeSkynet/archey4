@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import List
+from typing import Sequence
 
 from archey._version import __version__
 from archey.distributions import Distributions
@@ -17,7 +17,7 @@ class API:
     Feel free to contribute to add other formats as needed.
     """
 
-    def __init__(self, entries: List[Entry]):
+    def __init__(self, entries: Sequence[Entry]):
         self.entries = entries
 
     def json_serialization(self, indent: int = 0) -> str:

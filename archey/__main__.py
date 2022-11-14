@@ -13,7 +13,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import ExitStack
 from enum import Enum
-from typing import Optional
+from typing import Callable, Optional
 
 from archey._version import __version__
 from archey.configuration import Configuration
@@ -165,6 +165,8 @@ def main():
 
     # Let's use a context manager stack to manage conditional use of `TheadPoolExecutor`.
     with ExitStack() as cm_stack:
+        mapper: Callable
+
         if not configuration.get("parallel_loading"):
             mapper = map
         else:

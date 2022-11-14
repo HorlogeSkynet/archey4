@@ -22,7 +22,7 @@ class Temperature(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._temps = []
+        self._temps: List[float] = []
 
         # Tries `sensors` at first.
         self._run_sensors(

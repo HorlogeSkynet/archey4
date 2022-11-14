@@ -1,6 +1,7 @@
 """Number of installed packages detection class"""
 
 import os
+import typing
 from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_output
 
@@ -51,6 +52,7 @@ class Packages(Entry):
         super().__init__(*args, **kwargs)
 
         for packages_tool in PACKAGES_TOOLS:
+            packages_tool = typing.cast(dict, packages_tool)
             if (
                 "only_on" in packages_tool
                 and Distributions.get_local() not in packages_tool["only_on"]
