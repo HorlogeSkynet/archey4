@@ -1,8 +1,8 @@
 """`archey.test.entries` module initialization file"""
 
 import logging
-import unittest
 import typing
+import unittest
 from copy import deepcopy
 from functools import wraps
 from unittest.mock import MagicMock, patch

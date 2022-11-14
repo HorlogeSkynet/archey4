@@ -1,7 +1,7 @@
 """Test module for `archey.entry`"""
 
-import unittest
 import typing
+import unittest
 from abc import ABC
 
 from archey.entry import Entry

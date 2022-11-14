@@ -4,7 +4,7 @@ import platform
 import plistlib
 import re
 from subprocess import DEVNULL, PIPE, check_output, run
-from typing import Dict, List, Iterable
+from typing import Dict, Iterable, List
 
 from archey.colors import Colors
 from archey.entry import Entry
