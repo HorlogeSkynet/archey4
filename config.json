@@ -4,6 +4,7 @@
 	"suppress_warnings": false,
 	"entries_color": "",
 	"honor_ansi_color": true,
+	"logo_style": "",
 	"entries": [
 		{ "type": "User" },
 		{ "type": "Hostname" },

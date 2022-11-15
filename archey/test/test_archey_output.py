@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 
 from archey.colors import Colors
 from archey.distributions import Distributions
+from archey.logos import lazy_load_logo_module
 from archey.output import Output
 from archey.test.entries import HelperMethods
 
@@ -460,6 +461,32 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
         )
         # Check `Distributions.get_local` method has not been called at all.
         self.assertFalse(get_local_mock.called)
+
+    @patch(
+        "archey.output.Distributions.get_local",
+        return_value=Distributions.DARWIN,  # Select Darwin.
+    )
+    @HelperMethods.patch_clean_configuration(configuration={"logo_style": ""})
+    def test_no_preferred_style(self, _):
+        """Test when no preferred logo style set in configuration"""
+        output = Output()
+        self.assertEqual(
+            output._logo,  # pylint: disable=protected-access
+            lazy_load_logo_module(Distributions.DARWIN.value).LOGO
+        )
+
+    @patch(
+        "archey.output.Distributions.get_local",
+        return_value=Distributions.DARWIN,  # Select Darwin.
+    )
+    @HelperMethods.patch_clean_configuration(configuration={"logo_style": "retro"})
+    def test_preferred_style(self, _):
+        """Test output logo matches preferred logo style specified in configuration"""
+        output = Output()
+        self.assertEqual(
+            output._logo,  # pylint: disable=protected-access
+            lazy_load_logo_module(Distributions.DARWIN.value).LOGO_RETRO
+        )
 
     @patch(
         "archey.output.Distributions.get_local",
