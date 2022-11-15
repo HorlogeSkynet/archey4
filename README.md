@@ -255,6 +255,10 @@ Below stand further descriptions for each available (default) option :
 	// Set this option to `false` to force Archey to use its own colors palettes.
 	// `true` by default to honor os-release(5) `ANSI_COLOR` option.
 	"honor_ansi_color": true,
+	// Set this option to an alternative logo style identifier instead of the default one for your distro.
+	// For example, "retro" would show the retro styled Apple logo on Darwin platforms.
+	// Note that the `--logo-style` argument overrides this setting.
+	"logo_style": "",
 	// Entries list.
 	// Add a `disabled` option set to `true` to temporary hide one.
 	// You may change entry displayed name by adding a `name` option.

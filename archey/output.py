@@ -27,9 +27,15 @@ class Output:
     __LOGO_RIGHT_PADDING = "   "
 
     def __init__(self, **kwargs):
+        configuration = Configuration()
+
         # Fetches passed arguments.
         self._format_to_json = kwargs.get("format_to_json")
-        preferred_logo_style = (kwargs.get("preferred_logo_style") or "").upper()
+        preferred_logo_style = (
+            kwargs.get("preferred_logo_style")
+            or configuration.get("logo_style")
+            or ""
+        ).upper()
 
         try:
             # If set, force the distribution to `preferred_distribution` argument.
@@ -47,8 +53,6 @@ class Output:
             self._colors = getattr(logo_module, f"COLORS_{preferred_logo_style}").copy()
         else:
             self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
-
-        configuration = Configuration()
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
