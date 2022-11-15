@@ -32,9 +32,7 @@ class Output:
         # Fetches passed arguments.
         self._format_to_json = kwargs.get("format_to_json")
         preferred_logo_style = (
-            kwargs.get("preferred_logo_style")
-            or configuration.get("logo_style")
-            or ""
+            kwargs.get("preferred_logo_style") or configuration.get("logo_style") or ""
         ).upper()
 
         try:

@@ -472,7 +472,7 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
         output = Output()
         self.assertEqual(
             output._logo,  # pylint: disable=protected-access
-            lazy_load_logo_module(Distributions.DARWIN.value).LOGO
+            lazy_load_logo_module(Distributions.DARWIN.value).LOGO,
         )
 
     @patch(
@@ -485,7 +485,7 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
         output = Output()
         self.assertEqual(
             output._logo,  # pylint: disable=protected-access
-            lazy_load_logo_module(Distributions.DARWIN.value).LOGO_RETRO
+            lazy_load_logo_module(Distributions.DARWIN.value).LOGO_RETRO,
         )
 
     @patch(
