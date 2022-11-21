@@ -17,7 +17,7 @@ LOGO = [
     """{c[0]}UUUUUUUEEEEEEEEEEEEEE     UUUUUUU""",
     """{c[0]}UUUUUUU       {c[1]}VVVVV       {c[0]}UUUUUUU""",
     """{c[0]}UUUUUUU        {c[1]}VVV        {c[0]}UUUUUUU""",
-    """{c[0]}   UUUUUUU      {c[1]}V      {c[0]}UUUUUUU""",
-    """{c[0]}      UUUUUUUUUUUUUUUUUUU""",
-    """{c[0]}         UUUUUUUUUUUUU""",
+    """{c[0]}   UUUUUUU      {c[1]}V      {c[0]}UUUUUUU   """,
+    """{c[0]}      UUUUUUUUUUUUUUUUUUU        """,
+    """{c[0]}         UUUUUUUUUUUUU           """,
 ]
