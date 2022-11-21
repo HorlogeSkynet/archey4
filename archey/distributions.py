@@ -40,6 +40,7 @@ class Distributions(Enum):
     GUIX = "guix"
     KALI = "kali"
     MANJARO = "manjaro"
+    MOEVALENT = "moevalent"
     NETBSD = "netbsd"
     NIXOS = "nixos"
     LINUX = "linux"
@@ -54,6 +55,7 @@ class Distributions(Enum):
     SIDUCTION = "siduction"
     SLACKWARE = "slackware"
     UBUNTU = "ubuntu"
+    UNIVALENT = "univalent"
     WINDOWS = "windows"
 
     @staticmethod
