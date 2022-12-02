@@ -16,13 +16,16 @@ jobs:
           - 'macOS-latest'
           - 'ubuntu-latest'
         python-version:
-          - '3.6'
           # - '3.7'
           # - '3.8'
           - '3.9'
-          - '3.10'
-          - '3.11-dev'
+          # - '3.10'
+          - '3.11'
+          - '3.12-dev'
           - 'pypy3.9'
+        include:
+          - os: 'ubuntu-20.04'
+            python-version: '3.6'
 
     steps:
       - uses: actions/checkout@v3
@@ -47,9 +50,9 @@ jobs:
       - name: Run our test suite
         run: python -m unittest
 
-      # Currently disabled against Python 3.11.
+      # Currently disabled against Python 3.12.
       - name: Standalone building (with PEX)
-        if: ${{ matrix.python-version != '3.11-dev' }}
+        if: ${{ matrix.python-version != '3.12-dev' }}
         run: |
           pex \
             -o dist/archey \
@@ -71,9 +74,9 @@ jobs:
           rm dist/archey
 
       # Disabled against PyPy (see <https://stackoverflow.com/a/22245203>).
-      # Currently disabled against Python 3.11.
+      # Currently disabled against Python 3.12.
       - name: Standalone building (with PyInstaller)
-        if: ${{ matrix.python-version != 'pypy3.9' && matrix.python-version != '3.11-dev' }}
+        if: ${{ matrix.python-version != 'pypy3.9' && matrix.python-version != '3.12-dev' }}
         run: |
           pyinstaller \
             --distpath dist \
