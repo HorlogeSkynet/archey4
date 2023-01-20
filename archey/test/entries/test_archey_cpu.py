@@ -279,14 +279,28 @@ CPU family:          Z
 Model:               \xde\xad\xbe\xef
 Model name:          CPU-MODEL-NAME
 """,
+            """\
+Architecture: aarch64
+CPU op-mode(s): 32-bit, 64-bit
+Byte Order: Little Endian
+CPU(s): 4
+On-line CPU(s) list: 0-3
+Vendor ID: ARM
+Model name: Cortex-A72
+Model: 3
+Thread(s) per core: 1
+Core(s) per cluster: 4
+Socket(s): -
+Cluster(s): 1
+""",
         ],
     )
     def test_parse_lscpu_output(self, _):
         """
         Test model name parsing from `lscpu` output.
 
-        See issue #29 (ARM architectures).
-        `/proc/cpuinfo` will not contain `model name` info.
+        See issues #29 and #127 (ARM architectures).
+        `/proc/cpuinfo` will not contain `model name` (nor `physical id`) info.
         `lscpu` output will be used instead.
         """
         with self.subTest("Simple unique CPU."):
@@ -305,6 +319,12 @@ Model name:          CPU-MODEL-NAME
             self.assertListEqual(
                 CPU._parse_lscpu_output(),  # pylint: disable=protected-access
                 [{"CPU-MODEL-NAME": 8}, {"CPU-MODEL-NAME": 8}],
+            )
+
+        with self.subTest("4 CPUs, 1 cluster."):
+            self.assertListEqual(
+                CPU._parse_lscpu_output(),  # pylint: disable=protected-access
+                [{"Cortex-A72": 4}],
             )
 
     @HelperMethods.patch_clean_configuration

@@ -39,6 +39,14 @@ class CPU(Entry):
         r"^Socket\(s\)\s*:\s*(\d+)$",
         flags=re.IGNORECASE | re.MULTILINE,
     )
+    _CLUSTERS_REGEXP = re.compile(
+        r"^Cluster\(s\)\s*:\s*(\d+)$",
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
+    _CORES_PER_CLUSTER_REGEXP = re.compile(
+        r"^Core\(s\) per cluster\s*:\s*(\d+)$",
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -52,9 +60,9 @@ class CPU(Entry):
             self.value = self._parse_system_profiler() or self._parse_sysctl_machdep()
 
         if not self.value:
-            # This test case has been built for some ARM architectures (see #29).
-            # Sometimes, `model name` info is not present within `/proc/cpuinfo`.
-            # We use the output of `lscpu` program (util-linux-ng) to retrieve it.
+            # This test case has been built for some ARM architectures (see #29 and #127).
+            # Sometimes, model name and physical id info are missing from `/proc/cpuinfo`.
+            # We use the output of `lscpu` program (util-linux-ng) to properly detect logical cores.
             self.value = self._parse_lscpu_output()
 
     @classmethod
@@ -95,16 +103,16 @@ class CPU(Entry):
             return []
 
         nb_threads = cls._THREADS_PER_CORE_REGEXP.findall(cpu_info)
-        nb_cores = cls._CORES_PER_SOCKET_REGEXP.findall(cpu_info)
-        nb_sockets = cls._SOCKETS_REGEXP.findall(cpu_info)
+        nb_cores = cls._CORES_PER_SOCKET_REGEXP.findall(
+            cpu_info
+        ) or cls._CORES_PER_CLUSTER_REGEXP.findall(cpu_info)
+        nb_slots = cls._SOCKETS_REGEXP.findall(cpu_info) or cls._CLUSTERS_REGEXP.findall(cpu_info)
         model_names = cls._MODEL_NAME_REGEXP.findall(cpu_info)
 
         cpus_list = []
 
-        for threads, cores, sockets, model_name in zip(
-            nb_threads, nb_cores, nb_sockets, model_names
-        ):
-            for _ in range(int(sockets)):
+        for threads, cores, slots, model_name in zip(nb_threads, nb_cores, nb_slots, model_names):
+            for _ in range(int(slots)):
                 # Sometimes CPU model names contain extra ugly white-spaces.
                 cpus_list.append({re.sub(r"\s+", " ", model_name): int(threads) * int(cores)})
 
