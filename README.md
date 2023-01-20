@@ -128,11 +128,11 @@ pkg install archey4
 
 ```bash
 # If you want the latest release :
-wget -qO archey4.tar.gz "https://github.com/HorlogeSkynet/archey4/archive/v4.14.0.1.tar.gz"
+wget -qO archey4.tar.gz "https://github.com/HorlogeSkynet/archey4/archive/v4.14.1.0.tar.gz"
 tar xvzf archey4.tar.gz
 cd archey4-*/
 
-# If you want the latest (stable) changes :
+# If you want the latest revision :
 git clone https://github.com/HorlogeSkynet/archey4.git
 cd archey4/
 ```
@@ -160,7 +160,7 @@ install -D -m0644 config.json ~/.config/archey4/config.json
 #### Step 4 (optional) : Standalone building
 
 > Some years ago, Archey was a simple and unique Python file.  
-> Project evolved, and now it's a proper module.  
+> Project evolved, and now it's a Python package.  
 > Some procedures below walk you through several ways of building Archey as a standalone program.
 
 ```bash
