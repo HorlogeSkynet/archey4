@@ -80,7 +80,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 | All                   | `procps` (maybe `procps-ng`)      | Many entries would not work as expected              | Would provide `ps`              |
 | All                   | `dnsutils` (maybe `bind-tools`)   | **WAN\_IP** would be detected faster                 | Would provide `dig`             |
 | All                   | `lm-sensors` (maybe `lm_sensors`) | **Temperature** would be more accurate               | N/A                             |
-| macOS (Darwin)        | `iStats` or `osx-cpu-temp`        | **Temperature** wouldn't be detected without it      | N/A                             |
+| macOS (Darwin)        | [`iStats`] or [`osx-cpu-temp`]    | **Temperature** wouldn't be detected without it      | N/A                             |
 | Graphical (desktop)   | `pciutils` or `pciconf`           | **GPU** wouldn't be detected without it              | Would provide `lspci`/`pciconf` |
 | Graphical (desktop)   | `wmctrl`                          | **WindowManager** would be more accurate             | N/A                             |
 | Virtual w/o `systemd` | `virt-what`                       | **Model** would contain details about the hypervisor | **root** privileges required    |
@@ -474,3 +474,6 @@ Any improvement would be appreciated.
 * Don't forget to check the [Info for contributors](https://github.com/HorlogeSkynet/archey4/wiki/Info-for-contributors) wiki page.
 
 * Any patch sent by e-mail to [dev+archey@samuel.domains](mailto:dev+archey@samuel.domains) would get properly reviewed.
+
+[`iStats`]: https://github.com/Chris911/iStats
+[`osx-cpu-temp`]: https://github.com/lavoiesl/osx-cpu-temp
