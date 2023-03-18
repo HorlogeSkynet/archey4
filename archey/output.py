@@ -95,7 +95,7 @@ class Output:
         Finally outputs entries data to JSON format.
         See `archey.api` for further documentation.
         """
-        print(API(self._entries).json_serialization(indent=(cast(int, self._format_to_json) - 1)))
+        print(API(self._entries).json_serialization(indent=cast(int, self._format_to_json) - 1))
 
     def _output_text(self) -> None:
         """
