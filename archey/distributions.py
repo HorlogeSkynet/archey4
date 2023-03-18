@@ -43,6 +43,7 @@ class Distributions(Enum):
     MOEVALENT = "moevalent"
     NETBSD = "netbsd"
     NIXOS = "nixos"
+    NOBARA = "nobara"
     LINUX = "linux"
     LINUXMINT = "linuxmint"
     OPENBSD = "openbsd"
