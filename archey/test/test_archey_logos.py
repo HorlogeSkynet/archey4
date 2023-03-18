@@ -24,7 +24,6 @@ class TestLogos(unittest.TestCase):
         distributions_identifiers = Distributions.get_identifiers()
 
         for i, logo_module_info in enumerate(pkgutil.iter_modules(logos.__path__), start=1):
-
             # Check each logo module name corresponds to a distribution identifier.
             self.assertIn(
                 logo_module_info.name,
