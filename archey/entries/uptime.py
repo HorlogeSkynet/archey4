@@ -4,7 +4,7 @@ import re
 import time
 from contextlib import suppress
 from datetime import timedelta
-from subprocess import check_output
+from subprocess import PIPE, run
 
 from archey.entry import Entry
 from archey.exceptions import ArcheyException
@@ -66,13 +66,17 @@ class Uptime(Entry):
         # Probably Python <3.7, or just not one of the above OSes
         raise RuntimeError
 
-    @staticmethod
-    def _parse_uptime_cmd() -> timedelta:
+    def _parse_uptime_cmd(self) -> timedelta:
         """Tries to get uptime by parsing the `uptime` command"""
         try:
-            uptime_output = check_output("uptime", env={"LANG": "C"})
+            uptime_output = run("uptime", env={"LANG": "C"}, stdout=PIPE, stderr=PIPE, check=True)
         except FileNotFoundError as error:
             raise ArcheyException("Couldn't find `uptime` command on this system.") from error
+
+        # Log any `uptime` error messages at warning level.
+        if uptime_output.stderr:
+            for line in uptime_output.stderr.splitlines():
+                self._logger.warning("[uptime]: %s", line.decode())
 
         # Unfortunately the output is not designed to be machine-readable...
         uptime_match = re.search(
@@ -125,7 +129,7 @@ class Uptime(Entry):
             \s+?               #   whitespace between the user count and the text 'user',
             user               #   and the text 'user' (to anchor the end of the expression).
             """,
-            uptime_output,
+            uptime_output.stdout,
             re.VERBOSE,
         )
         if not uptime_match:

@@ -43,8 +43,8 @@ class TestUptimeEntry(unittest.TestCase):
             timedelta(seconds=1000),
         )
 
-    @patch("archey.entries.uptime.check_output")
-    def test_parse_uptime_cmd(self, check_output_mock):
+    @patch("archey.entries.uptime.run")
+    def test_parse_uptime_cmd(self, run_mock):
         """Test `_parse_uptime_cmd` static method"""
         # Create an uptime instance to perform testing.
         # It doesn't matter that its `__init__` will be called.
@@ -111,7 +111,7 @@ class TestUptimeEntry(unittest.TestCase):
         # pylint: enable=line-too-long
 
         # Variations of the time in the `{time}` section.
-        # These _should_ be avoided when we set the locale in `check_output`,
+        # These _should_ be avoided when we set the locale in `run`,
         # however let's check we can handle them anyway, just in case.
         time_variations = (
             "0:00",
@@ -166,11 +166,13 @@ class TestUptimeEntry(unittest.TestCase):
             # We use `itertools.product` to get the permutations of our variations
             # since there are a lot of them! (a list comprehension would be slower)
             for variations in product(time_variations, user_loadavg_variations):
-                check_output_mock.return_value = uptime_output.format(
+                run_mock.return_value.stdout = uptime_output.format(
                     time=variations[0], user_loadavg=variations[1]
                 ).encode()
                 self.assertEqual(
-                    uptime_instance_mock._parse_uptime_cmd(),  # pylint: disable=protected-access
+                    Uptime._parse_uptime_cmd(  # pylint: disable=protected-access
+                        uptime_instance_mock
+                    ),
                     expected_delta,
                     msg=(
                         "`uptime` output: "
@@ -179,10 +181,11 @@ class TestUptimeEntry(unittest.TestCase):
                 )
 
         # Check that our internal exception is correctly raised when `uptime` is not available.
-        check_output_mock.side_effect = FileNotFoundError()
+        run_mock.side_effect = FileNotFoundError()
         self.assertRaises(
             ArcheyException,
-            uptime_instance_mock._parse_uptime_cmd,  # pylint: disable=protected-access
+            Uptime._parse_uptime_cmd,  # pylint: disable=protected-access
+            uptime_instance_mock,
         )
 
     def test_various_output_cases(self):
