@@ -10,7 +10,7 @@ from textwrap import TextWrapper
 from typing import cast
 
 from archey.api import API
-from archey.colors import ANSI_ECMA_REGEXP, Colors
+from archey.colors import ANSI_ECMA_REGEXP, Colors, Style
 from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
@@ -56,11 +56,11 @@ class Output:
         ansi_color = Distributions.get_ansi_color()
         if ansi_color and configuration.get("honor_ansi_color"):
             # Replace each Archey integrated colors by `ANSI_COLOR`.
-            self._colors = len(self._colors) * [Colors.escape_code_from_attrs(ansi_color)]
+            self._colors = len(self._colors) * [Style.escape_code_from_attrs(ansi_color)]
 
         entries_color = configuration.get("entries_color")
         self._entries_color = (
-            Colors.escape_code_from_attrs(entries_color) if entries_color else self._colors[0]
+            Style.escape_code_from_attrs(entries_color) if entries_color else self._colors[0]
         )
 
         # Each entry will be added to this list
@@ -136,7 +136,7 @@ class Output:
         for i, entry in enumerate(self._results):
             # Shortens the entry according to the terminal width.
             # We have to remove any ANSI color, or the result would be skewed.
-            wrapped_entry = text_wrapper.fill(Colors.remove_colors(entry))
+            wrapped_entry = text_wrapper.fill(Style.remove_colors(entry))
             placeholder_offset = (
                 placeholder_length if wrapped_entry.endswith(text_wrapper.placeholder) else 0
             )
