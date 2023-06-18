@@ -46,17 +46,14 @@ class WanIP(Entry):
         dns_query = options.get("dns_query", "myip.opendns.com")
         if dns_query:
             # Run the DNS query.
-            try:
-                ip_address = self._run_dns_query(
-                    dns_query,
-                    options.get("dns_resolver", "resolver1.opendns.com"),
-                    ip_version,
-                    options.get("dns_timeout", 1),
-                )
-            except FileNotFoundError:
-                # DNS lookup tool does not seem to be available.
-                pass
-            else:
+            ip_address = self._run_dns_query(
+                dns_query,
+                options.get("dns_resolver", "resolver1.opendns.com"),
+                ip_version,
+                options.get("dns_timeout", 1),
+            )
+            # Return IP only if the query was successful
+            if ip_address is not None:
                 return ip_address
 
         # Is retrieval via HTTP(S) request enabled ?
@@ -84,7 +81,7 @@ class WanIP(Entry):
                 stderr=DEVNULL,
                 universal_newlines=True,
             ).rstrip()
-        except (TimeoutExpired, CalledProcessError):
+        except (FileNotFoundError, TimeoutExpired, CalledProcessError):
             return None
 
         # `ip_address` might be empty here.

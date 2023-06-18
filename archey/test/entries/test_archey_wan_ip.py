@@ -2,7 +2,7 @@
 
 import unittest
 from socket import timeout as SocketTimeoutError
-from subprocess import TimeoutExpired
+from subprocess import CalledProcessError, TimeoutExpired
 from unittest.mock import MagicMock, Mock, call, patch
 
 from archey.configuration import DEFAULT_CONFIG
@@ -53,7 +53,10 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
         "archey.entries.wan_ip.check_output",
         side_effect=[
             "\n",  # `check_output` call will soft-fail.
-            FileNotFoundError("dig"),  # `check_output` call will hard-fail.
+            FileNotFoundError("dig"),  # `check_output` call will hard-fail (missing `dig`)
+            CalledProcessError(
+                cmd="dig", returncode=9
+            ),  # `check_output` call will hard-fail (DNS connection error)
         ],
     )
     @patch("archey.entries.wan_ip.urlopen")
@@ -66,7 +69,13 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
             WanIP._retrieve_ip_address(self.wan_ip_mock, 4),  # pylint: disable=protected-access
         )
 
-        # New try: HTTP method has been called !
+        # HTTP method has been called with `dig` missing.
+        self.assertEqual(
+            WanIP._retrieve_ip_address(self.wan_ip_mock, 4),  # pylint: disable=protected-access
+            "XXX.YY.ZZ.TTT",
+        )
+
+        # HTTP method has been called with `dig` unable to connect!
         self.assertEqual(
             WanIP._retrieve_ip_address(self.wan_ip_mock, 4),  # pylint: disable=protected-access
             "XXX.YY.ZZ.TTT",
