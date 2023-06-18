@@ -4,6 +4,7 @@ import json
 import os
 import platform
 import re
+import shutil
 from glob import iglob
 from subprocess import DEVNULL, PIPE, CalledProcessError, check_output, run
 from typing import List, Optional
@@ -204,9 +205,12 @@ class Temperature(Entry):
 
     def _run_vcgencmd(self) -> None:
         # Let's try to retrieve a value from the Broadcom chip on Raspberry.
+        vcgencmd_path = shutil.which("vcgencmd")
+        if vcgencmd_path is None:
+            vcgencmd_path = "/opt/vc/bin/vcgencmd"
         try:
             vcgencmd_output = check_output(
-                ["/opt/vc/bin/vcgencmd", "measure_temp"], stderr=DEVNULL, universal_newlines=True
+                [vcgencmd_path, "measure_temp"], stderr=DEVNULL, universal_newlines=True
             )
         except (FileNotFoundError, CalledProcessError):
             return
