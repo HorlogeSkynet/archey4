@@ -111,7 +111,7 @@ class TestTerminalEntry(unittest.TestCase):
     )
     def test_color_disabling(self):
         """Test `Terminal` output behavior when coloration has been disabled"""
-        with patch("archey.colors.Colors.should_color_output", return_value=False):
+        with patch("archey.colors.Style.should_color_output", return_value=False):
             terminal = Terminal()
 
             output_mock = MagicMock()

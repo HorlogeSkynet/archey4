@@ -4,7 +4,7 @@ import pkgutil
 import unittest
 
 from archey import logos
-from archey.colors import Colors
+from archey.colors import Style
 from archey.distributions import Distributions
 from archey.logos import get_logo_width, lazy_load_logo_module
 
@@ -67,7 +67,7 @@ class TestLogos(unittest.TestCase):
 
                 # Non-empty line check.
                 self.assertTrue(
-                    Colors.remove_colors(line.format(c=[""] * nb_colors)).strip(),
+                    Style.remove_colors(line.format(c=[""] * nb_colors)).strip(),
                     msg=f"[{logo_module_info.name}] line index {j}, got an useless empty line",
                 )
 
