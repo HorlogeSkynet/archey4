@@ -164,6 +164,17 @@ install -D -m0644 config.json ~/.config/archey4/config.json
 > Some procedures below walk you through several ways of building Archey as a standalone program.
 
 ```bash
+# Using Nuitka (recommended) :
+apt install -y patchelf
+pip3 install nuitka
+python3 -m nuitka \
+    --onefile \
+    --include-package=archey.logos \
+    --output-filename=archey \
+    --output-dir=dist \
+    --quiet \
+    archey/__main__.py
+
 # Using PEX (recommended) :
 pip3 install pex
 pex \

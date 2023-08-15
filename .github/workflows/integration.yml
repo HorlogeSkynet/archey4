@@ -36,8 +36,9 @@ jobs:
 
       - name: Install required dependencies for standalone builds
         run: |
+          sudo apt update && sudo apt install -y patchelf
           python -m pip install --upgrade pip setuptools
-          pip install pex stickytape pyinstaller
+          pip install nuitka pex stickytape pyinstaller
 
       - name: Install module regularly
         run: pip install .
@@ -49,6 +50,21 @@ jobs:
 
       - name: Run our test suite
         run: python -m unittest
+
+      # Disabled against PyPy.
+      # Currently disabled against Python 3.12.
+      - name: Standalone building (with Nuitka)
+        if: ${{ matrix.python-version != 'pypy3.9' && matrix.python-version != '3.12-dev' }}
+        run: |
+          python -m nuitka \
+            --onefile \
+            --include-package=archey.logos \
+            --output-filename=archey \
+            --output-dir=dist \
+            --quiet \
+            archey/__main__.py
+          time ./dist/archey
+          rm dist/archey
 
       # Currently disabled against Python 3.12.
       - name: Standalone building (with PEX)
