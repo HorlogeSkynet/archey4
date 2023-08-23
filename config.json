@@ -66,6 +66,7 @@
 			"one_line": true,
 			"max_count": 2,
 			"show_global": false,
+			"show_link_local": true,
 			"ipv6_support": true
 		},
 		{

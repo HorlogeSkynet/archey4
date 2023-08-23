@@ -113,6 +113,57 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         "archey.entries.lan_ip.netifaces.ifaddresses",
         side_effect=[
             {
+                AF_INET: [
+                    {
+                        "addr": "127.0.0.1",
+                        "netmask": "255.0.0.0",
+                        "peer": "127.0.0.1",
+                    },
+                ],
+                AF_INET6: [
+                    {
+                        "addr": "::1",
+                        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128",
+                    },
+                ],
+            },
+            {
+                AF_INET: [
+                    {
+                        "addr": "192.168.1.55",
+                        "netmask": "255.255.255.0",
+                        "broadcast": "192.168.1.255",
+                    },
+                    {
+                        "addr": "169.254.5.6",
+                        "netmask": "255.255.0.0",
+                        "broadcast": "169.254.255.255",
+                    },
+                ],
+                AF_INET6: [
+                    {
+                        "addr": "fe80::abcd:ef0:abef:dead",
+                        "netmask": "ffff:ffff:ffff:ffff::/64",
+                    },
+                ],
+            },
+        ],
+    )
+    def test_show_link_local(self, _, __):
+        """Test link-local IP addresses hiding"""
+        self.assertListEqual(
+            LanIP(options={"show_link_local": False}).value,
+            ["192.168.1.55"],
+        )
+
+    @patch(
+        "archey.entries.lan_ip.netifaces.interfaces",
+        return_value=["lo", "en0"],
+    )
+    @patch(
+        "archey.entries.lan_ip.netifaces.ifaddresses",
+        side_effect=[
+            {
                 AF_LINK: [
                     {
                         "addr": "00:00:00:00:00:00",
