@@ -52,6 +52,20 @@ LOGO_RETRO = [
     """{c[0]}       {c[6]}####{c[0]}     {c[6]}#####{c[0]}    """,
 ]
 
+# Alternative logo : Apple's "retro" logo (low intensity).
+
+COLORS_RETRO_LOW = [
+    Colors.CYAN_NORMAL,
+    Colors.GREEN_NORMAL,
+    Colors.YELLOW_NORMAL,
+    Colors.YELLOW_NORMAL,
+    Colors.RED_NORMAL,
+    Colors.MAGENTA_NORMAL,
+    Colors.BLUE_NORMAL,
+]
+
+LOGO_RETRO_LOW = LOGO_RETRO
+
 # Alternative logo: WWDC 2020 logo
 COLORS_WWDC20 = [
     Colors8Bit(1, 231),  # bright white
