@@ -55,7 +55,7 @@ LOGO_RETRO = [
 # Alternative logo : Apple's "retro" logo (low intensity).
 
 COLORS_RETRO_LOW = [
-    Colors.CLEAR,
+    Colors.CYAN_NORMAL,
     Colors.GREEN_NORMAL,
     Colors.YELLOW_NORMAL,
     Colors.YELLOW_NORMAL,
