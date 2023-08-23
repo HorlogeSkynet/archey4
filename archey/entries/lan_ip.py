@@ -40,12 +40,20 @@ class LanIP(Entry):
         # Global IP addresses (in RFC1918 terms) will be hidden by default.
         show_global = bool(self.options.get("show_global"))
 
+        # Link-local IP addresses (in RFC3927 terms) will be shown by default.
+        show_link_local = bool(self.options.get("show_link_local", True))
+
         self.value = list(
-            islice(self._lan_ip_addresses_generator(addr_families, show_global), max_count)
+            islice(
+                self._lan_ip_addresses_generator(addr_families, show_global, show_link_local),
+                max_count,
+            )
         )
 
     @staticmethod
-    def _lan_ip_addresses_generator(addr_families: list, show_global: bool) -> Iterator[str]:
+    def _lan_ip_addresses_generator(
+        addr_families: list, show_global: bool, show_link_local: bool
+    ) -> Iterator[str]:
         """Generator yielding local IP address according to passed address families"""
         # Loop through all available network interfaces.
         for if_name in netifaces.interfaces():
@@ -57,8 +65,12 @@ class LanIP(Entry):
                     # IPv6 addresses may contain '%' token separator.
                     ip_addr = ipaddress.ip_address(if_addr["addr"].split("%")[0])
 
-                    # Filter out loopback and public IP addresses.
-                    if not ip_addr.is_loopback and (not ip_addr.is_global or show_global):
+                    # Filter out loopback and public/link-local IP addresses (if enabled).
+                    if (
+                        not ip_addr.is_loopback
+                        and (not ip_addr.is_global or show_global)
+                        and (not ip_addr.is_link_local or show_link_local)
+                    ):
                         # Finally, yield the address compressed representation.
                         yield ip_addr.compressed
 

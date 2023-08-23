@@ -384,6 +384,8 @@ Below stand further descriptions for each available (default) option :
 			"max_count": 2,
 			// Set to `true` if your local network does not honor RFC1918.
 			"show_global": false,
+			// Set to `false` to hide link-local IP addresses (see RFC3927).
+			"show_link_local": true,
 			// Set to `false` to only display IPv4 LAN addresses.
 			"ipv6_support": true
 		},
