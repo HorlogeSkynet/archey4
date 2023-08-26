@@ -7,6 +7,19 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ## [Unreleased]
 
+## [v4.14.2.0] - 2023-08-26
+### Added
+- Official Nobara distribution support
+- Standalone build procedure using Nuitka
+- Darwin "WWDC 2020" (`wwdc`) alternate logo
+- Darwin "retro" low intensity (`retro_low`) alternate logo
+- New `show_link_local` option to allow link-local IP addresses hiding for `LAN_IP`
+
+### Fixed
+- Log `uptime` errors at warning level
+- Honor `PATH` when looking for `vcgencmd` in `Temperature`
+- Fallback to HTTP properly on DNS connection errors for `WAN_IP`
+
 ## [v4.14.1.0] - 2023-01-20
 ### Added
 - Python 3.12 official support
@@ -417,7 +430,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.1.0...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.2.0...HEAD
+[v4.14.2.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.1.0...v4.14.2.0
 [v4.14.1.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.1...v4.14.1.0
 [v4.14.0.1]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.0...v4.14.0.1
 [v4.14.0.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.13.4...v4.14.0.0
