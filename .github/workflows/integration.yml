@@ -34,11 +34,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install required dependencies for standalone builds
+      - name: Install required dependencies
         run: |
-          sudo apt update && sudo apt install -y patchelf
           python -m pip install --upgrade pip setuptools
-          pip install nuitka pex stickytape pyinstaller
 
       - name: Install module regularly
         run: pip install .
@@ -51,10 +49,27 @@ jobs:
       - name: Run our test suite
         run: python -m unittest
 
-      # Disabled against PyPy.
-      # Currently disabled against Python 3.12.
+  standalone_build:
+    name: Standalone builds
+    runs-on: ubuntu-latest
+    env:
+      CLICOLOR_FORCE: 1
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install required dependencies
+        run: |
+          sudo apt update && sudo apt install -y patchelf
+          python -m pip install --upgrade pip setuptools
+          pip install nuitka pex stickytape pyinstaller
+          pip install .
+
       - name: Standalone building (with Nuitka)
-        if: ${{ matrix.python-version != 'pypy3.9' && matrix.python-version != '3.12-dev' }}
         run: |
           python -m nuitka \
             --onefile \
@@ -66,9 +81,7 @@ jobs:
           time ./dist/archey
           rm dist/archey
 
-      # Currently disabled against Python 3.12.
       - name: Standalone building (with PEX)
-        if: ${{ matrix.python-version != '3.12-dev' }}
         run: |
           pex \
             -o dist/archey \
@@ -89,10 +102,7 @@ jobs:
           time ./dist/archey
           rm dist/archey
 
-      # Disabled against PyPy (see <https://stackoverflow.com/a/22245203>).
-      # Currently disabled against Python 3.12.
       - name: Standalone building (with PyInstaller)
-        if: ${{ matrix.python-version != 'pypy3.9' && matrix.python-version != '3.12-dev' }}
         run: |
           pyinstaller \
             --distpath dist \
@@ -115,7 +125,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install lint tools and project (for its dependencies)
+      - name: Install required dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pylint pylint-secure-coding-standard mypy black isort
@@ -133,7 +143,7 @@ jobs:
       - name: Run Black
         run: black --check --diff archey/
 
-  shell:
+  shell_lint:
     name: Lint packaging shell scripts
     runs-on: ubuntu-latest
 
@@ -142,7 +152,7 @@ jobs:
 
       - run: shellcheck packaging/*
 
-  man:
+  man_lint:
     name: Lint manual page
     runs-on: ubuntu-latest
 
