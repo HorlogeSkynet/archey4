@@ -30,7 +30,7 @@
 
 ## Why (again) a f\*cking new Archey fork ?
 
-The answer is [here](https://blog.samuel.domains/archey4).
+The answer is [here](https://samuel.forestier.app/archey4).
 
 > Note : Since the 21st September of 2017, you may notice that this repository no longer has the official status of fork.  
 > Actually, the maintainer decided to separate it from the original one's "network" with the help of _GitHub_'s staff.  
@@ -58,7 +58,7 @@ The answer is [here](https://blog.samuel.domains/archey4).
 
 ## What does it look like ?
 
-<p align="center"><img alt="Archey 4 complete preview" src="https://blog.samuel.domains/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.14.0.0"></p>
+<p align="center"><img alt="Archey 4 complete preview" src="https://samuel.forestier.app/img/blog/the-archey-project-what-i-ve-decided-to-do.png?v4.14.0.0"></p>
 
 ## Which packages do I need to run this project ?
 
@@ -486,7 +486,7 @@ Any improvement would be appreciated.
 
 * Don't forget to check the [Info for contributors](https://github.com/HorlogeSkynet/archey4/wiki/Info-for-contributors) wiki page.
 
-* Any patch sent by e-mail to [dev+archey@samuel.domains](mailto:dev+archey@samuel.domains) would get properly reviewed.
+* Any patch sent by [e-mail](mailto:samuel+archey@forestier.app) will get properly reviewed.
 
 [`iStats`]: https://github.com/Chris911/iStats
 [`osx-cpu-temp`]: https://github.com/lavoiesl/osx-cpu-temp

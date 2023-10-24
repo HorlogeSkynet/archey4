@@ -19,7 +19,7 @@ setup(
     keywords='archey python3 linux system-information monitoring screenshot',
     url='https://github.com/HorlogeSkynet/archey4',
     author='Samuel Forestier',  # Not alone
-    author_email='dev+archey@samuel.domains',
+    author_email='samuel+archey@forestier.app',
     license='GPLv3',
     packages=find_packages(exclude=['archey.test*']),
     package_data={'archey': ['py.typed']},

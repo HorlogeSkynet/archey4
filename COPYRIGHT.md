@@ -2,7 +2,7 @@
 
 Copyright 2010 Melik Manukyan <melik@archlinux.us>  
 Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>  
-Copyright 2017-2023 Samuel Forestier <dev+archey@samuel.domains>
+Copyright 2017-2023 Samuel Forestier <samuel+archey@forestier.app>
 
 ## License
 
@@ -32,8 +32,8 @@ See <https://www.gnu.org/licenses/gpl-3.0.txt> for the full license text.
 ## Maintainers
 
 * Michael Bromilow (@ingrinder)
-* Samuel Forestier (@HorlogeSkynet) <dev+archey@samuel.domains>
+* Samuel Forestier (@HorlogeSkynet) <samuel+archey@forestier.app>
 
 ## Packager(s)
 
-* Samuel Forestier (@HorlogeSkynet) <dev+archey@samuel.domains>
+* Samuel Forestier (@HorlogeSkynet) <samuel+archey@forestier.app>
