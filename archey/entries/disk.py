@@ -182,6 +182,7 @@ class Disk(Entry):
                 # See #92 (related to flatpak/xdg-desktop-portal#512).
                 stderr=DEVNULL,
                 check=False,
+                encoding="utf-8",
             ).stdout
         except FileNotFoundError:
             # `df` isn't available on this system.
