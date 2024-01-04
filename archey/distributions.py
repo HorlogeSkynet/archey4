@@ -33,6 +33,7 @@ class Distributions(Enum):
     DEBIAN = "debian"
     DEVUAN = "devuan"
     ELEMENTARY = "elementary"
+    ENDEAVOUROS = "endeavouros"
     ENSO = "enso"
     FEDORA = "fedora"
     FREEBSD = "freebsd"
