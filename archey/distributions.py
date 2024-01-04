@@ -32,6 +32,7 @@ class Distributions(Enum):
     DARWIN = "darwin"
     DEBIAN = "debian"
     DEVUAN = "devuan"
+    ENDEAVOUROS = "endeavouros"
     ELEMENTARY = "elementary"
     ENSO = "enso"
     FEDORA = "fedora"
