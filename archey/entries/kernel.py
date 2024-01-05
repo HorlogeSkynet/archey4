@@ -7,12 +7,21 @@ from typing import Optional
 from urllib.error import URLError
 from urllib.request import urlopen
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.environment import Environment
 from archey.utility import Utility
 
 
 class Kernel(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\uf305 Kernel"
+
     """
     Retrieve kernel identity.
     [GNU/LINUX] If user-enabled, implement a version comparison against upstream data.

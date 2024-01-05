@@ -3,10 +3,19 @@
 import platform
 from typing import Optional
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class Hostname(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "󰌘 Hostname"
+
     """Read system file with fallback on `platform` module to retrieve the system host-name"""
 
     def __init__(self, *args, **kwargs):

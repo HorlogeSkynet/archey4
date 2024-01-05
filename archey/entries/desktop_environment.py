@@ -3,6 +3,7 @@
 import os
 import platform
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.processes import Processes
 
@@ -21,12 +22,19 @@ DE_DICT = {
 
 
 class DesktopEnvironment(Entry):
+    # Icons
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\ue23c Desktop Environment"
+    else:
+        _PRETTY_NAME = "Desktop Environment"
+
     """
     Just iterate over running processes to find a known-entry.
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
-
-    _PRETTY_NAME = "Desktop Environment"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

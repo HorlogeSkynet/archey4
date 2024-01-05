@@ -6,11 +6,20 @@ import re
 from subprocess import DEVNULL, CalledProcessError, check_output
 from typing import Optional
 
+from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
 
 
 class Model(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\ueabe model"
+
     """Uses multiple methods to retrieve some information about the host hardware"""
 
     LINUX_DMI_SYS_PATH = "/sys/devices/virtual/dmi/id"

@@ -4,10 +4,19 @@ import os
 from subprocess import CalledProcessError, check_output
 from typing import Optional
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class Shell(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "󰆍 shell"
+
     """
     Simple shell path detection based either on the `SHELL` environment variable or
     the local administrative database.

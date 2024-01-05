@@ -9,10 +9,19 @@ from glob import iglob
 from subprocess import DEVNULL, PIPE, CalledProcessError, check_output, run
 from typing import List, Optional
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class Temperature(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "󱩅 Temperature"
+
     """
     Tries to compute an average temperature from `sensors` (LM-Sensors).
     If not available, falls back on system thermal zones files (GNU/Linux)

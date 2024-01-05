@@ -5,10 +5,20 @@ import re
 from subprocess import DEVNULL, CalledProcessError, check_output
 from typing import List
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class GPU(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\ue735 GPU"
+
+
     """Relies on `lspci` or `pciconf` to retrieve graphical device(s) information"""
 
     def __init__(self, *args, **kwargs):

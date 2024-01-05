@@ -4,11 +4,20 @@ import platform
 from subprocess import check_output
 from typing import Optional
 
+from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
 
 
 class Distro(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\uf17c Distro"
+
     """Uses `distro` and `platform` modules to retrieve distribution and architecture information"""
 
     def __init__(self, *args, **kwargs):

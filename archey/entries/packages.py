@@ -5,6 +5,7 @@ import typing
 from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_output
 
+from archey.configuration import Configuration
 from archey.distributions import Distributions
 from archey.entry import Entry
 
@@ -46,6 +47,14 @@ PACKAGES_TOOLS = (
 
 
 class Packages(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\ueb29 Packages"
+
     """Relies on the first found packages manager to list the installed packages"""
 
     def __init__(self, *args, **kwargs):

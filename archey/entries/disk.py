@@ -3,14 +3,24 @@
 import platform
 import plistlib
 import re
+
 from subprocess import DEVNULL, PIPE, check_output, run
 from typing import Dict, Iterable, List
 
 from archey.colors import Colors
+from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class Disk(Entry):
+    # Icons
+
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+
+    if icon == True:
+        _PRETTY_NAME = "󱛟 Disk"
     """Uses `df` to compute disk usage across devices"""
 
     def __init__(self, *args, **kwargs):

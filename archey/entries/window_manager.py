@@ -4,6 +4,7 @@ import platform
 import re
 from subprocess import DEVNULL, CalledProcessError, check_output
 
+from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.processes import Processes
 
@@ -49,12 +50,19 @@ WM_DICT = {
 
 
 class WindowManager(Entry):
+    # Icons
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "\ueae4 Window Manager"
+    else:
+        _PRETTY_NAME = "Window Manager"
+
     """
     Uses `wmctrl` to retrieve some information about the window manager.
     If not available, fall back on a simple iteration over the processes.
     """
-
-    _PRETTY_NAME = "Window Manager"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

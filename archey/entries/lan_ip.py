@@ -4,6 +4,8 @@ import ipaddress
 from itertools import islice
 from typing import Iterator
 
+from archey.configuration import Configuration
+
 try:
     import netifaces
 except ImportError:
@@ -13,9 +15,17 @@ from archey.entry import Entry
 
 
 class LanIP(Entry):
+    # Icons
+    configuration = Configuration()
+    icon = configuration.get("icon")
+
+    if icon == True:
+        _PRETTY_NAME = "󰩠 LAN IP"
+    else:
+        _PRETTY_NAME = "LAN IP"
+
     """Relies on the `netifaces` module to detect LAN IP addresses"""
 
-    _PRETTY_NAME = "LAN IP"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
