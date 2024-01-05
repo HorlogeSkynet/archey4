@@ -2,6 +2,8 @@
 
 > Archey is a simple system information tool written in Python
 
+This is a fork. Also take a look at the original. These are just my changes
+
 <p align="center">
 	<img src=".github/archey4.png" alt="Archey logo" title="CC-BY Brume Archey logo" longdesc="https://brume.ink/">
 	<br />
