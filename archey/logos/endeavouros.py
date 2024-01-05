@@ -1,27 +1,23 @@
-# Endeavour OS Logo
+"""Endeavour OS Logo"""
 
 from archey.colors import Colors
 
 COLORS = [Colors.RED_BRIGHT, Colors.MAGENTA_NORMAL, Colors.BLUE_NORMAL]
 
 LOGO = [
-    """                                        """,
-    """                                        """,
-    f"""{COLORS[0]}                     ./{COLORS[1]}o{COLORS[2]}.               """,
-    f"""{COLORS[0]}                   ./{COLORS[1]}sssso{COLORS[2]}-             """,
-    f"""{COLORS[0]}                 `:{COLORS[1]}osssssss+{COLORS[2]}-           """,
-    f"""{COLORS[0]}               `:+{COLORS[1]}sssssssssso{COLORS[2]}/.         """,
-    f"""{COLORS[0]}             `-/{COLORS[1]}ssssssssssssso{COLORS[2]}/.        """,
-    f"""{COLORS[0]}           `-/+{COLORS[1]}sssssssssssssssso{COLORS[2]}+:`     """,
-    f"""{COLORS[0]}         `-:/+{COLORS[1]}sssssssssssssssssso{COLORS[2]}/.     """,
-    f"""{COLORS[0]}       `.://o{COLORS[1]}sssssssssssssssssssso{COLORS[2]}++-   """,
-    f"""{COLORS[0]}      .://+{COLORS[1]}ssssssssssssssssssssssso{COLORS[2]}++:  """,
-    f"""{COLORS[0]}    .:///o{COLORS[1]}ssssssssssssssssssssssssso{COLORS[2]}++: """,
-    f"""{COLORS[0]}  `:////{COLORS[1]}ssssssssssssssssssssssssssso{COLORS[2]}+++.""",
-    f"""{COLORS[0]}`-////+{COLORS[1]}ssssssssssssssssssssssssssso{COLORS[2]}++++-""",
-    f"""{COLORS[0]} `..-+{COLORS[1]}oosssssssssssssssssssssssso{COLORS[2]}+++++/`""",
-    f"""{COLORS[2]}   ./++++++++++++++++++++++++++++++/:.  """,
-    f"""{COLORS[2]}  `:::::::::::::::::::::::::------``    """
-    ]
-
-
+    """{c[0]}                     ./{c[1]}o{c[2]}.               """,
+    """{c[0]}                   ./{c[1]}sssso{c[2]}-             """,
+    """{c[0]}                 `:{c[1]}osssssss+{c[2]}-           """,
+    """{c[0]}               `:+{c[1]}sssssssssso{c[2]}/.         """,
+    """{c[0]}             `-/{c[1]}ssssssssssssso{c[2]}/.        """,
+    """{c[0]}           `-/+{c[1]}sssssssssssssssso{c[2]}+:`     """,
+    """{c[0]}         `-:/+{c[1]}sssssssssssssssssso{c[2]}/.     """,
+    """{c[0]}       `.://o{c[1]}sssssssssssssssssssso{c[2]}++-   """,
+    """{c[0]}      .://+{c[1]}ssssssssssssssssssssssso{c[2]}++:  """,
+    """{c[0]}    .:///o{c[1]}ssssssssssssssssssssssssso{c[2]}++: """,
+    """{c[0]}  `:////{c[1]}ssssssssssssssssssssssssssso{c[2]}+++.""",
+    """{c[0]}`-////+{c[1]}ssssssssssssssssssssssssssso{c[2]}++++-""",
+    """{c[0]} `..-+{c[1]}oosssssssssssssssssssssssso{c[2]}+++++/`""",
+    """{c[2]}   ./++++++++++++++++++++++++++++++/:.  """,
+    """{c[2]}  `:::::::::::::::::::::::::------``    """
+]
