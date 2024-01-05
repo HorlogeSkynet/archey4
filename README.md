@@ -272,6 +272,9 @@ Below stand further descriptions for each available (default) option :
 	// For example, "retro" would show the retro styled Apple logo on Darwin platforms.
 	// Note that the `--logo-style` argument overrides this setting.
 	"logo_style": "",
+	// Enable icons
+	// A nerd font is required to activate the icons. Otherwise, these are simply missing and a placeholder can be seen. https://github.com/ryanoasis/nerd-fonts
+	"icon": false,
 	// Entries list.
 	// Add a `disabled` option set to `true` to temporary hide one.
 	// You may change entry displayed name by adding a `name` option.
