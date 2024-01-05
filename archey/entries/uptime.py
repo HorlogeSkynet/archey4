@@ -18,7 +18,7 @@ class Uptime(Entry):
     icon = configuration.get("icon")
 
     if icon == True:
-        _PRETTY_NAME = "󱤥 Terminal"
+        _PRETTY_NAME = "󱤥 Uptime"
 
     """Returns a pretty-formatted string representing the host uptime"""
 
