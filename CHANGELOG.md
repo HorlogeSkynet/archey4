@@ -9,6 +9,9 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ### Added
 - Official EndeavourOS distribution support
 
+### Changed
+- Allow `df` output to contain Unicode characters
+
 ## [v4.14.2.0] - 2023-08-26
 ### Added
 - Official Nobara distribution support
@@ -17,7 +20,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Darwin "retro" low intensity (`retro_low`) alternate logo
 - New `show_link_local` option to allow link-local IP addresses hiding for `LAN_IP`
 
-### Fixed
+### Changed
 - Log `uptime` errors at warning level
 - Honor `PATH` when looking for `vcgencmd` in `Temperature`
 - Fallback to HTTP properly on DNS connection errors for `WAN_IP`
