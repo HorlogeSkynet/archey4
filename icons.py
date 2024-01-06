@@ -1,3 +1,17 @@
+"""
+File is generated. Tool used https://pypi.org/project/nerdfonts/
+This file depends on: nerd-fonts https://github.com/ryanoasis/nerd-fonts
+
+Usage:
+
+import icons
+
+print (icons.icons) # for a list of all icons
+print (icons.icons['fa_thumbs_up']) # for printing one icon with the name fa_thumbs_up
+
+"""
+
+
 VERSION = "latest"
 
 icons = {
