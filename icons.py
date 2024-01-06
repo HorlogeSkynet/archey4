@@ -9,6 +9,8 @@ import icons
 print (icons.icons) # for a list of all icons
 print (icons.icons['fa_thumbs_up']) # for printing one icon with the name fa_thumbs_up
 
+
+For easy finding use the website: https://www.nerdfonts.com/cheat-sheet
 """
 
 
