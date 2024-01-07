@@ -2,8 +2,6 @@
 
 > Archey is a simple system information tool written in Python
 
-This is a fork. Also take a look at the original. These are just my changes
-
 <p align="center">
 	<img src=".github/archey4.png" alt="Archey logo" title="CC-BY Brume Archey logo" longdesc="https://brume.ink/">
 	<br />
@@ -272,6 +270,10 @@ Below stand further descriptions for each available (default) option :
 	// For example, "retro" would show the retro styled Apple logo on Darwin platforms.
 	// Note that the `--logo-style` argument overrides this setting.
 	"logo_style": "",
+	// Enable icons
+	// A nerd font is required to activate the icons. Otherwise, these are simply missing and a placeholder can be seen. https://github.com/ryanoasis/nerd-fonts
+	// Make sure that UTF-8 is supported on your system
+	"entries_icon": false,
 	// Entries list.
 	// Add a `disabled` option set to `true` to temporary hide one.
 	// You may change entry displayed name by adding a `name` option.
