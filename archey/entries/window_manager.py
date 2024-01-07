@@ -68,6 +68,18 @@ class WindowManager(Entry):
                 r"(?<=Name: ).*",
                 check_output(["wmctrl", "-m"], stderr=DEVNULL, universal_newlines=True),
             ).group(0)
+
+            # Check Display-Server-Protokoll
+
+            session = os.environ.get('XDG_SESSION_TYPE', '')
+            if session == "x11":
+                session = "X11"
+            elif session == "wayland":
+                session = "Wayland"
+
+            if session != "":
+                self.value = self.value + " (" + session + ")"
+
         except (FileNotFoundError, CalledProcessError):
             processes = Processes().list
             for wm_id, wm_name in WM_DICT.items():
