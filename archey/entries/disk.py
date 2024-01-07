@@ -13,6 +13,8 @@ from archey.entry import Entry
 class Disk(Entry):
     """Uses `df` to compute disk usage across devices"""
 
+    _ICON = "\U000f16df"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

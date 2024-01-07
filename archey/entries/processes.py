@@ -9,6 +9,8 @@ class Processes(Entry):
     Simple wrapper to `archey.processes` to provide the number of running processes as an entry.
     """
 
+    _ICON = "\ueba2"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

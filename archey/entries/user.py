@@ -8,6 +8,8 @@ from archey.entry import Entry
 class User(Entry):
     """Retrieves the session name of the current logged in user"""
 
+    _ICON = "\uf007"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

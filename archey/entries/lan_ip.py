@@ -15,6 +15,7 @@ from archey.entry import Entry
 class LanIP(Entry):
     """Relies on the `netifaces` module to detect LAN IP addresses"""
 
+    _ICON = "\U000f0a60"  # UTF-8 Code
     _PRETTY_NAME = "LAN IP"
 
     def __init__(self, *args, **kwargs):

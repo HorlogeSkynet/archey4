@@ -60,6 +60,8 @@ class Terminal(Entry):
     It also displays the colors palette afterwards.
     """
 
+    _ICON = "\uf120"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

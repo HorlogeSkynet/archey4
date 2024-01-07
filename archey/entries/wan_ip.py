@@ -13,6 +13,7 @@ from archey.environment import Environment
 class WanIP(Entry):
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
 
+    _ICON = "\U000f0a60"  # UTF-8 Code
     _PRETTY_NAME = "WAN IP"
 
     def __init__(self, *args, **kwargs):

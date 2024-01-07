@@ -13,6 +13,8 @@ from archey.entry import Entry
 class Model(Entry):
     """Uses multiple methods to retrieve some information about the host hardware"""
 
+    _ICON = "\ueabe"  # UTF-8 Code
+
     LINUX_DMI_SYS_PATH = "/sys/devices/virtual/dmi/id"
 
     def __init__(self, *args, **kwargs):

@@ -18,6 +18,8 @@ class Kernel(Entry):
     [GNU/LINUX] If user-enabled, implement a version comparison against upstream data.
     """
 
+    _ICON = "\uf305"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

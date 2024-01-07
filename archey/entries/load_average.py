@@ -10,6 +10,7 @@ from archey.entry import Entry
 class LoadAverage(Entry):
     """System load average detection entry"""
 
+    _ICON = "\U000f051f"  # UTF-8 Code
     _PRETTY_NAME = "Load Average"
 
     def __init__(self, *args, **kwargs):

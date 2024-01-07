@@ -11,6 +11,8 @@ from archey.entry import Entry
 class Distro(Entry):
     """Uses `distro` and `platform` modules to retrieve distribution and architecture information"""
 
+    _ICON = "\uf17c"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

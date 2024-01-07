@@ -20,6 +20,8 @@ class Temperature(Entry):
     On Raspberry devices, retrieves temperature from the `vcgencmd` binary.
     """
 
+    _ICON = "\U000f1a45"  # UTF-8 Code
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
