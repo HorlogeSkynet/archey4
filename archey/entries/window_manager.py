@@ -5,7 +5,6 @@ import platform
 import re
 from subprocess import DEVNULL, CalledProcessError, check_output
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.processes import Processes
 
@@ -51,14 +50,10 @@ WM_DICT = {
 
 
 class WindowManager(Entry):
-    # Icons
-    configuration = Configuration()
-    icon = configuration.get("icon")
+    # icon and name
 
-    if icon == True:
-        _PRETTY_NAME = "\ueae4 Window Manager"
-    else:
-        _PRETTY_NAME = "Window Manager"
+    _ICON = "\ueae4"  # UTF-8 Code
+    _PRETTY_NAME = "Window Manager"
 
     """
     Uses `wmctrl` to retrieve some information about the window manager.
@@ -73,18 +68,6 @@ class WindowManager(Entry):
                 r"(?<=Name: ).*",
                 check_output(["wmctrl", "-m"], stderr=DEVNULL, universal_newlines=True),
             ).group(0)
-
-            # Check Display-Server-Protokoll
-
-            session = os.environ.get('XDG_SESSION_TYPE', '')
-            if session == "x11":
-                session = "X11"
-            elif session == "wayland":
-                session = "Wayland"
-
-            if session != "":
-                self.value = self.value + " (" + session + ")"
-
         except (FileNotFoundError, CalledProcessError):
             processes = Processes().list
             for wm_id, wm_name in WM_DICT.items():

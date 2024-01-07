@@ -6,19 +6,14 @@ from contextlib import suppress
 from datetime import timedelta
 from subprocess import PIPE, run
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.exceptions import ArcheyException
 
 
 class Uptime(Entry):
-    # Icons
+    # icon
 
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "󱤥 Uptime"
+    _ICON = "\U000f1925"  # UTF-8 Code
 
     """Returns a pretty-formatted string representing the host uptime"""
 

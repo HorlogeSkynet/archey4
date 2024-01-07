@@ -8,19 +8,14 @@ from subprocess import check_output
 from typing import Tuple
 
 from archey.colors import Colors
-from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.exceptions import ArcheyException
 
 
 class RAM(Entry):
-    # Icons
+    # icon
 
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "󰍛 RAM"
+    _ICON = "\U000f035b"  # UTF-8 Code
 
     """
     First tries to use the `free` command to retrieve RAM usage.

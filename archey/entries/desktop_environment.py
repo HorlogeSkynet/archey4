@@ -22,14 +22,10 @@ DE_DICT = {
 
 
 class DesktopEnvironment(Entry):
-    # Icons
-    configuration = Configuration()
-    icon = configuration.get("icon")
 
-    if icon == True:
-        _PRETTY_NAME = "\ue23c Desktop Environment"
-    else:
-        _PRETTY_NAME = "Desktop Environment"
+    # icon and name
+    _ICON = "\ue23c"  # UTF-8 Code
+    _PRETTY_NAME = "Desktop Environment"
 
     """
     Just iterate over running processes to find a known-entry.

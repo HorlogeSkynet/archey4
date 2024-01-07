@@ -8,20 +8,11 @@ from typing import Dict, List
 
 from archey.distributions import Distributions
 from archey.entry import Entry
-from archey.configuration import Configuration
 
 
 class CPU(Entry):
-
-    # Icons
-
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "\uf4bc CPU"
-
-
+    # icon
+    _ICON = "\uf4bc"  # UTF-8 Code
 
     """
     Parse `/proc/cpuinfo` file to retrieve model names.

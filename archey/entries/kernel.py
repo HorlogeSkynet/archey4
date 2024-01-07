@@ -14,13 +14,9 @@ from archey.utility import Utility
 
 
 class Kernel(Entry):
-    # Icons
 
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "\uf305 Kernel"
+    # icon
+    _ICON = "\uf305"  # UTF-8 Code
 
     """
     Retrieve kernel identity.

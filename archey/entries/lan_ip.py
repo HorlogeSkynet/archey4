@@ -4,8 +4,6 @@ import ipaddress
 from itertools import islice
 from typing import Iterator
 
-from archey.configuration import Configuration
-
 try:
     import netifaces
 except ImportError:
@@ -15,17 +13,11 @@ from archey.entry import Entry
 
 
 class LanIP(Entry):
-    # Icons
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "󰩠 LAN IP"
-    else:
-        _PRETTY_NAME = "LAN IP"
+    # icon and name
+    _ICON = "\U000f0a60"  # UTF-8 Code
+    _PRETTY_NAME = "LAN IP"
 
     """Relies on the `netifaces` module to detect LAN IP addresses"""
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,7 +54,7 @@ class LanIP(Entry):
 
     @staticmethod
     def _lan_ip_addresses_generator(
-        addr_families: list, show_global: bool, show_link_local: bool
+            addr_families: list, show_global: bool, show_link_local: bool
     ) -> Iterator[str]:
         """Generator yielding local IP address according to passed address families"""
         # Loop through all available network interfaces.
@@ -77,9 +69,9 @@ class LanIP(Entry):
 
                     # Filter out loopback and public/link-local IP addresses (if enabled).
                     if (
-                        not ip_addr.is_loopback
-                        and (not ip_addr.is_global or show_global)
-                        and (not ip_addr.is_link_local or show_link_local)
+                            not ip_addr.is_loopback
+                            and (not ip_addr.is_global or show_global)
+                            and (not ip_addr.is_link_local or show_link_local)
                     ):
                         # Finally, yield the address compressed representation.
                         yield ip_addr.compressed

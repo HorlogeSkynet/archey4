@@ -2,18 +2,13 @@
 
 import getpass
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class User(Entry):
-    # Icons
+    # icon
 
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "\uf007 User"
+    _ICON = "\uf007"  # UTF-8 Code
 
     """Retrieves the session name of the current logged in user"""
 

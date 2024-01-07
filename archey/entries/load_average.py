@@ -4,19 +4,14 @@ import os
 from contextlib import suppress
 
 from archey.colors import Colors
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class LoadAverage(Entry):
-    # Icons
-    configuration = Configuration()
-    icon = configuration.get("icon")
+    # icon and name
 
-    if icon == True:
-        _PRETTY_NAME = "󰔟 Load Average"
-    else:
-        _PRETTY_NAME = "Load Average"
+    _ICON = "\U000f051f"  # UTF-8 Code
+    _PRETTY_NAME = "Load Average"
 
     """System load average detection entry"""
 

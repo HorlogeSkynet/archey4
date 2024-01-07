@@ -6,20 +6,14 @@ from typing import Optional
 from urllib.error import URLError
 from urllib.request import urlopen
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 from archey.environment import Environment
 
 
 class WanIP(Entry):
-    # Icons
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "󰩠 WAN IP"
-    else:
-        _PRETTY_NAME = "WAN IP"
+    # icon and name
+    _ICON = "\U000f0a60"  # UTF-8 Code
+    _PRETTY_NAME = "WAN IP"
 
     """Uses different ways to retrieve the public IPv{4,6} addresses"""
 

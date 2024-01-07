@@ -5,7 +5,6 @@ import re
 from typing import Optional
 
 from archey.colors import Colors, Style
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 # We detect a terminal by using the following three constants in the order below:
@@ -56,13 +55,9 @@ ENV_DICT = {
 
 
 class Terminal(Entry):
-    # Icons
+    # icon
 
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "\uf120 Terminal"
+    _ICON = "\uf120"  # UTF-8 Code
 
     """
     Simple terminal detection based on the `TERM` environment variable.

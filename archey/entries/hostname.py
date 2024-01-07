@@ -3,18 +3,13 @@
 import platform
 from typing import Optional
 
-from archey.configuration import Configuration
 from archey.entry import Entry
 
 
 class Hostname(Entry):
-    # Icons
 
-    configuration = Configuration()
-    icon = configuration.get("icon")
-
-    if icon == True:
-        _PRETTY_NAME = "󰌘 Hostname"
+    # icon
+    _ICON = "\U000f0318"  # UTF-8 Code
 
     """Read system file with fallback on `platform` module to retrieve the system host-name"""
 
