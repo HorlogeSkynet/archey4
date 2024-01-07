@@ -17,7 +17,7 @@ class TestTerminalEntry(unittest.TestCase):
     def setUp(self):
         # By default, colors won't be disabled.
         self._should_color_output_patch = patch(
-            "archey.colors.Colors.should_color_output",
+            "archey.colors.Style.should_color_output",
             return_value=True,
         )
         self._should_color_output_patch.start()
