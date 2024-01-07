@@ -16,7 +16,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "suppress_warnings": False,
     "entries_color": "",
     "honor_ansi_color": True,
-    "icon": False,
+    "entries_icon": False,
     "default_strings": {
         "latest": "latest",
         "available": "available",
