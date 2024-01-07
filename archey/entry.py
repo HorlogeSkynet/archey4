@@ -12,6 +12,7 @@ class Entry(AbstractBaseClass):
     """Module base class"""
 
     _PRETTY_NAME: Optional[str] = None
+    _ICON: Optional[str] = None
 
     def __new__(cls, *_, **kwargs):
         """Hook object instantiation to handle our particular `disabled` config field"""
@@ -26,7 +27,18 @@ class Entry(AbstractBaseClass):
         # `name`: key (defaults to the instantiated entry class name);
         # `value`: value of entry as an appropriate object;
         # `options`: configuration options *specific* to an entry instance;
-        self.name = name or self._PRETTY_NAME or self.__class__.__name__
+
+        configuration = Configuration()
+        icon = configuration.get("entries_icon")
+
+        if icon == True:
+            if self._ICON == None:
+                self.name = name or self._PRETTY_NAME or self.__class__.__name__
+            else:
+                self.name = name or self._PRETTY_NAME or self.__class__.__name__
+                self.name = self._ICON + " " + self.name
+        else:
+            self.name = name or self._PRETTY_NAME or self.__class__.__name__
         self.value = value
         self.options = options or {}
 
