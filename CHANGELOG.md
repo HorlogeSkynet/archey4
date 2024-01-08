@@ -8,9 +8,11 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Added
 - Official EndeavourOS distribution support
+- Display server protocol to `WindowManager`
 
 ### Changed
 - Allow `df` output to contain Unicode characters
+- `WindowManager` API value format: now an object with `name` and `display_server_protocol` attributes
 
 ## [v4.14.2.0] - 2023-08-26
 ### Added

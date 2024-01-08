@@ -30,7 +30,7 @@ Window manager's "showing the desktop" mode: OFF
     )
     def test_wmctrl(self, _, __):
         """Test `wmctrl` output parsing"""
-        self.assertEqual(WindowManager().value, "WINDOW MANAGER")
+        self.assertEqual(WindowManager().value["name"], "WINDOW MANAGER")
 
     @patch(
         "archey.entries.window_manager.check_output",
@@ -46,9 +46,15 @@ Window manager's "showing the desktop" mode: OFF
             "here",
         ),
     )
-    def test_no_wmctrl_match(self, _, __):
+    @patch(
+        "archey.entries.desktop_environment.os.getenv",
+        return_value="wayland",
+    )
+    def test_no_wmctrl_match(self, _, __, ___):
         """Test basic detection based on a (fake) processes list"""
-        self.assertEqual(WindowManager().value, "Awesome")
+        window_manager = WindowManager()
+        self.assertEqual(window_manager.value["name"], "Awesome")
+        self.assertEqual(window_manager.value["display_server_protocol"], "Wayland")
 
     @patch(
         "archey.entries.window_manager.check_output",
@@ -72,7 +78,7 @@ Window manager's "showing the desktop" mode: OFF
         output_mock = MagicMock()
         window_manager.output(output_mock)
 
-        self.assertIsNone(window_manager.value)
+        self.assertIsNone(window_manager.value["name"])
         self.assertEqual(
             output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
         )
