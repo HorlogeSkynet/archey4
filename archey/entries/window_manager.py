@@ -1,5 +1,6 @@
 """Windows manager detection class"""
 
+import os
 import platform
 import re
 from subprocess import DEVNULL, CalledProcessError, check_output
@@ -47,6 +48,11 @@ WM_DICT = {
     "yabai": "Yabai",
 }
 
+DSP_DICT = {
+    "x11": "X11",
+    "wayland": "Wayland",
+}
+
 
 class WindowManager(Entry):
     """
@@ -59,8 +65,9 @@ class WindowManager(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        name = None
         try:
-            self.value = re.search(  # type: ignore
+            name = re.search(  # type: ignore
                 r"(?<=Name: ).*",
                 check_output(["wmctrl", "-m"], stderr=DEVNULL, universal_newlines=True),
             ).group(0)
@@ -68,8 +75,27 @@ class WindowManager(Entry):
             processes = Processes().list
             for wm_id, wm_name in WM_DICT.items():
                 if wm_id in processes:
-                    self.value = wm_name
+                    name = wm_name
                     break
             else:
                 if platform.system() == "Darwin":
-                    self.value = "Quartz Compositor"
+                    name = "Quartz Compositor"
+
+        display_server_protocol = DSP_DICT.get(os.getenv("XDG_SESSION_TYPE", ""))
+
+        self.value = {
+            "name": name,
+            "display_server_protocol": display_server_protocol,
+        }
+
+    def output(self, output) -> None:
+        # No WM could be detected.
+        if self.value["name"] is None:
+            output.append(self.name, self._default_strings.get("not_detected"))
+            return
+
+        text_output = self.value["name"]
+        if self.value["display_server_protocol"] is not None:
+            text_output += f" ({self.value['display_server_protocol']})"
+
+        output.append(self.name, text_output)
