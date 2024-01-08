@@ -444,7 +444,7 @@ Below stand further descriptions for each available (default) option :
 			// A custom program and its arguments to execute.
 			"shell": false,
 			"command": ["echo", "My super GPU model !"],
-			// Whether or not command exit status code should be ignored (defaults to `true`).
+			// Whether or not command exit status code should be checked (defaults to `true`).
 			"check": true,
 			// Whether or not STDERR should be silenced instead of logged (defaults to `true`).
 			"log_stderr": true,
