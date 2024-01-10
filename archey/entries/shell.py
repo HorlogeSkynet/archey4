@@ -13,7 +13,7 @@ class Shell(Entry):
     the local administrative database.
     """
 
-    _ICON = "\U000f018d"  # UTF-8 Code
+    _ICON = "\U000f018d"  # md_console 󰆍
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

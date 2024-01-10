@@ -18,7 +18,7 @@ class Kernel(Entry):
     [GNU/LINUX] If user-enabled, implement a version comparison against upstream data.
     """
 
-    _ICON = "\uf305"  # UTF-8 Code
+    _ICON = "\uf305"  # linux_coreos 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

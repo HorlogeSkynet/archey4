@@ -9,7 +9,7 @@ from archey.entry import Entry
 class Hostname(Entry):
     """Read system file with fallback on `platform` module to retrieve the system host-name"""
 
-    _ICON = "\U000f0318"  # UTF-8 Code
+    _ICON = "\U000f0318"  # md_lan_connect 󰌘
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

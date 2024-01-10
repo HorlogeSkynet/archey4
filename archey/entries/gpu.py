@@ -11,7 +11,7 @@ from archey.entry import Entry
 class GPU(Entry):
     """Relies on `lspci` or `pciconf` to retrieve graphical device(s) information"""
 
-    _ICON = "\ue735"  # UTF-8 Code
+    _ICON = "\ue735"  # dev_html5_3d_effects 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
