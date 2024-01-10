@@ -25,6 +25,7 @@ class DesktopEnvironment(Entry):
     Just iterate over running processes to find a known-entry.
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
+
     _ICON = "\ue23c"  # fae_restore 
     _PRETTY_NAME = "Desktop Environment"
 
