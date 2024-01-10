@@ -1,6 +1,7 @@
 """Local IP addresses detection class"""
 
 import ipaddress
+from functools import cached_property
 from itertools import islice
 from typing import Iterator
 
@@ -74,17 +75,15 @@ class LanIP(Entry):
                         # Finally, yield the address compressed representation.
                         yield ip_addr.compressed
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting the IP address list."""
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        """Pretty-formats the IP address list."""
         # If we found IP addresses, join them together nicely.
         # If not, fall back on default strings according to `netifaces` availability.
         if self.value:
             if not self.options.get("one_line", True):
                 # One-line output has been disabled, add one IP address per item.
-                for ip_address in self.value:
-                    output.append(self.name, ip_address)
-
-                return
+                return map(lambda ip_address: (self.name, ip_address), self.value)
 
             text_output = ", ".join(self.value)
 
@@ -93,4 +92,4 @@ class LanIP(Entry):
         else:
             text_output = self._default_strings.get("not_detected")
 
-        output.append(self.name, text_output)
+        return [(self.name, text_output)]

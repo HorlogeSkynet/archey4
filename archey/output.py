@@ -72,10 +72,6 @@ class Output:
         """Append an entry to the list of entries to output"""
         self._entries.append(module)
 
-    def append(self, key: str, value) -> None:
-        """Append a pre-formatted entry to the final output content"""
-        self._results.append(f"{self._entries_color}{key}:{Colors.CLEAR} {value}")
-
     def output(self) -> None:
         """
         Main `Output`'s `output` method.
@@ -85,9 +81,12 @@ class Output:
         if self._format_to_json:
             self._output_json()
         else:
-            # Iterate through the entries and run their output method to add their content.
+            # Iterate through the entries and get their content.
             for entry in self._entries:
-                entry.output(self)
+                for entry_line in entry.pretty_value:
+                    self._results.append(
+                        f"{self._entries_color}{entry_line[0]}:{Colors.CLEAR} {entry_line[1]}"
+                    )
             self._output_text()
 
     def _output_json(self) -> None:

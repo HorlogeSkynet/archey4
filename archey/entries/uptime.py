@@ -4,6 +4,7 @@ import re
 import time
 from contextlib import suppress
 from datetime import timedelta
+from functools import cached_property
 from subprocess import PIPE, run
 
 from archey.entry import Entry
@@ -145,8 +146,9 @@ class Uptime(Entry):
             seconds=int(uptime_args.get("seconds") or 0),
         )
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting the uptime to a string."""
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        """Pretty-formats the uptime to a string."""
         days = self.value["days"]
         hours = self.value["hours"]
         minutes = self.value["minutes"]
@@ -178,4 +180,4 @@ class Uptime(Entry):
         elif not days and not hours:
             uptime = "< 1 minute"
 
-        output.append(self.name, uptime)
+        return [(self.name, uptime)]

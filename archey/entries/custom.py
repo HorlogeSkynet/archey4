@@ -4,6 +4,7 @@ import logging
 import os
 import stat
 from contextlib import suppress
+from functools import cached_property
 from subprocess import DEVNULL, PIPE, CalledProcessError, run
 from typing import List, Union
 
@@ -61,14 +62,13 @@ class Custom(Entry):
             if log_stderr and proc.stderr:
                 self._logger.warning("%s", proc.stderr.rstrip())
 
-    def output(self, output) -> None:
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
         if not self.value:
-            output.append(self.name, self._default_strings.get("not_detected"))
-            return
+            return [(self.name, self._default_strings.get("not_detected"))]
 
         # Join the results only if `one_line` option is enabled.
         if self.options.get("one_line", True):
-            output.append(self.name, ", ".join(self.value))
+            return [(self.name, ", ".join(self.value))]
         else:
-            for element in self.value:
-                output.append(self.name, element)
+            return map(lambda element: (self.name, element), self.value)

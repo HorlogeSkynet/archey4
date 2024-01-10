@@ -1,6 +1,7 @@
 """Distribution and architecture detection class"""
 
 import platform
+from functools import cached_property
 from subprocess import check_output
 from typing import Optional
 
@@ -43,10 +44,13 @@ class Distro(Entry):
 
         return f"Darwin {platform.release()}"
 
-    def output(self, output) -> None:
-        output.append(
-            self.name,
-            f"{{}} {self.value['arch']}".format(
-                self.value["name"] or self._default_strings.get("not_detected")
-            ),
-        )
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        return [
+            (
+                self.name,
+                f"{{}} {self.value['arch']}".format(
+                    self.value["name"] or self._default_strings.get("not_detected")
+                ),
+            )
+        ]

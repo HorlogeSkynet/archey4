@@ -1,5 +1,6 @@
 """Public IP address detection class"""
 
+from functools import cached_property
 from socket import timeout as SocketTimeoutError
 from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_output
 from typing import Optional
@@ -96,17 +97,15 @@ class WanIP(Entry):
         except (URLError, SocketTimeoutError):
             return None
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting our list of IP addresses."""
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        """Pretty-formats our list of IP addresses."""
         # If we found IP addresses, join them together nicely.
         # If not, fall-back on the "No address" string.
         if self.value:
             if not self.options.get("one_line", True):
                 # One-line output has been disabled, add one IP address per item.
-                for ip_address in self.value:
-                    output.append(self.name, ip_address)
-
-                return
+                return map(lambda ip_address: (self.name, ip_address), self.value)
 
             text_output = ", ".join(self.value)
 
@@ -115,4 +114,4 @@ class WanIP(Entry):
         else:
             text_output = self._default_strings.get("not_detected")
 
-        output.append(self.name, text_output)
+        return [(self.name, text_output)]

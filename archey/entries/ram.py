@@ -4,6 +4,7 @@ import os
 import platform
 import re
 from contextlib import suppress
+from functools import cached_property
 from subprocess import check_output
 from typing import Tuple
 
@@ -152,14 +153,14 @@ class RAM(Entry):
 
         return (mem_used / 1024), (mem_total / 1024)
 
-    def output(self, output) -> None:
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
         """
-        Adds the entry to `output` after pretty-formatting the RAM usage with color and units.
+        Pretty-formats the RAM usage with color and units.
         """
         if not self.value:
             # Fall back on the default behavior if no RAM usage could be detected.
-            super().output(output)
-            return
+            return super().pretty_value
 
         # DRY some constants
         used = self.value["used"]
@@ -173,6 +174,4 @@ class RAM(Entry):
             self.options.get("danger_use_percent", 66.7),
         )
 
-        output.append(
-            self.name, f"{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}"
-        )
+        return [(self.name, f"{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}")]

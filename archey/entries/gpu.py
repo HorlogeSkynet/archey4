@@ -2,6 +2,7 @@
 
 import platform
 import re
+from functools import cached_property
 from subprocess import DEVNULL, CalledProcessError, check_output
 from typing import List
 
@@ -80,16 +81,15 @@ class GPU(Entry):
 
         return gpus_list
 
-    def output(self, output) -> None:
-        """Writes GPUs to `output` based on preferences"""
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        """Pretty-formats GPUs based on preferences"""
         # No GPU could be detected.
         if not self.value:
-            output.append(self.name, self._default_strings.get("not_detected"))
-            return
+            return [(self.name, self._default_strings.get("not_detected"))]
 
         # Join the results only if `one_line` option is enabled.
         if self.options.get("one_line"):
-            output.append(self.name, ", ".join(self.value))
+            return [(self.name, ", ".join(self.value))]
         else:
-            for gpu_device in self.value:
-                output.append(self.name, gpu_device)
+            return map(lambda gpu_device: (self.name, gpu_device), self.value)

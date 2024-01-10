@@ -4,6 +4,7 @@ import json
 import platform
 import re
 from subprocess import DEVNULL, CalledProcessError, check_output
+from functools import cached_property
 from typing import Dict, List
 
 from archey.distributions import Distributions
@@ -184,12 +185,12 @@ class CPU(Entry):
         model_name, nb_cores = sysctl_output.splitlines()
         return [{model_name: int(nb_cores)}]
 
-    def output(self, output) -> None:
-        """Writes CPUs to `output` based on preferences"""
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        """Provides CPU pretty value based on preferences"""
         # No CPU could be detected.
         if not self.value:
-            output.append(self.name, self._default_strings.get("not_detected"))
-            return
+            return [(self.name, self._default_strings.get("not_detected"))]
 
         entries = []
         for cpus in self.value:
@@ -201,8 +202,7 @@ class CPU(Entry):
 
         if self.options.get("one_line"):
             # One-line output is enabled : Join the results !
-            output.append(self.name, ", ".join(entries))
+            return [(self.name, ", ".join(entries))]
         else:
             # One-line output has been disabled, add one entry per item.
-            for entry in entries:
-                output.append(self.name, entry)
+            return map(lambda entry: (self.name, entry), entries)

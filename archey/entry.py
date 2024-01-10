@@ -3,6 +3,7 @@
 import logging
 from abc import ABC as AbstractBaseClass
 from abc import abstractmethod
+from functools import cached_property
 from typing import Optional
 
 from archey.configuration import Configuration
@@ -36,12 +37,13 @@ class Entry(AbstractBaseClass):
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)
 
-    def output(self, output) -> None:
-        """Output the results to output. Can be overridden by subclasses."""
+    @cached_property
+    def pretty_value(self) -> [(str, str)]:
+        """Provide a "pretty" value. Can be overridden by subclasses."""
         if self.value:
-            # Let's assume we can just use `__str__` on the object in value,
+            # Let's assume we can just use `__str__` on the object in _value,
             # and create a single-line output with it.
-            output.append(self.name, str(self.value))
+            return [(self.name, str(self.value))]
         else:
             # If the value is "falsy" leave a generic "Not detected" message for this entry.
-            output.append(self.name, self._default_strings.get("not_detected"))
+            return [(self.name, self._default_strings.get("not_detected"))]
