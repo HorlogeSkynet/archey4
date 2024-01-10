@@ -31,14 +31,9 @@ class Entry(AbstractBaseClass):
         configuration = Configuration()
         icon = configuration.get("entries_icon")
 
-        if icon == True:
-            if self._ICON == None:
-                self.name = name or self._PRETTY_NAME or self.__class__.__name__
-            else:
-                self.name = name or self._PRETTY_NAME or self.__class__.__name__
-                self.name = self._ICON + " " + self.name
-        else:
-            self.name = name or self._PRETTY_NAME or self.__class__.__name__
+        self.name = name or self._PRETTY_NAME or self.__class__.__name__
+        if self._ICON is not None and Configuration().get("entries_icon"):
+            self.name = f"{self._ICON} {self.name}"
         self.value = value
         self.options = options or {}
 
