@@ -119,14 +119,15 @@ class TerminalMovements(Enum):
     TO_COLUMN = "G"
     TO_POSITION = "H"
 
-    # override `Style`
-    def __str__(self):
-        return Style.escape_code_from_attrs(";".join(map(str, (1, self.value))))
+    ERASE_LINE = "K"
 
-    # Python 3.6 compatibility due to string format changes, see
-    # <https://docs.python.org/3/whatsnew/3.7.html#other-language-changes> (bpo-28794)
-    def __format__(self, _):
-        return super().__str__()
+    def move(self, *amounts):
+        """
+        Returns an ANSI escape code corresponding to the movement given.
+        Use `TerminalMovements` for the direction, and specify amounts 1-indexed, row before column.
+        """
+        display_attrs = ";".join(map(str, (*amounts, self.value)))
+        return f"\x1b[{display_attrs}"
 
 
 class CursorPosition(Style):
@@ -141,4 +142,6 @@ class CursorPosition(Style):
         Returns an ANSI escape code corresponding to the movement given.
         Use `TerminalMovements` for the direction, and specify amounts 1-indexed, row before column.
         """
-        return Style.escape_code_from_attrs(";".join(map(str, (*amounts, movement))))
+        # return Style.escape_code_from_attrs(";".join(map(str, (*amounts, movement.value))))
+        display_attrs = ";".join(map(str, (*amounts, movement.value)))
+        return f"\x1b[{display_attrs}"

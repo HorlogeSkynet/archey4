@@ -10,7 +10,7 @@ import argparse
 import logging
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import ExitStack
 from enum import Enum
 from typing import Callable, Optional
@@ -124,6 +124,7 @@ def args_parsing() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# todo: refactor out into functions/methods (too many branches)
 def main():
     """Simple entry point"""
     args = args_parsing()
@@ -152,13 +153,17 @@ def main():
         format_to_json=args.json,
     )
 
+    # Begin with some output as soon as possible
+    output.begin_output()
+
     # We will map this function onto our enabled entries to instantiate them.
-    def _entry_instantiator(entry: dict) -> Optional[Entry]:
+    def _entry_instantiator(entry: dict, index: int) -> Optional[Entry]:
         # Based on **required** `type` field, instantiate the corresponding `Entry` object.
         try:
             return Entries[entry.pop("type")].value(
                 name=entry.pop("name", None),  # `name` is fully-optional.
                 options=entry,  # Remaining fields should be propagated as options.
+                index=index,  # Provide entry with its position index.
             )
         except KeyError as key_error:
             logging.warning("One entry (misses or) uses an invalid `type` field (%s).", key_error)
@@ -182,11 +187,25 @@ def main():
             )
             mapper = executor.map
 
-        for entry_instance in mapper(_entry_instantiator, available_entries):
-            if entry_instance:
-                output.add_entry(entry_instance)
+        # todo: solution fails if parallel_loading false because no executor
+        if configuration.get("output_concurrency"):
+            tasks = []
+            for index, entry in enumerate(available_entries):
+                future = executor.submit(_entry_instantiator, entry, index)
+                output.add_entry_concurrent(future)
+                tasks.append(future)
 
-    output.output()
+            for future in as_completed(tasks):
+                output.entry_future_done_callback(future)
+
+        else:
+            for entry_instance in mapper(
+                _entry_instantiator, available_entries, range(len(available_entries))
+            ):
+                if entry_instance:
+                    output.add_entry(entry_instance)
+
+    output.finish_output()
 
     # Has the screenshot flag been specified ?
     if args.screenshot is not None:
