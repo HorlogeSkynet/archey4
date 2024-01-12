@@ -28,9 +28,6 @@ class Entry(AbstractBaseClass):
         # `value`: value of entry as an appropriate object;
         # `options`: configuration options *specific* to an entry instance;
 
-        configuration = Configuration()
-        icon = configuration.get("entries_icon")
-
         self.name = name or self._PRETTY_NAME or self.__class__.__name__
         if self._ICON is not None and Configuration().get("entries_icon"):
             self.name = f"{self._ICON} {self.name}"
