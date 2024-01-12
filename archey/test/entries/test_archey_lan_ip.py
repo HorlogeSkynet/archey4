@@ -247,9 +247,9 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
             self.assertEqual(output_mock.append.call_count, 3)
             output_mock.append.assert_has_calls(
                 [
-                    call("LAN IP", "192.168.1.55"),
-                    call("LAN IP", "2001::45:6789:abcd:6817"),
-                    call("LAN IP", "fe80::abcd:ef0:abef:dead"),
+                    call("\U000f0a60 LAN IP", "192.168.1.55"),
+                    call("\U000f0a60 LAN IP", "2001::45:6789:abcd:6817"),
+                    call("\U000f0a60 LAN IP", "fe80::abcd:ef0:abef:dead"),
                 ]
             )
 
