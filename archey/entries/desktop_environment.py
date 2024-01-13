@@ -26,7 +26,7 @@ class DesktopEnvironment(Entry):
     If not, rely on the `XDG_CURRENT_DESKTOP` environment variable.
     """
 
-    _ICON = "\ue23c"  # fae_restore 
+    _ICON = "\ue23c"  # fae_restore
     _PRETTY_NAME = "Desktop Environment"
 
     def __init__(self, *args, **kwargs):

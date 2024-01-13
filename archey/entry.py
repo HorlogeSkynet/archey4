@@ -11,8 +11,8 @@ from archey.configuration import Configuration
 class Entry(AbstractBaseClass):
     """Module base class"""
 
-    _PRETTY_NAME: Optional[str] = None
     _ICON: Optional[str] = None
+    _PRETTY_NAME: Optional[str] = None
 
     def __new__(cls, *_, **kwargs):
         """Hook object instantiation to handle our particular `disabled` config field"""
@@ -23,19 +23,23 @@ class Entry(AbstractBaseClass):
 
     @abstractmethod
     def __init__(self, name: Optional[str] = None, value=None, options: Optional[dict] = None):
+        configuration = Configuration()
+
         # Each entry will have always have the following attributes...
         # `name`: key (defaults to the instantiated entry class name);
         # `value`: value of entry as an appropriate object;
         # `options`: configuration options *specific* to an entry instance;
-
         self.name = name or self._PRETTY_NAME or self.__class__.__name__
-        if self._ICON is not None and Configuration().get("entries_icon"):
-            self.name = f"{self._ICON} {self.name}"
         self.value = value
         self.options = options or {}
 
+        # optionally prepend entry name with an icon
+        icon = self.options.get("icon", self._ICON)
+        if icon is not None and configuration.get("entries_icon"):
+            self.name = f"{icon} {self.name}"
+
         # Propagates a reference to default strings specified in `Configuration`.
-        self._default_strings = Configuration().get("default_strings")
+        self._default_strings = configuration.get("default_strings")
 
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)

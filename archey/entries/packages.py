@@ -48,7 +48,7 @@ PACKAGES_TOOLS = (
 class Packages(Entry):
     """Relies on the first found packages manager to list the installed packages"""
 
-    _ICON = "\ueb29"  # cod_package 
+    _ICON = "\ueb29"  # cod_package
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

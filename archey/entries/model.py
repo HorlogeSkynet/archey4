@@ -13,7 +13,7 @@ from archey.entry import Entry
 class Model(Entry):
     """Uses multiple methods to retrieve some information about the host hardware"""
 
-    _ICON = "\ueabe"  # cod_circuit_board 
+    _ICON = "\ueabe"  # cod_circuit_board
 
     LINUX_DMI_SYS_PATH = "/sys/devices/virtual/dmi/id"
 
