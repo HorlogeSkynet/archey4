@@ -14,7 +14,7 @@ from archey.entry import Entry
 class Custom(Entry):
     """Custom entry gathering info based on configuration options"""
 
-    _ICON = "\uf013"
+    _ICON = "\uf013"  # fa_cog
 
     def __new__(cls, *_, **kwargs):
         # Don't load this entry if a configuration file has too broad permissions.
