@@ -60,6 +60,8 @@ class Terminal(Entry):
     It also displays the colors palette afterwards.
     """
 
+    _ICON = "\uf120"  # fa_terminal
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

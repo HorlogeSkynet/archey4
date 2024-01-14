@@ -19,6 +19,8 @@ class CPU(Entry):
     Each `dict` **SHOULD** contain only one entry (CPU model name as key and cores count as value).
     """
 
+    _ICON = "\uf4bc"  # oct_cpu
+
     _MODEL_NAME_REGEXP = re.compile(
         r"^model name\s*:\s*(.*)$",
         flags=re.IGNORECASE | re.MULTILINE,

@@ -60,6 +60,7 @@ class WindowManager(Entry):
     If not available, fall back on a simple iteration over the processes.
     """
 
+    _ICON = "\ueae4"  # cod_empty_window
     _PRETTY_NAME = "Window Manager"
 
     def __init__(self, *args, **kwargs):

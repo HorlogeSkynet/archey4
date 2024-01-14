@@ -270,9 +270,15 @@ Below stand further descriptions for each available (default) option :
 	// For example, "retro" would show the retro styled Apple logo on Darwin platforms.
 	// Note that the `--logo-style` argument overrides this setting.
 	"logo_style": "",
+	// Enable icons for entries.
+	// A terminal "nerd font" is required to display the icons. Otherwise, these are simply missing and a placeholder will be seen.
+	// You can also refer to : <https://github.com/ryanoasis/nerd-fonts>.
+	// Make sure that your system locale supports UTF-8.
+	"entries_icon": false,
 	// Entries list.
 	// Add a `disabled` option set to `true` to temporary hide one.
 	// You may change entry displayed name by adding a `name` option.
+	// You may change entry displayed icon by adding an `icon` option.
 	// You may re-order the entries list as you wish.
 	"entries": [
 		{ "type": "User" },
@@ -436,8 +442,9 @@ Below stand further descriptions for each available (default) option :
 		{
 			"type": "Custom",
 			// `command` option is mandatory. `shell` option defaults to `false`.
-			// Don't forget to set a `name` !
+			// Don't forget to set a `name` (and optionally an icon) !
 			"name": "GPU",
+			"icon": "\ue735",
 			// The custom shell command to execute.
 			"shell": true,
 			"command": "lshw -C display 2> /dev/null | rg product | cut -d ':' -f 2",

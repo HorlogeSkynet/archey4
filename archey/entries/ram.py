@@ -18,6 +18,8 @@ class RAM(Entry):
     If not available, falls back on the parsing of `/proc/meminfo` file.
     """
 
+    _ICON = "\U000f035b"  # md_memory
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

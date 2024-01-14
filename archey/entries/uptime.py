@@ -13,6 +13,8 @@ from archey.exceptions import ArcheyException
 class Uptime(Entry):
     """Returns a pretty-formatted string representing the host uptime"""
 
+    _ICON = "\U000f1925"  # md_timer_cog
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
