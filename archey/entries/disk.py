@@ -228,9 +228,10 @@ class Disk(Entry):
 
         return f"{blocks:02.1f} {unit}{suffix}"
 
-    def output(self, output) -> None:
+    @property
+    def pretty_value(self) -> Entry.ValueType:
         """
-        Adds the entry to `output` after formatting with color and units.
+        Pretty-formats the entry with color and units.
         Follows the user configuration supplied for formatting.
         """
         # Fetch our `filesystems` object locally so we can modify it safely.
@@ -238,8 +239,7 @@ class Disk(Entry):
 
         if not filesystems:
             # We didn't find any disk, fall back to the default entry behavior.
-            super().output(output)
-            return
+            return super().pretty_value
 
         # DRY configuration object for the output.
         disk_labels = self.options.get("disk_labels")
@@ -272,6 +272,8 @@ class Disk(Entry):
                     name += " "
                 name += "({disk_label})"
 
+        entry_lines = []
+
         # We will only run this loop a single time for combined entries.
         for mount_point, filesystem_data in filesystems.items():
             # Select the corresponding level color based on disk percentage usage.
@@ -294,4 +296,6 @@ class Disk(Entry):
                 self._blocks_to_human_readable(filesystem_data["total_blocks"]),
             )
 
-            output.append(name.format(disk_label=disk_label), pretty_filesystem_value)
+            entry_lines.append((name.format(disk_label=disk_label), pretty_filesystem_value))
+
+        return entry_lines

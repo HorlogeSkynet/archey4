@@ -121,10 +121,7 @@ class Terminal(Entry):
         # Note : It _might_ be `None` in very specific environments.
         return env_term
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting with colors palette"""
-        text_output = self.value or self._default_strings.get("not_detected")
-        if Style.should_color_output():
-            text_output += " " + self._get_colors_palette()
-
-        output.append(self.name, text_output)
+    def __str__(self) -> str:
+        return self.value + (
+            " " + self._get_colors_palette() if Style.should_color_output() else ""
+        )

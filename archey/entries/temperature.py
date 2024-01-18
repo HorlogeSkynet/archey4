@@ -226,13 +226,7 @@ class Temperature(Entry):
         """Simple Celsius to Fahrenheit conversion method"""
         return temp * (9 / 5) + 32
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting with units."""
-        if not self.value:
-            # Fall back on the default behavior if no temperatures were detected.
-            super().output(output)
-            return
-
+    def __str__(self) -> str:
         # DRY some constants
         char_before_unit = self.value["char_before_unit"]
         unit = self.value["unit"]
@@ -242,4 +236,4 @@ class Temperature(Entry):
         if len(self._temps) > 1:
             entry_text += f" (Max. {self.value['max_temperature']}{char_before_unit}{unit})"
 
-        output.append(self.name, entry_text)
+        return entry_text

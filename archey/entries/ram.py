@@ -154,15 +154,7 @@ class RAM(Entry):
 
         return (mem_used / 1024), (mem_total / 1024)
 
-    def output(self, output) -> None:
-        """
-        Adds the entry to `output` after pretty-formatting the RAM usage with color and units.
-        """
-        if not self.value:
-            # Fall back on the default behavior if no RAM usage could be detected.
-            super().output(output)
-            return
-
+    def __str__(self) -> str:
         # DRY some constants
         used = self.value["used"]
         total = self.value["total"]
@@ -175,6 +167,4 @@ class RAM(Entry):
             self.options.get("danger_use_percent", 66.7),
         )
 
-        output.append(
-            self.name, f"{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}"
-        )
+        return f"{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}"

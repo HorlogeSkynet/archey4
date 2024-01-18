@@ -186,12 +186,12 @@ class CPU(Entry):
         model_name, nb_cores = sysctl_output.splitlines()
         return [{model_name: int(nb_cores)}]
 
-    def output(self, output) -> None:
-        """Writes CPUs to `output` based on preferences"""
+    @property
+    def pretty_value(self) -> Entry.ValueType:
+        """Provides CPU pretty value based on preferences"""
         # No CPU could be detected.
         if not self.value:
-            output.append(self.name, self._default_strings.get("not_detected"))
-            return
+            return [(self.name, self._default_strings.get("not_detected"))]
 
         entries = []
         for cpus in self.value:
@@ -203,8 +203,7 @@ class CPU(Entry):
 
         if self.options.get("one_line"):
             # One-line output is enabled : Join the results !
-            output.append(self.name, ", ".join(entries))
-        else:
-            # One-line output has been disabled, add one entry per item.
-            for entry in entries:
-                output.append(self.name, entry)
+            return [(self.name, ", ".join(entries))]
+
+        # One-line output has been disabled, create one line per item.
+        return [(self.name, entry) for entry in entries]

@@ -3,7 +3,7 @@
 import os
 import stat
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG, Configuration
 from archey.entries.custom import Custom
@@ -72,43 +72,25 @@ class TestCustomEntry(unittest.TestCase):
         )
         self.assertListEqual(custom.value, ["Model 1", "Model 2"])
 
-        output_mock = MagicMock()
-
         with self.subTest("Single-line combined output."):
             custom.options["one_line"] = True
-
-            custom.output(output_mock)
-
-            output_mock.append.assert_called_once_with("Custom", "Model 1, Model 2")
-
-        output_mock.reset_mock()
+            self.assertListEqual(custom.pretty_value, [("Custom", "Model 1, Model 2")])
 
         with self.subTest("Multi-lines combined output."):
             custom.options["one_line"] = False
-
-            custom.output(output_mock)
-
-            self.assertEqual(output_mock.append.call_count, 2)
-            output_mock.append.assert_has_calls(
+            self.assertListEqual(
+                custom.pretty_value,
                 [
-                    call("Custom", "Model 1"),
-                    call("Custom", "Model 2"),
-                ]
+                    ("Custom", "Model 1"),
+                    ("Custom", "Model 2"),
+                ],
             )
-
-        output_mock.reset_mock()
 
         with self.subTest("No detected output."):
             custom.value = []
-
-            custom.output(output_mock)
-
-            output_mock.append.assert_called_once_with(
-                "Custom",
-                DEFAULT_CONFIG["default_strings"]["not_detected"],
+            self.assertListEqual(
+                custom.pretty_value, [("Custom", DEFAULT_CONFIG["default_strings"]["not_detected"])]
             )
-
-        output_mock.reset_mock()
 
     def test_unsafe_config_files(self):
         """Check unsafe configuration files lead to Custom entry loading prevention"""

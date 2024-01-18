@@ -19,25 +19,17 @@ class LoadAverage(Entry):
         with suppress(AttributeError):
             self.value = os.getloadavg()
 
-    def output(self, output) -> None:
-        if not self.value:
-            # Fall back on the default behavior if load average values could not be detected.
-            super().output(output)
-            return
-
+    def __str__(self) -> str:
         # DRY constant thresholds.
         decimal_places = self.options.get("decimal_places", 2)
         warning_threshold = self.options.get("warning_threshold", 1.0)
         danger_threshold = self.options.get("danger_threshold", 2.0)
 
-        output.append(
-            self.name,
-            " ".join(
-                [
-                    str(Colors.get_level_color(load_avg, warning_threshold, danger_threshold))
-                    + str(round(load_avg, decimal_places))
-                    + str(Colors.CLEAR)
-                    for load_avg in self.value
-                ]
-            ),
+        return " ".join(
+            [
+                str(Colors.get_level_color(load_avg, warning_threshold, danger_threshold))
+                + str(round(load_avg, decimal_places))
+                + str(Colors.CLEAR)
+                for load_avg in self.value
+            ]
         )

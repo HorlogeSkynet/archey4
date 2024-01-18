@@ -147,8 +147,7 @@ class Uptime(Entry):
             seconds=int(uptime_args.get("seconds") or 0),
         )
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting the uptime to a string."""
+    def __str__(self) -> str:
         days = self.value["days"]
         hours = self.value["hours"]
         minutes = self.value["minutes"]
@@ -180,4 +179,4 @@ class Uptime(Entry):
         elif not days and not hours:
             uptime = "< 1 minute"
 
-        output.append(self.name, uptime)
+        return uptime

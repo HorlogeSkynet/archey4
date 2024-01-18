@@ -2,7 +2,7 @@
 
 import unittest
 from subprocess import CalledProcessError
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.shell import Shell
@@ -59,13 +59,9 @@ class TestShellEntry(unittest.TestCase):
     def test_config_fall_back(self, _, __):
         """`id` fails, but Archey must not !"""
         shell = Shell()
-
-        output_mock = MagicMock()
-        shell.output(output_mock)
-
         self.assertIsNone(shell.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
+        self.assertListEqual(
+            shell.pretty_value, [(shell.name, DEFAULT_CONFIG["default_strings"]["not_detected"])]
         )
 
 

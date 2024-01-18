@@ -45,10 +45,7 @@ class Distro(Entry):
 
         return f"Darwin {platform.release()}"
 
-    def output(self, output) -> None:
-        output.append(
-            self.name,
-            f"{{}} {self.value['arch']}".format(
-                self.value["name"] or self._default_strings.get("not_detected")
-            ),
+    def __str__(self) -> str:
+        return f"{{}} {self.value['arch']}".format(
+            self.value["name"] or self._default_strings.get("not_detected")
         )

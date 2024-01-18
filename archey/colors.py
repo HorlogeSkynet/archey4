@@ -99,7 +99,7 @@ class Colors8Bit(Style):
     """
 
     def __init__(self, bright: int, value: int):
-        if bright not in (0, 1) or value not in range(0, 255):
+        if bright not in (0, 1) or not 0 <= value <= 255:
             raise ValueError("Supplied color is outside the allowed range.")
         # `ESC[38;5` selects 8-bit foreground colour
         self.value = (bright, 38, 5, value)
