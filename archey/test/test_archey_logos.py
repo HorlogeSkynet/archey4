@@ -15,9 +15,11 @@ class TestLogos(unittest.TestCase):
     def test_distribution_logos_consistency(self):
         """
         Verify each distribution identifier got a logo module.
-        Verify each distribution logo module contain `LOGO` & `COLORS` ("truthy") attributes.
+        Verify each distribution logo module contains `LOGO` & `COLORS` ("truthy") attributes.
         Also check they got _consistent_ widths across their respective lines.
         Additionally verify they don't contain any (useless) empty line.
+
+        Logo alternative "styles" are also checked.
 
         This test also indirectly checks `lazy_load_logo_module` behavior!
         """
@@ -33,43 +35,51 @@ class TestLogos(unittest.TestCase):
 
             logo_module = lazy_load_logo_module(logo_module_info.name)
 
-            # Attributes checks.
+            # Check at least a default logo has been defined.
             self.assertTrue(
                 getattr(logo_module, "LOGO", []),
-                msg=f"[{logo_module_info.name}] logo module missing `LOGO` attribute",
-            )
-            self.assertTrue(
-                getattr(logo_module, "COLORS", []),
-                msg=f"[{logo_module_info.name}] logo module missing `COLORS` attribute",
+                msg=f"[{logo_module_info.name}] logo module misses `LOGO` attribute",
             )
 
-            # Compute once and for all the number of defined colors for this logo.
-            nb_colors = len(logo_module.COLORS)
+            for logo_style in filter(lambda s: s.startswith("LOGO"), dir(logo_module)):
+                parts = logo_style.partition("_")
+                style_suffix = parts[1] + parts[2]
 
-            # Make Archey compute the logo (effective) width.
-            logo_width = get_logo_width(logo_module.LOGO, nb_colors)
-
-            # Then, check that each logo line got the same effective width.
-            for j, line in enumerate(logo_module.LOGO[1:], start=1):
-                # Here we gotta trick the `get_logo_width` call.
-                # We actually pass each logo line as if it was a "complete" logo.
-                line_width = get_logo_width([line], nb_colors)
-
-                # Width check.
-                self.assertEqual(
-                    line_width,
-                    logo_width,
+                self.assertTrue(
+                    getattr(logo_module, "COLORS" + style_suffix, []),
                     msg=(
-                        f"[{logo_module_info.name}] line index {j}, "
-                        f"got an unexpected width {line_width} (expected {logo_width})"
+                        f"[{logo_module_info.name} {parts[2] or 'default'} logo] module misses "
+                        f"`COLORS{style_suffix}` attribute"
                     ),
                 )
 
-                # Non-empty line check.
-                self.assertTrue(
-                    Style.remove_colors(line.format(c=[""] * nb_colors)).strip(),
-                    msg=f"[{logo_module_info.name}] line index {j}, got an useless empty line",
-                )
+                # Compute once and for all the number of defined colors for this logo.
+                nb_colors = len(getattr(logo_module, "COLORS" + style_suffix))
+
+                # Make Archey compute the logo (effective) width.
+                logo_width = get_logo_width(getattr(logo_module, "LOGO" + style_suffix), nb_colors)
+
+                # Then, check that each logo line got the same effective width.
+                for j, line in enumerate(getattr(logo_module, "LOGO" + style_suffix)[1:], start=1):
+                    # Here we gotta trick the `get_logo_width` call.
+                    # We actually pass each logo line as if it was a "complete" logo.
+                    line_width = get_logo_width([line], nb_colors)
+
+                    # Width check.
+                    self.assertEqual(
+                        line_width,
+                        logo_width,
+                        msg=(
+                            f"[{logo_module_info.name} {parts[2] or 'default'} logo] line index "
+                            f"{j}, got an unexpected width {line_width} (expected {logo_width})"
+                        ),
+                    )
+
+                    # Non-empty line check.
+                    self.assertTrue(
+                        Style.remove_colors(line.format(c=[""] * nb_colors)).strip(),
+                        msg=f"[{logo_module_info.name}] line index {j}, got an useless empty line",
+                    )
 
         # Finally, check each distributions identifier got a logo!
         # pylint: disable=undefined-loop-variable

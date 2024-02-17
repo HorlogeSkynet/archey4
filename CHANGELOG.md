@@ -12,6 +12,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ### Changed
 - Allow `df` output to contain Unicode characters
+- Extend logos consistency test case to all logo styles
 - `WindowManager` API value format: now an object with `name` and `display_server_protocol` attributes
 
 ## [v4.14.2.0] - 2023-08-26
