@@ -1,6 +1,5 @@
 """Simple singleton meta-class definition"""
 
-
 from abc import ABCMeta as AbstractBaseMetaClass
 from typing import Dict
 
