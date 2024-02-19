@@ -446,6 +446,7 @@ Below stand further descriptions for each available (default) option :
 			"name": "GPU",
 			"icon": "\ue735",
 			// The custom shell command to execute.
+			// /!\ If you're running AppArmor, don't forget to extend Archey profile through /etc/apparmor.d/local/usr.bin.archey4 !
 			"shell": true,
 			"command": "lshw -C display 2> /dev/null | rg product | cut -d ':' -f 2",
 			// A custom program and its arguments to execute.

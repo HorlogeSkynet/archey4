@@ -16,3 +16,9 @@ find /usr/lib/python3*/*-packages/archey \
 	-name __pycache__ \
 	-exec \
 		rm -r {} +
+
+# Removes the AppArmor definition from kernel.
+APP_PROFILE="/etc/apparmor.d/usr.bin.archey4"
+if aa-enabled --quiet 2>/dev/null; then
+	apparmor_parser -R "$APP_PROFILE" || true
+fi

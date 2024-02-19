@@ -25,6 +25,7 @@ assignees: ''
  - Operating system and version : 
  - Graphical environment name and version : 
  - Connectivity (off-line, LAN only, Internet access) : 
+ - AppArmor profile loaded (yes/no, check `aa-status`) : 
 
 **Additional context**
 <!-- If applicable, add any other context about the problem here. -->
