@@ -1,7 +1,7 @@
 """Test module for Archey's kernel information detection module"""
 
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.kernel import Kernel
@@ -131,33 +131,31 @@ class TestKernelEntry(unittest.TestCase):
     @HelperMethods.patch_clean_configuration
     def test_kernel_comparison(self, _, __, ___):
         """Check kernel releases comparison and output templates"""
-        output_mock = MagicMock()
-
         # Only current release (`check_version` disabled by default).
         kernel = Kernel()
-        kernel.output(output_mock)
-        self.assertEqual(output_mock.append.call_args[0][1], "Linux 1.2.3-4-arch")
+        self.assertListEqual(kernel.pretty_value, [(kernel.name, "Linux 1.2.3-4-arch")])
 
         # Current = latest (up to date !).
         kernel = Kernel(options={"check_version": True})
-        kernel.output(output_mock)
-
         self.assertTrue(kernel.value["latest"])
         self.assertIs(kernel.value["is_outdated"], False)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            f"Linux 1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})",
+        self.assertListEqual(
+            kernel.pretty_value,
+            [(kernel.name, f"Linux 1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})")],
         )
 
         # Current < latest (outdated).
         kernel = Kernel(options={"check_version": True})
-        kernel.output(output_mock)
-
         self.assertTrue(kernel.value["latest"])
         self.assertIs(kernel.value["is_outdated"], True)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            f"Linux 1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})",
+        self.assertListEqual(
+            kernel.pretty_value,
+            [
+                (
+                    kernel.name,
+                    f"Linux 1.2.3-4-arch (1.3.2 {DEFAULT_CONFIG['default_strings']['available']})",
+                )
+            ],
         )
 
 

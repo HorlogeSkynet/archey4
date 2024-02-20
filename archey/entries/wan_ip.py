@@ -2,7 +2,7 @@
 
 from socket import timeout as SocketTimeoutError
 from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_output
-from typing import Optional
+from typing import List, Optional
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -97,17 +97,15 @@ class WanIP(Entry):
         except (URLError, SocketTimeoutError):
             return None
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting our list of IP addresses."""
+    @property
+    def pretty_value(self) -> "List[tuple[str, str]]":
+        """Pretty-formats our list of IP addresses."""
         # If we found IP addresses, join them together nicely.
         # If not, fall-back on the "No address" string.
         if self.value:
             if not self.options.get("one_line", True):
-                # One-line output has been disabled, add one IP address per item.
-                for ip_address in self.value:
-                    output.append(self.name, ip_address)
-
-                return
+                # One-line output has been disabled, create one line for each IP address.
+                return [(self.name, ip_address) for ip_address in self.value]
 
             text_output = ", ".join(self.value)
 
@@ -116,4 +114,4 @@ class WanIP(Entry):
         else:
             text_output = self._default_strings.get("not_detected")
 
-        output.append(self.name, text_output)
+        return [(self.name, text_output)]

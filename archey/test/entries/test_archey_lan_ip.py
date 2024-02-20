@@ -1,7 +1,7 @@
 """Test module for Archey's LAN IP addresses detection module"""
 
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import patch
 
 from netifaces import AF_INET, AF_INET6, AF_LINK
 
@@ -218,13 +218,11 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     def test_ipv6_and_limit_and_ether(self, _, __):
         """
         Test for IPv6 support, final set length limit and Ethernet interface filtering.
-        Additionally check the `output` method behavior.
+        Additionally check the `pretty_value` property behavior.
 
         IP address "compression" and interface name splitting will also be tested.
         """
         lan_ip = LanIP(options={"max_count": 3})
-
-        output_mock = MagicMock()
 
         self.assertListEqual(
             lan_ip.value,
@@ -232,25 +230,21 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         )
 
         with self.subTest("Single-line combined output."):
-            lan_ip.output(output_mock)
-            self.assertEqual(
-                output_mock.append.call_args[0][1],
-                "192.168.1.55, 2001::45:6789:abcd:6817, fe80::abcd:ef0:abef:dead",
+            self.assertListEqual(
+                lan_ip.pretty_value,
+                [(lan_ip.name, "192.168.1.55, 2001::45:6789:abcd:6817, fe80::abcd:ef0:abef:dead")],
             )
-
-        output_mock.reset_mock()
 
         with self.subTest("Multi-lines output."):
             lan_ip.options["one_line"] = False
 
-            lan_ip.output(output_mock)
-            self.assertEqual(output_mock.append.call_count, 3)
-            output_mock.append.assert_has_calls(
+            self.assertListEqual(
+                lan_ip.pretty_value,
                 [
-                    call("LAN IP", "192.168.1.55"),
-                    call("LAN IP", "2001::45:6789:abcd:6817"),
-                    call("LAN IP", "fe80::abcd:ef0:abef:dead"),
-                ]
+                    (lan_ip.name, "192.168.1.55"),
+                    (lan_ip.name, "2001::45:6789:abcd:6817"),
+                    (lan_ip.name, "fe80::abcd:ef0:abef:dead"),
+                ],
             )
 
     @patch(
@@ -352,16 +346,13 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     def test_no_network_address_output(self, _, __):
         """
         Test when the network interface(s) do not have any IP address.
-        Additionally check the `output` method behavior.
+        Additionally check the `pretty_value` property behavior.
         """
         lan_ip = LanIP()
-
-        output_mock = MagicMock()
-        lan_ip.output(output_mock)
-
         self.assertListEmpty(lan_ip.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["no_address"]
+        self.assertListEqual(
+            lan_ip.pretty_value,
+            [(lan_ip.name, DEFAULT_CONFIG["default_strings"]["no_address"])],
         )
 
     @patch(
@@ -415,13 +406,10 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     def test_user_disabled(self, _, __):
         """Check behavior on user inputs edge-cases"""
         lan_ip = LanIP(options={"max_count": 0})
-
-        output_mock = MagicMock()
-        lan_ip.output(output_mock)
-
         self.assertListEmpty(lan_ip.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["no_address"]
+        self.assertListEqual(
+            lan_ip.pretty_value,
+            [(lan_ip.name, DEFAULT_CONFIG["default_strings"]["no_address"])],
         )
 
     @patch("archey.entries.lan_ip.netifaces", None)  # Imitate an `ImportError` behavior.
@@ -429,13 +417,10 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
     def test_netifaces_not_available(self):
         """Check `netifaces` is really acting as a (soft-)dependency"""
         lan_ip = LanIP()
-
-        output_mock = MagicMock()
-        lan_ip.output(output_mock)
-
         self.assertIsNone(lan_ip.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
+        self.assertListEqual(
+            lan_ip.pretty_value,
+            [(lan_ip.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
         )
 
 

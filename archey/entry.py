@@ -3,7 +3,7 @@
 import logging
 from abc import ABC as AbstractBaseClass
 from abc import abstractmethod
-from typing import Optional
+from typing import List, Optional
 
 from archey.configuration import Configuration
 
@@ -44,12 +44,15 @@ class Entry(AbstractBaseClass):
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)
 
-    def output(self, output) -> None:
-        """Output the results to output. Can be overridden by subclasses."""
+    @property
+    def pretty_value(self) -> "List[tuple[str, str]]":
+        """
+        Provide a "pretty" value. Can be overridden by subclasses.
+        Return value is a list (1 object per line) of tuples of (name, value).
+        """
         if self.value:
             # Let's assume we can just use `__str__` on the object in value,
             # and create a single-line output with it.
-            output.append(self.name, str(self.value))
-        else:
-            # If the value is "falsy" leave a generic "Not detected" message for this entry.
-            output.append(self.name, self._default_strings.get("not_detected"))
+            return [(self.name, str(self.value))]
+        # If the value is "falsy" leave a generic "Not detected" message for this entry.
+        return [(self.name, self._default_strings.get("not_detected"))]

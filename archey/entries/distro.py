@@ -2,7 +2,7 @@
 
 import platform
 from subprocess import check_output
-from typing import Optional
+from typing import List, Optional
 
 from archey.distributions import Distributions
 from archey.entry import Entry
@@ -45,10 +45,13 @@ class Distro(Entry):
 
         return f"Darwin {platform.release()}"
 
-    def output(self, output) -> None:
-        output.append(
-            self.name,
-            f"{{}} {self.value['arch']}".format(
-                self.value["name"] or self._default_strings.get("not_detected")
-            ),
-        )
+    @property
+    def pretty_value(self) -> "List[tuple[str, str]]":
+        return [
+            (
+                self.name,
+                f"{{}} {self.value['arch']}".format(
+                    self.value["name"] or self._default_strings.get("not_detected")
+                ),
+            )
+        ]

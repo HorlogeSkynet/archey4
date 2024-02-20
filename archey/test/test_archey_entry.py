@@ -13,9 +13,10 @@ class _SimpleEntry(Entry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def output(self, output) -> None:
+    @property
+    def pretty_value(self) -> "typing.List[tuple[str, str]]":
         """Reverse order!"""
-        output.append((self.value, self.name))
+        return [(self.value, self.name)]
 
 
 class TestEntry(unittest.TestCase):
@@ -57,6 +58,4 @@ class TestEntry(unittest.TestCase):
     def test_entry_output_overriding(self):
         """Check `Entry.output` public method overriding"""
         simple_entry = _SimpleEntry("is this", "ordered")
-        output: typing.List[typing.Tuple[str, ...]] = []
-        simple_entry.output(output)
-        self.assertListEqual(output, [("ordered", "is this")])
+        self.assertListEqual(simple_entry.pretty_value, [("ordered", "is this")])

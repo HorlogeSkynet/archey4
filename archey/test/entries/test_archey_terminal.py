@@ -1,7 +1,7 @@
 """Test module for Archey's terminal detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.terminal import Terminal
@@ -76,13 +76,9 @@ class TestTerminalEntry(unittest.TestCase):
     def test_terminal_emulator_term_fallback_and_unicode(self):
         """Check that `TERM` is honored if present, and Unicode support for the colors palette"""
         terminal = Terminal(options={"use_unicode": True})
-
-        output_mock = MagicMock()
-        terminal.output(output_mock)
-
         self.assertEqual(terminal.value, "xterm-256color")
-        self.assertTrue(output_mock.append.call_args[0][1].startswith("xterm-256color"))
-        self.assertEqual(output_mock.append.call_args[0][1].count("\u2588"), 7 * 2)
+        self.assertTrue(terminal.pretty_value[0][1].startswith("xterm-256color"))
+        self.assertEqual(terminal.pretty_value[0][1].count("\u2588"), 7 * 2)
 
     @patch.dict(
         "archey.entries.terminal.os.environ",
@@ -114,11 +110,8 @@ class TestTerminalEntry(unittest.TestCase):
         with patch("archey.colors.Style.should_color_output", return_value=False):
             terminal = Terminal()
 
-            output_mock = MagicMock()
-            terminal.output(output_mock)
-
             self.assertEqual(terminal.value, "X-TERMINAL-EMULATOR")
-            self.assertEqual(output_mock.append.call_args[0][1], "X-TERMINAL-EMULATOR")
+            self.assertListEqual(terminal.pretty_value, [(terminal.name, "X-TERMINAL-EMULATOR")])
 
     @patch.dict(
         "archey.entries.terminal.os.environ",
@@ -129,14 +122,13 @@ class TestTerminalEntry(unittest.TestCase):
     def test_not_detected(self):
         """Test terminal emulator (non-)detection, without Unicode support"""
         terminal = Terminal(options={"use_unicode": False})
-
-        output_mock = MagicMock()
-        terminal.output(output_mock)
-        output = output_mock.append.call_args[0][1]
-
         self.assertIsNone(terminal.value)
-        self.assertTrue(output.startswith(DEFAULT_CONFIG["default_strings"]["not_detected"]))
-        self.assertFalse(output.count("\u2588"))
+        self.assertTrue(
+            terminal.pretty_value[0][1].startswith(
+                DEFAULT_CONFIG["default_strings"]["not_detected"]
+            )
+        )
+        self.assertFalse(terminal.pretty_value[0][1].count("\u2588"))
 
 
 if __name__ == "__main__":

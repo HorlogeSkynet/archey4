@@ -226,12 +226,12 @@ class Temperature(Entry):
         """Simple Celsius to Fahrenheit conversion method"""
         return temp * (9 / 5) + 32
 
-    def output(self, output) -> None:
-        """Adds the entry to `output` after pretty-formatting with units."""
+    @property
+    def pretty_value(self) -> "List[tuple[str, str]]":
+        """Pretty-formats with units."""
         if not self.value:
             # Fall back on the default behavior if no temperatures were detected.
-            super().output(output)
-            return
+            return super().pretty_value
 
         # DRY some constants
         char_before_unit = self.value["char_before_unit"]
@@ -242,4 +242,4 @@ class Temperature(Entry):
         if len(self._temps) > 1:
             entry_text += f" (Max. {self.value['max_temperature']}{char_before_unit}{unit})"
 
-        output.append(self.name, entry_text)
+        return [(self.name, entry_text)]

@@ -2,7 +2,7 @@
 
 import unittest
 from unittest.mock import DEFAULT as DEFAULT_SENTINEL
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.distributions import Distributions
@@ -303,15 +303,12 @@ sample_package_2_2
     def test_no_packages_manager(self, check_output_mock):
         """No packages manager is available at the moment..."""
         check_output_mock.side_effect = self._check_output_side_effect()
-
         packages = Packages()
 
-        output_mock = MagicMock()
-        packages.output(output_mock)
-
         self.assertIsNone(packages.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
+        self.assertListEqual(
+            packages.pretty_value,
+            [(packages.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
         )
 
     @staticmethod

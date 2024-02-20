@@ -1,7 +1,7 @@
 """Test module for Archey's window manager detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.window_manager import WindowManager
@@ -74,13 +74,10 @@ Window manager's "showing the desktop" mode: OFF
     def test_no_wmctrl_mismatch(self, _, __):
         """Test (non-detection) when processes list do not contain any known value"""
         window_manager = WindowManager()
-
-        output_mock = MagicMock()
-        window_manager.output(output_mock)
-
         self.assertIsNone(window_manager.value["name"])
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
+        self.assertListEqual(
+            window_manager.pretty_value,
+            [(window_manager.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
         )
 
 

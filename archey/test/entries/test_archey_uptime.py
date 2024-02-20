@@ -3,7 +3,7 @@
 import unittest
 from datetime import timedelta
 from itertools import product
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import mock_open, patch
 
 from archey.entries.uptime import Uptime
 from archey.exceptions import ArcheyException
@@ -191,7 +191,6 @@ class TestUptimeEntry(unittest.TestCase):
     def test_various_output_cases(self):
         """Test when the device has just been started..."""
         uptime_instance_mock = HelperMethods.entry_mock(Uptime)
-        output_mock = MagicMock()
 
         with self.subTest("Output in case of hours and minutes."):
             uptime_instance_mock.value = {
@@ -200,10 +199,10 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 1,
                 "seconds": 0,
             }
-            Uptime.output(uptime_instance_mock, output_mock)
-            self.assertEqual(output_mock.append.call_args[0][1], "2 hours and 1 minute")
-
-        output_mock.reset_mock()
+            self.assertListEqual(
+                Uptime.pretty_value.__get__(uptime_instance_mock),
+                [(uptime_instance_mock.name, "2 hours and 1 minute")],
+            )
 
         with self.subTest("Output in case of days, hours and minutes."):
             uptime_instance_mock.value = {
@@ -212,10 +211,10 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 2,
                 "seconds": 0,
             }
-            Uptime.output(uptime_instance_mock, output_mock)
-            self.assertEqual(output_mock.append.call_args[0][1], "1 day, 1 hour and 2 minutes")
-
-        output_mock.reset_mock()
+            self.assertListEqual(
+                Uptime.pretty_value.__get__(uptime_instance_mock),
+                [(uptime_instance_mock.name, "1 day, 1 hour and 2 minutes")],
+            )
 
         with self.subTest("Output in case of days and minutes."):
             uptime_instance_mock.value = {
@@ -224,10 +223,10 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 3,
                 "seconds": 0,
             }
-            Uptime.output(uptime_instance_mock, output_mock)
-            self.assertEqual(output_mock.append.call_args[0][1], "3 days and 3 minutes")
-
-        output_mock.reset_mock()
+            self.assertListEqual(
+                Uptime.pretty_value.__get__(uptime_instance_mock),
+                [(uptime_instance_mock.name, "3 days and 3 minutes")],
+            )
 
         with self.subTest("Output in case of very early execution."):
             uptime_instance_mock.value = {
@@ -236,8 +235,10 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 0,
                 "seconds": 0,
             }
-            Uptime.output(uptime_instance_mock, output_mock)
-            self.assertEqual(output_mock.append.call_args[0][1], "< 1 minute")
+            self.assertListEqual(
+                Uptime.pretty_value.__get__(uptime_instance_mock),
+                [(uptime_instance_mock.name, "< 1 minute")],
+            )
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """Test module for Archey's session user name detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.user import User
@@ -27,15 +27,12 @@ class TestUserEntry(unittest.TestCase):
         self.assertIsNone(User().value)
 
     @HelperMethods.patch_clean_configuration
-    def test_output(self):
-        """Simple test for `output` base method"""
+    def test_pretty_value(self):
+        """Simple test for `pretty_value` base property"""
         user_instance_mock = HelperMethods.entry_mock(User)
-
-        output_mock = MagicMock()
-        User.output(user_instance_mock, output_mock)
-
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
+        self.assertListEqual(
+            User.pretty_value.__get__(user_instance_mock),
+            [(user_instance_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
         )
 
 

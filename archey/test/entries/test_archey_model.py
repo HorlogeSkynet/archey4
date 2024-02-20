@@ -2,7 +2,7 @@
 
 import unittest
 from subprocess import CalledProcessError
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import mock_open, patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.model import Model
@@ -249,13 +249,10 @@ class TestModelEntry(unittest.TestCase):
     def test_no_match(self):
         """Test when no information could be retrieved"""
         model_instance_mock = HelperMethods.entry_mock(Model)
-
-        output_mock = MagicMock()
-        Model.output(model_instance_mock, output_mock)
-
         self.assertIsNone(model_instance_mock.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
+        self.assertListEqual(
+            Model.pretty_value.__get__(model_instance_mock),
+            [(model_instance_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
         )
 
     @patch(

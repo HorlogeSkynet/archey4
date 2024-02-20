@@ -1,7 +1,7 @@
 """Test module for Archey's distribution detection module"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.entries.distro import Distro
@@ -45,20 +45,23 @@ class TestDistroEntry(unittest.TestCase):
         )
 
     @HelperMethods.patch_clean_configuration
-    def test_unknown_distro_output(self):
-        """Test for `output` method when distribution name couldn't be found"""
-        distro_intance_mock = HelperMethods.entry_mock(Distro)
-        output_mock = MagicMock()
+    def test_unknown_distro_pretty_value(self):
+        """Test for `pretty_value` property when distribution name couldn't be found"""
+        distro_instance_mock = HelperMethods.entry_mock(Distro)
 
-        distro_intance_mock.value = {
+        distro_instance_mock.value = {
             "name": None,
             "arch": "ARCHITECTURE",
         }
 
-        Distro.output(distro_intance_mock, output_mock)
-        self.assertEqual(
-            output_mock.append.call_args[0][1],
-            f"{DEFAULT_CONFIG['default_strings']['not_detected']} ARCHITECTURE",
+        self.assertListEqual(
+            Distro.pretty_value.__get__(distro_instance_mock),
+            [
+                (
+                    distro_instance_mock.name,
+                    f"{DEFAULT_CONFIG['default_strings']['not_detected']} ARCHITECTURE",
+                )
+            ],
         )
 
 
