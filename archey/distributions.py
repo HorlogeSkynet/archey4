@@ -25,6 +25,7 @@ class Distributions(Enum):
     ALPINE = "alpine"
     ANDROID = "android"
     ARCH = "arch"
+    ARMBIAN = "armbian"
     BUILDROOT = "buildroot"
     BUNSENLABS = "bunsenlabs"
     CENTOS = "centos"
@@ -67,7 +68,7 @@ class Distributions(Enum):
 
     @staticmethod
     @lru_cache(maxsize=None)  # Python < 3.9, `functools.cache` is not yet available.
-    def get_local() -> "Distributions":
+    def get_local() -> "Distributions":  # pylint: disable=too-many-return-statements
         """Entry point of Archey distribution detection logic"""
         distribution = Distributions._vendor_detection()
 
@@ -102,6 +103,11 @@ class Distributions(Enum):
                 "/usr/bin/cbpp-exit"
             ):
                 return Distributions.CRUNCHBANG
+
+            # Armbian is also detected as _regular_ Debian by `distro`, but going directly
+            # through release info gives us a proper id (see <python-distro/distro#366>).
+            if distro.distro_release_attr("id") == "armbian":
+                return Distributions.ARMBIAN
 
         elif distribution == Distributions.UBUNTU:
             # Older Pop!_OS releases (< 20.*) didn't ship their own `ID` (from `os-release`).
