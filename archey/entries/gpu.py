@@ -2,6 +2,7 @@
 
 import platform
 import re
+from shlex import split
 from subprocess import DEVNULL, CalledProcessError, check_output
 from typing import List
 
@@ -31,7 +32,7 @@ class GPU(Entry):
     def _parse_lspci_output() -> List[str]:
         """Based on `lspci` output, return a list of video controllers names"""
         try:
-            lspci_output = check_output("lspci", universal_newlines=True).splitlines()
+            lspci_output = check_output(["lspci", "-m"], universal_newlines=True).splitlines()
         except (FileNotFoundError, CalledProcessError):
             return []
 
@@ -40,10 +41,11 @@ class GPU(Entry):
         # We'll be looking for specific video controllers (in the below keys order).
         for video_key in ("3D", "VGA", "Display"):
             for pci_device in lspci_output:
-                # If a controller type match...
-                if video_key in pci_device:
+                pci_class, pci_vendor, pci_device = split(pci_device)[1:4]
+                # If a controller type matches the class...
+                if video_key in pci_class:
                     # ... adds its name to the final list.
-                    gpus_list.append(pci_device.partition(": ")[2])
+                    gpus_list.append(f"{pci_vendor} {pci_device}")
 
         return gpus_list
 
