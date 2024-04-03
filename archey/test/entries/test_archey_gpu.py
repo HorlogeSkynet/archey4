@@ -17,18 +17,25 @@ class TestGPUEntry(unittest.TestCase, CustomAssertions):
         side_effect=[
             FileNotFoundError(),
             """\
-XX:YY.H IDE interface: IIIIIIIIIIIIIIII
-XX:YY.H SMBus: BBBBBBBBBBBBBBBB
-XX:YY.H VGA compatible controller: GPU-MODEL-NAME
-XX:YY.H Audio device: DDDDDDDDDDDDDDDD
+XX:YY.H "IDE interface" "Manufacturer" "IIIIIIIIIIIIIIII"
+XX:YY.H "SMBus" "Manufacturer" "BBBBBBBBBBBBBBBB"
+XX:YY.H "VGA compatible controller" "GPU-Manufacturer" "GPU-MODEL-NAME"
+XX:YY.H "Audio device" "Manufacturer" "DDDDDDDDDDDDDDDD"
 """,
             """\
-XX:YY.H IDE interface: IIIIIIIIIIIIIIII
-XX:YY.H SMBus: BBBBBBBBBBBBBBBB
-XX:YY.H VGA compatible controller: GPU-MODEL-NAME
-XX:YY.H Display controller: ANOTHER-MATCHING-VIDEO-CONTROLLER
-XX:YY.H Audio device: DDDDDDDDDDDDDDDD
-XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
+XX:YY.H "IDE interface" "Manufacturer" "IIIIIIIIIIIIIIII"
+XX:YY.H "SMBus" "Manufacturer" "BBBBBBBBBBBBBBBB"
+XX:YY.H "VGA compatible controller" "GPU-Manufacturer" "GPU-MODEL-NAME"
+XX:YY.H "Display controller" "Another-GPU-Manufacturer" "ANOTHER-MATCHING-VIDEO-CONTROLLER"
+XX:YY.H "Audio device" "Manufacturer" "DDDDDDDDDDDDDDDD"
+XX:YY.H "3D controller" "3D-Manufacturer" "3D GPU-MODEL-NAME TAKES ADVANTAGE"
+""",
+            """\
+XX:YY.H "IDE interface" "Manufacturer" "IIIIIIIIIIIIIIII"
+XX:YY.H "SMBus" "Manufacturer" "BBBBBBBBBBBBBBBB"
+XX:YY.H "VGA compatible controller" "GPU-Manufacturer" "GPU-MODEL-NAME"
+XX:YY.H "Audio device" "Manufacturer" "DDDDDDDDDDDDDDDD"
+XX:YY.H "Non-Volatile memory controller" "Sandisk Corp" "SanDisk Ultra 3D / WD Blue SN570 NVMe SSD"
 """,
         ],
     )
@@ -36,15 +43,17 @@ XX:YY.H 3D controller: 3D GPU-MODEL-NAME TAKES ADVANTAGE
         """Check `_parse_lspci_output` behavior"""
         # pylint: disable=protected-access
         self.assertListEmpty(GPU._parse_lspci_output())
-        self.assertListEqual(GPU._parse_lspci_output(), ["GPU-MODEL-NAME"])
+        self.assertListEqual(GPU._parse_lspci_output(), ["GPU-Manufacturer GPU-MODEL-NAME"])
         self.assertListEqual(
             GPU._parse_lspci_output(),
             [
-                "3D GPU-MODEL-NAME TAKES ADVANTAGE",
-                "GPU-MODEL-NAME",
-                "ANOTHER-MATCHING-VIDEO-CONTROLLER",
+                "3D-Manufacturer 3D GPU-MODEL-NAME TAKES ADVANTAGE",
+                "GPU-Manufacturer GPU-MODEL-NAME",
+                "Another-GPU-Manufacturer ANOTHER-MATCHING-VIDEO-CONTROLLER",
             ],
         )
+        # Ensure 3D nand flash is ignored; see issue #149
+        self.assertListEqual(GPU._parse_lspci_output(), ["GPU-Manufacturer GPU-MODEL-NAME"])
         # pylint: enable=protected-access
 
     @patch(
