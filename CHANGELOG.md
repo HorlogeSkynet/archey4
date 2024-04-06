@@ -6,8 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4.14.3.0] - 2024-04-06
 ### Added
+- Official Armbian distribution support
 - Official EndeavourOS distribution support
+- (Nerd Fonts) icons for entries support
 - Display server protocol to `WindowManager`
 - New Red Hat logo "The Hat"
 
@@ -440,7 +444,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.2.0...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.3.0...HEAD
+[v4.14.3.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.2.0...v4.14.3.0
 [v4.14.2.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.1.0...v4.14.2.0
 [v4.14.1.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.1...v4.14.1.0
 [v4.14.0.1]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.0...v4.14.0.1
