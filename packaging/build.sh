@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 
-# ##########################################################################################
-#                       Archey 4 distribution packages building script                     #
+# ###########################################################################################
+#                       Archey 4 distribution packages building script                      #
 #
 # Dependencies :
 # * python3
@@ -13,9 +13,10 @@
 # * twine >= 3.1.1
 #
 # Procedure to install them on Debian :
-# $ sudo apt install ruby rpm build-essential libarchive-tools debsigs rubygems python3-pip
+# $ sudo apt install ruby rpm build-essential libarchive-tools debsigs rubygems python3-venv
 # $ sudo gem install --no-document fpm
-# $ sudo pip3 install setuptools twine
+# $ python3 -m venv venv && source venv/bin/activate
+# $ (venv) pip3 install -U setuptools twine wheel
 #
 # Run it as :
 # $ bash packaging/build.sh [REVISION] [0xGPG_IDENTITY]
@@ -23,7 +24,7 @@
 # If you happen to tweak packaging scripts, please lint them before submitting changes :
 # $ shellcheck packaging/*
 #
-# ##########################################################################################
+# ###########################################################################################
 
 
 # Abort on error, don't allow usages of undeclared variable.
