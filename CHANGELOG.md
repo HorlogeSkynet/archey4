@@ -9,6 +9,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ### Added
 - AppArmor confinement profile (included in Debian and AUR packages)
 - `WindowManager` support for Windows
+- `WindowManager` support for some Wayland compositors
 
 ## [v4.14.3.0] - 2024-04-06
 ### Added
