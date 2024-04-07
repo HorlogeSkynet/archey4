@@ -11,6 +11,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - `none` logo style to completely hide distribution logo
 - AppArmor confinement profile (included in Debian and AUR packages)
 - `WindowManager` support for Windows
+- `WindowManager` support for some Wayland compositors
 
 ### Changed
 - `Model` honor `/proc/device-tree/model` when it exists
