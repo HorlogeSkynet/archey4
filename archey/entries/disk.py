@@ -4,7 +4,7 @@ import platform
 import plistlib
 import re
 from subprocess import DEVNULL, PIPE, check_output, run
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Self
 
 from archey.colors import Colors
 from archey.entry import Entry
@@ -228,74 +228,68 @@ class Disk(Entry):
 
         return f"{blocks:02.1f} {unit}{suffix}"
 
-    @property
-    def pretty_value(self) -> Entry.ValueType:
-        """
-        Pretty-formats the entry with color and units.
-        Follows the user configuration supplied for formatting.
-        """
-        # Fetch our `filesystems` object locally so we can modify it safely.
-        filesystems = self.value
+    def __str__(self):
+        return "placeholder"
 
-        if not filesystems:
-            # We didn't find any disk, fall back to the default entry behavior.
-            return super().pretty_value
+    def __iter__(self) -> Self:
+        """Sets up iterable for entry."""
+        # Combine all entries into one grand-total if configured to do so
+        # (and we have a "truthy" value).
+        if self.options.get("combine_total", True) and self.value:
+            # Tuple inside list in order to get a proper iter
+            self._iter_value = iter(
+                {
+                    None: {
+                        "device_path": None,
+                        "used_blocks": sum(
+                            fs_data["used_blocks"] for fs_data in self.value.values()
+                        ),
+                        "total_blocks": sum(
+                            fs_data["total_blocks"] for fs_data in self.value.values()
+                        ),
+                    },
+                }.items()
+            )
+        else:
+            self._iter_value = iter(self.value.items())
+        return self
 
+    def __next__(self) -> Entry.ValueType:
+        """Yield nicely-formatted disk entry values"""
         # DRY configuration object for the output.
         disk_labels = self.options.get("disk_labels")
         hide_entry_name = self.options.get("hide_entry_name")
 
-        # Combine all entries into one grand-total if configured to do so.
-        if self.options.get("combine_total", True):
-            name = self.name
+        filesystem = next(self._iter_value)
 
-            # Rewrite our `filesystems` object as one combining all of them.
-            filesystems = {
-                None: {
-                    "device_path": None,
-                    "used_blocks": sum(
-                        filesystem_data["used_blocks"] for filesystem_data in filesystems.values()
-                    ),
-                    "total_blocks": sum(
-                        filesystem_data["total_blocks"] for filesystem_data in filesystems.values()
-                    ),
-                }
-            }
+        # Work out name
+        fs_name = ""
+        if not (hide_entry_name and disk_labels):
+            # Only allow entry name to be hidden if labels are defined
+            fs_name += self.name
+        if disk_labels:
+            if not hide_entry_name:
+                fs_name += " "
+            fs_name += "({disk_label})"
+
+        # Select the corresponding level color based on disk percentage usage.
+        level_color = Colors.get_level_color(
+            (filesystem[1]["used_blocks"] / filesystem[1]["total_blocks"]) * 100,
+            self.options.get("warning_use_percent", 50),
+            self.options.get("danger_use_percent", 75),
+        )
+
+        # Set the correct disk label
+        if disk_labels == "mount_points":
+            disk_label = filesystem[0]
+        elif disk_labels == "device_paths":
+            disk_label = filesystem[1]["device_path"]
         else:
-            # We will only use disk labels and entry name hiding if we aren't combining entries.
-            name = ""
-            # Hide `Disk` from entry name only if the user specified it... as long as a label.
-            if not hide_entry_name or not disk_labels:
-                name += self.name
-            if disk_labels:
-                if not hide_entry_name:
-                    name += " "
-                name += "({disk_label})"
+            disk_label = None
 
-        entry_lines = []
+        pretty_filesystem_value = f"{level_color}{{}}{Colors.CLEAR} / {{}}".format(
+            self._blocks_to_human_readable(filesystem[1]["used_blocks"]),
+            self._blocks_to_human_readable(filesystem[1]["total_blocks"]),
+        )
 
-        # We will only run this loop a single time for combined entries.
-        for mount_point, filesystem_data in filesystems.items():
-            # Select the corresponding level color based on disk percentage usage.
-            level_color = Colors.get_level_color(
-                (filesystem_data["used_blocks"] / filesystem_data["total_blocks"]) * 100,
-                self.options.get("warning_use_percent", 50),
-                self.options.get("danger_use_percent", 75),
-            )
-
-            # Set the correct disk label
-            if disk_labels == "mount_points":
-                disk_label = mount_point
-            elif disk_labels == "device_paths":
-                disk_label = filesystem_data["device_path"]
-            else:
-                disk_label = None
-
-            pretty_filesystem_value = f"{level_color}{{}}{Colors.CLEAR} / {{}}".format(
-                self._blocks_to_human_readable(filesystem_data["used_blocks"]),
-                self._blocks_to_human_readable(filesystem_data["total_blocks"]),
-            )
-
-            entry_lines.append((name.format(disk_label=disk_label), pretty_filesystem_value))
-
-        return entry_lines
+        return (fs_name.format(disk_label=disk_label), pretty_filesystem_value)

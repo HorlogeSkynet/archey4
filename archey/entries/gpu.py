@@ -84,15 +84,6 @@ class GPU(Entry):
 
         return gpus_list
 
-    @property
-    def pretty_value(self) -> Entry.ValueType:
-        """Pretty-formats GPUs based on preferences"""
-        # No GPU could be detected.
-        if not self.value:
-            return [(self.name, self._default_strings.get("not_detected"))]
-
-        # Join the results only if `one_line` option is enabled.
-        if self.options.get("one_line"):
-            return [(self.name, ", ".join(self.value))]
-
-        return [(self.name, gpu_device) for gpu_device in self.value]
+    def __next__(self) -> Entry.ValueType:
+        """Yield nicely-formatted GPU entry values"""
+        return (self.name, str(next(self._iter_value)))

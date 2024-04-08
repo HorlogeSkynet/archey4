@@ -4,7 +4,6 @@ import unittest
 from subprocess import CalledProcessError
 from unittest.mock import patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.shell import Shell
 from archey.test.entries import HelperMethods
 
@@ -61,7 +60,8 @@ class TestShellEntry(unittest.TestCase):
         shell = Shell()
         self.assertIsNone(shell.value)
         self.assertListEqual(
-            shell.pretty_value, [(shell.name, DEFAULT_CONFIG["default_strings"]["not_detected"])]
+            list(shell),
+            [(shell.name, None)],
         )
 
 

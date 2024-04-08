@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import DEFAULT as DEFAULT_SENTINEL
 from unittest.mock import patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.distributions import Distributions
 from archey.entries.packages import Packages
 from archey.test.entries import HelperMethods
@@ -307,8 +306,8 @@ sample_package_2_2
 
         self.assertIsNone(packages.value)
         self.assertListEqual(
-            packages.pretty_value,
-            [(packages.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+            list(packages),
+            [(packages.name, None)],
         )
 
     @staticmethod

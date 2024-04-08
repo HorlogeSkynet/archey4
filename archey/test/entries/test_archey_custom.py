@@ -5,7 +5,7 @@ import stat
 import unittest
 from unittest.mock import patch
 
-from archey.configuration import DEFAULT_CONFIG, Configuration
+from archey.configuration import Configuration
 from archey.entries.custom import Custom
 
 
@@ -62,8 +62,8 @@ class TestCustomEntry(unittest.TestCase):
         )
         self.assertIsNone(custom.value, None)
 
-    def test_multiple_lines_command_output(self) -> None:
-        """Check multiple lines command output"""
+    def test_output(self) -> None:
+        """Check command output"""
         custom = Custom(
             options={
                 "shell": True,
@@ -72,14 +72,10 @@ class TestCustomEntry(unittest.TestCase):
         )
         self.assertListEqual(custom.value, ["Model 1", "Model 2"])
 
-        with self.subTest("Single-line combined output."):
-            custom.options["one_line"] = True
-            self.assertListEqual(custom.pretty_value, [("Custom", "Model 1, Model 2")])
-
-        with self.subTest("Multi-lines combined output."):
+        with self.subTest("Normal output."):
             custom.options["one_line"] = False
             self.assertListEqual(
-                custom.pretty_value,
+                list(custom),
                 [
                     ("Custom", "Model 1"),
                     ("Custom", "Model 2"),
@@ -89,7 +85,8 @@ class TestCustomEntry(unittest.TestCase):
         with self.subTest("No detected output."):
             custom.value = []
             self.assertListEqual(
-                custom.pretty_value, [("Custom", DEFAULT_CONFIG["default_strings"]["not_detected"])]
+                list(custom),
+                [],
             )
 
     def test_unsafe_config_files(self):

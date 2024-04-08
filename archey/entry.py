@@ -3,7 +3,7 @@
 import logging
 from abc import ABC as AbstractBaseClass
 from abc import abstractmethod
-from typing import List, Optional, TypeAlias
+from typing import Any, Iterator, Optional, Self, TypeAlias
 
 from archey.configuration import Configuration
 
@@ -11,7 +11,7 @@ from archey.configuration import Configuration
 class Entry(AbstractBaseClass):
     """Module base class"""
 
-    ValueType: TypeAlias = List["tuple[str, str]"]
+    ValueType: TypeAlias = tuple[str, Optional[str]]
     _ICON: Optional[str] = None
     _PRETTY_NAME: Optional[str] = None
 
@@ -45,20 +45,43 @@ class Entry(AbstractBaseClass):
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)
 
+        # Create a default iterable & index
+        self._iter_idx = 0
+        self._iter_value: Iterator[Any] = iter([])
+
+    def __iter__(self) -> Self:
+        """Best-effort set up of an iterable of value for inherited entries to use."""
+        try:
+            if isinstance(self.value, str):
+                raise TypeError
+            if isinstance(self.value, dict):
+                self._iter_value = iter(self.value.items())
+            else:
+                self._iter_value = iter(self.value)
+        except TypeError:
+            # e.g. int, str, None
+            if self.value:
+                self._iter_value = iter([self.value])
+            else:
+                # Make an empty iterable rather than `[None]`
+                self._iter_value = iter([])
+        return self
+
+    def __next__(self) -> ValueType:
+        """
+        Default behaviour: assume we can just use `__str__` on ourself for a single-line output.
+        """
+        if self._iter_idx > 0:
+            raise StopIteration
+
+        self._iter_idx += 1
+        # If the value is "truthy" use `__str__`
+        if self.value:
+            return (self.name, str(self))
+        # Otherwise, `None`
+        return (self.name, None)
+
     def __str__(self) -> str:
         """Provide a sane default printable string representation of the entry"""
         # Assume that the `__str__` of our value is usable
         return str(self.value)
-
-    @property
-    def pretty_value(self) -> ValueType:
-        """
-        Provide a "pretty" value. Can be overridden by subclasses.
-        Return value is a list (1 object per line) of tuples of (name, value).
-        """
-        if self.value:
-            # Let's assume we can just use `__str__` on ourself,
-            # and create a single-line output with it.
-            return [(self.name, str(self))]
-        # If the value is "falsy" leave a generic "Not detected" message for this entry.
-        return [(self.name, self._default_strings.get("not_detected"))]

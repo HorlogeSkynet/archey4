@@ -77,8 +77,8 @@ class TestTerminalEntry(unittest.TestCase):
         """Check that `TERM` is honored if present, and Unicode support for the colors palette"""
         terminal = Terminal(options={"use_unicode": True})
         self.assertEqual(terminal.value, "xterm-256color")
-        self.assertTrue(terminal.pretty_value[0][1].startswith("xterm-256color"))
-        self.assertEqual(terminal.pretty_value[0][1].count("\u2588"), 7 * 2)
+        self.assertTrue(str(terminal).startswith("xterm-256color"))
+        self.assertEqual(str(terminal).count("\u2588"), 7 * 2)
 
     @patch.dict(
         "archey.entries.terminal.os.environ",
@@ -111,7 +111,7 @@ class TestTerminalEntry(unittest.TestCase):
             terminal = Terminal()
 
             self.assertEqual(terminal.value, "X-TERMINAL-EMULATOR")
-            self.assertListEqual(terminal.pretty_value, [(terminal.name, "X-TERMINAL-EMULATOR")])
+            self.assertListEqual(list(terminal), [(terminal.name, "X-TERMINAL-EMULATOR")])
 
     @patch.dict(
         "archey.entries.terminal.os.environ",
@@ -123,12 +123,8 @@ class TestTerminalEntry(unittest.TestCase):
         """Test terminal emulator (non-)detection, without Unicode support"""
         terminal = Terminal(options={"use_unicode": False})
         self.assertIsNone(terminal.value)
-        self.assertTrue(
-            terminal.pretty_value[0][1].startswith(
-                DEFAULT_CONFIG["default_strings"]["not_detected"]
-            )
-        )
-        self.assertFalse(terminal.pretty_value[0][1].count("\u2588"))
+        self.assertTrue(str(terminal).startswith(DEFAULT_CONFIG["default_strings"]["not_detected"]))
+        self.assertFalse(str(terminal).count("\u2588"))
 
 
 if __name__ == "__main__":

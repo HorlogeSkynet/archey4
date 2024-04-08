@@ -6,7 +6,6 @@ import unittest
 from subprocess import CalledProcessError
 from unittest.mock import Mock, patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.temperature import Temperature
 from archey.test import CustomAssertions
 from archey.test.entries import HelperMethods
@@ -333,12 +332,12 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
         # pylint: enable=protected-access
 
     @HelperMethods.patch_clean_configuration
-    def test_pretty_value(self):
-        """Test `pretty_value` property"""
-        # No value --> not detected.
+    def test_output(self):
+        """Test output values"""
+        # No value --> `None`.
         self.assertListEqual(
-            Temperature.pretty_value.__get__(self.temperature_mock),
-            [(self.temperature_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+            list(self.temperature_mock),
+            [(self.temperature_mock.name, None)],
         )
 
         # Values --> normal behavior.
@@ -350,7 +349,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             "unit": "C",
         }
         self.assertListEqual(
-            Temperature.pretty_value.__get__(self.temperature_mock),
+            list(self.temperature_mock),
             [(self.temperature_mock.name, "46.7oC (Max. 50.0oC)")],
         )
 
@@ -363,7 +362,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             "unit": "C",
         }
         self.assertListEqual(
-            Temperature.pretty_value.__get__(self.temperature_mock),
+            list(self.temperature_mock),
             [(self.temperature_mock.name, "42.8 C")],
         )
 

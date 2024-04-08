@@ -116,16 +116,10 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
         """
         self.wan_ip_mock.value = ["XXX.YY.ZZ.TTT", "0123::4567:89a:dead:beef"]
 
-        with self.subTest("Single-line combined output."):
-            self.assertListEqual(
-                WanIP.pretty_value.__get__(self.wan_ip_mock),
-                [(self.wan_ip_mock.name, "XXX.YY.ZZ.TTT, 0123::4567:89a:dead:beef")],
-            )
-
-        with self.subTest("Multi-lines output."):
+        with self.subTest("Normal output."):
             self.wan_ip_mock.options["one_line"] = False
             self.assertListEqual(
-                WanIP.pretty_value.__get__(self.wan_ip_mock),
+                list(self.wan_ip_mock),
                 [
                     ("WAN IP", "XXX.YY.ZZ.TTT"),
                     ("WAN IP", "0123::4567:89a:dead:beef"),
@@ -138,8 +132,8 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
             self.wan_ip_mock.value = []
             self.assertListEmpty(self.wan_ip_mock.value)
             self.assertListEqual(
-                WanIP.pretty_value.__get__(self.wan_ip_mock),
-                [(self.wan_ip_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+                list(self.wan_ip_mock),
+                [],
             )
 
     @HelperMethods.patch_clean_configuration
@@ -151,7 +145,7 @@ class TestWanIPEntry(unittest.TestCase, CustomAssertions):
         self.wan_ip_mock.value = []
         self.assertListEmpty(self.wan_ip_mock.value)
         self.assertListEqual(
-            WanIP.pretty_value.__get__(self.wan_ip_mock),
+            list(self.wan_ip_mock),
             [(self.wan_ip_mock.name, DEFAULT_CONFIG["default_strings"]["no_address"])],
         )
 

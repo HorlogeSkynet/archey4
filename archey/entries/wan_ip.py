@@ -2,7 +2,7 @@
 
 from socket import timeout as SocketTimeoutError
 from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_output
-from typing import Optional
+from typing import Optional, Self
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -97,21 +97,15 @@ class WanIP(Entry):
         except (URLError, SocketTimeoutError):
             return None
 
-    @property
-    def pretty_value(self) -> Entry.ValueType:
-        """Pretty-formats our list of IP addresses."""
-        # If we found IP addresses, join them together nicely.
-        # If not, fall-back on the "No address" string.
-        if self.value:
-            if not self.options.get("one_line", True):
-                # One-line output has been disabled, create one line for each IP address.
-                return [(self.name, ip_address) for ip_address in self.value]
-
-            text_output = ", ".join(self.value)
-
-        elif not Environment.DO_NOT_TRACK:
-            text_output = self._default_strings.get("no_address")
+    def __iter__(self) -> Self:
+        """Sets up iterable over IP addresses"""
+        if not self.value and not Environment.DO_NOT_TRACK:
+            # If no IP addresses found, fall-back on the "No address" string.
+            self._iter_value = iter([self._default_strings.get("no_address")])
         else:
-            text_output = self._default_strings.get("not_detected")
+            self._iter_value = iter(self.value)
+        return self
 
-        return [(self.name, text_output)]
+    def __next__(self) -> Entry.ValueType:
+        """Yield IP addresses."""
+        return (self.name, str(next(self._iter_value)))

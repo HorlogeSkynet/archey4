@@ -382,8 +382,8 @@ class TestDiskEntry(unittest.TestCase):
                     test_case[1],
                 )
 
-    def test_disk_pretty_value_colors(self):
-        """Test `pretty_value` output disk level coloring."""
+    def test_disk_colors(self):
+        """Test output disk level coloring."""
         # This dict's values are tuples of used blocks, and the level's corresponding color.
         # For reference, this test uses a disk whose total block count is 100.
         levels = {
@@ -401,7 +401,7 @@ class TestDiskEntry(unittest.TestCase):
                     }
                 }
                 self.assertListEqual(
-                    Disk.pretty_value.__get__(self.disk_instance_mock),
+                    list(self.disk_instance_mock),
                     [
                         (
                             "Disk",
@@ -411,8 +411,8 @@ class TestDiskEntry(unittest.TestCase):
                     ],
                 )
 
-    def test_disk_multiline_pretty_value(self):
-        """Test `pretty_value`'s multi-line capability."""
+    def test_disk_output(self):
+        """Test multi-line capability."""
         self.disk_instance_mock.value = {
             "first_mount_point": {
                 "device_path": "/dev/my-cool-disk",
@@ -428,14 +428,14 @@ class TestDiskEntry(unittest.TestCase):
 
         with self.subTest("Single-line combined output."):
             self.assertListEqual(
-                Disk.pretty_value.__get__(self.disk_instance_mock),
+                list(self.disk_instance_mock),
                 [("Disk", f"{Colors.YELLOW_NORMAL}20.0 KiB{Colors.CLEAR} / 40.0 KiB")],
             )
 
-        with self.subTest("Multi-line output"):
+        with self.subTest("Normal output"):
             self.disk_instance_mock.options["combine_total"] = False
             self.assertListEqual(
-                Disk.pretty_value.__get__(self.disk_instance_mock),
+                list(self.disk_instance_mock),
                 [
                     ("Disk", f"{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB"),
                     ("Disk", f"{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB"),
@@ -448,7 +448,7 @@ class TestDiskEntry(unittest.TestCase):
                 "disk_labels": "device_paths",
             }
             self.assertListEqual(
-                Disk.pretty_value.__get__(self.disk_instance_mock),
+                list(self.disk_instance_mock),
                 [
                     (
                         "Disk (/dev/my-cool-disk)",
@@ -468,7 +468,7 @@ class TestDiskEntry(unittest.TestCase):
                 "hide_entry_name": True,
             }
             self.assertListEqual(
-                Disk.pretty_value.__get__(self.disk_instance_mock),
+                list(self.disk_instance_mock),
                 [
                     (
                         "(first_mount_point)",
@@ -489,7 +489,7 @@ class TestDiskEntry(unittest.TestCase):
                 "hide_entry_name": True,
             }
             self.assertListEqual(
-                Disk.pretty_value.__get__(self.disk_instance_mock),
+                list(self.disk_instance_mock),
                 [
                     ("Disk", f"{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB"),
                     ("Disk", f"{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB"),

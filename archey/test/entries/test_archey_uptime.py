@@ -199,9 +199,9 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 1,
                 "seconds": 0,
             }
-            self.assertListEqual(
-                Uptime.pretty_value.__get__(uptime_instance_mock),
-                [(uptime_instance_mock.name, "2 hours and 1 minute")],
+            self.assertEqual(
+                str(uptime_instance_mock),
+                "2 hours and 1 minute",
             )
 
         with self.subTest("Output in case of days, hours and minutes."):
@@ -211,9 +211,9 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 2,
                 "seconds": 0,
             }
-            self.assertListEqual(
-                Uptime.pretty_value.__get__(uptime_instance_mock),
-                [(uptime_instance_mock.name, "1 day, 1 hour and 2 minutes")],
+            self.assertEqual(
+                str(uptime_instance_mock),
+                "1 day, 1 hour and 2 minutes",
             )
 
         with self.subTest("Output in case of days and minutes."):
@@ -223,9 +223,9 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 3,
                 "seconds": 0,
             }
-            self.assertListEqual(
-                Uptime.pretty_value.__get__(uptime_instance_mock),
-                [(uptime_instance_mock.name, "3 days and 3 minutes")],
+            self.assertEqual(
+                str(uptime_instance_mock),
+                "3 days and 3 minutes",
             )
 
         with self.subTest("Output in case of very early execution."):
@@ -235,9 +235,9 @@ class TestUptimeEntry(unittest.TestCase):
                 "minutes": 0,
                 "seconds": 0,
             }
-            self.assertListEqual(
-                Uptime.pretty_value.__get__(uptime_instance_mock),
-                [(uptime_instance_mock.name, "< 1 minute")],
+            self.assertEqual(
+                str(uptime_instance_mock),
+                "< 1 minute",
             )
 
 

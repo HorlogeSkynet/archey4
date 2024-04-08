@@ -133,14 +133,14 @@ class TestKernelEntry(unittest.TestCase):
         """Check kernel releases comparison and output templates"""
         # Only current release (`check_version` disabled by default).
         kernel = Kernel()
-        self.assertListEqual(kernel.pretty_value, [(kernel.name, "Linux 1.2.3-4-arch")])
+        self.assertListEqual(list(kernel), [(kernel.name, "Linux 1.2.3-4-arch")])
 
         # Current = latest (up to date !).
         kernel = Kernel(options={"check_version": True})
         self.assertTrue(kernel.value["latest"])
         self.assertIs(kernel.value["is_outdated"], False)
         self.assertListEqual(
-            kernel.pretty_value,
+            list(kernel),
             [(kernel.name, f"Linux 1.2.3-4-arch ({DEFAULT_CONFIG['default_strings']['latest']})")],
         )
 
@@ -149,7 +149,7 @@ class TestKernelEntry(unittest.TestCase):
         self.assertTrue(kernel.value["latest"])
         self.assertIs(kernel.value["is_outdated"], True)
         self.assertListEqual(
-            kernel.pretty_value,
+            list(kernel),
             [
                 (
                     kernel.name,

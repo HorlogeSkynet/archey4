@@ -3,9 +3,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.distro import Distro
-from archey.test.entries import HelperMethods
 
 
 class TestDistroEntry(unittest.TestCase):
@@ -42,26 +40,6 @@ class TestDistroEntry(unittest.TestCase):
         self.assertEqual(
             Distro._fetch_darwin_release(),  # pylint: disable=protected-access
             "macOS 11.1",
-        )
-
-    @HelperMethods.patch_clean_configuration
-    def test_unknown_distro_pretty_value(self):
-        """Test for `pretty_value` property when distribution name couldn't be found"""
-        distro_instance_mock = HelperMethods.entry_mock(Distro)
-
-        distro_instance_mock.value = {
-            "name": None,
-            "arch": "ARCHITECTURE",
-        }
-
-        self.assertListEqual(
-            Distro.pretty_value.__get__(distro_instance_mock),
-            [
-                (
-                    distro_instance_mock.name,
-                    f"{DEFAULT_CONFIG['default_strings']['not_detected']} ARCHITECTURE",
-                )
-            ],
         )
 
 

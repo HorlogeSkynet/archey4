@@ -229,17 +229,9 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
             ["192.168.1.55", "2001::45:6789:abcd:6817", "fe80::abcd:ef0:abef:dead"],
         )
 
-        with self.subTest("Single-line combined output."):
+        with self.subTest("Normal output."):
             self.assertListEqual(
-                lan_ip.pretty_value,
-                [(lan_ip.name, "192.168.1.55, 2001::45:6789:abcd:6817, fe80::abcd:ef0:abef:dead")],
-            )
-
-        with self.subTest("Multi-lines output."):
-            lan_ip.options["one_line"] = False
-
-            self.assertListEqual(
-                lan_ip.pretty_value,
+                list(lan_ip),
                 [
                     (lan_ip.name, "192.168.1.55"),
                     (lan_ip.name, "2001::45:6789:abcd:6817"),
@@ -351,7 +343,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         lan_ip = LanIP()
         self.assertListEmpty(lan_ip.value)
         self.assertListEqual(
-            lan_ip.pretty_value,
+            list(lan_ip),
             [(lan_ip.name, DEFAULT_CONFIG["default_strings"]["no_address"])],
         )
 
@@ -408,7 +400,7 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         lan_ip = LanIP(options={"max_count": 0})
         self.assertListEmpty(lan_ip.value)
         self.assertListEqual(
-            lan_ip.pretty_value,
+            list(lan_ip),
             [(lan_ip.name, DEFAULT_CONFIG["default_strings"]["no_address"])],
         )
 
@@ -419,8 +411,8 @@ class TestLanIPEntry(unittest.TestCase, CustomAssertions):
         lan_ip = LanIP()
         self.assertIsNone(lan_ip.value)
         self.assertListEqual(
-            lan_ip.pretty_value,
-            [(lan_ip.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+            list(lan_ip),
+            [],
         )
 
 

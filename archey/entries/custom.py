@@ -63,13 +63,6 @@ class Custom(Entry):
             if log_stderr and proc.stderr:
                 self._logger.warning("%s", proc.stderr.rstrip())
 
-    @property
-    def pretty_value(self) -> Entry.ValueType:
-        if not self.value:
-            return [(self.name, self._default_strings.get("not_detected"))]
-
-        # Join the results only if `one_line` option is enabled.
-        if self.options.get("one_line", True):
-            return [(self.name, ", ".join(self.value))]
-
-        return [(self.name, element) for element in self.value]
+    def __next__(self) -> Entry.ValueType:
+        """Yield nicely-formatted entry values"""
+        return (self.name, str(next(self._iter_value)))

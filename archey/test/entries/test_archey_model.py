@@ -4,7 +4,6 @@ import unittest
 from subprocess import CalledProcessError
 from unittest.mock import mock_open, patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.model import Model
 from archey.test.entries import HelperMethods
 
@@ -251,8 +250,8 @@ class TestModelEntry(unittest.TestCase):
         model_instance_mock = HelperMethods.entry_mock(Model)
         self.assertIsNone(model_instance_mock.value)
         self.assertListEqual(
-            Model.pretty_value.__get__(model_instance_mock),
-            [(model_instance_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+            list(model_instance_mock),
+            [(model_instance_mock.name, None)],
         )
 
     @patch(

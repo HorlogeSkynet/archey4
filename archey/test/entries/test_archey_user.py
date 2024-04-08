@@ -3,9 +3,7 @@
 import unittest
 from unittest.mock import patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.user import User
-from archey.test.entries import HelperMethods
 
 
 class TestUserEntry(unittest.TestCase):
@@ -25,15 +23,6 @@ class TestUserEntry(unittest.TestCase):
         """Simple mock, simple test"""
         self.assertEqual(User().value, "USERNAME")
         self.assertIsNone(User().value)
-
-    @HelperMethods.patch_clean_configuration
-    def test_pretty_value(self):
-        """Simple test for `pretty_value` base property"""
-        user_instance_mock = HelperMethods.entry_mock(User)
-        self.assertListEqual(
-            User.pretty_value.__get__(user_instance_mock),
-            [(user_instance_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
-        )
 
 
 if __name__ == "__main__":

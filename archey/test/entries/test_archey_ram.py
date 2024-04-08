@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import mock_open, patch
 
 from archey.colors import Colors
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.ram import RAM
 from archey.test.entries import HelperMethods
 
@@ -125,13 +124,13 @@ Swapouts:                               3456015.
 
     @HelperMethods.patch_clean_configuration
     def test_various_output_configuration(self):
-        """Test `pretty_value` output overloading based on user preferences"""
+        """Test output overloading based on user preferences"""
         ram_instance_mock = HelperMethods.entry_mock(RAM)
 
         with self.subTest("Output in case of non-detection."):
             self.assertListEqual(
-                RAM.pretty_value.__get__(ram_instance_mock),
-                [(ram_instance_mock.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+                list(ram_instance_mock),
+                [(ram_instance_mock.name, None)],
             )
 
         with self.subTest('"Normal" output (green).'):
@@ -145,7 +144,7 @@ Swapouts:                               3456015.
                 "danger_use_percent": 66.7,
             }
             self.assertListEqual(
-                RAM.pretty_value.__get__(ram_instance_mock),
+                list(ram_instance_mock),
                 [
                     (
                         ram_instance_mock.name,
@@ -165,7 +164,7 @@ Swapouts:                               3456015.
                 "danger_use_percent": 50,
             }
             self.assertListEqual(
-                RAM.pretty_value.__get__(ram_instance_mock),
+                list(ram_instance_mock),
                 [
                     (
                         ram_instance_mock.name,

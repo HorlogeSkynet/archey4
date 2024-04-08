@@ -37,9 +37,11 @@ class HelperMethods:
         # These instance-attributes are quite important, so let's mimic them.
         instance_mock.name = getattr(entry, "_PRETTY_NAME") or str(entry.__name__)
         instance_mock.value = None  # (entry default)
-        # Let's also configure the `__str__` magic method
+        # Let's also configure the magic methods
         # (MyPy doesn't realise this is a mock, see https://github.com/python/mypy/issues/2427)
         instance_mock.__str__ = entry.__str__  # type: ignore
+        instance_mock.__iter__ = entry.__iter__  # type: ignore
+        instance_mock.__next__ = entry.__next__  # type: ignore
         # We don't have default entry options defined outside of entries.
         instance_mock.options = options or {}
 

@@ -3,7 +3,6 @@
 import unittest
 from unittest.mock import mock_open, patch
 
-from archey.configuration import DEFAULT_CONFIG
 from archey.entries.cpu import CPU
 from archey.test import CustomAssertions
 from archey.test.entries import HelperMethods
@@ -329,39 +328,33 @@ Cluster(s): 1
 
     @HelperMethods.patch_clean_configuration
     def test_various_output_configuration(self):
-        """Test `pretty_value` output overloading based on user preferences combination"""
+        """
+        Test `__iter__` and `__next__` output overloading based on user preferences combination
+        """
         cpu_instance_mock = HelperMethods.entry_mock(CPU)
 
         cpu_instance_mock.value = [{"CPU-MODEL-NAME": 1}, {"ANOTHER-CPU-MODEL": 2}]
 
-        with self.subTest("Single-line combined output."):
+        with self.subTest("Normal output."):
             cpu_instance_mock.options["one_line"] = True
             self.assertListEqual(
-                CPU.pretty_value.__get__(cpu_instance_mock),
-                [("CPU", "CPU-MODEL-NAME, 2 x ANOTHER-CPU-MODEL")],
+                list(cpu_instance_mock),
+                [("CPU", "CPU-MODEL-NAME"), ("CPU", "2 x ANOTHER-CPU-MODEL")],
             )
 
-        with self.subTest("Single-line combined output (no count)."):
+        with self.subTest("Normal output (no count)."):
             cpu_instance_mock.options["show_cores"] = False
             cpu_instance_mock.options["one_line"] = True
             self.assertListEqual(
-                CPU.pretty_value.__get__(cpu_instance_mock),
-                [("CPU", "CPU-MODEL-NAME, ANOTHER-CPU-MODEL")],
-            )
-
-        with self.subTest("Multi-lines output (with counts)."):
-            cpu_instance_mock.options["show_cores"] = True
-            cpu_instance_mock.options["one_line"] = False
-            self.assertListEqual(
-                CPU.pretty_value.__get__(cpu_instance_mock),
-                [("CPU", "CPU-MODEL-NAME"), ("CPU", "2 x ANOTHER-CPU-MODEL")],
+                list(cpu_instance_mock),
+                [("CPU", "CPU-MODEL-NAME"), ("CPU", "ANOTHER-CPU-MODEL")],
             )
 
         with self.subTest("No CPU detected output."):
             cpu_instance_mock.value = []
             self.assertListEqual(
-                CPU.pretty_value.__get__(cpu_instance_mock),
-                [("CPU", DEFAULT_CONFIG["default_strings"]["not_detected"])],
+                list(cpu_instance_mock),
+                [],
             )
 
     @patch(

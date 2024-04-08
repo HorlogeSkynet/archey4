@@ -82,13 +82,27 @@ class Output:
         We either hand-off to JSON output, or get entries' pretty-formatted values and add them
         to the results.
         """
+        # DRY configuration access
+        configuration = Configuration()
         if self._format_to_json:
             self._output_json()
         else:
-            # Iterate through the entries and get their content.
+            # Iterate through the entries
             for entry in self._entries:
-                for entry_line in entry.pretty_value:
-                    self.append(*entry_line)
+                # Append single-line or multi-line content as appropriate
+                if entry.options.get("one_line", True):
+                    self.append(
+                        entry.name,
+                        ", ".join(entry_line[1] for entry_line in entry)
+                        or configuration.get("default_strings").get("not_detected"),
+                    )
+                else:
+                    for entry_line in entry:
+                        self.append(
+                            entry_line[0],
+                            entry_line[1]
+                            or configuration.get("default_strings").get("not_detected"),
+                        )
             self._output_text()
 
     def _output_json(self) -> None:

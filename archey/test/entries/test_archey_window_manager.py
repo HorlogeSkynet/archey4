@@ -75,9 +75,9 @@ Window manager's "showing the desktop" mode: OFF
         """Test (non-detection) when processes list do not contain any known value"""
         window_manager = WindowManager()
         self.assertIsNone(window_manager.value["name"])
-        self.assertListEqual(
-            window_manager.pretty_value,
-            [(window_manager.name, DEFAULT_CONFIG["default_strings"]["not_detected"])],
+        self.assertEqual(
+            str(window_manager),
+            DEFAULT_CONFIG["default_strings"]["not_detected"],
         )
 
 
