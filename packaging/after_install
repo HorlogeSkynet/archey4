@@ -3,5 +3,22 @@
 set -e
 
 
+# Handles AppArmor profile (see dh_apparmor).
+APP_PROFILE="/etc/apparmor.d/usr.bin.archey4"
+if [ -f "$APP_PROFILE" ]; then
+	# Add the local/ include
+	LOCAL_APP_PROFILE="/etc/apparmor.d/local/usr.bin.archey4"
+
+	test -e "$LOCAL_APP_PROFILE" || {
+		mkdir -p "$(dirname "$LOCAL_APP_PROFILE")"
+		install --mode 644 /dev/null "$LOCAL_APP_PROFILE"
+	}
+
+	# Reload the profile, including any abstraction updates
+	if aa-enabled --quiet 2>/dev/null; then
+		apparmor_parser -r -T -W "$APP_PROFILE" || true
+	fi
+fi
+
 # Creates a symbolic link providing `archey4` command alias.
 ln -s -f /usr/bin/archey /usr/bin/archey4

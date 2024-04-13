@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+
+# Handles AppArmor profile (see dh_apparmor).
+if ! [ -e /etc/apparmor.d/usr.bin.archey4 ] ; then
+	rm -f /etc/apparmor.d/disable/usr.bin.archey4 || true
+	rm -f /etc/apparmor.d/force-complain/usr.bin.archey4 || true
+	rm -f /etc/apparmor.d/local/usr.bin.archey4 || true
+	rm -f /var/cache/apparmor/*/usr.bin.archey4 || true
+	rmdir /etc/apparmor.d/disable 2>/dev/null || true
+	rmdir /etc/apparmor.d/local   2>/dev/null || true
+	rmdir /etc/apparmor.d         2>/dev/null || true
+fi
