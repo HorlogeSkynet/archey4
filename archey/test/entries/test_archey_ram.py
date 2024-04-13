@@ -127,11 +127,8 @@ Swapouts:                               3456015.
         """Test output overloading based on user preferences"""
         ram_instance_mock = HelperMethods.entry_mock(RAM)
 
-        with self.subTest("Output in case of non-detection."):
-            self.assertListEqual(
-                list(ram_instance_mock),
-                [(ram_instance_mock.name, None)],
-            )
+        with self.subTest("In case of non-detection."):
+            self.assertIsNone(ram_instance_mock.value)
 
         with self.subTest('"Normal" output (green).'):
             ram_instance_mock.value = {
@@ -143,14 +140,9 @@ Swapouts:                               3456015.
                 "warning_use_percent": 33.3,
                 "danger_use_percent": 66.7,
             }
-            self.assertListEqual(
-                list(ram_instance_mock),
-                [
-                    (
-                        ram_instance_mock.name,
-                        f"{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB",
-                    )
-                ],
+            self.assertEqual(
+                str(ram_instance_mock),
+                f"{Colors.GREEN_NORMAL}2043 MiB{Colors.CLEAR} / 15658 MiB",
             )
 
         with self.subTest('"Danger" output (red).'):
@@ -163,14 +155,9 @@ Swapouts:                               3456015.
                 "warning_use_percent": 25,
                 "danger_use_percent": 50,
             }
-            self.assertListEqual(
-                list(ram_instance_mock),
-                [
-                    (
-                        ram_instance_mock.name,
-                        f"{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB",
-                    )
-                ],
+            self.assertEqual(
+                str(ram_instance_mock),
+                f"{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB",
             )
 
 

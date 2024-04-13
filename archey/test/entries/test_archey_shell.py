@@ -59,10 +59,6 @@ class TestShellEntry(unittest.TestCase):
         """`id` fails, but Archey must not !"""
         shell = Shell()
         self.assertIsNone(shell.value)
-        self.assertListEqual(
-            list(shell),
-            [(shell.name, None)],
-        )
 
 
 if __name__ == "__main__":

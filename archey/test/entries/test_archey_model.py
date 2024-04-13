@@ -249,10 +249,6 @@ class TestModelEntry(unittest.TestCase):
         """Test when no information could be retrieved"""
         model_instance_mock = HelperMethods.entry_mock(Model)
         self.assertIsNone(model_instance_mock.value)
-        self.assertListEqual(
-            list(model_instance_mock),
-            [(model_instance_mock.name, None)],
-        )
 
     @patch(
         "archey.entries.model.check_output",

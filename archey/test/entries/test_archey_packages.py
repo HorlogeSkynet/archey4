@@ -305,10 +305,6 @@ sample_package_2_2
         packages = Packages()
 
         self.assertIsNone(packages.value)
-        self.assertListEqual(
-            list(packages),
-            [(packages.name, None)],
-        )
 
     @staticmethod
     def _check_output_side_effect(pkg_manager_cmd=None):

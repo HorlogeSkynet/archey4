@@ -335,10 +335,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
     def test_output(self):
         """Test output values"""
         # No value --> `None`.
-        self.assertListEqual(
-            list(self.temperature_mock),
-            [(self.temperature_mock.name, None)],
-        )
+        self.assertIsNone(self.temperature_mock.value)
 
         # Values --> normal behavior.
         self.temperature_mock._temps = [50.0, 40.0, 50.0]  # pylint: disable=protected-access
@@ -348,9 +345,9 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             "char_before_unit": "o",
             "unit": "C",
         }
-        self.assertListEqual(
-            list(self.temperature_mock),
-            [(self.temperature_mock.name, "46.7oC (Max. 50.0oC)")],
+        self.assertEqual(
+            str(self.temperature_mock),
+            "46.7oC (Max. 50.0oC)",
         )
 
         # Only one value --> no maximum.
@@ -361,10 +358,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             "char_before_unit": " ",
             "unit": "C",
         }
-        self.assertListEqual(
-            list(self.temperature_mock),
-            [(self.temperature_mock.name, "42.8 C")],
-        )
+        self.assertEqual(str(self.temperature_mock), "42.8 C")
 
     def test_convert_to_fahrenheit(self):
         """Simple tests for the `_convert_to_fahrenheit` static method"""
