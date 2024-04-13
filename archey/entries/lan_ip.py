@@ -2,7 +2,7 @@
 
 import ipaddress
 from itertools import islice
-from typing import Iterator, Self
+from typing import Iterator, TypeVar
 
 try:
     import netifaces
@@ -10,6 +10,8 @@ except ImportError:
     netifaces = None
 
 from archey.entry import Entry
+
+Self = TypeVar("Self", bound="LanIP")
 
 
 class LanIP(Entry):
@@ -75,7 +77,7 @@ class LanIP(Entry):
                         # Finally, yield the address compressed representation.
                         yield ip_addr.compressed
 
-    def __iter__(self) -> Self:
+    def __iter__(self: Self) -> Self:
         """Sets up iterable over IP addresses"""
         if not self.value and netifaces:
             # If no IP addresses found, fall-back on the "No address" string.

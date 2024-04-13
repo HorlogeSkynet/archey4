@@ -14,7 +14,7 @@ class _SimpleEntry(Entry):
         super().__init__(*args, **kwargs)
 
     @property
-    def pretty_value(self) -> "typing.List[tuple[str, str]]":
+    def pretty_value(self) -> "typing.List[typing.Tuple[str, str]]":
         """Reverse order!"""
         return [(self.value, self.name)]
 

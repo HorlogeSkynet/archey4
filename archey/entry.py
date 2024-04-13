@@ -3,15 +3,17 @@
 import logging
 from abc import ABC as AbstractBaseClass
 from abc import abstractmethod
-from typing import Any, Iterator, Optional, Self, TypeAlias
+from typing import Any, Iterator, Optional, Tuple, TypeVar
 
 from archey.configuration import Configuration
+
+Self = TypeVar("Self", bound="Entry")
 
 
 class Entry(AbstractBaseClass):
     """Module base class"""
 
-    ValueType: TypeAlias = tuple[str, Optional[str]]
+    ValueType = Tuple[str, Optional[str]]
     _ICON: Optional[str] = None
     _PRETTY_NAME: Optional[str] = None
 
@@ -23,7 +25,9 @@ class Entry(AbstractBaseClass):
         return super().__new__(cls)
 
     @abstractmethod
-    def __init__(self, name: Optional[str] = None, value=None, options: Optional[dict] = None):
+    def __init__(
+        self: Self, name: Optional[str] = None, value=None, options: Optional[dict] = None
+    ):
         configuration = Configuration()
 
         # Each entry will have always have the following attributes...
@@ -49,7 +53,7 @@ class Entry(AbstractBaseClass):
         self._iter_idx = 0
         self._iter_value: Iterator[Any] = iter([])
 
-    def __iter__(self) -> Self:
+    def __iter__(self: Self) -> Self:
         """Best-effort set up of an iterable of value for inherited entries to use."""
         if isinstance(self.value, (str, int)):
             self._iter_value = iter([self.value])
@@ -63,7 +67,7 @@ class Entry(AbstractBaseClass):
             self._iter_value = iter([])
         return self
 
-    def __next__(self) -> ValueType:
+    def __next__(self: Self) -> ValueType:
         """
         Default behaviour: assume we can just use `__str__` on ourself for a single-line output.
         """
@@ -77,7 +81,7 @@ class Entry(AbstractBaseClass):
         # Otherwise, just raise `StopIteration` immediately
         raise StopIteration
 
-    def __str__(self) -> str:
+    def __str__(self: Self) -> str:
         """Provide a sane default printable string representation of the entry"""
         # Assume that the `__str__` of our value is usable
         return str(self.value)

@@ -2,12 +2,14 @@
 
 from socket import timeout as SocketTimeoutError
 from subprocess import DEVNULL, CalledProcessError, TimeoutExpired, check_output
-from typing import Optional, Self
+from typing import Optional, TypeVar
 from urllib.error import URLError
 from urllib.request import urlopen
 
 from archey.entry import Entry
 from archey.environment import Environment
+
+Self = TypeVar("Self", bound="WanIP")
 
 
 class WanIP(Entry):
@@ -97,7 +99,7 @@ class WanIP(Entry):
         except (URLError, SocketTimeoutError):
             return None
 
-    def __iter__(self) -> Self:
+    def __iter__(self: Self) -> Self:
         """Sets up iterable over IP addresses"""
         if not self.value and not Environment.DO_NOT_TRACK:
             # If no IP addresses found, fall-back on the "No address" string.

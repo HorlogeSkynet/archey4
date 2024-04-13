@@ -4,10 +4,12 @@ import platform
 import plistlib
 import re
 from subprocess import DEVNULL, PIPE, check_output, run
-from typing import Dict, Iterable, List, Self
+from typing import Dict, Iterable, List, TypeVar
 
 from archey.colors import Colors
 from archey.entry import Entry
+
+Self = TypeVar("Self", bound="Disk")
 
 
 class Disk(Entry):
@@ -231,7 +233,7 @@ class Disk(Entry):
     def __str__(self):
         return "placeholder"
 
-    def __iter__(self) -> Self:
+    def __iter__(self: Self) -> Self:
         """Sets up iterable for entry."""
         # Combine all entries into one grand-total if configured to do so
         # (and we have a "truthy" value).
