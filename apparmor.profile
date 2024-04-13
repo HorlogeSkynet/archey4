@@ -52,6 +52,9 @@ profile archey4 /usr/{,local/}bin/archey{,4} {
 	# [CPU] entry
 	/{,usr/}bin/lscpu PUx,
 
+	# [Desktop Environment] entry
+	/usr/share/xsessions/*.desktop r,
+
 	# [Disk] entry
 	/{,usr/}bin/df PUx,
 
