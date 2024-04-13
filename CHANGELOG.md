@@ -10,11 +10,13 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - `Model` support for Raspberry Pi 5+
 - `none` logo style to completely hide distribution logo
 - AppArmor confinement profile (included in Debian and AUR packages)
+- `DesktopEnvironment` support for Windows
 - `WindowManager` support for Windows
 - `WindowManager` support for some Wayland compositors
 
 ### Changed
 - `Model` honor `/proc/device-tree/model` when it exists
+- `DesktopEnvironment` now honors environment (including `XDG_CURRENT_DESKTOP`)
 
 ### Removed
 - `_distribution` protected attribute from `Output` class
