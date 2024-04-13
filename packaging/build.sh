@@ -58,6 +58,7 @@ FPM_COMMON_ARGS=(
 	--maintainer "${AUTHOR} <${AUTHOR_EMAIL}>" \
 	--after-install ./packaging/after_install \
 	--after-upgrade ./packaging/after_install \
+	--after-remove ./packaging/after_remove \
 	--before-remove ./packaging/before_remove \
 	--python-bin python3 \
 	--python-install-bin 'usr/bin/' \
@@ -73,6 +74,9 @@ echo ">>> Packages generation for ${NAME}_v${VERSION}-${REVISION} <<<"
 # Prepare the configuration file under a regular `etc/` directory.
 mkdir -p etc/archey4/ && \
 	cp config.json etc/archey4/config.json
+# Prepare the AppArmor profile (without `abi` directive, unsupported by Debian).
+mkdir -p etc/apparmor.d/ && \
+	sed '/^abi.*,$/d' apparmor.profile > etc/apparmor.d/usr.bin.archey4
 # Prepare and compress the manual page.
 sed -e "s/\${DATE}/$(date +'%B %Y')/1" -e "s/\${VERSION}/${VERSION}/1" archey.1 | \
 	gzip -c --best - > "${DIST_OUTPUT}/archey.1.gz"
@@ -92,6 +96,8 @@ export PYTHONDONTWRITEBYTECODE=1
 echo 'Now generating Debian package...'
 fpm \
 	"${FPM_COMMON_ARGS[@]}" \
+	--config-files "etc/apparmor.d/" \
+	--config-files "etc/apparmor.d/usr.bin.archey4" \
 	--output-type deb \
 	--package "${DIST_OUTPUT}/${NAME}_${VERSION}-${REVISION}_${ARCHITECTURE}.deb" \
 	--depends 'python3 >= 3.6' \
@@ -100,7 +106,7 @@ fpm \
 	--python-install-lib 'usr/lib/python3/dist-packages/' \
 	--deb-priority 'optional' \
 	--deb-field 'Recommends: procps' \
-	--deb-field 'Suggests: dnsutils, lm-sensors, pciutils, virt-what, wmctrl' \
+	--deb-field 'Suggests: apparmor, dnsutils, lm-sensors, pciutils, virt-what, wmctrl' \
 	--deb-no-default-config-files \
 	setup.py
 
@@ -157,9 +163,11 @@ done
 # 	setup.py
 
 
-# Remove the fake `etc/archey4/` tree.
+# Remove the fake `etc/archey4/` & `etc/apparmor.d/` trees.
 rm etc/archey4/config.json && \
 	rmdir --ignore-fail-on-non-empty -p etc/archey4/
+rm etc/apparmor.d/usr.bin.archey4 && \
+	rmdir --ignore-fail-on-non-empty -p etc/apparmor.d/
 
 
 # Silence some Setuptools warnings by re-enabling byte-code generation.
