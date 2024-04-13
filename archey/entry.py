@@ -51,20 +51,16 @@ class Entry(AbstractBaseClass):
 
     def __iter__(self) -> Self:
         """Best-effort set up of an iterable of value for inherited entries to use."""
-        try:
-            if isinstance(self.value, str):
-                raise TypeError
-            if isinstance(self.value, dict):
-                self._iter_value = iter(self.value.items())
-            else:
-                self._iter_value = iter(self.value)
-        except TypeError:
-            # e.g. int, str, None
-            if self.value:
-                self._iter_value = iter([self.value])
-            else:
-                # Make an empty iterable rather than `[None]`
-                self._iter_value = iter([])
+        if isinstance(self.value, (str, int)):
+            self._iter_value = iter([self.value])
+        elif isinstance(self.value, dict):
+            self._iter_value = iter(self.value.items())
+        elif self.value:
+            # Don't know what it is -- let `iter` deal with it.
+            self._iter_value = iter(self.value)
+        else:
+            # Make an empty iterable rather than `[None]`
+            self._iter_value = iter([])
         return self
 
     def __next__(self) -> ValueType:
@@ -78,8 +74,8 @@ class Entry(AbstractBaseClass):
         # If the value is "truthy" use `__str__`
         if self.value:
             return (self.name, str(self))
-        # Otherwise, `None`
-        return (self.name, None)
+        # Otherwise, just raise `StopIteration` immediately
+        raise StopIteration
 
     def __str__(self) -> str:
         """Provide a sane default printable string representation of the entry"""
