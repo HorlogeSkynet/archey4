@@ -8,8 +8,12 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Added
 - AppArmor confinement profile (included in Debian and AUR packages)
+- `DesktopEnvironment` support for Windows
 - `WindowManager` support for Windows
 - `WindowManager` support for some Wayland compositors
+
+### Changed
+- `DesktopEnvironment` now honors environment (including `XDG_CURRENT_DESKTOP`)
 
 ## [v4.14.3.0] - 2024-04-06
 ### Added
