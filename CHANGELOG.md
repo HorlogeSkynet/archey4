@@ -10,6 +10,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - `Model` support for Raspberry Pi 5+
 - `none` logo style to completely hide distribution logo
 - AppArmor confinement profile (included in Debian and AUR packages)
+- `WindowManager` support for Windows
 
 ### Changed
 - `Model` honor `/proc/device-tree/model` when it exists
