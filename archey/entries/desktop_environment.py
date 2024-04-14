@@ -129,7 +129,7 @@ class DesktopEnvironment(Entry):
                     # Don't expect anything from .desktop files and parse them in a best-effort way
                     config = configparser.ConfigParser(allow_no_value=True, strict=False)
                     with open(desktop_file, encoding="utf-8") as f_desktop_file:
-                        config.read_file(f_desktop_file)
+                        config.read_string(f_desktop_file.read())
                     return (
                         # Honor `DesktopNames` option with `X-LightDM-DesktopName` as a fallback
                         config.get("Desktop Entry", "DesktopNames", fallback=None)
