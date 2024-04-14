@@ -81,6 +81,8 @@ class WindowManager(Entry):
             else:
                 if platform.system() == "Darwin":
                     name = "Quartz Compositor"
+                elif platform.system() == "Windows":
+                    name = "Desktop Window Manager"
 
         display_server_protocol = DSP_DICT.get(os.getenv("XDG_SESSION_TYPE", ""))
 
