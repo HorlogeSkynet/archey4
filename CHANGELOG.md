@@ -8,6 +8,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ## [Unreleased]
 ### Added
 - AppArmor confinement profile (included in Debian and AUR packages)
+- `WindowManager` support for Windows
 
 ## [v4.14.3.0] - 2024-04-06
 ### Added
