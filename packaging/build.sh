@@ -60,7 +60,7 @@ FPM_COMMON_ARGS=(
 	--after-upgrade ./packaging/after_install \
 	--after-remove ./packaging/after_remove \
 	--before-remove ./packaging/before_remove \
-	--python-bin python3 \
+	--python-bin /usr/bin/python3 \
 	--python-install-bin 'usr/bin/' \
 	--python-install-data 'usr/' \
 	--no-python-fix-name \
