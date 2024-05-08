@@ -41,7 +41,7 @@ readline-8.0.1-r0 x86_64 {{readline}} (GPL-2.0-or-later) [installed]
         """Simple test for the APK packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("apk")
 
-        self.assertEqual(Packages().value, 8)
+        self.assertEqual(Packages().value, '(apk) 8')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -57,7 +57,7 @@ GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
         """Simple test for the DNF packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("dnf")
 
-        self.assertEqual(Packages().value, 4)
+        self.assertEqual(Packages().value, '(dnf) 4')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -75,7 +75,7 @@ alien                   install
         """Simple test for the DPKG packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("dpkg")
 
-        self.assertEqual(Packages().value, 6)
+        self.assertEqual(Packages().value, '(dpkg) 6')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -97,7 +97,7 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
         """Simple test for the Emerge packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("emerge")
 
-        self.assertEqual(Packages().value, 5)
+        self.assertEqual(Packages().value, '(emerge) 5')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -112,7 +112,7 @@ python3.8-pip-20.1
         """Simple test for the Emerge packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("nix-env")
 
-        self.assertEqual(Packages().value, 4)
+        self.assertEqual(Packages().value, '(nix-env) 4')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -127,7 +127,7 @@ argon2 20171227-3
         """Simple test for the Pacman packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pacman")
 
-        self.assertEqual(Packages().value, 4)
+        self.assertEqual(Packages().value, '(pacman) 4')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -147,7 +147,7 @@ xz-5.2.4            LZMA compression and decompression tools
         """Simple test for the OpenBSD `pkg_*` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pkg_info")
 
-        self.assertEqual(Packages().value, 9)
+        self.assertEqual(Packages().value, '(pkg_info) 9')
 
     @patch("archey.entries.packages.Distributions.get_local", return_value=Distributions.FREEBSD)
     @patch(
@@ -167,7 +167,7 @@ readline-8.0.4                 Library for editing command lines as they are typ
         """Simple test for the FreeBSD `pkg` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pkg")
 
-        self.assertEqual(Packages().value, 8)
+        self.assertEqual(Packages().value, '(pkg) 8')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -191,7 +191,7 @@ pkgin-20.12.1nb1     Apt / yum like tool for managing pkgsrc binary packages
         """Simple test for the (NetBSD) `pkgin` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pkgin")
 
-        self.assertEqual(Packages().value, 13)
+        self.assertEqual(Packages().value, '(pkgin) 13')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -217,7 +217,7 @@ The following ports are currently installed:
         """Simple test for the MacPorts CLI client (`port`) package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("port")
 
-        self.assertEqual(Packages().value, 14)
+        self.assertEqual(Packages().value, '(port) 14')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -232,7 +232,7 @@ MySQL-client-3.23.57-1
         """Simple test for the RPM packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("rpm")
 
-        self.assertEqual(Packages().value, 4)
+        self.assertEqual(Packages().value, '(rpm) 4')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -249,7 +249,7 @@ ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
         """Simple test for the Yum packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("yum")
 
-        self.assertEqual(Packages().value, 4)
+        self.assertEqual(Packages().value, '(yum) 4')
 
     @patch(
         "archey.entries.packages.check_output",
@@ -270,13 +270,13 @@ i  | at            | A Job Manager                       | package    \n\
         """Simple test for the Zypper packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("zypper")
 
-        self.assertEqual(Packages().value, 5)
+        self.assertEqual(Packages().value, '(zypper) 5')
 
     @patch(
         "archey.entries.packages.PACKAGES_TOOLS",
         new=(
-            {"cmd": ("pkg_tool_1")},
-            {"cmd": ("pkg_tool_2"), "skew": 2},
+            {"tool": "pkg_tool_1", "cmd": ("pkg_tool_1")},
+            {"tool": "pkg_tool_2", "cmd": ("pkg_tool_2"), "skew": 2},
         ),
     )
     @patch(
@@ -296,7 +296,7 @@ sample_package_2_2
     )
     def test_multiple_package_managers(self, _):
         """Simple test for multiple packages managers"""
-        self.assertEqual(Packages().value, 4)
+        self.assertEqual(Packages().value, '(pkg_tool_1) 2, (pkg_tool_2) 2')
 
     @patch("archey.entries.packages.check_output")
     @HelperMethods.patch_clean_configuration
