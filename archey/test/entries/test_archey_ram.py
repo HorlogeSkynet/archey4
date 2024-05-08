@@ -116,7 +116,11 @@ Swapouts:                               3456015.
 """
         ],
     )
-    def test_run_sysctl_mem(self, _):
+    @patch(
+        "archey.entries.ram.os.sysconf",
+        return_value=4096,
+    )
+    def test_run_sysctl_mem(self, _, __):
         """Test _run_sysctl_mem()"""
         self.assertTupleEqual(
             RAM._run_sysctl_mem(),  # pylint: disable=protected-access
