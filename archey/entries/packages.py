@@ -43,6 +43,8 @@ PACKAGES_TOOLS = (
     {"tool": "slackware", "cmd": ("ls", "-1", "/var/log/packages/")},  # SlackWare.
     {"tool": "yum", "cmd": ("yum", "list", "installed"), "skew": 2},
     {"tool": "zypper", "cmd": ("zypper", "search", "-i"), "skew": 5},
+    {"tool": "snap", "cmd": ("snap", "list", "--all"), "skew": 1},
+    {"tool": "flatpak", "cmd": ("flatpak", "list"), "skew": 1},
 )
 
 

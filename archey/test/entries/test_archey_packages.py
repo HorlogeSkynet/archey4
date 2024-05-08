@@ -273,6 +273,39 @@ i  | at            | A Job Manager                       | package    \n\
         self.assertEqual(Packages().value, '(zypper) 5')
 
     @patch(
+        "archey.entries.packages.check_output",
+        return_value="""\
+Name                       Version           Rev    Tracking         Publisher   Notes
+gnome-3-38-2004            0+git.efb213a     143    latest/stable/…  canonical✓  -
+gnome-42-2204              0+git.510a601     176    latest/stable    canonical✓  -
+gtk-common-themes          0.1-81-g442e511   1535   latest/stable/…  canonical✓  -
+snap-store                 41.3-66-gfe1e325  638    latest/stable/…  canonical✓  -
+""",
+    )    
+    def test_match_with_snap(self, check_output_mock):
+        """Simple test for the Snap packages manager"""
+        check_output_mock.side_effect = self._check_output_side_effect("snap")
+
+        self.assertEqual(Packages().value, '(snap) 4')
+
+
+    @patch(
+        "archey.entries.packages.check_output",
+        return_value="""\
+Name                                                    Application ID                                                  Version                  Branch                  Origin                    Installation
+Discord                                                 com.discordapp.Discord                                          0.0.35                   stable                  flathub                   system
+Xournal++                                               com.github.xournalpp.xournalpp                                  1.2.2                    stable                  flathub                   system
+draw.io                                                 com.jgraph.drawio.desktop                                       22.0.2                   stable                  flathub                   system
+Extension Manager                                       com.mattjakeman.ExtensionManager                                0.4.2                    stable                  flathub                   system
+""",
+    )
+    def test_match_with_flatpak(self, check_output_mock):
+        """Simple test for the Flatpak packages manager"""
+        check_output_mock.side_effect = self._check_output_side_effect("flatpak")
+
+        self.assertEqual(Packages().value, '(flatpak) 4')
+
+    @patch(
         "archey.entries.packages.PACKAGES_TOOLS",
         new=(
             {"tool": "pkg_tool_1", "cmd": ("pkg_tool_1")},
