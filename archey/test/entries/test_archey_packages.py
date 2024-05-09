@@ -2,7 +2,7 @@
 
 import unittest
 from unittest.mock import DEFAULT as DEFAULT_SENTINEL
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from archey.configuration import DEFAULT_CONFIG
 from archey.distributions import Distributions
@@ -41,7 +41,7 @@ readline-8.0.1-r0 x86_64 {{readline}} (GPL-2.0-or-later) [installed]
         """Simple test for the APK packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("apk")
 
-        self.assertEqual(Packages().value, '(apk) 8')
+        self.assertDictEqual(Packages().value, {"apk": 8})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -57,7 +57,7 @@ GraphicsMagick.x86_64          1.3.26-3.fc26           @@commandline
         """Simple test for the DNF packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("dnf")
 
-        self.assertEqual(Packages().value, '(dnf) 4')
+        self.assertDictEqual(Packages().value, {"dnf": 4})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -75,7 +75,7 @@ alien                   install
         """Simple test for the DPKG packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("dpkg")
 
-        self.assertEqual(Packages().value, '(dpkg) 6')
+        self.assertDictEqual(Packages().value, {"dpkg": 6})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -97,7 +97,23 @@ USE="pam -static-libs" ABI_X86="(64) -32 (-x32)" \n\
         """Simple test for the Emerge packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("emerge")
 
-        self.assertEqual(Packages().value, '(emerge) 5')
+        self.assertDictEqual(Packages().value, {"emerge": 5})
+
+    @patch(
+        "archey.entries.packages.check_output",
+        return_value="""\
+Name                                                    Application ID                                                  Version                  Branch                  Origin                    Installation
+Discord                                                 com.discordapp.Discord                                          0.0.35                   stable                  flathub                   system
+Xournal++                                               com.github.xournalpp.xournalpp                                  1.2.2                    stable                  flathub                   system
+draw.io                                                 com.jgraph.drawio.desktop                                       22.0.2                   stable                  flathub                   system
+Extension Manager                                       com.mattjakeman.ExtensionManager                                0.4.2                    stable                  flathub                   system
+""",
+    )
+    def test_match_with_flatpak(self, check_output_mock):
+        """Simple test for the Flatpak packages manager"""
+        check_output_mock.side_effect = self._check_output_side_effect("flatpak")
+
+        self.assertDictEqual(Packages().value, {"flatpak": 4})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -112,7 +128,7 @@ python3.8-pip-20.1
         """Simple test for the Emerge packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("nix-env")
 
-        self.assertEqual(Packages().value, '(nix-env) 4')
+        self.assertDictEqual(Packages().value, {"nix-env": 4})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -127,7 +143,7 @@ argon2 20171227-3
         """Simple test for the Pacman packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pacman")
 
-        self.assertEqual(Packages().value, '(pacman) 4')
+        self.assertDictEqual(Packages().value, {"pacman": 4})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -147,7 +163,7 @@ xz-5.2.4            LZMA compression and decompression tools
         """Simple test for the OpenBSD `pkg_*` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pkg_info")
 
-        self.assertEqual(Packages().value, '(pkg_info) 9')
+        self.assertDictEqual(Packages().value, {"pkg_info": 9})
 
     @patch("archey.entries.packages.Distributions.get_local", return_value=Distributions.FREEBSD)
     @patch(
@@ -167,7 +183,7 @@ readline-8.0.4                 Library for editing command lines as they are typ
         """Simple test for the FreeBSD `pkg` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pkg")
 
-        self.assertEqual(Packages().value, '(pkg) 8')
+        self.assertDictEqual(Packages().value, {"pkg": 8})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -191,7 +207,7 @@ pkgin-20.12.1nb1     Apt / yum like tool for managing pkgsrc binary packages
         """Simple test for the (NetBSD) `pkgin` package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("pkgin")
 
-        self.assertEqual(Packages().value, '(pkgin) 13')
+        self.assertDictEqual(Packages().value, {"pkgin": 13})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -217,7 +233,7 @@ The following ports are currently installed:
         """Simple test for the MacPorts CLI client (`port`) package manager"""
         check_output_mock.side_effect = self._check_output_side_effect("port")
 
-        self.assertEqual(Packages().value, '(port) 14')
+        self.assertDictEqual(Packages().value, {"port": 14})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -232,7 +248,7 @@ MySQL-client-3.23.57-1
         """Simple test for the RPM packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("rpm")
 
-        self.assertEqual(Packages().value, '(rpm) 4')
+        self.assertDictEqual(Packages().value, {"rpm": 4})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -249,7 +265,7 @@ ModemManager-glib.x86_64        1.6.0-2.el7         @base            \n\
         """Simple test for the Yum packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("yum")
 
-        self.assertEqual(Packages().value, '(yum) 4')
+        self.assertDictEqual(Packages().value, {"yum": 4})
 
     @patch(
         "archey.entries.packages.check_output",
@@ -270,46 +286,13 @@ i  | at            | A Job Manager                       | package    \n\
         """Simple test for the Zypper packages manager"""
         check_output_mock.side_effect = self._check_output_side_effect("zypper")
 
-        self.assertEqual(Packages().value, '(zypper) 5')
-
-    @patch(
-        "archey.entries.packages.check_output",
-        return_value="""\
-Name                       Version           Rev    Tracking         Publisher   Notes
-gnome-3-38-2004            0+git.efb213a     143    latest/stable/…  canonical✓  -
-gnome-42-2204              0+git.510a601     176    latest/stable    canonical✓  -
-gtk-common-themes          0.1-81-g442e511   1535   latest/stable/…  canonical✓  -
-snap-store                 41.3-66-gfe1e325  638    latest/stable/…  canonical✓  -
-""",
-    )    
-    def test_match_with_snap(self, check_output_mock):
-        """Simple test for the Snap packages manager"""
-        check_output_mock.side_effect = self._check_output_side_effect("snap")
-
-        self.assertEqual(Packages().value, '(snap) 4')
-
-
-    @patch(
-        "archey.entries.packages.check_output",
-        return_value="""\
-Name                                                    Application ID                                                  Version                  Branch                  Origin                    Installation
-Discord                                                 com.discordapp.Discord                                          0.0.35                   stable                  flathub                   system
-Xournal++                                               com.github.xournalpp.xournalpp                                  1.2.2                    stable                  flathub                   system
-draw.io                                                 com.jgraph.drawio.desktop                                       22.0.2                   stable                  flathub                   system
-Extension Manager                                       com.mattjakeman.ExtensionManager                                0.4.2                    stable                  flathub                   system
-""",
-    )
-    def test_match_with_flatpak(self, check_output_mock):
-        """Simple test for the Flatpak packages manager"""
-        check_output_mock.side_effect = self._check_output_side_effect("flatpak")
-
-        self.assertEqual(Packages().value, '(flatpak) 4')
+        self.assertDictEqual(Packages().value, {"zypper": 5})
 
     @patch(
         "archey.entries.packages.PACKAGES_TOOLS",
         new=(
-            {"tool": "pkg_tool_1", "cmd": ("pkg_tool_1")},
-            {"tool": "pkg_tool_2", "cmd": ("pkg_tool_2"), "skew": 2},
+            {"cmd": ("pkg_tool_1",), "name": "acae_loot_42"},
+            {"cmd": ("pkg_tool_2",), "skew": 2},
         ),
     )
     @patch(
@@ -329,23 +312,57 @@ sample_package_2_2
     )
     def test_multiple_package_managers(self, _):
         """Simple test for multiple packages managers"""
-        self.assertEqual(Packages().value, '(pkg_tool_1) 2, (pkg_tool_2) 2')
+        self.assertDictEqual(Packages().value, {"acae_loot_42": 2, "pkg_tool_2": 2})
 
-    @patch("archey.entries.packages.check_output")
     @HelperMethods.patch_clean_configuration
-    def test_no_packages_manager(self, check_output_mock):
-        """No packages manager is available at the moment..."""
-        check_output_mock.side_effect = self._check_output_side_effect()
-
-        packages = Packages()
-
+    def test_various_output_configuration(self):
+        """Test `output` overloading based on user preferences combination"""
+        packages_instance_mock = HelperMethods.entry_mock(Packages)
         output_mock = MagicMock()
-        packages.output(output_mock)
 
-        self.assertIsNone(packages.value)
-        self.assertEqual(
-            output_mock.append.call_args[0][1], DEFAULT_CONFIG["default_strings"]["not_detected"]
-        )
+        packages_instance_mock.value = {"pkg_tool_0": 0, "pkg_tool_18": 18, "pkg_tool_42": 42}
+
+        with self.subTest("Single-line combined output (without zero counts)."):
+            Packages.output(packages_instance_mock, output_mock)
+            output_mock.append.assert_called_once_with(
+                "Packages", "(pkg_tool_18) 18, (pkg_tool_42) 42"
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest("Single-line combined output (with zero counts)."):
+            packages_instance_mock.options["show_zeros"] = True
+
+            Packages.output(packages_instance_mock, output_mock)
+            output_mock.append.assert_called_once_with(
+                "Packages", "(pkg_tool_0) 0, (pkg_tool_18) 18, (pkg_tool_42) 42"
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest("Multi-lines output (with zero counts)."):
+            packages_instance_mock.options["one_line"] = False
+            packages_instance_mock.options["show_zeros"] = True
+
+            Packages.output(packages_instance_mock, output_mock)
+            self.assertEqual(output_mock.append.call_count, 3)
+            output_mock.append.assert_has_calls(
+                [
+                    call("Packages", "(pkg_tool_0) 0"),
+                    call("Packages", "(pkg_tool_18) 18"),
+                    call("Packages", "(pkg_tool_42) 42"),
+                ]
+            )
+
+        output_mock.reset_mock()
+
+        with self.subTest("No available packages tool."):
+            packages_instance_mock.value = {}
+
+            Packages.output(packages_instance_mock, output_mock)
+            output_mock.append.assert_called_once_with(
+                "Packages", DEFAULT_CONFIG["default_strings"]["not_detected"]
+            )
 
     @staticmethod
     def _check_output_side_effect(pkg_manager_cmd=None):
