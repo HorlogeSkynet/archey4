@@ -52,6 +52,7 @@ class Distributions(Enum):
     OPENSUSE = "opensuse"
     POP = "pop"
     PARABOLA = "parabola"
+    QUIRINUX = "quirinux"
     RASPBIAN = "raspbian"
     ROCKY = "rocky"
     RHEL = "rhel"
