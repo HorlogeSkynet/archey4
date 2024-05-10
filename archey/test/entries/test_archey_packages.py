@@ -322,7 +322,19 @@ sample_package_2_2
 
         packages_instance_mock.value = {"pkg_tool_0": 0, "pkg_tool_18": 18, "pkg_tool_42": 42}
 
+        with self.subTest("Single-line fully-combined output."):
+            packages_instance_mock.options["combine_total"] = True
+
+            Packages.output(packages_instance_mock, output_mock)
+            output_mock.append.assert_called_once_with("Packages", "60")
+
+        output_mock.reset_mock()
+
         with self.subTest("Single-line combined output (without zero counts)."):
+            packages_instance_mock.options["combine_total"] = False
+            packages_instance_mock.options["one_line"] = True
+            packages_instance_mock.options["show_zeros"] = False
+
             Packages.output(packages_instance_mock, output_mock)
             output_mock.append.assert_called_once_with(
                 "Packages", "(pkg_tool_18) 18, (pkg_tool_42) 42"
@@ -342,7 +354,6 @@ sample_package_2_2
 
         with self.subTest("Multi-lines output (with zero counts)."):
             packages_instance_mock.options["one_line"] = False
-            packages_instance_mock.options["show_zeros"] = True
 
             Packages.output(packages_instance_mock, output_mock)
             self.assertEqual(output_mock.append.call_count, 3)

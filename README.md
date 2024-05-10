@@ -312,6 +312,8 @@ Below stand further descriptions for each available (default) option :
 		},
 		{
 			"type": "Packages",
+			// Set to `true` to sum up all installed package counts.
+			"combine_total": false,
 			// Set to `false` not to join all packages tool counts on the same line.
 			"one_line": true,
 			// Set to `true` to include tools with no installed package.

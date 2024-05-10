@@ -102,6 +102,10 @@ class Packages(Entry):
             super().output(output)
             return
 
+        if self.options.get("combine_total"):
+            output.append(self.name, str(sum(self.value.values())))
+            return
+
         entries = []
         for pkg_tool_name, count in self.value.items():
             if count > 0 or self.options.get("show_zeros"):
