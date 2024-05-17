@@ -30,7 +30,12 @@
 			"type": "Terminal",
 			"use_unicode": true
 		},
-		{ "type": "Packages" },
+		{
+			"type": "Packages",
+			"combine_total": false,
+			"one_line": true,
+			"show_zeros": false
+		},
 		{
 			"type": "Temperature",
 			"char_before_unit": " ",

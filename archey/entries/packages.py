@@ -26,7 +26,8 @@ PACKAGES_TOOLS = (
     {"cmd": ("dnf", "list", "installed"), "skew": 1},
     {"cmd": ("dpkg", "--get-selections")},
     {"cmd": ("emerge", "-ep", "world"), "skew": 5},
-    {"cmd": ("ls", "-1", get_homebrew_cellar_path())},  # Homebrew.
+    {"cmd": ("flatpak", "list"), "skew": 1},
+    {"cmd": ("ls", "-1", get_homebrew_cellar_path()), "name": "homebrew"},
     {"cmd": ("nix-env", "-q")},
     {"cmd": ("pacman", "-Q")},
     {"cmd": ("pacstall", "-L")},
@@ -39,7 +40,8 @@ PACKAGES_TOOLS = (
     {"cmd": ("pkgin", "list")},
     {"cmd": ("port", "installed"), "skew": 1},
     {"cmd": ("rpm", "-qa")},
-    {"cmd": ("ls", "-1", "/var/log/packages/")},  # SlackWare.
+    {"cmd": ("ls", "-1", "/var/log/packages/"), "name": "slackware"},
+    {"cmd": ("snap", "list", "--all"), "skew": 1},
     {"cmd": ("yum", "list", "installed"), "skew": 2},
     {"cmd": ("zypper", "search", "-i"), "skew": 5},
 )
@@ -52,6 +54,8 @@ class Packages(Entry):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.value = {}
 
         for packages_tool in PACKAGES_TOOLS:
             packages_tool = typing.cast(dict, packages_tool)
@@ -77,17 +81,40 @@ class Packages(Entry):
                 continue
 
             # Here we *may* use `\n` as `universal_newlines` has been set.
-            if self.value:
-                self.value += results.count("\n")
-            else:
-                self.value = results.count("\n")
+            count = results.count("\n")
 
             # If any, deduct output skew present due to the packages tool itself.
             if "skew" in packages_tool:
-                self.value -= packages_tool["skew"]
+                count -= packages_tool["skew"]
+
+            pkg_tool_name = packages_tool.get("name", packages_tool["cmd"][0])
 
             # For DPKG only, remove any not purged package.
-            if packages_tool["cmd"][0] == "dpkg":
-                self.value -= results.count("deinstall")
+            if pkg_tool_name == "dpkg":
+                count -= results.count("deinstall")
 
-            # Let's just loop over, in case there are multiple package managers.
+            self.value[pkg_tool_name] = count
+
+    def output(self, output) -> None:
+        """Adds the entry to `output` after pretty-formatting packages tool counts"""
+        if not self.value:
+            # Fall back on the default behavior if no temperatures were detected.
+            super().output(output)
+            return
+
+        if self.options.get("combine_total"):
+            output.append(self.name, str(sum(self.value.values())))
+            return
+
+        entries = []
+        for pkg_tool_name, count in self.value.items():
+            if count > 0 or self.options.get("show_zeros"):
+                entries.append(f"({pkg_tool_name}) {count}")
+
+        if self.options.get("one_line", True):
+            # One-line output is enabled : Join the results !
+            output.append(self.name, ", ".join(entries))
+        else:
+            # One-line output has been disabled, add one entry per item.
+            for entry in entries:
+                output.append(self.name, entry)

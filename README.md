@@ -310,7 +310,15 @@ Below stand further descriptions for each available (default) option :
 			// Set it to `false` to allow compatibility with non-Unicode locales.
 			"use_unicode": true
 		},
-		{ "type": "Packages" },
+		{
+			"type": "Packages",
+			// Set to `true` to sum up all installed package counts.
+			"combine_total": false,
+			// Set to `false` not to join all packages tool counts on the same line.
+			"one_line": true,
+			// Set to `true` to include tools with no installed package.
+			"show_zeros": false
+		},
 		{
 			"type": "Temperature",
 			// The character to display between the temperature value and the unit (as '°' in 53.2°C).

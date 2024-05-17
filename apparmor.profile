@@ -73,15 +73,18 @@ profile archey4 /usr/{,local/}bin/archey{,4} {
 	# [Packages] entry
 	/{,usr/}bin/ls rix,
 	/{,usr/}bin/apk PUx,
+	#/{,usr/}bin/apt PUx,
 	/{,usr/}bin/dnf PUx,
 	/{,usr/}bin/dpkg PUx,
 	/{,usr/}bin/emerge PUx,
+	/usr/{,local/}bin/flatpak PUx,
 	/{,usr/}bin/nix-env PUx,
 	/{,usr/}bin/pacman PUx,
 	/{,usr/}bin/pacstall PUx,
 	/{,usr/}bin/pkgin PUx,
 	/{,usr/}bin/port PUx,
 	/{,usr/}bin/rpm PUx,
+	/usr/{,local/}bin/snap PUx,
 	/{,usr/}bin/yum PUx,
 	/{,usr/}bin/zypper PUx,
 
