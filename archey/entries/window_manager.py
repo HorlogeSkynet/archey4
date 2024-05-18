@@ -18,11 +18,13 @@ WM_DICT = {
     "chunkwm": "ChunkWM",
     "compiz": "Compiz",
     "deepin-wm": "Deepin WM",
-    "dwm": "DWM",
+    "dwm": "dwm",
+    "dwl": "dwl",
     "enlightenment": "Enlightenment",
     "herbstluftwm": "herbstluftwm",
     "fluxbox": "Fluxbox",
     "fvwm": "FVWM",
+    "hyprland": "Hyprland",
     "i3": "i3",
     "icewm": "IceWM",
     "kwin_x11": "KWin",
@@ -38,7 +40,9 @@ WM_DICT = {
     "Spectacle": "Spectacle",
     "stumpwm": "StumpWM",
     "subtle": "Subtle",
+    "sway": "Sway",
     "monsterwm": "MonsterWM",
+    "wayfire": "Wayfire",
     "wingo": "Wingo",
     "wmaker": "Window Maker",
     "wmfs": "Wmfs",
@@ -81,6 +85,8 @@ class WindowManager(Entry):
             else:
                 if platform.system() == "Darwin":
                     name = "Quartz Compositor"
+                elif platform.system() == "Windows":
+                    name = "Desktop Window Manager"
 
         display_server_protocol = DSP_DICT.get(os.getenv("XDG_SESSION_TYPE", ""))
 
