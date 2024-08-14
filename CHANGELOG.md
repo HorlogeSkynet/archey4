@@ -7,6 +7,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ## [Unreleased]
 ### Added
+- `Model` support for Raspberry Pi 5+
 - AppArmor confinement profile (included in Debian and AUR packages)
 
 ## [v4.14.3.0] - 2024-04-06

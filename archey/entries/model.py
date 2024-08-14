@@ -163,6 +163,11 @@ class Model(Entry):
         except OSError:
             return None
 
+        # Honor 'Model' entry (if present), for Raspberry Pi 5+
+        model = re.search(r"(?<=Model\t: ).*", cpu_info)
+        if model is not None:
+            return model.group(0)
+
         # If the output contains 'Hardware' and 'Revision'...
         hardware = re.search(r"(?<=Hardware\t: ).*", cpu_info)
         revision = re.search(r"(?<=Revision\t: ).*", cpu_info)

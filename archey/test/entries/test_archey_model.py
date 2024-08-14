@@ -217,10 +217,15 @@ class TestModelEntry(unittest.TestCase):
         """Test `_fetch_raspberry_pi_revision` static method"""
         with patch("archey.entries.model.open", mock_open()) as mock:
             mock.return_value.read.side_effect = [
+                "Revision\t: REV\nSerial\t: SERIAL\nModel\t: HARDWARE Model MODEL Rev REVISION\n",
                 "Hardware\t: HARDWARE\nRevision\t: REVISION\n",
                 "processor   : 0\ncpu family  : X\n",
             ]
 
+            self.assertEqual(
+                Model._fetch_raspberry_pi_revision(),  # pylint: disable=protected-access
+                "HARDWARE Model MODEL Rev REVISION",
+            )
             self.assertEqual(
                 Model._fetch_raspberry_pi_revision(),  # pylint: disable=protected-access
                 "Raspberry Pi HARDWARE (Rev. REVISION)",
