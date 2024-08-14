@@ -17,7 +17,7 @@ def get_homebrew_cellar_path() -> str:
     return "/usr/local/Cellar/"
 
 
-PACKAGES_TOOLS = (
+PACKAGES_TOOLS: typing.Tuple[typing.Dict[str, typing.Any], ...] = (
     {"cmd": ("apk", "list", "--installed")},
     # As of 2020, `apt` is _very_ slow compared to `dpkg` on Debian-based distributions.
     # Additional note : `apt`'s CLI is currently not "stable" in Debian terms.
