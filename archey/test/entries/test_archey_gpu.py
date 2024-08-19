@@ -1,6 +1,9 @@
 """Test module for Archey's GPU detection module"""
 
+import sys
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
 from archey.configuration import DEFAULT_CONFIG
@@ -55,6 +58,100 @@ XX:YY.H "Non-Volatile memory controller" "Sandisk Corp" "SanDisk Ultra 3D / WD B
         # Ensure 3D nand flash is ignored; see issue #149
         self.assertListEqual(GPU._parse_lspci_output(), ["GPU-Manufacturer GPU-MODEL-NAME"])
         # pylint: enable=protected-access
+
+    @unittest.skipUnless(
+        sys.platform.startswith("linux"),
+        "major/minor device types differ between UNIX implementations",
+    )
+    @patch("archey.entries.gpu.Path")
+    def test_videocore_chipsets(self, path_mock):
+        """Check `_videocore_chipsets` behavior"""
+        gpu_instance_mock = HelperMethods.entry_mock(GPU)
+
+        # Prepare mocks for `Path("...").glob("...")` and device major/minor checks.
+        device_dri_card_path_mock = MagicMock()
+        device_dri_card_path_mock.stat.return_value = MagicMock(
+            st_rdev=57856  # device type: 226, 0
+        )
+        path_mock.return_value.glob.return_value = [device_dri_card_path_mock]
+
+        # pylint: disable=protected-access
+
+        # create a fake debugfs kernel tree
+        with tempfile.TemporaryDirectory() as temp_dir, patch(
+            "archey.entries.gpu.LINUX_DRI_DEBUGFS_PATH", Path(temp_dir)
+        ):
+            debugfs_dri_0 = Path(temp_dir) / "0"
+            debugfs_dri_0.mkdir(parents=True, exist_ok=True)
+
+            # There is a /dev/dri/card0, but its driver information are (currently) missing
+            self.assertListEmpty(gpu_instance_mock._videocore_chipsets(gpu_instance_mock))
+
+            # VideoCore IV (Raspberry Pi 1 -> 3)
+            (debugfs_dri_0 / "name").write_text(
+                "vc4 dev=XXXX:YY:ZZ.T master=pci:XXXX:YY:ZZ.T unique=XXXX:YY:ZZ.T\n"
+            )
+            (debugfs_dri_0 / "v3d_ident").write_text(
+                """\
+Revision:   1
+Slices:     3
+TMUs:       6
+QPUs:       12
+Semaphores: 16
+"""
+            )
+            self.assertListEqual(
+                gpu_instance_mock._videocore_chipsets(gpu_instance_mock), ["VideoCore IV"]
+            )
+
+            # VideoCore VI (Raspberry Pi 4)
+            (debugfs_dri_0 / "name").write_text(
+                "v3d dev=XXXX:YY:ZZ.T master=pci:XXXX:YY:ZZ.T unique=XXXX:YY:ZZ.T\n"
+            )
+            (debugfs_dri_0 / "v3d_ident").write_text(
+                """\
+Revision:   4.2.14.0
+MMU:        yes
+TFU:        yes
+TSY:        yes
+MSO:        yes
+L3C:        no (0kb)
+Core 0:
+  Revision:     4.2
+  Slices:       2
+  TMUs:         2
+  QPUs:         8
+  Semaphores:   0
+  BCG int:      0
+  Override TMU: 0
+"""
+            )
+            self.assertListEqual(
+                gpu_instance_mock._videocore_chipsets(gpu_instance_mock), ["VideoCore VI"]
+            )
+
+            # VideoCore VII (Raspberry Pi 5)
+            (debugfs_dri_0 / "name").write_text(
+                "v3d dev=XXXX:YY:ZZ.T master=pci:XXXX:YY:ZZ.T unique=XXXX:YY:ZZ.T\n"
+            )
+            (debugfs_dri_0 / "v3d_ident").write_text(
+                """\
+Revision:   7.1.7.0
+MMU:        yes
+TFU:        no
+MSO:        yes
+L3C:        no (0kb)
+Core 0:
+  Revision:     7.1
+  Slices:       4
+  TMUs:         4
+  QPUs:         16
+  Semaphores:   0
+"""
+            )
+            self.assertListEqual(
+                gpu_instance_mock._videocore_chipsets(gpu_instance_mock), ["VideoCore VII"]
+            )
 
     @patch(
         "archey.entries.gpu.check_output",

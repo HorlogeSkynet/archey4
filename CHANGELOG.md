@@ -7,6 +7,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ## [Unreleased]
 ### Added
+- `GPU` support for Raspberry Pi
 - `Model` support for Raspberry Pi 5+
 - `none` logo style to completely hide distribution logo
 - AppArmor confinement profile (included in Debian and AUR packages)
