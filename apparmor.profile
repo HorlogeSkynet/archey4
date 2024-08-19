@@ -65,6 +65,7 @@ profile archey4 /usr/{,local/}bin/archey{,4} {
 	@{PROC}/loadavg r,
 
 	# [Model] entry
+	@{PROC}/device-tree/model r,
 	@{sys}/devices/virtual/dmi/id/* r,
 	/{,usr/}bin/systemd-detect-virt PUx,
 	/{,usr/}{,s}bin/virt-what PUx,

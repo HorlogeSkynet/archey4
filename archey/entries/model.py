@@ -1,5 +1,6 @@
 """Hardware model information detection class"""
 
+import contextlib
 import os
 import platform
 import re
@@ -156,7 +157,12 @@ class Model(Entry):
 
     @staticmethod
     def _fetch_raspberry_pi_revision() -> Optional[str]:
-        """Tries to retrieve 'Hardware' and 'Revision IDs' from `/proc/cpuinfo`"""
+        """Tries to retrieve hardware info from `/proc/device-tree/model` or `/proc/cpuinfo`"""
+        with contextlib.suppress(OSError), open(
+            "/proc/device-tree/model", encoding="ASCII"
+        ) as f_model:
+            return f_model.read().rstrip()
+
         try:
             with open("/proc/cpuinfo", encoding="ASCII") as f_cpu_info:
                 cpu_info = f_cpu_info.read()

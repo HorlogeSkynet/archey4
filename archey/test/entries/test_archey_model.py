@@ -217,19 +217,35 @@ class TestModelEntry(unittest.TestCase):
         """Test `_fetch_raspberry_pi_revision` static method"""
         with patch("archey.entries.model.open", mock_open()) as mock:
             mock.return_value.read.side_effect = [
-                "Revision\t: REV\nSerial\t: SERIAL\nModel\t: HARDWARE Model MODEL Rev REVISION\n",
-                "Hardware\t: HARDWARE\nRevision\t: REVISION\n",
-                "processor   : 0\ncpu family  : X\n",
+                "Raspberry Pi 3 Model B Plus Rev 1.3\n",
             ]
+            self.assertEqual(
+                Model._fetch_raspberry_pi_revision(),  # pylint: disable=protected-access
+                "Raspberry Pi 3 Model B Plus Rev 1.3",
+            )
 
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),  # /proc/device-tree/model doesn't exist
+                "Revision\t: REV\nSerial\t: SERIAL\nModel\t: HARDWARE Model MODEL Rev REVISION\n",
+            ]
             self.assertEqual(
                 Model._fetch_raspberry_pi_revision(),  # pylint: disable=protected-access
                 "HARDWARE Model MODEL Rev REVISION",
             )
+
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),  # /proc/device-tree/model doesn't exist
+                "Hardware\t: HARDWARE\nRevision\t: REVISION\n",
+            ]
             self.assertEqual(
                 Model._fetch_raspberry_pi_revision(),  # pylint: disable=protected-access
                 "Raspberry Pi HARDWARE (Rev. REVISION)",
             )
+
+            mock.return_value.read.side_effect = [
+                FileNotFoundError(),  # /proc/device-tree/model doesn't exist
+                "processor   : 0\ncpu family  : X\n",
+            ]
             self.assertIsNone(
                 Model._fetch_raspberry_pi_revision()  # pylint: disable=protected-access
             )

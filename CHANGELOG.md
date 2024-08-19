@@ -10,6 +10,9 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - `Model` support for Raspberry Pi 5+
 - AppArmor confinement profile (included in Debian and AUR packages)
 
+### Changed
+- `Model` honor `/proc/device-tree/model` when it exists
+
 ## [v4.14.3.0] - 2024-04-06
 ### Added
 - Official Armbian distribution support
