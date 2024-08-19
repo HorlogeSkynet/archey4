@@ -60,6 +60,7 @@ profile archey4 /usr/{,local/}bin/archey{,4} {
 
 	# [GPU] entry
 	/{,usr/}bin/lspci PUx,
+	@{sys}/kernel/debug/dri/[0-9]*/{name,v3d_ident} r,
 
 	# [Hostname] entry
 	/etc/hostname r,
