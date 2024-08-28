@@ -451,14 +451,14 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
         self.assertTrue(print_mock.assert_called_once)
 
     @patch("archey.output.Distributions.get_local")
+    @patch("archey.output.lazy_load_logo_module")
     @patch("archey.output.Distributions.get_ansi_color", return_value=None)
-    def test_preferred_distribution(self, _, get_local_mock):
+    def test_preferred_distribution(self, _, lazy_load_logo_module_mock, get_local_mock):
         """Simple test checking behavior when `preferred_distribution` is passed at instantiation"""
-        output = Output(preferred_distribution="rhel")
+        Output(preferred_distribution="rhel")
 
-        self.assertEqual(
-            output._distribution, Distributions.RHEL  # pylint: disable=protected-access
-        )
+        # Check `lazy_load_logo_module` has been called with RHEL distribution.
+        lazy_load_logo_module_mock.assert_called_with(Distributions.RHEL.value)
         # Check `Distributions.get_local` method has not been called at all.
         self.assertFalse(get_local_mock.called)
 
@@ -487,6 +487,35 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
             output._logo,  # pylint: disable=protected-access
             lazy_load_logo_module(Distributions.DARWIN.value).LOGO_RETRO,
         )
+
+    @patch("archey.output.Distributions.get_ansi_color", return_value=None)
+    @patch("archey.output.sys.stdout.isatty", return_value=True)
+    @patch("archey.output.get_terminal_size")
+    @patch("archey.output.print", return_value=None)  # Let's nastily mute class' outputs.
+    def test_no_logo(self, print_mock, termsize_mock, _, __):
+        """Test `Output` 'none' logo style (logo hiding)"""
+        output = Output(preferred_logo_style="none")
+
+        # We only need a column value for the terminal size
+        termsize_tuple = namedtuple("termsize_tuple", "columns")
+        termsize_mock.return_value = termsize_tuple(80)
+
+        output._results = [  # pylint: disable=protected-access
+            "entry_1",
+            "entry_2",
+            "entry_3",
+        ]
+        output.output()
+
+        print_mock.assert_called_with(
+            """\
+entry_1
+entry_2
+entry_3\x1b[0m\
+"""
+        )
+        # Check that `print` has been called only once.
+        self.assertTrue(print_mock.assert_called_once)
 
     @patch(
         "archey.output.Distributions.get_local",

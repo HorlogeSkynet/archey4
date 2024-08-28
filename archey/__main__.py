@@ -104,7 +104,8 @@ def args_parsing() -> argparse.Namespace:
         "--logo-style",
         metavar="IDENTIFIER",
         help="alternative logo style identifier to show instead of the distribution default one. "
-        "For instance, you can try 'retro' to prefer old Apple's logo on Darwin platforms. "
+        "For instance, you can try 'retro' to prefer old Apple's logo on Darwin platforms. Pass "
+        "'none' to completely hide distribution logo. "
         "Full list of styles : https://github.com/HorlogeSkynet/archey4/wiki/List-of-logos",
     )
     parser.add_argument(
