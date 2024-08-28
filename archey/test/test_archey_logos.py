@@ -94,6 +94,7 @@ class TestLogos(unittest.TestCase):
 
     def test_get_logo_width(self):
         """Test `logos.get_logo_width` behavior"""
+        self.assertEqual(get_logo_width([]), 0)
         self.assertEqual(get_logo_width(["{c[0]}   {c[1]}"], 2), 3)
         self.assertEqual(get_logo_width(["{c[0]} {{ {c[1]}"]), 3)
         self.assertEqual(

@@ -24,7 +24,7 @@ class Output:
     It also handles the logo choice based on some system detections.
     """
 
-    __LOGO_RIGHT_PADDING = "   "
+    __logo_right_padding = "   "
 
     def __init__(self, **kwargs):
         configuration = Configuration()
@@ -35,22 +35,27 @@ class Output:
             kwargs.get("preferred_logo_style") or configuration.get("logo_style") or ""
         ).upper()
 
-        try:
-            # If set, force the distribution to `preferred_distribution` argument.
-            self._distribution = Distributions(kwargs.get("preferred_distribution"))
-        except ValueError:
-            # If not (or unknown), run distribution detection.
-            self._distribution = Distributions.get_local()
-
-        # Retrieve distribution's logo module before copying and DRY-ing its attributes.
-        logo_module = lazy_load_logo_module(self._distribution.value)
-
-        # If set and available, fetch an alternative logo style from module.
-        if preferred_logo_style and hasattr(logo_module, f"LOGO_{preferred_logo_style}"):
-            self._logo = getattr(logo_module, f"LOGO_{preferred_logo_style}").copy()
-            self._colors = getattr(logo_module, f"COLORS_{preferred_logo_style}").copy()
+        # If logo shouldn't be displayed, don't load any module and reset right padding
+        if preferred_logo_style == "NONE":
+            self._logo, self._colors = [], []
+            self.__logo_right_padding = ""
         else:
-            self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
+            try:
+                # If set, force the distribution to `preferred_distribution` argument.
+                distribution = Distributions(kwargs.get("preferred_distribution"))
+            except ValueError:
+                # If not (or unknown), run distribution detection.
+                distribution = Distributions.get_local()
+
+            # Retrieve distribution's logo module before copying and DRY-ing its attributes.
+            logo_module = lazy_load_logo_module(distribution.value)
+
+            # If set and available, fetch an alternative logo style from module.
+            if preferred_logo_style and hasattr(logo_module, f"LOGO_{preferred_logo_style}"):
+                self._logo = getattr(logo_module, f"LOGO_{preferred_logo_style}").copy()
+                self._colors = getattr(logo_module, f"COLORS_{preferred_logo_style}").copy()
+            else:
+                self._logo, self._colors = logo_module.LOGO.copy(), logo_module.COLORS.copy()
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
@@ -59,9 +64,12 @@ class Output:
             self._colors = len(self._colors) * [Style.escape_code_from_attrs(ansi_color)]
 
         entries_color = configuration.get("entries_color")
-        self._entries_color = (
-            Style.escape_code_from_attrs(entries_color) if entries_color else self._colors[0]
-        )
+        if entries_color:
+            self._entries_color = Style.escape_code_from_attrs(entries_color)
+        elif self._colors:
+            self._entries_color = str(self._colors[0])
+        else:
+            self._entries_color = ""
 
         # Each entry will be added to this list
         self._entries = []
@@ -111,7 +119,7 @@ class Output:
             self._results[0:0] = [""] * (height_diff // 2)
             self._results.extend([""] * (len(self._logo) - len(self._results)))
         else:
-            colored_empty_line = [str(self._colors[0]) + " " * logo_width]
+            colored_empty_line = [(str(self._colors[0]) if self._colors else "") + " " * logo_width]
             self._logo[0:0] = colored_empty_line * (-height_diff // 2)
             self._logo.extend(colored_empty_line * (len(self._results) - len(self._logo)))
 
@@ -119,7 +127,7 @@ class Output:
         if not sys.stdout.isatty():
             text_width = cast(int, float("inf"))
         else:
-            text_width = get_terminal_size().columns - logo_width - len(self.__LOGO_RIGHT_PADDING)
+            text_width = get_terminal_size().columns - logo_width - len(self.__logo_right_padding)
 
         text_wrapper = TextWrapper(
             width=text_width,
@@ -166,7 +174,7 @@ class Output:
         # Merge entry results to the distribution logo.
         logo_with_entries = os.linesep.join(
             [
-                f"{logo_part}{self.__LOGO_RIGHT_PADDING}{entry_part}"
+                f"{logo_part}{self.__logo_right_padding}{entry_part}"
                 for logo_part, entry_part in zip(self._logo, self._results)
             ]
         )

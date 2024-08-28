@@ -267,7 +267,8 @@ Below stand further descriptions for each available (default) option :
 	// `true` by default to honor os-release(5) `ANSI_COLOR` option.
 	"honor_ansi_color": true,
 	// Set this option to an alternative logo style identifier instead of the default one for your distro.
-	// For example, "retro" would show the retro styled Apple logo on Darwin platforms.
+	// For example, "retro" would show the retro styled Apple's logo on Darwin platforms.
+	// You can set it to "none" to completely hide distribution logo.
 	// Note that the `--logo-style` argument overrides this setting.
 	"logo_style": "",
 	// Enable icons for entries.

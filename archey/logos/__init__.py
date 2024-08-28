@@ -25,5 +25,8 @@ def get_logo_width(logo: List[str], nb_colors: int = 8) -> int:
     `logo` is supposed to be one of the constants declared above.
     `nb_colors` must be greater than or equal to the number of colors used by the logo.
     """
+    if not logo:
+        return 0
+
     # We replace each placeholder by a 0-character string.
     return len(logo[0].format(c=[""] * nb_colors))
