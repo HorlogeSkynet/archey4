@@ -37,6 +37,10 @@ check_untyped_defs = true
 module = "netifaces"
 ignore_missing_imports = true
 
+# Ruff
+[tool.ruff]
+line-length = 100
+
 # Black
 [tool.black]
 line-length = 100
