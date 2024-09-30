@@ -6,21 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4.15.0.0] - 2024-09-30
 ### Added
 - `GPU` support for Raspberry Pi
 - `Model` support for Raspberry Pi 5+
 - `none` logo style to completely hide distribution logo
-- AppArmor confinement profile (included in Debian and AUR packages)
 - `DesktopEnvironment` support for Windows
 - `WindowManager` support for Windows
 - `WindowManager` support for some Wayland compositors
 
 ### Changed
-- `Model` honor `/proc/device-tree/model` when it exists
+- `Model` honors `/proc/device-tree/model` when it exists
+- `Packages` shows counts divided by package managers
 - `DesktopEnvironment` now honors environment (including `XDG_CURRENT_DESKTOP`)
 
 ### Removed
 - `_distribution` protected attribute from `Output` class
+
+### Security
+- AppArmor confinement profile (included in Debian and AUR packages)
 
 ## [v4.14.3.0] - 2024-04-06
 ### Added
@@ -459,7 +464,8 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Main bugs fixes
 - Project officially forked from djmelik/archey
 
-[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.3.0...HEAD
+[Unreleased]: https://github.com/HorlogeSkynet/archey4/compare/v4.15.0.0...HEAD
+[v4.15.0.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.3.0...v4.15.0.0
 [v4.14.3.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.2.0...v4.14.3.0
 [v4.14.2.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.1.0...v4.14.2.0
 [v4.14.1.0]: https://github.com/HorlogeSkynet/archey4/compare/v4.14.0.1...v4.14.1.0
