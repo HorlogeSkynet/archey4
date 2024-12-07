@@ -248,34 +248,40 @@ Below stand further descriptions for each available (default) option :
 <!-- We use JavaScript syntax coloration below because JSON does not allow the usage of comments in it -->
 ```javascript
 {
-	// If set to `false`, configurations defined afterwards won't be loaded.
-	// Developers running Archey from the original project may keep in there the original `config.json`,
-	//   while having their own external configuration set elsewhere.
+	// If set to `false`, configuration files processing will stop with this file.
+	// System administrators may use this option to prevent user/local preferences to override system defaults (unless Archey is run with `-c` option).
+	// Developers running Archey from sources should use this option to prevent upstream config.json from overriding their own configuration.
 	"allow_overriding": true,
+	//
 	// Set to `false` to disable multi-threaded loading of entries.
 	"parallel_loading": true,
+	//
 	// If set to `true`, any execution warning or error would be hidden.
 	// Configuration parsing warnings **would** still be shown.
 	"suppress_warnings": false,
+	//
 	// Use this option to specify a custom color for entries (logo won't be affected).
 	// Value should be a string suitable for inclusion in the ANSI/ECMA-48 escape code for setting graphical rendition
-	//
 	// For instance "5;31;47" would result in red text blinking on white background.
 	// See <https://wiki.bash-hackers.org/scripting/terminalcodes> for more information.
 	"entries_color": "",
+	//
 	// Set this option to `false` to force Archey to use its own colors palettes.
 	// `true` by default to honor os-release(5) `ANSI_COLOR` option.
 	"honor_ansi_color": true,
+	//
 	// Set this option to an alternative logo style identifier instead of the default one for your distro.
 	// For example, "retro" would show the retro styled Apple's logo on Darwin platforms.
 	// You can set it to "none" to completely hide distribution logo.
 	// Note that the `--logo-style` argument overrides this setting.
 	"logo_style": "",
+	//
 	// Enable icons for entries.
 	// A terminal "nerd font" is required to display the icons. Otherwise, these are simply missing and a placeholder will be seen.
 	// You can also refer to : <https://github.com/ryanoasis/nerd-fonts>.
 	// Make sure that your system locale supports UTF-8.
 	"entries_icon": false,
+	//
 	// Entries list.
 	// Add a `disabled` option set to `true` to temporary hide one.
 	// You may change entry displayed name by adding a `name` option.
@@ -288,6 +294,7 @@ Below stand further descriptions for each available (default) option :
 		{ "type": "Distro" },
 		{
 			"type": "Kernel",
+			//
 			// Set to `true` to enable kernel release check against <www.kernel.org>.
 			// /!\ `DO_NOT_TRACK` environment variable may affect this feature behavior ! /!\
 			"check_version": false
@@ -295,8 +302,10 @@ Below stand further descriptions for each available (default) option :
 		{ "type": "Uptime" },
 		{
 			"type": "LoadAverage",
+			//
 			// Number of decimal places to display for the load average.
 			"decimal_places": 2,
+			//
 			// Some thresholds you can adjust to customize warning/danger colors.
 			"warning_threshold": 1.0,
 			"danger_threshold": 2.0
@@ -307,21 +316,26 @@ Below stand further descriptions for each available (default) option :
 		{ "type": "Shell" },
 		{
 			"type": "Terminal",
+			//
 			// Leave this option set to `true` to display a beautiful colors palette.
 			// Set it to `false` to allow compatibility with non-Unicode locales.
 			"use_unicode": true
 		},
 		{
 			"type": "Packages",
+			//
 			// Set to `true` to sum up all installed package counts.
 			"combine_total": false,
+			//
 			// Set to `false` not to join all packages tool counts on the same line.
 			"one_line": true,
+			//
 			// Set to `true` to include tools with no installed package.
 			"show_zeros": false
 		},
 		{
 			"type": "Temperature",
+			//
 			// The character to display between the temperature value and the unit (as '°' in 53.2°C).
 			"char_before_unit": " ",
 			"sensors_chipsets": [
@@ -337,18 +351,21 @@ Below stand further descriptions for each available (default) option :
 			"sensors_excluded_subfeatures": [
 				// Blacklist of chipset "subfeature" (in LM-SENSORS terms) identifiers (strings) to exclude from average computation.
 				// Leaving empty (the default) would make Archey process input data from **all** available subfeatures providing valid temperatures.
-				//
 				// For instance, AMD Ryzen X series CPUs include a thermal bias sensor, appearing as a subfeature named `Tctl`.
 				// Excluding it can be achieved this way :
+				//
 				//"Tctl"
 			],
+			//
 			// Display temperature values in Fahrenheit instead of Celsius.
 			"use_fahrenheit": false
 		},
 		{
 			"type": "CPU",
+			//
 			// Set to `true` to join all CPUs on the same line.
 			"one_line": false,
+			//
 			// Set to `false` to hide the number of cores.
 			"show_cores": true,
 			//
@@ -357,20 +374,24 @@ Below stand further descriptions for each available (default) option :
 		},
 		{
 			"type": "GPU",
+			//
 			// Set to `true` to join all GPUs on the same line.
 			"one_line": false,
+			//
 			// The maximum number of GPUs you want to display.
 			// `false` --> Unlimited.
 			"max_count": 2
 		},
 		{
 			"type": "RAM",
+			//
 			// Some threshold values you can adjust affecting warning/danger colors.
 			"warning_use_percent": 33.3,
 			"danger_use_percent": 66.7
 		},
 		{
 			"type": "Disk",
+			//
 			// Which filesystems to show:
 			// `["local"]` shows only local filesystems.
 			// You can alternatively list specific filesystems as:
@@ -378,8 +399,10 @@ Below stand further descriptions for each available (default) option :
 			//  * A list of mount points - e.g. `["/", "/mnt"]`
 			//  * A combination of the above - e.g. `["/", "/dev/sda2"]`
 			"show_filesystems": ["local"],
+			//
 			// Set to `false` to write each filesystem on its own line.
 			"combine_total": true,
+			//
 			// Defines which labels to use for each disk (only works if `combine_total` is false!)
 			// The options available are:
 			//  * `"mount_points"`: Shows the mount point of the filesystem.
@@ -392,26 +415,33 @@ Below stand further descriptions for each available (default) option :
 			//      e.g. `Disk: 10.0 GiB / 100.0 GiB`
 			//           `Disk: 15.0 GiB / 200.0 GiB`
 			"disk_labels": null,
+			//
 			// Set to `true` to hide the "Disk" entry name from the output.
 			// i.e. null  --> `Disk (/):`
 			//      false --> `Disk (/):`
 			//      true  --> `(/):`
 			"hide_entry_name": null,
+			//
 			// Some threshold values you can adjust affecting warning/danger colors.
 			"warning_use_percent": 50,
 			"danger_use_percent": 75
 		},
 		{
 			"type": "LAN_IP",
+			//
 			// Set to `false` not to join all IP addresses on the same line.
 			"one_line": true,
+			//
 			// The maximum number of local addresses you want to display.
 			// `false` --> Unlimited.
 			"max_count": 2,
+			//
 			// Set to `true` if your local network does not honor RFC1918.
 			"show_global": false,
+			//
 			// Set to `false` to hide link-local IP addresses (see RFC3927).
 			"show_link_local": true,
+			//
 			// Set to `false` to only display IPv4 LAN addresses.
 			"ipv6_support": true
 		},
@@ -421,6 +451,7 @@ Below stand further descriptions for each available (default) option :
 			// As explained above, you may temporary hide entries as you wish.
 			// See below example to hide your public IP addresses before posting your configuration on Internet.
 			//"disabled": true,
+			//
 			//
 			// Set to `false` not to join all IP addresses on the same line.
 			"one_line": true,
@@ -450,21 +481,27 @@ Below stand further descriptions for each available (default) option :
 		},
 		{
 			"type": "Custom",
+			//
 			// `command` option is mandatory. `shell` option defaults to `false`.
 			// Don't forget to set a `name` (and optionally an icon) !
 			"name": "GPU",
 			"icon": "\ue735",
+			//
 			// The custom shell command to execute.
 			// /!\ If you're running AppArmor, don't forget to extend Archey profile through /etc/apparmor.d/local/usr.bin.archey4 !
 			"shell": true,
 			"command": "lshw -C display 2> /dev/null | rg product | cut -d ':' -f 2",
+			//
 			// A custom program and its arguments to execute.
 			"shell": false,
 			"command": ["echo", "My super GPU model !"],
+			//
 			// Whether or not command exit status code should be checked (defaults to `true`).
 			"check": true,
+			//
 			// Whether or not STDERR should be silenced instead of logged (defaults to `true`).
 			"log_stderr": true,
+			//
 			// Set to `false` not to join all output content on the same line.
 			"one_line": true
 		}
