@@ -6,6 +6,7 @@ import os
 from copy import deepcopy
 from typing import Any, Dict
 
+from archey.colors import ANSI_TEXT_CODES_REGEXP
 from archey.singleton import Singleton
 from archey.utility import Utility
 
@@ -51,6 +52,9 @@ class Configuration(metaclass=Singleton):
             self._load_configuration(os.path.expanduser("~/.config/archey4/"))
             self._load_configuration(os.getcwd())
 
+        # Perform various validations
+        self._validate_configuration()
+
     def get(self, key: str, default=None) -> Any:
         """
         A binding method to imitate the `dict.get()` behavior.
@@ -89,6 +93,19 @@ class Configuration(metaclass=Singleton):
         logging.getLogger().setLevel(
             logging.ERROR if self.get("suppress_warnings") else logging.WARN
         )
+
+    def _validate_configuration(self) -> None:
+        # entries_color
+        entries_color = self._config.get("entries_color")
+        if entries_color:
+            if (
+                not isinstance(entries_color, str)
+                or ANSI_TEXT_CODES_REGEXP.fullmatch(entries_color) is None
+            ):
+                logging.warning(
+                    "Couldn't validate 'entries_color' configuration option value, ignoring..."
+                )
+                self._config["entries_color"] = DEFAULT_CONFIG["entries_color"]
 
     def __iter__(self):
         """When used as an iterator, directly yield `_config` elements"""

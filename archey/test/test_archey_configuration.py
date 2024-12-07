@@ -132,6 +132,45 @@ class TestConfiguration(unittest.TestCase):
                 },
             )
 
+    @patch(
+        # `_load_configuration` method is mocked to "ignore" local system configurations.
+        "archey.configuration.Configuration._load_configuration",
+        Mock(),
+    )
+    def test_validate_configuration(self):
+        """Test configuration option values validation"""
+        configuration = Configuration()
+
+        # OK
+        with patch.dict(
+            configuration._config,  # pylint: disable=protected-access
+            {
+                "entries_color": "0;1;2",
+            },
+        ):
+            configuration._validate_configuration()  # pylint: disable=protected-access
+            self.assertEqual(configuration.get("entries_color"), "0;1;2")
+
+        # KO
+        with patch.dict(
+            configuration._config,  # pylint: disable=protected-access
+            {
+                "entries_color": True,
+            },
+        ):
+            configuration._validate_configuration()  # pylint: disable=protected-access
+            self.assertEqual(configuration.get("entries_color"), "")
+
+        # KO
+        with patch.dict(
+            configuration._config,  # pylint: disable=protected-access
+            {
+                "entries_color": "true",
+            },
+        ):
+            configuration._validate_configuration()  # pylint: disable=protected-access
+            self.assertEqual(configuration.get("entries_color"), "")
+
     def test_instantiation_config_path(self):
         """Test for configuration loading from specific user-defined path"""
         with tempfile.TemporaryDirectory() as temp_dir:
