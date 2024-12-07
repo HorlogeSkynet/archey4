@@ -263,7 +263,7 @@ Below stand further descriptions for each available (default) option :
 	// Use this option to specify a custom color for entries (logo won't be affected).
 	// Value should be a string suitable for inclusion in the ANSI/ECMA-48 escape code for setting graphical rendition
 	// For instance "5;31;47" would result in red text blinking on white background.
-	// See <https://wiki.bash-hackers.org/scripting/terminalcodes> for more information.
+	// See <https://flokoe.github.io/bash-hackers-wiki/scripting/terminalcodes/> for more information.
 	"entries_color": "",
 	//
 	// Set this option to `false` to force Archey to use its own colors palettes.
