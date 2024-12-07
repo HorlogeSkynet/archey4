@@ -9,7 +9,8 @@ from functools import lru_cache
 from archey.environment import Environment
 
 # REGEXP compiled pattern matching ANSI/ECMA-48 color escape codes.
-ANSI_ECMA_REGEXP = re.compile(r"\x1b\[\d+(?:(?:;\d+)+)?m")
+ANSI_TEXT_CODES_REGEXP = re.compile(r"\d+(?:(?:;\d+)+)?")
+ANSI_ECMA_REGEXP = re.compile(rf"\x1b\[{ANSI_TEXT_CODES_REGEXP.pattern}m")
 
 
 class Style:
