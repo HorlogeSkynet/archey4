@@ -2,7 +2,7 @@
 
 Copyright 2010 Melik Manukyan <melik@archlinux.us>  
 Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>  
-Copyright 2017-2024 Samuel Forestier <samuel+archey@forestier.app>
+Copyright 2017-2025 Samuel Forestier <samuel+archey@forestier.app>
 
 ## License
 
