@@ -461,21 +461,21 @@ Below stand further descriptions for each available (default) option :
 			// You may set `dns_query` (or `http_url`) to `false` to disable them.
 			// You may directly set `ipv4` or `ipv6` fields to `false` to completely disable them.
 			//
-			// <https://ident.me/> server sources : <https://github.com/pcarrier/identme>.
+			// <https://www.ident.me/> server sources : <https://github.com/pcarrier/ident.me>.
 			//
 			// /!\ `DO_NOT_TRACK` environment variable may affect this entry behavior ! /!\
 			"ipv4": {
 				"dns_query": "myip.opendns.com",
 				"dns_resolver": "resolver1.opendns.com",
 				"dns_timeout": 1,
-				"http_url": "https://v4.ident.me/",
+				"http_url": "https://4.ident.me/",
 				"http_timeout": 1
 			},
 			"ipv6": {
 				"dns_query": "myip.opendns.com",
 				"dns_resolver": "resolver1.opendns.com",
 				"dns_timeout": 1,
-				"http_url": "https://v6.ident.me/",
+				"http_url": "https://6.ident.me/",
 				"http_timeout": 1
 			}
 		},

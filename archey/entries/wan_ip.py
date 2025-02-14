@@ -58,7 +58,7 @@ class WanIP(Entry):
                 return ip_address
 
         # Is retrieval via HTTP(S) request enabled ?
-        http_url = options.get("http_url", f"https://v{ip_version}.ident.me/")
+        http_url = options.get("http_url", f"https://{ip_version}.ident.me/")
         if not http_url:
             return None
 

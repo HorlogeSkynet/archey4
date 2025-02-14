@@ -82,14 +82,14 @@
 				"dns_query": "myip.opendns.com",
 				"dns_resolver": "resolver1.opendns.com",
 				"dns_timeout": 1,
-				"http_url": "https://v4.ident.me/",
+				"http_url": "https://4.ident.me/",
 				"http_timeout": 1
 			},
 			"ipv6": {
 				"dns_query": "myip.opendns.com",
 				"dns_resolver": "resolver1.opendns.com",
 				"dns_timeout": 1,
-				"http_url": "https://v6.ident.me/",
+				"http_url": "https://6.ident.me/",
 				"http_timeout": 1
 			}
 		}
