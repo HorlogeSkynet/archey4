@@ -15,9 +15,9 @@ class Processes(metaclass=Singleton):
 
         try:
             ps_output = check_output(["ps", "-eo", "comm"], stderr=PIPE, universal_newlines=True)
-        except FileNotFoundError:
+        except OSError as os_error:
             self._processes = []
-            logging.warning("`procps` (or `procps-ng`) couldn't be found on your system.")
+            logging.warning("`ps` failed or `procps`/`procps-ng` isn't installed : %s", os_error)
         except CalledProcessError as process_error:
             self._processes = []
             logging.warning(

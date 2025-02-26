@@ -60,7 +60,7 @@ class Model(Entry):
         except CalledProcessError:
             # Not a virtual environment.
             return None
-        except FileNotFoundError:
+        except OSError:
             # If not available, let's query `virt-what` (privileges usually required).
             try:
                 return (
@@ -130,7 +130,7 @@ class Model(Entry):
                 model = check_output(
                     ["sysctl", "-n", "hw.model"], stderr=DEVNULL, universal_newlines=True
                 )
-            except FileNotFoundError:
+            except OSError:
                 return None
             except CalledProcessError:
                 pass
@@ -144,7 +144,7 @@ class Model(Entry):
                 sysctl_output = check_output(
                     ["sysctl", "-n", f"hw.{hw_oid}"], stderr=DEVNULL, universal_newlines=True
                 )
-            except FileNotFoundError:
+            except OSError:
                 return None
             except CalledProcessError:
                 pass
@@ -189,7 +189,7 @@ class Model(Entry):
         try:
             brand = check_output(["getprop", "ro.product.brand"], universal_newlines=True).rstrip()
             model = check_output(["getprop", "ro.product.model"], universal_newlines=True).rstrip()
-        except FileNotFoundError:
+        except OSError:
             return None
 
         return f"{brand} ({model})"
@@ -202,7 +202,7 @@ class Model(Entry):
             product = check_output(
                 ["kenv", "smbios.system.version"], universal_newlines=True
             ).rstrip()
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             return None
 
         return f"{vendor} ({product})"

@@ -232,7 +232,7 @@ class TestTemperatureEntry(unittest.TestCase, CustomAssertions):
             # Second case (`iStats` OK).
             "41.125\n",
             # Third case (`iStats` KO, `OSX CPU Temp` OK).
-            FileNotFoundError(),
+            OSError(),
             "61.8 °C\n",
             # Fourth case (`OSX CPU Temp` KO, but with <= 1.1.0 output).
             # See lavoiesl/osx-cpu-temp#22.

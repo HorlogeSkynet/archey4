@@ -30,7 +30,7 @@ class Distro(Entry):
             release = check_output(
                 ["getprop", "ro.build.version.release"], universal_newlines=True
             ).rstrip()
-        except FileNotFoundError:
+        except OSError:
             return None
 
         return f"Android {release}"

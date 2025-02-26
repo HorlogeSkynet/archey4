@@ -82,7 +82,7 @@ class WanIP(Entry):
                 stderr=DEVNULL,
                 universal_newlines=True,
             ).rstrip()
-        except (FileNotFoundError, TimeoutExpired, CalledProcessError):
+        except (OSError, TimeoutExpired, CalledProcessError):
             return None
 
         # `ip_address` might be empty here.

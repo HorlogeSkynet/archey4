@@ -101,7 +101,7 @@ class CPU(Entry):
         """Same operation but from `lscpu` output"""
         try:
             cpu_info = check_output("lscpu", env={"LANG": "C"}, universal_newlines=True)
-        except FileNotFoundError:
+        except OSError:
             return []
 
         nb_threads = cls._THREADS_PER_CORE_REGEXP.findall(cpu_info)
@@ -129,7 +129,7 @@ class CPU(Entry):
                 stderr=DEVNULL,
                 universal_newlines=True,
             )
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             # `-json` is not available before Catalina.
             return []
 
@@ -165,7 +165,7 @@ class CPU(Entry):
                 stderr=DEVNULL,
                 universal_newlines=True,
             )
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             return []
 
         # `sysctl_output` should exactly contains two lines.
@@ -179,7 +179,7 @@ class CPU(Entry):
             sysctl_output = check_output(
                 ["sysctl", "-n", "hw.model", "hw.ncpu"], stderr=DEVNULL, universal_newlines=True
             )
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             return []
 
         # `sysctl_output` should exactly contains two lines.
