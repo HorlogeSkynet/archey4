@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project (partially) adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
@@ -13,6 +13,9 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ### Changed
 - `Entry` behavior in boolean contexts ("truthy" when `value` is populated)
+
+### Fixed
+- Sub-process execution failure when `PATH` contains an invalid component
 
 ## [v4.15.0.0] - 2024-09-30
 ### Added

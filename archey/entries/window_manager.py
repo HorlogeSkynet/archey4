@@ -76,7 +76,7 @@ class WindowManager(Entry):
                 r"(?<=Name: ).*",
                 check_output(["wmctrl", "-m"], stderr=DEVNULL, universal_newlines=True),
             ).group(0)
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             processes = Processes().list
             for wm_id, wm_name in WM_DICT.items():
                 if wm_id in processes:

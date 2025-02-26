@@ -82,7 +82,7 @@ class Temperature(Entry):
                 sensors_output = run(
                     sensors_args, universal_newlines=True, stdout=PIPE, stderr=PIPE, check=True
                 )
-            except FileNotFoundError:
+            except OSError:
                 return None
             except CalledProcessError as called_process_error:
                 error_message = called_process_error.stderr
@@ -187,7 +187,7 @@ class Temperature(Entry):
                 stderr=PIPE,
                 universal_newlines=True,
             )
-        except FileNotFoundError:
+        except OSError:
             # `sysctl` does not seem to be available on this system.
             return
         except CalledProcessError as error_message:

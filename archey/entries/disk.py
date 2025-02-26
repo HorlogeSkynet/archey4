@@ -71,7 +71,7 @@ class Disk(Entry):
         # Call `diskutil` to generate a property list (PList) of all APFS containers
         try:
             property_list = plistlib.loads(check_output(["diskutil", "apfs", "list", "-plist"]))
-        except FileNotFoundError:
+        except OSError:
             self._logger.warning(
                 "APFS volumes cannot be deduplicated as diskutil program could not be found."
             )
@@ -186,7 +186,7 @@ class Disk(Entry):
                 check=False,
                 encoding="utf-8",
             ).stdout
-        except FileNotFoundError:
+        except OSError:
             # `df` isn't available on this system.
             return {}
 

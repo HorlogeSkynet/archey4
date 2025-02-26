@@ -72,7 +72,7 @@ class Uptime(Entry):
         """Tries to get uptime by parsing the `uptime` command"""
         try:
             uptime_output = run("uptime", env={"LANG": "C"}, stdout=PIPE, stderr=PIPE, check=True)
-        except FileNotFoundError as error:
+        except (FileNotFoundError, NotADirectoryError) as error:
             raise ArcheyException("Couldn't find `uptime` command on this system.") from error
 
         # Log any `uptime` error messages at warning level.

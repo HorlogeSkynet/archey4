@@ -49,7 +49,7 @@ class GPU(Entry):
         """Based on `lspci` output, return a list of video controllers names"""
         try:
             lspci_output = check_output(["lspci", "-m"], universal_newlines=True).splitlines()
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             return []
 
         gpus_list = []
@@ -122,7 +122,7 @@ class GPU(Entry):
             profiler_output = check_output(
                 ["system_profiler", "SPDisplaysDataType"], stderr=DEVNULL, universal_newlines=True
             )
-        except FileNotFoundError:
+        except OSError:
             return []
 
         return re.findall(r"Chipset Model: (.*)", profiler_output, re.MULTILINE)
@@ -134,7 +134,7 @@ class GPU(Entry):
             pciconf_output = check_output(
                 ["pciconf", "-lv"], stderr=DEVNULL, universal_newlines=True
             )
-        except (FileNotFoundError, CalledProcessError):
+        except (OSError, CalledProcessError):
             return []
 
         gpus_list = []

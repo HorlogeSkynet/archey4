@@ -39,14 +39,14 @@ class RAM(Entry):
         Tries a variety of methods, increasing compatibility for a wide range of systems.
         """
         if platform.system() == "Linux":
-            with suppress(IndexError, FileNotFoundError):
+            with suppress(IndexError, OSError):
                 return self._run_free_dash_m()
         elif platform.system() == "FreeBSD":
-            with suppress(FileNotFoundError):
+            with suppress(OSError):
                 return self._run_sysctl_mem()
         else:
             # Darwin or any other BSD-based system.
-            with suppress(FileNotFoundError):
+            with suppress(OSError):
                 return self._run_sysctl_and_vmstat()
 
         with suppress(OSError):
