@@ -30,7 +30,7 @@ class TestEntry(unittest.TestCase):
     def test_entry_disabling(self):
         """Test `Entry` _disabling_"""
         simple_entry = _SimpleEntry()
-        self.assertTrue(simple_entry)
+        self.assertIsNotNone(simple_entry)
 
         simple_entry = _SimpleEntry(options={"disabled": True})
         self.assertIsNone(simple_entry)
@@ -44,6 +44,7 @@ class TestEntry(unittest.TestCase):
         simple_entry = _SimpleEntry()
         self.assertEqual(simple_entry.name, "Simple Entry")
         self.assertIsNone(simple_entry.value)
+        self.assertFalse(simple_entry)
 
         # No `_PRETTY_NAME` is defined : proper fall-back on entry internal name.
         delattr(_SimpleEntry, "_PRETTY_NAME")
@@ -53,6 +54,7 @@ class TestEntry(unittest.TestCase):
         simple_entry = _SimpleEntry("T", "est")
         self.assertEqual(simple_entry.name, "T")
         self.assertEqual(simple_entry.value, "est")
+        self.assertTrue(simple_entry)
 
     def test_entry_output_overriding(self):
         """Check `Entry.output` public method overriding"""

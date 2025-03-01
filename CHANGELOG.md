@@ -9,6 +9,10 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 ### Added
 - Python 3.13 & 3.14 official support
 - `entries_color` config option validation
+- `hide_undetected` config option to hide undetected entries
+
+### Changed
+- `Entry` behavior in boolean contexts ("truthy" when `value` is populated)
 
 ## [v4.15.0.0] - 2024-09-30
 ### Added

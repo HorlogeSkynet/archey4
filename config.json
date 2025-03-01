@@ -5,6 +5,7 @@
 	"entries_color": "",
 	"honor_ansi_color": true,
 	"logo_style": "",
+	"hide_undetected": false,
 	"entries_icon": false,
 	"entries": [
 		{ "type": "User" },

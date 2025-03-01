@@ -44,6 +44,9 @@ class Entry(AbstractBaseClass):
         # Provision a logger for each entry.
         self._logger = logging.getLogger(self.__module__)
 
+    def __bool__(self) -> bool:
+        return bool(self.value)
+
     def output(self, output) -> None:
         """Output the results to output. Can be overridden by subclasses."""
         if self.value:
