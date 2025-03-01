@@ -276,6 +276,9 @@ Below stand further descriptions for each available (default) option :
 	// Note that the `--logo-style` argument overrides this setting.
 	"logo_style": "",
 	//
+	// Use this option to hide undetected entries, to prevent "Not detected" messages from being displayed.
+	"hide_undetected": false,
+	//
 	// Enable icons for entries.
 	// A terminal "nerd font" is required to display the icons. Otherwise, these are simply missing and a placeholder will be seen.
 	// You can also refer to : <https://github.com/ryanoasis/nerd-fonts>.

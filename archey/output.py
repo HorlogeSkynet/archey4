@@ -18,7 +18,7 @@ from archey.exceptions import ArcheyException
 from archey.logos import get_logo_width, lazy_load_logo_module
 
 
-class Output:
+class Output:  # pylint: disable=too-many-instance-attributes
     """
     This is the object handling output entries populating.
     It also handles the logo choice based on some system detections.
@@ -27,12 +27,12 @@ class Output:
     __logo_right_padding = "   "
 
     def __init__(self, **kwargs):
-        configuration = Configuration()
+        self.configuration = Configuration()
 
         # Fetches passed arguments.
         self._format_to_json = kwargs.get("format_to_json")
         preferred_logo_style = (
-            kwargs.get("preferred_logo_style") or configuration.get("logo_style") or ""
+            kwargs.get("preferred_logo_style") or self.configuration.get("logo_style") or ""
         ).upper()
 
         # If logo shouldn't be displayed, don't load any module and reset right padding
@@ -59,11 +59,11 @@ class Output:
 
         # If `os-release`'s `ANSI_COLOR` option is set, honor it.
         ansi_color = Distributions.get_ansi_color()
-        if ansi_color and configuration.get("honor_ansi_color"):
+        if ansi_color and self.configuration.get("honor_ansi_color"):
             # Replace each Archey integrated colors by `ANSI_COLOR`.
             self._colors = len(self._colors) * [Style.escape_code_from_attrs(ansi_color)]
 
-        entries_color = configuration.get("entries_color")
+        entries_color = self.configuration.get("entries_color")
         if entries_color:
             self._entries_color = Style.escape_code_from_attrs(entries_color)
         elif self._colors:
@@ -76,9 +76,9 @@ class Output:
         # Each class output will be added in the list below afterwards
         self._results = []
 
-    def add_entry(self, module: Entry) -> None:
+    def add_entry(self, entry: Entry) -> None:
         """Append an entry to the list of entries to output"""
-        self._entries.append(module)
+        self._entries.append(entry)
 
     def append(self, key: str, value) -> None:
         """Append a pre-formatted entry to the final output content"""
@@ -95,7 +95,8 @@ class Output:
         else:
             # Iterate through the entries and run their output method to add their content.
             for entry in self._entries:
-                entry.output(self)
+                if not self.configuration.get("hide_undetected") or entry:
+                    entry.output(self)
             self._output_text()
 
     def _output_json(self) -> None:
