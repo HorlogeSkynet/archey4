@@ -13,6 +13,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 
 ### Changed
 - `Entry` behavior in boolean contexts ("truthy" when `value` is populated)
+- `Model` now ignores "Default string" fuzzy data
 
 ### Fixed
 - Sub-process execution failure when `PATH` contains an invalid component

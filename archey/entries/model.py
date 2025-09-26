@@ -10,13 +10,17 @@ from typing import Optional
 from archey.distributions import Distributions
 from archey.entry import Entry
 
+LINUX_DMI_SYS_PATH = "/sys/devices/virtual/dmi/id"
+LINUX_DMI_FUZZY_PATTERNS = [
+    re.compile("to be filled", re.IGNORECASE),
+    re.compile("default string", re.IGNORECASE),
+]
+
 
 class Model(Entry):
     """Uses multiple methods to retrieve some information about the host hardware"""
 
     _ICON = "\ueabe"  # cod_circuit_board
-
-    LINUX_DMI_SYS_PATH = "/sys/devices/virtual/dmi/id"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,21 +80,21 @@ class Model(Entry):
             except (OSError, CalledProcessError):
                 return None
 
-    @classmethod
-    def _fetch_dmi_info(cls) -> Optional[str]:
+    @staticmethod
+    def _fetch_dmi_info() -> Optional[str]:
         """Tries to open DMI Linux files, looking for hardware information"""
 
         def _read_dmi_file(file_name: str) -> str:
             try:
                 with open(
-                    os.path.join(cls.LINUX_DMI_SYS_PATH, file_name), encoding="UTF-8"
+                    os.path.join(LINUX_DMI_SYS_PATH, file_name), encoding="UTF-8"
                 ) as f_dmi_file:
                     dmi_info = f_dmi_file.read().rstrip()
             except OSError:
                 return ""
 
             # Stop `/sys/devices/virtual/dmi/id/*` parsing on fuzzy data.
-            if "to be filled" in dmi_info.lower():
+            if any(fuzzy_pattern.match(dmi_info) for fuzzy_pattern in LINUX_DMI_FUZZY_PATTERNS):
                 return ""
 
             return dmi_info
