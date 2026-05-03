@@ -69,8 +69,7 @@ class TestConfiguration(unittest.TestCase):
             with open(
                 os.path.join(temp_dir, "config.json"), mode="w", encoding="UTF-8"
             ) as f_config:
-                f_config.write(
-                    """\
+                f_config.write("""\
 {
     "allow_overriding": false,
     "suppress_warnings": true,
@@ -84,8 +83,7 @@ class TestConfiguration(unittest.TestCase):
         "use_fahrenheit": true
     }
 }
-"""
-                )
+""")
 
             # Let's load it into our `Configuration` instance.
             configuration._load_configuration(temp_dir)  # pylint: disable=protected-access
@@ -177,8 +175,7 @@ class TestConfiguration(unittest.TestCase):
             # We create a fake temporary configuration file.
             config_file = os.path.join(temp_dir, "user.cfg")  # A pure arbitrary name.
             with open(config_file, mode="w", encoding="UTF-8") as f_config:
-                f_config.write(
-                    """\
+                f_config.write("""\
 {
     "allow_overriding": false,
     "suppress_warnings": true,
@@ -192,8 +189,7 @@ class TestConfiguration(unittest.TestCase):
         "use_fahrenheit": true
     }
 }
-"""
-                )
+""")
 
             configuration = Configuration(config_path=config_file)
 

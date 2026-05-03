@@ -210,8 +210,7 @@ class TestOutput(unittest.TestCase):
                 "21",
             ]
             output.output()
-            print_mock.assert_called_with(
-                """\
+            print_mock.assert_called_with("""\
 FAKE_COLOR    1
     2
     3
@@ -233,8 +232,7 @@ FAKE_COLOR    1
     19
 FAKE_COLOR    20
 FAKE_COLOR    21\x1b[0m\
-"""
-            )
+""")
 
         output = Output()
 
@@ -296,8 +294,7 @@ FAKE_COLOR    21\x1b[0m\
                 "22",
             ]
             output.output()
-            print_mock.assert_called_with(
-                """\
+            print_mock.assert_called_with("""\
 FAKE_COLOR    1
 FAKE_COLOR    2
     3
@@ -320,8 +317,7 @@ FAKE_COLOR    2
     20
 FAKE_COLOR    21
 FAKE_COLOR    22\x1b[0m\
-"""
-            )
+""")
 
         output = Output()
 
@@ -438,15 +434,13 @@ FAKE_COLOR    22\x1b[0m\
         ]
         output.output()
 
-        print_mock.assert_called_with(
-            """\
+        print_mock.assert_called_with("""\
 W    short
 O    \x1b[0m...
 O    adjusted
 O    \x1b[0;31mshort\x1b[0m
 O    \x1b[0;31m\x1b[0m...\x1b[0m\
-"""
-        )
+""")
         # Check that `print` has been called only once.
         self.assertTrue(print_mock.assert_called_once)
 
@@ -507,13 +501,11 @@ O    \x1b[0;31m\x1b[0m...\x1b[0m\
         ]
         output.output()
 
-        print_mock.assert_called_with(
-            """\
+        print_mock.assert_called_with("""\
 entry_1
 entry_2
 entry_3\x1b[0m\
-"""
-        )
+""")
         # Check that `print` has been called only once.
         self.assertTrue(print_mock.assert_called_once)
 

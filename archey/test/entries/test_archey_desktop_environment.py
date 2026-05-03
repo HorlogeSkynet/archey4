@@ -111,8 +111,7 @@ class TestDesktopEnvironmentEntry(unittest.TestCase):
     )
     @patch(
         "archey.entries.desktop_environment.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 [Desktop Entry]
 Name=Retro Home
 Comment=Your home for retro gaming
@@ -122,8 +121,7 @@ Type=Application
 DesktopNames=Retro-Home;Ludo;
 
 no-value-option
-"""
-        ),
+"""),
     )
     def test_environment_detection_4_desktop_file(self, _) -> None:
         """_environment_detection against legacy `SESSION_DESKTOP` pointing to a desktop file"""
@@ -147,8 +145,7 @@ no-value-option
     )
     @patch(
         "archey.entries.desktop_environment.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 [Desktop Entry]
 Name=EmacsDesktop
 Comment=EmacsDesktop
@@ -159,8 +156,7 @@ X-LightDM-DesktopName=EmacsDesktop
 
 [Desktop Entry]
 Comment="Just messing with ConfigParser by adding section and option duplicates"
-"""
-        ),
+"""),
     )
     def test_environment_detection_4_desktop_file_fallback(self, _) -> None:
         """_environment_detection against legacy `SESSION_DESKTOP` pointing to a desktop file"""
@@ -184,12 +180,10 @@ Comment="Just messing with ConfigParser by adding section and option duplicates"
     )
     @patch(
         "archey.entries.desktop_environment.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 [Desktop Entry]
 Name=FooDesktop
-"""
-        ),
+"""),
     )
     def test_environment_detection_4_bad_desktop_file(self, _) -> None:
         """_environment_detection against legacy `SESSION_DESKTOP` pointing to a desktop file"""

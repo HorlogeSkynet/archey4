@@ -183,9 +183,7 @@ class Output:  # pylint: disable=too-many-instance-attributes
         try:
             print(logo_with_entries.format(c=self._colors) + str(Colors.CLEAR))
         except UnicodeError as unicode_error:
-            raise ArcheyException(
-                """\
+            raise ArcheyException("""\
 Your locale or TTY does not seem to support UTF-8 encoding.
 Please disable Unicode within your configuration file.\
-"""
-            ) from unicode_error
+""") from unicode_error

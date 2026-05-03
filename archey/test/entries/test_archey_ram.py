@@ -32,8 +32,7 @@ Swap:          4095          39        4056
 
     @patch(
         "archey.entries.ram.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 MemTotal:        7581000 kB
 MemFree:          716668 kB
 MemAvailable:    3632244 kB
@@ -58,8 +57,7 @@ Shmem:            451056 kB
 Slab:             314100 kB
 SReclaimable:     200792 kB
 SUnreclaim:       113308 kB
-"""
-        ),
+"""),
     )  # Some lines have been ignored as they are useless for computations.
     def test_read_proc_meminfo(self):
         """Test `_read_proc_meminfo` content parsing"""
@@ -108,13 +106,11 @@ Swapouts:                               3456015.
 
     @patch(
         "archey.entries.ram.check_output",
-        side_effect=[
-            """\
+        side_effect=["""\
 3992309
 3050620
 297854
-"""
-        ],
+"""],
     )
     @patch(
         "archey.entries.ram.os.sysconf",

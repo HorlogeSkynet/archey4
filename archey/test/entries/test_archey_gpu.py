@@ -91,15 +91,13 @@ XX:YY.H "Non-Volatile memory controller" "Sandisk Corp" "SanDisk Ultra 3D / WD B
             (debugfs_dri_0 / "name").write_text(
                 "vc4 dev=XXXX:YY:ZZ.T master=pci:XXXX:YY:ZZ.T unique=XXXX:YY:ZZ.T\n"
             )
-            (debugfs_dri_0 / "v3d_ident").write_text(
-                """\
+            (debugfs_dri_0 / "v3d_ident").write_text("""\
 Revision:   1
 Slices:     3
 TMUs:       6
 QPUs:       12
 Semaphores: 16
-"""
-            )
+""")
             self.assertListEqual(
                 gpu_instance_mock._videocore_chipsets(gpu_instance_mock), ["VideoCore IV"]
             )
@@ -108,8 +106,7 @@ Semaphores: 16
             (debugfs_dri_0 / "name").write_text(
                 "v3d dev=XXXX:YY:ZZ.T master=pci:XXXX:YY:ZZ.T unique=XXXX:YY:ZZ.T\n"
             )
-            (debugfs_dri_0 / "v3d_ident").write_text(
-                """\
+            (debugfs_dri_0 / "v3d_ident").write_text("""\
 Revision:   4.2.14.0
 MMU:        yes
 TFU:        yes
@@ -124,8 +121,7 @@ Core 0:
   Semaphores:   0
   BCG int:      0
   Override TMU: 0
-"""
-            )
+""")
             self.assertListEqual(
                 gpu_instance_mock._videocore_chipsets(gpu_instance_mock), ["VideoCore VI"]
             )
@@ -134,8 +130,7 @@ Core 0:
             (debugfs_dri_0 / "name").write_text(
                 "v3d dev=XXXX:YY:ZZ.T master=pci:XXXX:YY:ZZ.T unique=XXXX:YY:ZZ.T\n"
             )
-            (debugfs_dri_0 / "v3d_ident").write_text(
-                """\
+            (debugfs_dri_0 / "v3d_ident").write_text("""\
 Revision:   7.1.7.0
 MMU:        yes
 TFU:        no
@@ -147,8 +142,7 @@ Core 0:
   TMUs:         4
   QPUs:         16
   Semaphores:   0
-"""
-            )
+""")
             self.assertListEqual(
                 gpu_instance_mock._videocore_chipsets(gpu_instance_mock), ["VideoCore VII"]
             )
