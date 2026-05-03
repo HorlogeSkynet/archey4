@@ -185,6 +185,7 @@ class Disk(Entry):
                 stderr=DEVNULL,
                 check=False,
                 encoding="utf-8",
+                errors="backslashreplace",
             ).stdout
         except OSError:
             # `df` isn't available on this system.
