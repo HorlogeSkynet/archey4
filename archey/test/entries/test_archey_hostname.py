@@ -11,11 +11,9 @@ class TestHostnameEntry(unittest.TestCase):
 
     @patch(
         "archey.entries.hostname.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 MY-COOL-LAPTOP
-"""
-        ),
+"""),
     )
     def test_etc_hostname(self):
         """Mock reading from `/etc/hostname`"""

@@ -17,16 +17,14 @@ class TestCPUEntry(unittest.TestCase, CustomAssertions):
 
     @patch(
         "archey.entries.cpu.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 processor\t: 0
 vendor_id\t: CPU-VENDOR-NAME
 cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
 physical id\t: 0
-"""
-        ),
+"""),
     )
     def test_parse_proc_cpuinfo_one_entry(self):
         """Test `/proc/cpuinfo` parsing"""
@@ -37,8 +35,7 @@ physical id\t: 0
 
     @patch(
         "archey.entries.cpu.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 processor\t: 0
 vendor_id\t: CPU-VENDOR-NAME
 cpu family\t: X
@@ -59,8 +56,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: ANOTHER-CPU-MODEL
 physical id\t: 1
-"""
-        ),
+"""),
     )
     def test_parse_proc_cpuinfo_multiple_entries(self):
         """Test `/proc/cpuinfo` parsing"""
@@ -71,8 +67,7 @@ physical id\t: 1
 
     @patch(
         "archey.entries.cpu.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 processor\t: 0
 vendor_id\t: CPU-VENDOR-NAME
 cpu family\t: X
@@ -100,8 +95,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: CPU-MODEL-NAME
 physical id\t: 1
-"""
-        ),
+"""),
     )
     def test_parse_proc_cpuinfo_one_cpu_dual_socket(self):
         """Test `/proc/cpuinfo` parsing for same CPU model across two sockets"""
@@ -112,8 +106,7 @@ physical id\t: 1
 
     @patch(
         "archey.entries.cpu.open",
-        mock_open(
-            read_data="""\
+        mock_open(read_data="""\
 processor\t: 0
 vendor_id\t: CPU-VENDOR-NAME
 cpu family\t: X
@@ -141,8 +134,7 @@ cpu family\t: X
 model\t\t: YY
 model name\t: ANOTHER\tCPU   MODEL WITH STRANGE S P  A   C     E     S
 physical id\t: 1
-"""
-        ),
+"""),
     )
     def test_parse_proc_cpuinfo_multiple_inconsistent_entries(self):
         """
