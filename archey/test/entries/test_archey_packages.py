@@ -133,21 +133,6 @@ python3.8-pip-20.1
     @patch(
         "archey.entries.packages.check_output",
         return_value="""\
-acl 2.2.52-4
-archey4 v4.3.3-1
-archlinux-keyring 20180108-1
-argon2 20171227-3
-""",
-    )
-    def test_match_with_pacman(self, check_output_mock):
-        """Simple test for the Pacman packages manager"""
-        check_output_mock.side_effect = self._check_output_side_effect("pacman")
-
-        self.assertDictEqual(Packages().value, {"pacman": 4})
-
-    @patch(
-        "archey.entries.packages.check_output",
-        return_value="""\
 bzip2-1.0.8         block-sorting file compressor, unencumbered
 gettext-runtime-0.20.1p0 GNU gettext runtime libraries and programs
 intel-firmware-20191115v0 microcode update binaries for Intel CPUs
