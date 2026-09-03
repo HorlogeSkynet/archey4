@@ -30,7 +30,7 @@ PACKAGES_TOOLS: typing.Tuple[typing.Dict[str, typing.Any], ...] = (
     {"cmd": ("ls", "-1", get_homebrew_cellar_path()), "name": "homebrew"},
     {"cmd": ("nix-env", "-q")},
     {"cmd": ("pacman", "-Q")},
-    {"cmd": ("pacman", "-Qm"), "name": "pacman (foreign)"},
+    {"cmd": ("pacman", "-Qm"), "name": "pacman, foreign only"},
     {"cmd": ("pacstall", "-L")},
     {"cmd": ("pkg_info", "-a")},
     {
