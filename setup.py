@@ -54,7 +54,6 @@ Remain *maintained*, *community-driven* and *highly-compatible* with yesterday's
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
         'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
         'Operating System :: Android',
         'Operating System :: MacOS',
