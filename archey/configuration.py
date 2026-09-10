@@ -19,6 +19,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "honor_ansi_color": True,
     "entries_icon": False,
     "default_strings": {
+        "free": "free",
         "latest": "latest",
         "available": "available",
         "no_address": "No Address",

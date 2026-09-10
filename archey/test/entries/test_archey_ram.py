@@ -142,9 +142,11 @@ Swapouts:                               3456015.
             ram_instance_mock.value = {
                 "used": 2043.0,
                 "total": 15658.0,
+                "free": 13615.0,
                 "unit": "MiB",
             }
             ram_instance_mock.options = {
+                "show_free": False,
                 "warning_use_percent": 33.3,
                 "danger_use_percent": 66.7,
             }
@@ -161,9 +163,11 @@ Swapouts:                               3456015.
             ram_instance_mock.value = {
                 "used": 7830.0,
                 "total": 15658.0,
+                "free": 7828.0,
                 "unit": "MiB",
             }
             ram_instance_mock.options = {
+                "show_free": True,
                 "warning_use_percent": 25,
                 "danger_use_percent": 50,
             }
@@ -171,7 +175,8 @@ Swapouts:                               3456015.
             RAM.output(ram_instance_mock, output_mock)
             self.assertEqual(
                 output_mock.append.call_args[0][1],
-                f"{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB",
+                f"{Colors.RED_NORMAL}7830 MiB{Colors.CLEAR} / 15658 MiB"
+                f" (7828 MiB {DEFAULT_CONFIG['default_strings']['free']})",
             )
 
 

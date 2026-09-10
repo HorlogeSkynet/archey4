@@ -388,6 +388,9 @@ Below stand further descriptions for each available (default) option :
 		{
 			"type": "RAM",
 			//
+			// Set to `true` to explicitly show unused RAM amount ($total - $used).
+			"show_free": false,
+			//
 			// Some threshold values you can adjust affecting warning/danger colors.
 			"warning_use_percent": 33.3,
 			"danger_use_percent": 66.7
@@ -424,6 +427,9 @@ Below stand further descriptions for each available (default) option :
 			//      false --> `Disk (/):`
 			//      true  --> `(/):`
 			"hide_entry_name": null,
+			//
+			// Set to `true` to explicitly show unused disk space ($total - $used).
+			"show_free": false,
 			//
 			// Some threshold values you can adjust affecting warning/danger colors.
 			"warning_use_percent": 50,

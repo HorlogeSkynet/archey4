@@ -30,6 +30,7 @@ class RAM(Entry):
         self.value = {
             "used": used,
             "total": total,
+            "free": total - used,
             "unit": "MiB",
         }
 
@@ -175,6 +176,8 @@ class RAM(Entry):
             self.options.get("danger_use_percent", 66.7),
         )
 
-        output.append(
-            self.name, f"{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}"
-        )
+        value = f"{level_color}{int(used)} {unit}{Colors.CLEAR} / {int(total)} {unit}"
+        if self.options.get("show_free"):
+            value += f" ({int(self.value['free'])} {unit} {self._default_strings.get('free')})"
+
+        output.append(self.name, value)

@@ -10,6 +10,7 @@ and this project (partially) adheres to [Semantic Versioning](https://semver.org
 - Python 3.13 & 3.14 official support
 - `entries_color` config option validation
 - `hide_undetected` config option to hide undetected entries
+- `show_free` config option for `Disk` and `RAM` entries to show unused space/memory
 
 ### Changed
 - `Entry` behavior in boolean contexts ("truthy" when `value` is populated)

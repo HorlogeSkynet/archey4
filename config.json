@@ -56,11 +56,13 @@
 		},
 		{
 			"type": "RAM",
+			"show_free": false,
 			"warning_use_percent": 33.3,
 			"danger_use_percent": 66.7
 		},
 		{
 			"type": "Disk",
+			"show_free": false,
 			"show_filesystems": ["local"],
 			"combine_total": true,
 			"disk_labels": null,
@@ -96,6 +98,7 @@
 		}
 	],
 	"default_strings": {
+		"free": "free",
 		"latest": "latest",
 		"available": "available",
 		"no_address": "No Address",

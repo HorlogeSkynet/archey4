@@ -98,6 +98,7 @@ class Disk(Entry):
                 "device_path": f"/dev/{plist_container['DesignatedPhysicalStore']}",
                 "used_blocks": 0,
                 "total_blocks": 0,
+                "free_blocks": 0,
             }
             for plist_volume in plist_container["Volumes"]:
                 # Get volumes which start with this volume's device path, i.e. include snapshots
@@ -111,13 +112,17 @@ class Disk(Entry):
                         # Get this volume from disk_dict (removing it)
                         volume = disk_dict.pop(inverted_disk_dict[volume_path])
                     except KeyError:
-                        # skip this volume as it misses from  `disk_dict`
+                        # skip this volume as it misses from `disk_dict`
                         continue
 
                     # Now add it to the container entry
                     container_dict["used_blocks"] += volume["used_blocks"]
                     # Total is always the container total
                     container_dict["total_blocks"] = volume["total_blocks"]
+                    # Update free blocks count according to new container used blocks count
+                    container_dict["free_blocks"] = (
+                        volume["total_blocks"] - container_dict["used_blocks"]
+                    )
 
             # Use the "reference" (virtual disk) as the mountpoint, since APFS containers
             # cannot be directly mounted
@@ -161,14 +166,16 @@ class Disk(Entry):
         Runs `df -P -k` and returns disks in a dict formatted as:
         {
             'mount_point_1': {
-                'device_path': AAA,
-                'used_blocks': BBB,
-                'total_blocks': CCC
+                'device_path': '/foo',
+                'used_blocks': 0xBBB,
+                'total_blocks': 0xCCC,
+                'free_blocks': 0xCCC - 0xBBB,
             },
             'mount_point_2': {
-                'device_path': XXX,
-                'used_blocks': YYY,
-                'total_blocks': ZZZ
+                'device_path': '/bar',
+                'used_blocks': 0xEEE,
+                'total_blocks': 0xFFF,
+                'free_blocks': 0xFFF - 0xEEE,
             }
         }
         Mount points are used as keys since they are always unique.
@@ -207,10 +214,12 @@ class Disk(Entry):
             if total_blocks == 0:
                 continue
 
+            used_blocks = int(df_entry_match.group("used_blocks"))
             df_output_dict[df_entry_match.group("mount_point")] = {
                 "device_path": df_entry_match.group("device_path"),
-                "used_blocks": int(df_entry_match.group("used_blocks")),
+                "used_blocks": used_blocks,
                 "total_blocks": total_blocks,
+                "free_blocks": total_blocks - used_blocks,
             }
 
         return df_output_dict
@@ -260,6 +269,9 @@ class Disk(Entry):
                     "total_blocks": sum(
                         filesystem_data["total_blocks"] for filesystem_data in filesystems.values()
                     ),
+                    "free_blocks": sum(
+                        filesystem_data["free_blocks"] for filesystem_data in filesystems.values()
+                    ),
                 }
             }
         else:
@@ -294,5 +306,8 @@ class Disk(Entry):
                 self._blocks_to_human_readable(filesystem_data["used_blocks"]),
                 self._blocks_to_human_readable(filesystem_data["total_blocks"]),
             )
+            if self.options.get("show_free"):
+                free_blocks = self._blocks_to_human_readable(filesystem_data["free_blocks"])
+                pretty_filesystem_value += f" ({free_blocks} {self._default_strings.get('free')})"
 
             output.append(name.format(disk_label=disk_label), pretty_filesystem_value)
