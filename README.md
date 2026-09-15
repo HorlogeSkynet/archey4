@@ -234,11 +234,10 @@ python3 -m archey --help
 Since v4.3.0, Archey 4 **may** be "tweaked" a bit with external configuration.  
 You can place a [`config.json`](config.json) file in these locations :
 
-1. `/etc/archey4/config.json` (system preferences)
-2. `~/.config/archey4/config.json` (user preferences)
-3. `./config.json` (local preferences)
+1. `/etc/xdg/archey4` or `/etc/archey4` (or any directory set in `XDG_CONFIG_DIRS`) (system preferences)
+2. `${XDG_CONFIG_HOME}/archey4` or `~/.config/archey4` (user preferences)
 
-**If an option is defined in multiple places, it will be overridden according to the order above (local preferences > user preferences > system preferences).**
+**If an option is defined in multiple places, it will be overridden according to the order above (system preferences -> user preferences).**
 
 Alternatively, you may specify your own configuration file with the `-c` command-line option.
 
