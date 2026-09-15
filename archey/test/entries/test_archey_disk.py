@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import MagicMock, call, patch
 
 from archey.colors import Colors
+from archey.configuration import DEFAULT_CONFIG
 from archey.entries.disk import Disk
 from archey.test.entries import HelperMethods
 
@@ -163,31 +164,37 @@ class TestDiskEntry(unittest.TestCase):
                     "device_path": "/dev/disk3s1s1",  # in apfs container (disk0s2)
                     "used_blocks": 0,
                     "total_blocks": 0,
+                    "free_blocks": 0,
                 },
                 "/System/Volumes/VM": {
                     "device_path": "/dev/disk3s6",  # in apfs container (disk0s2)
                     "used_blocks": 0,
                     "total_blocks": 0,
+                    "free_blocks": 0,
                 },
                 "/System/Volumes/xarts": {
                     "device_path": "/dev/disk1s2",  # in iboot system container (disk0s1)
                     "used_blocks": 0,
                     "total_blocks": 0,
+                    "free_blocks": 0,
                 },
                 "/System/Volumes/iSCPreboot": {
                     "device_path": "/dev/disk1s1",  # in iboot system container (disk0s1)
                     "used_blocks": 0,
                     "total_blocks": 0,
+                    "free_blocks": 0,
                 },
                 "/System/Volumes/Data": {
                     "device_path": "/dev/disk3s5",  # in apfs container (disk0s2)
                     "used_blocks": 0,
                     "total_blocks": 0,
+                    "free_blocks": 0,
                 },
                 "/System/Volumes/Update/SFR/mnt1": {
                     "device_path": "/dev/disk2s1",  # in recovery container (disk0s3)
                     "used_blocks": 0,
                     "total_blocks": 0,
+                    "free_blocks": 0,
                 },
             }
             # We should end up with the 3 container device paths
@@ -200,16 +207,19 @@ class TestDiskEntry(unittest.TestCase):
                         "device_path": "/dev/disk0s2",
                         "used_blocks": 0,
                         "total_blocks": 0,
+                        "free_blocks": 0,
                     },
                     "disk1": {
                         "device_path": "/dev/disk0s1",
                         "used_blocks": 0,
                         "total_blocks": 0,
+                        "free_blocks": 0,
                     },
                     "disk2": {
                         "device_path": "/dev/disk0s3",
                         "used_blocks": 0,
                         "total_blocks": 0,
+                        "free_blocks": 0,
                     },
                 },
             )
@@ -221,31 +231,37 @@ class TestDiskEntry(unittest.TestCase):
                     "device_path": "/dev/disk3s1s1",  # in apfs container (disk0s2)
                     "used_blocks": 23068672,
                     "total_blocks": 970981376,
+                    "free_blocks": 970981376 - (23068672 + 1048576 + 266338304),
                 },
                 "/System/Volumes/VM": {
                     "device_path": "/dev/disk3s6",  # in apfs container (disk0s2)
                     "used_blocks": 1048576,
                     "total_blocks": 970981376,
+                    "free_blocks": 970981376 - (23068672 + 1048576 + 266338304),
                 },
                 "/System/Volumes/xarts": {
                     "device_path": "/dev/disk1s2",  # in iboot system container (disk0s1)
                     "used_blocks": 6144,
                     "total_blocks": 512000,
+                    "free_blocks": 512000 - (6144 + 7578),
                 },
                 "/System/Volumes/iSCPreboot": {
                     "device_path": "/dev/disk1s1",  # in iboot system container (disk0s1)
                     "used_blocks": 7578,
                     "total_blocks": 512000,
+                    "free_blocks": 512000 - (6144 + 7578),
                 },
                 "/System/Volumes/Data": {
                     "device_path": "/dev/disk3s5",  # in apfs container (disk0s2)
                     "used_blocks": 266338304,
                     "total_blocks": 970981376,
+                    "free_blocks": 970981376 - (23068672 + 1048576 + 266338304),
                 },
                 "/System/Volumes/Update/SFR/mnt1": {
                     "device_path": "/dev/disk2s1",  # in recovery container (disk0s3)
                     "used_blocks": 1677722,
                     "total_blocks": 5242880,
+                    "free_blocks": 3565158,
                 },
             }
             # We should end up with the 3 container device paths
@@ -258,16 +274,19 @@ class TestDiskEntry(unittest.TestCase):
                         "device_path": "/dev/disk0s2",
                         "used_blocks": 290455552,
                         "total_blocks": 970981376,
+                        "free_blocks": 680525824,
                     },
                     "disk1": {
                         "device_path": "/dev/disk0s1",
                         "used_blocks": 13722,
                         "total_blocks": 512000,
+                        "free_blocks": 498278,
                     },
                     "disk2": {
                         "device_path": "/dev/disk0s3",
                         "used_blocks": 1677722,
                         "total_blocks": 5242880,
+                        "free_blocks": 3565158,
                     },
                 },
             )
@@ -338,17 +357,25 @@ class TestDiskEntry(unittest.TestCase):
                         "device_path": "/dev/nvme0n1p2",
                         "used_blocks": 427458276,
                         "total_blocks": 499581952,
+                        "free_blocks": 72123676,
                     },
-                    "/tmp": {"device_path": "tmpfs", "used_blocks": 292, "total_blocks": 8127236},
+                    "/tmp": {
+                        "device_path": "tmpfs",
+                        "used_blocks": 292,
+                        "total_blocks": 8127236,
+                        "free_blocks": 8126944,
+                    },
                     "/boot": {
                         "device_path": "/dev/nvme0n1p1",
                         "used_blocks": 35908,
                         "total_blocks": 523248,
+                        "free_blocks": 487340,
                     },
                     "/what is  this": {
                         "device_path": "/dev/sda1",
                         "used_blocks": 42,
                         "total_blocks": 1624,
+                        "free_blocks": 1582,
                     },
                 },
             )
@@ -399,6 +426,7 @@ class TestDiskEntry(unittest.TestCase):
                         "device_path": "/dev/my-cool-disk",
                         "used_blocks": blocks_color_tuple[0],
                         "total_blocks": 100,
+                        "free_blocks": 100 - blocks_color_tuple[0],
                     }
                 }
                 Disk.output(self.disk_instance_mock, self.output_mock)
@@ -414,11 +442,13 @@ class TestDiskEntry(unittest.TestCase):
                 "device_path": "/dev/my-cool-disk",
                 "used_blocks": 10,
                 "total_blocks": 10,
+                "free_blocks": 0,
             },
             "second_mount_point": {
                 "device_path": "/dev/my-cooler-disk",
                 "used_blocks": 10,
                 "total_blocks": 30,
+                "free_blocks": 20,
             },
         }
 
@@ -443,8 +473,9 @@ class TestDiskEntry(unittest.TestCase):
 
         self.output_mock.reset_mock()
 
-        with self.subTest("Entry name labeling (device path with entry name)"):
+        with self.subTest("Entry name labeling (device path with entry name) with free disk space"):
             self.disk_instance_mock.options = {
+                "show_free": True,
                 "combine_total": False,
                 "disk_labels": "device_paths",
             }
@@ -455,11 +486,13 @@ class TestDiskEntry(unittest.TestCase):
                 [
                     call(
                         "Disk (/dev/my-cool-disk)",
-                        f"{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB",
+                        f"{Colors.RED_NORMAL}10.0 KiB{Colors.CLEAR} / 10.0 KiB"
+                        f" (0.0 KiB {DEFAULT_CONFIG['default_strings']['free']})",
                     ),
                     call(
                         "Disk (/dev/my-cooler-disk)",
-                        f"{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB",
+                        f"{Colors.GREEN_NORMAL}10.0 KiB{Colors.CLEAR} / 30.0 KiB"
+                        f" (20.0 KiB {DEFAULT_CONFIG['default_strings']['free']})",
                     ),
                 ]
             )
