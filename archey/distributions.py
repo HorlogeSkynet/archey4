@@ -60,6 +60,7 @@ class Distributions(Enum):
     SLACKWARE = "slackware"
     UBUNTU = "ubuntu"
     UNIVALENT = "univalent"
+    VYLEN = "vylen"
     WINDOWS = "windows"
 
     @staticmethod

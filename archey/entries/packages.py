@@ -25,6 +25,7 @@ PACKAGES_TOOLS: typing.Tuple[typing.Dict[str, typing.Any], ...] = (
     # {"cmd": ("apt", "list", "-qq", "--installed")},
     {"cmd": ("dnf", "list", "installed"), "skew": 1},
     {"cmd": ("dpkg", "--get-selections")},
+    {"cmd": ("emerald", "installed")},
     {"cmd": ("emerge", "-ep", "world"), "skew": 5},
     {"cmd": ("flatpak", "list"), "skew": 1},
     {"cmd": ("ls", "-1", get_homebrew_cellar_path()), "name": "homebrew"},
