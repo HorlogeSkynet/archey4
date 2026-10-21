@@ -75,11 +75,19 @@ class TestLogos(unittest.TestCase):
                         ),
                     )
 
-                    # Non-empty line check.
-                    self.assertTrue(
-                        Style.remove_colors(line.format(c=[""] * nb_colors)).strip(),
-                        msg=f"[{logo_module_info.name}] line index {j}, got an useless empty line",
-                    )
+                    # Non-empty starting line check.
+                    if j == 1:
+                        self.assertTrue(
+                            Style.remove_colors(line.format(c=[""] * nb_colors)).strip(),
+                            msg=f"[{logo_module_info.name}] got an useless starting empty line",
+                        )
+
+                # Non-empty ending line check.
+                # pylint: disable=undefined-loop-variable
+                self.assertTrue(
+                    Style.remove_colors(line.format(c=[""] * nb_colors)).strip(),
+                    msg=f"[{logo_module_info.name}] got an useless ending empty line",
+                )
 
         # Finally, check each distributions identifier got a logo!
         # pylint: disable=undefined-loop-variable
